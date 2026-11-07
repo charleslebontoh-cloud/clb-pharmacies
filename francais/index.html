@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<title>CLB Grammar</title>
+<meta name="theme-color" content="#061433">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="CLB Grammar"><meta name="format-detection" content="telephone=no">
+<style>
+:root{--bg:#061433;--card:#0f1d4a;--line:#24397a;--ink:#f4f6ff;--muted:#a3b2d9;--gold:#edbb00;--grana:#a50044;--ok:#34c77b;--ko:#ff5d73;--blue:#1b63c6;--ease:cubic-bezier(.22,1,.36,1);--spring:cubic-bezier(.34,1.56,.64,1)}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%;background:var(--bg)}
+body{margin:0;font:16px/1.5 -apple-system,"SF Pro Text",system-ui,Segoe UI,Roboto,sans-serif;background:linear-gradient(180deg,#0b2a6b,#061433 45%);color:var(--ink);min-height:100vh;-webkit-tap-highlight-color:transparent;padding-bottom:calc(env(safe-area-inset-bottom) + 96px);overscroll-behavior-y:none}
+.wrap{max-width:760px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 18px) max(18px,env(safe-area-inset-right)) 0 max(18px,env(safe-area-inset-left))}
+.brand{font-weight:800;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+h1{margin:4px 0 4px;font:800 30px/1.15 -apple-system,"SF Pro Display",system-ui;letter-spacing:-.02em}h1 span{color:#ff4f8b}
+h2{font-size:19px;margin:22px 0 10px}
+.sub{color:var(--muted);font-size:14px}
+.view{display:none}.view.on{display:block;animation:vin .45s var(--ease)}
+@keyframes vin{from{opacity:0;transform:translateY(14px);filter:blur(3px)}to{opacity:1;transform:none;filter:none}}
+.card{background:rgba(16,29,74,.85);border:1px solid var(--line);border-radius:20px;padding:16px;margin-top:12px;box-shadow:0 12px 30px -20px rgba(0,0,0,.8);animation:cin .5s var(--ease) both}
+.card:nth-child(2){animation-delay:.04s}.card:nth-child(3){animation-delay:.08s}.card:nth-child(4){animation-delay:.12s}.card:nth-child(n+5){animation-delay:.16s}
+@keyframes cin{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.stat{background:rgba(16,29,74,.85);border:1px solid var(--line);border-radius:18px;padding:12px;text-align:center}
+.stat b{display:block;font-size:26px;font-weight:900}.stat span{font-size:12px;color:var(--muted)}
+.big{width:100%;border:0;border-radius:18px;padding:18px;font:800 17px -apple-system,system-ui;color:#1b1300;background:linear-gradient(135deg,#edbb00,#ffd84d);box-shadow:0 14px 30px -12px rgba(237,187,0,.7);margin-top:14px;position:relative;overflow:hidden}
+.big small{display:block;font-weight:600;font-size:13px;opacity:.75}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:12px 14px;font:700 15px -apple-system,system-ui}
+button{transition:transform .2s var(--spring),filter .2s;cursor:pointer}button:active{transform:scale(.95);filter:brightness(1.12)}
+.ls{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:rgba(16,29,74,.85);border:1px solid var(--line);border-radius:18px;padding:14px;margin-top:10px;color:var(--ink);font:inherit}
+.ls .ico{width:44px;height:44px;flex:0 0 44px;border-radius:14px;display:grid;place-items:center;font:800 15px Georgia,serif;background:rgba(237,187,0,.12);color:var(--gold);border:1px solid rgba(237,187,0,.35)}
+.ls .tx{flex:1;min-width:0}.ls .tx b{display:block;font-size:15px}.ls .tx small{color:var(--muted)}
+.bar{height:6px;border-radius:6px;background:#1d2d63;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,#1b63c6,#34c77b);transition:width .8s var(--ease)}
+.cat{color:var(--gold);font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase;margin:20px 0 0}
+.rule{font-size:16px}.rule b{color:#fff}.tip{border-left:4px solid var(--gold);background:rgba(237,187,0,.08)}.tip h3,.card h3{margin:0 0 6px;font-size:14px;color:var(--gold)}
+.ex div{padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06)}.ex div:last-child{border:0}.ex b{color:#7fd0ff}
+.back{background:none;border:0;color:var(--gold);font:700 15px -apple-system,system-ui;padding:6px 0}
+/* quiz */
+.qtop{display:flex;align-items:center;gap:12px}.qtop .bar{flex:1;height:10px}.qtop .x{background:none;border:0;color:var(--muted);font-size:22px}
+.qcount{color:var(--muted);font-size:13px;margin-top:6px}
+.qtitle{color:var(--gold);font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-top:18px}
+.qtext{font:700 22px/1.4 Georgia,"Times New Roman",serif;margin:10px 0 18px}
+.qtext .gap{display:inline-block;min-width:60px;border-bottom:3px solid var(--gold);color:var(--gold);text-align:center;padding:0 4px;transition:all .3s}
+.opts{display:grid;gap:10px}
+.opt{width:100%;text-align:left;padding:16px;border-radius:16px;border:1.5px solid var(--line);background:rgba(16,29,74,.9);color:var(--ink);font:700 17px -apple-system,system-ui;position:relative}
+.opt.good{border-color:var(--ok);background:rgba(52,199,123,.18);animation:pop .4s var(--spring)}
+.opt.bad{border-color:var(--ko);background:rgba(255,93,115,.16);animation:shake .4s}
+.opt[disabled]{opacity:1}
+@keyframes pop{50%{transform:scale(1.04)}}@keyframes shake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+.fb{margin-top:14px;border-radius:16px;padding:14px;display:none;animation:cin .35s var(--ease)}
+.fb.ok{display:block;background:rgba(52,199,123,.14);border:1px solid rgba(52,199,123,.5)}.fb.ko{display:block;background:rgba(255,93,115,.12);border:1px solid rgba(255,93,115,.5)}
+.fb b{display:block;margin-bottom:4px}
+.next{display:none}.next.on{display:block}
+.res{text-align:center;padding-top:30px}.res .score{font:900 64px -apple-system,system-ui;background:linear-gradient(135deg,#edbb00,#ff4f8b);-webkit-background-clip:text;background-clip:text;color:transparent}
+.xp{position:fixed;left:50%;top:40%;transform:translateX(-50%);font:900 28px -apple-system;color:var(--gold);pointer-events:none;animation:flt 1s var(--ease) forwards;z-index:30;text-shadow:0 2px 14px rgba(237,187,0,.7)}
+@keyframes flt{from{opacity:1;transform:translate(-50%,0) scale(.8)}to{opacity:0;transform:translate(-50%,-80px) scale(1.3)}}
+.confetti{position:fixed;width:8px;height:12px;z-index:40;pointer-events:none;border-radius:2px;animation:fall 1.7s cubic-bezier(.2,.6,.4,1) forwards}
+@keyframes fall{to{transform:translate(var(--dx),110vh) rotate(var(--r));opacity:.7}}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;align-items:end;height:110px;margin-top:10px}
+.week div{display:grid;gap:4px;justify-items:center;align-items:end;height:100%}.week i{display:block;width:70%;border-radius:6px 6px 2px 2px;background:var(--blue);min-height:3px;transition:height .8s var(--ease)}.week small{font-size:11px;color:var(--muted)}
+.empty{color:var(--muted);text-align:center;padding:24px;border:1px dashed var(--line);border-radius:18px;margin-top:12px}
+nav{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,1fr);padding:6px;border-radius:22px;z-index:20;background:rgba(10,22,58,.72);-webkit-backdrop-filter:blur(22px) saturate(1.8);backdrop-filter:blur(22px) saturate(1.8);border:1px solid rgba(255,255,255,.1);box-shadow:0 18px 40px -12px rgba(0,0,0,.7);max-width:560px;margin:0 auto}
+nav button{position:relative;z-index:1;background:none;border:0;color:var(--muted);font:700 11px -apple-system,system-ui;display:grid;justify-items:center;gap:2px;padding:7px 2px;border-radius:16px}
+nav button b{font-size:20px;line-height:1;transition:transform .35s var(--spring)}nav button.on{color:#061433}nav button.on b{transform:scale(1.12)}
+#pill{position:absolute;top:6px;bottom:6px;border-radius:16px;background:linear-gradient(135deg,#edbb00,#ffd84d);transition:left .45s var(--spring),width .45s var(--spring);box-shadow:0 6px 18px -6px rgba(237,187,0,.8)}
+body.quiz nav{transform:translateY(140%);transition:transform .4s var(--ease)}nav{transition:transform .4s var(--ease)}
+#splash{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:radial-gradient(circle at 50% 45%,#0b2a6b,#061433 60%);transition:opacity .6s,visibility .6s;cursor:pointer}
+#splash>div{text-align:center}#splash img{display:block;margin:0 auto;width:150px;height:150px;border-radius:34px;box-shadow:0 22px 40px -12px rgba(0,0,0,.7);animation:sIn .9s var(--spring),bob 2.6s 1s ease-in-out infinite}
+#splash b{display:block;margin-top:16px;font:800 15px -apple-system;letter-spacing:.2em;color:var(--gold);animation:cin .8s .2s both}
+#splash .tap{display:block;margin-top:20px;font:700 12px -apple-system;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);animation:cin .8s .6s both,blink 2s 1.4s ease-in-out infinite}
+#splash.out{opacity:0;visibility:hidden}#splash.out img{transform:scale(1.6);opacity:0;transition:transform .6s var(--ease),opacity .5s}
+@keyframes sIn{from{transform:scale(.4) rotate(-90deg);opacity:0}to{transform:none;opacity:1}}@keyframes bob{50%{transform:translateY(-10px)}}@keyframes blink{50%{opacity:.35}}
+@media (min-width:900px){.qtext{font-size:26px}.opts{grid-template-columns:1fr 1fr}}
+</style></head><body>
+<div id="splash" role="button" tabindex="0" aria-label="Entrer"><div><img src="icon-512.png" alt=""><b>CLB GRAMMAR</b><span class="tap">Touche pour entrer</span><small style="display:block;margin-top:26px;color:#4d5d8f;font-size:11px">version 1 · 7 nov. 2026</small></div></div>
+<div class="wrap">
+
+<section class="view" id="v-home">
+ <div class="brand">CLB Grammar</div><h1>Bonjour <span>Charles</span></h1><div class="sub" id="h-sub"></div>
+ <div class="stats"><div class="stat"><b id="s-streak">0</b><span>🔥 jours de suite</span></div><div class="stat"><b id="s-xp">0</b><span>⭐ points</span></div><div class="stat"><b id="s-mast">0 %</b><span>🎯 maîtrise</span></div></div>
+ <button class="big" id="go-daily">⚡ Défi du jour<small id="daily-sub">10 questions adaptées à tes erreurs</small></button>
+ <div class="card"><h3>📌 À revoir en priorité</h3><div id="h-weak"></div></div>
+ <div class="card tip"><h3>💡 Le conseil du jour</h3><div id="h-tip"></div></div>
+</section>
+
+<section class="view" id="v-lessons">
+ <div class="brand">CLB Grammar</div><h1>Les <span>leçons</span></h1><div class="sub">Règles, astuces et exercices. Une barre verte pleine = leçon maîtrisée.</div>
+ <div id="l-list"></div>
+</section>
+
+<section class="view" id="v-lesson">
+ <button class="back" data-go="lessons">‹ Leçons</button>
+ <div class="brand" id="ld-cat"></div><h1 id="ld-t"></h1>
+ <div class="card rule"><h3>📖 La règle</h3><div id="ld-r"></div></div>
+ <div class="card tip"><h3>💡 L'astuce</h3><div id="ld-tip"></div></div>
+ <div class="card ex"><h3>✍️ Exemples</h3><div id="ld-ex"></div></div>
+ <button class="big" id="ld-go">🎯 M'entraîner sur cette leçon</button>
+</section>
+
+<section class="view" id="v-quiz">
+ <div class="qtop"><button class="x" id="q-x" aria-label="Quitter">✕</button><div class="bar"><i id="q-bar" style="width:0"></i></div></div>
+ <div class="qcount" id="q-count"></div>
+ <div class="qtitle" id="q-les"></div>
+ <div class="qtext" id="q-text"></div>
+ <div class="opts" id="q-opts"></div>
+ <div class="fb" id="q-fb"></div>
+ <button class="big next" id="q-next">Continuer</button>
+</section>
+
+<section class="view" id="v-result">
+ <div class="res"><div style="font-size:54px" id="r-emoji">🏆</div><div class="score" id="r-score"></div><div class="sub" id="r-sub"></div></div>
+ <button class="big" data-go="home">Retour à l'accueil</button>
+ <button class="btn" style="width:100%;margin-top:10px" id="r-again">Recommencer</button>
+</section>
+
+<section class="view" id="v-review">
+ <div class="brand">CLB Grammar</div><h1>Mes <span>erreurs</span></h1><div class="sub">Les questions ratées reviennent jusqu'à ce que tu les maîtrises.</div>
+ <button class="big" id="go-review">🔁 Réviser mes erreurs<small id="rv-sub"></small></button>
+ <div id="rv-list"></div>
+</section>
+
+<section class="view" id="v-stats">
+ <div class="brand">CLB Grammar</div><h1>Mes <span>progrès</span></h1>
+ <div class="card"><h3>📊 Réponses justes, 7 derniers jours</h3><div class="week" id="st-week"></div></div>
+ <div class="card"><h3>🎯 Maîtrise par catégorie</h3><div id="st-cat"></div></div>
+ <div class="card"><h3>⚙️ Données</h3><div class="sub">Ta progression est enregistrée sur cet appareil.</div><button class="btn" style="margin-top:10px" id="st-reset">Remettre à zéro</button></div>
+</section>
+</div>
+
+<nav><span id="pill"></span><button data-go="home"><b>🏠</b>Accueil</button><button data-go="lessons"><b>📚</b>Leçons</button><button data-go="review"><b>🔁</b>Erreurs</button><button data-go="stats"><b>📈</b>Progrès</button></nav>
+
+<script src="data.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+const dkey=d=>{const x=new Date(d);return x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0");};
+const today=()=>dkey(Date.now());
+let S=LS.get("gram",{xp:0,cards:{},days:{},streak:0,last:""});
+const save=()=>LS.set("gram",S);
+const ALL=[];LESSONS.forEach(l=>l.q.forEach((q,i)=>ALL.push({k:l.id+"-"+i,l,q})));
+const DAYS=[0,1,2,4,8,16];
+const box=k=>(S.cards[k]||{b:-1}).b;
+const due=k=>{const c=S.cards[k];return c&&c.due<=Date.now()&&c.b<5;};
+function lessonMastery(l){return l.q.reduce((s,_,i)=>s+Math.max(0,box(l.id+"-"+i)),0)/(l.q.length*5);}
+function totalMastery(){return ALL.reduce((s,x)=>s+Math.max(0,box(x.k)),0)/(ALL.length*5);}
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---------- navigation ---------- */
+let VIEW="home";
+function go(v){VIEW=v;document.querySelectorAll(".view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));document.body.classList.toggle("quiz",v==="quiz"||v==="result");
+ const map={lesson:"lessons",quiz:null,result:null};const nv=map[v]!==undefined?map[v]:v;
+ document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.go===nv));pill();window.scrollTo({top:0,behavior:"smooth"});
+ if(v==="home")home();if(v==="lessons")lessons();if(v==="review")review();if(v==="stats")stats();}
+function pill(){const b=document.querySelector("nav button.on"),p=$("pill");if(!b){return;}p.style.left=b.offsetLeft+"px";p.style.width=b.offsetWidth+"px";}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-go]");if(b)go(b.dataset.go);});
+addEventListener("resize",pill);
+
+/* ---------- accueil ---------- */
+const TIPS=LESSONS.map(l=>`<b>${esc(l.t)}</b> : ${l.tip}`);
+function home(){const h=new Date().getHours();
+ $("h-sub").textContent=(h<12?"Prêt pour ta séance du matin ?":h<18?"Une petite séance cet après-midi ?":"Quelques minutes avant ce soir ?")+" "+ALL.length+" exercices dans "+LESSONS.length+" leçons.";
+ $("s-streak").textContent=streakNow();$("s-xp").textContent=S.xp.toLocaleString("fr-FR");$("s-mast").textContent=Math.round(totalMastery()*100)+" %";
+ const done=(S.days[today()]||{}).daily;$("daily-sub").textContent=done?"✅ Fait aujourd'hui, tu peux en refaire un":"10 questions adaptées à tes erreurs";
+ const weak=LESSONS.map(l=>[l,lessonMastery(l)]).sort((a,b)=>a[1]-b[1]).slice(0,3);
+ $("h-weak").innerHTML=weak.map(([l,m])=>`<button class="ls" data-les="${l.id}"><span class="ico">${esc(l.t.split(" ")[0])}</span><span class="tx"><b>${esc(l.t)}</b><small>${esc(l.cat)} · ${Math.round(m*100)} %</small><div class="bar"><i style="width:${m*100}%"></i></div></span></button>`).join("");
+ const d=new Date();$("h-tip").innerHTML=TIPS[(d.getDate()+d.getMonth()*31)%TIPS.length];}
+function streakNow(){if(!S.last)return 0;const y=new Date();y.setDate(y.getDate()-1);return(S.last===today()||S.last===dkey(y))?S.streak:0;}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-les]");if(b)openLesson(b.dataset.les);});
+
+/* ---------- leçons ---------- */
+function lessons(){let h="",cat="";LESSONS.forEach(l=>{if(l.cat!==cat){cat=l.cat;h+=`<div class="cat">${esc(cat)}</div>`;}const m=lessonMastery(l);
+ h+=`<button class="ls" data-les="${l.id}"><span class="ico">${m>=.99?"✓":esc(l.t.split(" ")[0])}</span><span class="tx"><b>${esc(l.t)}</b><small>${l.q.length} exercices · ${Math.round(m*100)} %</small><div class="bar"><i style="width:${m*100}%"></i></div></span></button>`;});
+ $("l-list").innerHTML=h;}
+let CUR=null;
+function openLesson(id){CUR=LESSONS.find(l=>l.id===id);$("ld-cat").textContent=CUR.cat;$("ld-t").textContent=CUR.t;$("ld-r").innerHTML=CUR.r;$("ld-tip").innerHTML=CUR.tip;$("ld-ex").innerHTML=CUR.ex.map(x=>`<div>${x}</div>`).join("");go("lesson");}
+$("ld-go").onclick=()=>startQuiz(shuffle(CUR.q.map((q,i)=>({k:CUR.id+"-"+i,l:CUR,q}))),"lesson");
+
+/* ---------- quiz ---------- */
+let QZ=null;
+function startQuiz(items,mode){if(!items.length)return;QZ={items,i:0,ok:0,mode,again:items.slice()};go("quiz");showQ();}
+function fill(t,ans){const parts=t.split(/(…|\([^)]*\))/);let used=false;return parts.map(p=>{if(!used&&(p==="…"||/^\(.*\)$/.test(p))){used=true;return `<span class="gap">${ans!=null?esc(ans):(p==="…"?"&nbsp;":esc(p.slice(1,-1)))}</span>`;}return esc(p);}).join("");}
+function showQ(){const it=QZ.items[QZ.i],q=it.q;
+ $("q-bar").style.width=(QZ.i/QZ.items.length*100)+"%";$("q-count").textContent=`Question ${QZ.i+1} sur ${QZ.items.length}`;$("q-les").textContent=it.l.t;
+ $("q-text").innerHTML=fill(q[0]);$("q-fb").className="fb";$("q-next").classList.remove("on");
+ const order=shuffle(q[1].map((o,i)=>i));
+ $("q-opts").innerHTML=order.map(i=>`<button class="opt" data-i="${i}">${esc(q[1][i])}</button>`).join("");}
+$("q-opts").addEventListener("click",e=>{const b=e.target.closest(".opt");if(!b||b.disabled)return;const it=QZ.items[QZ.i],q=it.q,i=+b.dataset.i,good=i===q[2];
+ document.querySelectorAll(".opt").forEach(o=>{o.disabled=true;if(+o.dataset.i===q[2])o.classList.add("good");});if(!good)b.classList.add("bad");
+ $("q-text").innerHTML=fill(q[0],q[1][q[2]]);
+ $("q-fb").className="fb "+(good?"ok":"ko");$("q-fb").innerHTML=`<b>${good?"✅ Bravo !":"❌ La bonne réponse : "+esc(q[1][q[2]])}</b>${esc(q[3])}`;
+ grade(it.k,good);if(good){QZ.ok++;S.xp+=10;floatXP();}else{try{navigator.vibrate&&navigator.vibrate(60);}catch(x){}}
+ save();$("q-next").classList.add("on");$("q-next").scrollIntoView({behavior:"smooth",block:"nearest"});});
+$("q-next").onclick=()=>{QZ.i++;if(QZ.i<QZ.items.length)showQ();else finish();};
+$("q-x").onclick=()=>{if(confirm("Quitter l'exercice ?"))go("home");};
+function grade(k,good){const c=S.cards[k]||{b:0,due:0,miss:0};if(good){c.b=Math.min(5,(c.b<0?0:c.b)+1);}else{c.b=0;c.miss=(c.miss||0)+1;c.lastMiss=Date.now();}
+ c.due=Date.now()+DAYS[c.b]*86400000;S.cards[k]=c;const d=S.days[today()]=S.days[today()]||{ok:0,n:0};d.n++;if(good)d.ok++;
+ if(S.last!==today()){const y=new Date();y.setDate(y.getDate()-1);S.streak=S.last===dkey(y)?S.streak+1:1;S.last=today();}}
+function floatXP(){const f=document.createElement("div");f.className="xp";f.textContent="+10";document.body.appendChild(f);setTimeout(()=>f.remove(),1000);}
+function finish(){const n=QZ.items.length,p=QZ.ok/n;$("q-bar").style.width="100%";
+ if(QZ.mode==="daily"){(S.days[today()]=S.days[today()]||{ok:0,n:0}).daily=true;save();}
+ $("r-score").textContent=QZ.ok+" / "+n;$("r-emoji").textContent=p===1?"🏆":p>=.7?"🎉":p>=.4?"💪":"📚";
+ $("r-sub").textContent=p===1?"Sans faute, parfait !":p>=.7?"Très bien, continue comme ça.":p>=.4?"Pas mal, les erreurs reviendront en révision.":"Relis les règles puis réessaie : tu vas progresser vite.";
+ go("result");if(p>=.7)confetti();}
+$("r-again").onclick=()=>startQuiz(shuffle(QZ.items),QZ.mode);
+function confetti(){const c=["#a50044","#004d98","#edbb00","#34c77b","#1b9cf0"];for(let i=0;i<70;i++){const d=document.createElement("i");d.className="confetti";d.style.left=Math.random()*100+"vw";d.style.top="-20px";d.style.background=c[i%5];d.style.setProperty("--dx",(Math.random()*160-80)+"px");d.style.setProperty("--r",(Math.random()*720)+"deg");d.style.animationDelay=Math.random()*.4+"s";document.body.appendChild(d);setTimeout(()=>d.remove(),2300);}}
+
+/* ---------- défi du jour ---------- */
+function daily(){const dueI=shuffle(ALL.filter(x=>due(x.k))),fresh=shuffle(ALL.filter(x=>!S.cards[x.k])),rest=shuffle(ALL.filter(x=>S.cards[x.k]&&!due(x.k)).sort((a,b)=>box(a.k)-box(b.k)).slice(0,20));
+ const pick=[];[dueI,fresh,rest].forEach(arr=>arr.forEach(x=>{if(pick.length<10&&!pick.includes(x))pick.push(x);}));return pick;}
+$("go-daily").onclick=()=>startQuiz(daily(),"daily");
+
+/* ---------- erreurs ---------- */
+function missed(){return ALL.filter(x=>{const c=S.cards[x.k];return c&&c.miss&&c.b<3;}).sort((a,b)=>(S.cards[b.k].lastMiss||0)-(S.cards[a.k].lastMiss||0));}
+function review(){const m=missed();$("rv-sub").textContent=m.length?m.length+" question(s) à retravailler":"Aucune erreur en attente 👏";$("go-review").style.display=m.length?"block":"none";
+ $("rv-list").innerHTML=m.length?m.slice(0,30).map(x=>`<div class="card"><h3>${esc(x.l.t)}</h3><div style="font-family:Georgia,serif;font-size:17px">${fill(x.q[0],x.q[1][x.q[2]])}</div><div class="sub" style="margin-top:6px">${esc(x.q[3])}</div></div>`).join(""):'<div class="empty">Pas d’erreur à revoir pour l’instant. Lance le défi du jour !</div>';}
+$("go-review").onclick=()=>startQuiz(shuffle(missed()).slice(0,12),"review");
+
+/* ---------- progrès ---------- */
+function stats(){let h="";for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const v=(S.days[dkey(d)]||{}).ok||0;h+=`<div><small>${v||""}</small><i style="height:${Math.min(100,v*5)*.75}%"></i><small>${d.toLocaleDateString("fr-FR",{weekday:"short"}).slice(0,3)}</small></div>`;}
+ $("st-week").innerHTML=h;const cats=[...new Set(LESSONS.map(l=>l.cat))];
+ $("st-cat").innerHTML=cats.map(c=>{const ls=LESSONS.filter(l=>l.cat===c),m=ls.reduce((s,l)=>s+lessonMastery(l),0)/ls.length;return `<div style="margin-top:10px"><div style="display:flex;justify-content:space-between"><b>${esc(c)}</b><span class="sub">${Math.round(m*100)} %</span></div><div class="bar"><i style="width:${m*100}%"></i></div></div>`;}).join("");}
+$("st-reset").onclick=()=>{if(confirm("Effacer toute ta progression ?")){S={xp:0,cards:{},days:{},streak:0,last:""};save();stats();}};
+
+/* ---------- démarrage ---------- */
+(()=>{const s=$("splash");let done=false;const enter=()=>{if(done)return;done=true;s.classList.add("out");setTimeout(()=>s.remove(),700);setTimeout(pill,60);};
+ s.addEventListener("click",enter);s.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" ")enter();});})();
+go("home");setTimeout(pill,100);
+if("serviceWorker"in navigator){let had=!!navigator.serviceWorker.controller,re=false;navigator.serviceWorker.addEventListener("controllerchange",()=>{if(had&&!re){re=true;location.reload();}had=true;});
+ navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(r=>{r.update();document.addEventListener("visibilitychange",()=>{if(!document.hidden)r.update();});}).catch(()=>{});}
+</script></body></html>
