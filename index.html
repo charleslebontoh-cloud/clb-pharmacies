@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="fr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>CLB Utilities</title>
+<title>CLB Health</title>
 <meta name="theme-color" content="#061433">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
-<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="CLB Utilities">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="CLB Health">
 <style>
 :root{--bg:#061433;--card:#0f1d4a;--line:#24397a;--ink:#f4f6ff;--muted:#a3b2d9;--gold:#edbb00;--grana:#a50044;--ok:#34c77b}
 *{box-sizing:border-box}body{margin:0;font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:linear-gradient(180deg,#0b2a6b,#061433 40%);color:var(--ink);min-height:100vh}
@@ -28,7 +28,7 @@ footer{color:var(--muted);font-size:12px;padding:0 18px 30px}footer a{color:var(
 
 body{padding-bottom:calc(env(safe-area-inset-bottom) + 72px)}
 .tab{display:none}.tab.on{display:block}
-nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);background:rgba(6,20,51,.97);border-top:1px solid var(--line);padding:6px 4px calc(env(safe-area-inset-bottom) + 6px);z-index:5}
+nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,1fr);background:rgba(6,20,51,.97);border-top:1px solid var(--line);padding:6px 4px calc(env(safe-area-inset-bottom) + 6px);z-index:5}
 nav button{background:none;border:0;color:var(--muted);font:600 11px system-ui;display:grid;gap:2px;justify-items:center;padding:4px}
 nav button b{font-size:21px;line-height:1}nav button.on{color:var(--gold)}
 .pad{padding:0 18px}
@@ -53,13 +53,17 @@ textarea{width:100%;min-height:70px}
 .log{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.log span{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 9px;font-size:12px;color:var(--muted)}
 .urg{display:grid;gap:10px}.urg a{display:flex;justify-content:space-between;align-items:center;background:rgba(16,29,74,.85);border:1px solid var(--line);border-left:4px solid var(--grana);border-radius:14px;padding:14px;color:var(--ink);text-decoration:none}
 .urg a b{font-size:24px;color:var(--gold)}.urg a span{font-weight:700}.urg a small{display:block;color:var(--muted);font-weight:400}
+.vi{width:100%;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px;font:inherit}
+#t-sos input,#t-sos textarea{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit}
+.fl{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--line)}.fl span{color:var(--muted)}.fl b{text-align:right}
+#e-over{position:fixed;inset:0;background:rgba(6,20,51,.97);z-index:20;display:none;place-content:center;text-align:center;padding:30px}#e-over .big{font-size:90px;font-weight:900;color:var(--gold)}
 .banner{margin:8px 18px 0;padding:10px 12px;border-radius:12px;background:rgba(27,99,198,.25);border:1px solid #1b63c6;font-weight:600;display:none}
 </style></head><body>
 <div class="banner" id="nudge"></div>
 
 <!-- PHARMACIES -->
 <section class="tab" id="t-ph">
-<header><div class="brand">CLB Utilities</div><h1>Pharmacies <span>de garde</span></h1><div class="per" id="per">Chargement…</div></header>
+<header><div class="brand">CLB Health</div><h1>Pharmacies <span>de garde</span></h1><div class="per" id="per">Chargement…</div></header>
 <div class="bar"><select id="zone" aria-label="Commune"></select><button id="loc" aria-label="Me relocaliser">📍</button></div>
 <div class="bar" style="padding-top:0"><input id="q" type="search" placeholder="Rechercher une pharmacie, une ville…" aria-label="Rechercher"></div>
 <div id="msg" role="status"></div>
@@ -69,7 +73,7 @@ textarea{width:100%;min-height:70px}
 
 <!-- EAU -->
 <section class="tab" id="t-eau">
-<header><div class="brand">CLB Utilities</div><h1>Hydratation <span>du jour</span></h1><div class="per" id="w-date"></div></header>
+<header><div class="brand">CLB Health</div><h1>Hydratation <span>du jour</span></h1><div class="per" id="w-date"></div></header>
 <div class="pad">
  <div class="ring"><svg width="210" height="210" viewBox="0 0 210 210"><circle cx="105" cy="105" r="92" fill="none" stroke="#1d2d63" stroke-width="16"/><circle id="w-arc" cx="105" cy="105" r="92" fill="none" stroke="#1b9cf0" stroke-width="16" stroke-linecap="round" stroke-dasharray="578" stroke-dashoffset="578" style="transition:stroke-dashoffset .6s"/></svg>
   <div class="in"><div class="big" id="w-tot">0 ml</div><div class="sm" id="w-goal">sur 2 000 ml</div></div></div>
@@ -93,7 +97,7 @@ textarea{width:100%;min-height:70px}
 
 <!-- PARKING -->
 <section class="tab" id="t-car">
-<header><div class="brand">CLB Utilities</div><h1>Où je suis <span>garé</span></h1><div class="per">Enregistre la position de la voiture, retrouve-la en un geste.</div></header>
+<header><div class="brand">CLB Health</div><h1>Où je suis <span>garé</span></h1><div class="per">Enregistre la position de la voiture, retrouve-la en un geste.</div></header>
 <div class="pad">
  <div class="card2" id="p-saved"></div>
  <div class="card2"><h3>📍 Nouvelle place</h3>
@@ -103,10 +107,50 @@ textarea{width:100%;min-height:70px}
 </div>
 </section>
 
+<!-- VISION -->
+<section class="tab" id="t-eye">
+<header><div class="brand">CLB Health</div><h1>Vision <span>& écrans</span></h1><div class="per">Pauses pour les yeux au bureau et tes mesures de lunettes sous la main.</div></header>
+<div class="pad">
+ <div class="card2"><h3>👀 Règle 20-20-20</h3>
+  <div class="note" style="margin:0 0 10px">Toutes les 20 minutes d’écran, regarde un point à environ 6 mètres pendant 20 secondes. Recommandé par l’American Academy of Ophthalmology contre la fatigue visuelle.</div>
+  <div class="ring" style="width:170px;height:170px"><svg width="170" height="170" viewBox="0 0 170 170"><circle cx="85" cy="85" r="74" fill="none" stroke="#1d2d63" stroke-width="12"/><circle id="e-arc" cx="85" cy="85" r="74" fill="none" stroke="#edbb00" stroke-width="12" stroke-linecap="round" stroke-dasharray="465" stroke-dashoffset="465"/></svg><div class="in"><div class="big" id="e-time" style="font-size:32px">20:00</div><div class="sm" id="e-st">à l’arrêt</div></div></div>
+  <button class="btn gold full" id="e-go">▶︎ Démarrer ma session écran</button>
+  <div class="note" id="e-count"></div>
+  <div class="note">L’appli doit rester ouverte (ou en arrière-plan récent) pour sonner. Active les notifications dans l’onglet Eau pour être prévenu hors de l’appli.</div></div>
+ <div class="card2"><h3>👓 Mes lunettes</h3>
+  <div class="row"><label>Date de l’ordonnance</label><input id="v-date" type="date"></div>
+  <div class="row" style="margin-top:6px"><label>Prescripteur</label><input id="v-doc" placeholder="Cabinet, médecin"></div>
+  <table style="width:100%;margin-top:10px;border-collapse:collapse;font-size:14px"><tr style="color:var(--muted)"><td></td><td>SPH</td><td>CYL</td><td>AXE</td></tr>
+  <tr><td><b>OD</b></td><td><input id="v-ods" class="vi"></td><td><input id="v-odc" class="vi"></td><td><input id="v-oda" class="vi"></td></tr>
+  <tr><td><b>OG</b></td><td><input id="v-ogs" class="vi"></td><td><input id="v-ogc" class="vi"></td><td><input id="v-oga" class="vi"></td></tr></table>
+  <div class="row" style="margin-top:8px"><label>Écart pupillaire loin (mm)</label><input id="v-ep" class="vi" style="width:80px"><label>près</label><input id="v-epn" class="vi" style="width:80px"></div>
+  <div class="row" style="margin-top:6px"><label>Verres</label><input id="v-verres" placeholder="Photochromiques, antireflet…" style="flex:2"></div>
+  <button class="btn gold full" id="v-save">💾 Enregistrer</button>
+  <button class="btn full" id="v-copy">📋 Copier mes mesures (commande en ligne)</button>
+  <div class="note" id="v-msg">Ces données restent uniquement sur ton téléphone.</div></div>
+ <div class="card2"><h3>📅 Prochain contrôle de la vue</h3>
+  <div class="row"><label>Date</label><input id="v-next" type="date"></div>
+  <button class="btn full" id="v-ics">📅 Ajouter le rappel à mon agenda</button>
+  <div class="note" id="v-left"></div></div>
+</div>
+</section>
 <!-- URGENCES -->
 <section class="tab" id="t-sos">
-<header><div class="brand">CLB Utilities</div><h1>Numéros <span>d’urgence</span></h1><div class="per">Un toucher pour appeler. Appels gratuits.</div></header>
+<header><div class="brand">CLB Health</div><h1>Urgence <span>& fiche santé</span></h1><div class="per">Un toucher pour appeler. Appels gratuits.</div></header>
 <div class="pad urg">
+ <div class="card2" style="border-left:4px solid #34c77b"><h3>🩺 Ma fiche santé</h3>
+  <div id="f-view"></div>
+  <details style="margin-top:8px"><summary style="color:var(--gold);font-weight:700">Modifier ma fiche</summary>
+   <div style="display:grid;gap:8px;margin-top:8px">
+   <input id="f-nom" placeholder="Nom complet"><input id="f-gs" placeholder="Groupe sanguin (ex. O+)">
+   <textarea id="f-all" placeholder="Allergies (médicaments, aliments…)"></textarea>
+   <textarea id="f-trt" placeholder="Traitements en cours"></textarea>
+   <input id="f-med" placeholder="Médecin traitant"><input id="f-medt" placeholder="Téléphone du médecin" inputmode="tel">
+   <input id="f-ice" placeholder="Personne à prévenir"><input id="f-icet" placeholder="Téléphone de cette personne" inputmode="tel">
+   <input id="f-ass" placeholder="Assurance / mutuelle et n° d’adhérent">
+   <button class="btn gold" id="f-save">💾 Enregistrer ma fiche</button></div></details>
+  <div class="note">À montrer aux secours. Stockée uniquement sur ton téléphone.</div></div>
+
  <a href="tel:185"><span>SAMU<small>Urgence médicale, ambulance</small></span><b>185</b></a>
  <a href="tel:180"><span>Sapeurs-pompiers<small>Incendie, accident, secours</small></span><b>180</b></a>
  <a href="tel:170"><span>Police secours<small>Aussi 110 ou 111</small></span><b>170</b></a>
@@ -118,7 +162,8 @@ textarea{width:100%;min-height:70px}
 </div>
 </section>
 
-<nav><button data-t="ph"><b>💊</b>Pharmacies</button><button data-t="eau"><b>💧</b>Eau</button><button data-t="car"><b>🚗</b>Parking</button><button data-t="sos"><b>🆘</b>Urgences</button></nav>
+<div id="e-over"><div style="font-size:50px">🌳</div><div style="font-size:22px;font-weight:800;margin:10px 0">Regarde au loin</div><div class="note" style="font-size:15px">Fixe un point à environ 6 mètres, cligne des yeux.</div><div class="big" id="e-sec">20</div><button class="btn" id="e-skip">Passer</button></div>
+<nav><button data-t="ph"><b>💊</b>Pharmacies</button><button data-t="eau"><b>💧</b>Eau</button><button data-t="eye"><b>👓</b>Vision</button><button data-t="sos"><b>🆘</b>Urgence</button><button data-t="car"><b>🚗</b>Parking</button></nav>
 <script>
 
 const $=id=>document.getElementById(id);
@@ -178,7 +223,7 @@ const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.
 let phLoaded=false;
 function go(t){TAB=t;document.querySelectorAll(".tab").forEach(s=>s.classList.toggle("on",s.id==="t-"+t));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));
  LS.set("tab",t);if(location.hash!=="#"+t)history.replaceState(null,"","#"+t);window.scrollTo(0,0);
- if(t==="ph"&&!phLoaded){phLoaded=true;if(!cur)locate();} if(t==="eau")wRender(); if(t==="car")pRender();}
+ if(t==="ph"&&!phLoaded){phLoaded=true;if(!cur)locate();} if(t==="eau")wRender(); if(t==="car")pRender(); if(t==="eye"){vLoad();eTick();} if(t==="sos")fRender();}
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.t));
 
 /* ---------- eau ---------- */
@@ -214,10 +259,10 @@ $("w-from").value=W.from;$("w-to").value=W.to;$("w-every").value=W.every;$("w-ta
 function slots(){const s=[];for(let h=W.from;h<=W.to;h+=W.every)s.push(h);return s;}
 const p2=n=>String(n).padStart(2,"0");
 function gcal(){const d=new Date(),ymd=d.getFullYear()+p2(d.getMonth()+1)+p2(d.getDate());
- $("w-gcal").innerHTML=slots().map(h=>{const u="https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent("💧 Boire un verre d'eau")+"&dates="+ymd+"T"+p2(h)+"0000/"+ymd+"T"+p2(h)+"0500&recur="+encodeURIComponent("RRULE:FREQ=DAILY")+"&details="+encodeURIComponent("Rappel CLB Utilities : un verre de 250 ml.");return `<a href="${u}" target="_blank" rel="noopener">${h} h</a>`;}).join("");}
+ $("w-gcal").innerHTML=slots().map(h=>{const u="https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent("💧 Boire un verre d'eau")+"&dates="+ymd+"T"+p2(h)+"0000/"+ymd+"T"+p2(h)+"0500&recur="+encodeURIComponent("RRULE:FREQ=DAILY")+"&details="+encodeURIComponent("Rappel CLB Health : un verre de 250 ml.");return `<a href="${u}" target="_blank" rel="noopener">${h} h</a>`;}).join("");}
 $("w-ics").onclick=()=>{const d=new Date(),ymd=d.getFullYear()+p2(d.getMonth()+1)+p2(d.getDate()),st=new Date().toISOString().replace(/[-:]/g,"").slice(0,15)+"Z";
- let s="BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//CLB Utilities//Eau//FR\r\nCALSCALE:GREGORIAN\r\n";
- slots().forEach(h=>{s+=`BEGIN:VEVENT\r\nUID:clb-eau-${h}-${ymd}@clb\r\nDTSTAMP:${st}\r\nDTSTART:${ymd}T${p2(h)}0000\r\nDTEND:${ymd}T${p2(h)}0500\r\nRRULE:FREQ=DAILY\r\nSUMMARY:💧 Boire un verre d'eau\r\nDESCRIPTION:Rappel CLB Utilities : un verre de 250 ml.\r\nBEGIN:VALARM\r\nACTION:DISPLAY\r\nDESCRIPTION:Bois un verre d'eau\r\nTRIGGER:PT0M\r\nEND:VALARM\r\nEND:VEVENT\r\n`;});
+ let s="BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//CLB Health//Eau//FR\r\nCALSCALE:GREGORIAN\r\n";
+ slots().forEach(h=>{s+=`BEGIN:VEVENT\r\nUID:clb-eau-${h}-${ymd}@clb\r\nDTSTAMP:${st}\r\nDTSTART:${ymd}T${p2(h)}0000\r\nDTEND:${ymd}T${p2(h)}0500\r\nRRULE:FREQ=DAILY\r\nSUMMARY:💧 Boire un verre d'eau\r\nDESCRIPTION:Rappel CLB Health : un verre de 250 ml.\r\nBEGIN:VALARM\r\nACTION:DISPLAY\r\nDESCRIPTION:Bois un verre d'eau\r\nTRIGGER:PT0M\r\nEND:VALARM\r\nEND:VEVENT\r\n`;});
  s+="END:VCALENDAR\r\n";const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([s],{type:"text/calendar"}));a.download="rappels-eau-CLB.ics";document.body.appendChild(a);a.click();a.remove();};
 $("w-notif").onclick=async()=>{if(!("Notification"in window)){alert("Les notifications ne sont pas disponibles ici. Utilise les rappels d’agenda.");return;}
  if(W.notif&&Notification.permission==="granted"){W.notif=false;save();wRender();return;}
@@ -248,8 +293,42 @@ $("p-save").onclick=()=>{const note=$("p-note").value.trim(),m=$("p-msg");m.text
  if(!navigator.geolocation){done(null,null,null);return;}
  navigator.geolocation.getCurrentPosition(p=>done(p.coords.latitude,p.coords.longitude,p.coords.accuracy),()=>done(null,null,null),{enableHighAccuracy:true,timeout:15000,maximumAge:0});};
 
+
+/* ---------- vision ---------- */
+let E=LS.get("eye",{on:false,next:0,count:0,day:""});
+const BREAK=20*60000;let eTimer=null,eSec=0;
+function eTick(){const now=Date.now();if(E.day!==today()){E.day=today();E.count=0;}
+ if(!E.on){$("e-time").textContent="20:00";$("e-st").textContent="à l’arrêt";$("e-arc").style.strokeDashoffset=465;$("e-go").textContent="▶︎ Démarrer ma session écran";$("e-count").textContent=E.count?`${E.count} pause(s) faite(s) aujourd’hui.`:"";return;}
+ let left=E.next-now;if(left<=0&&!eSec){eBreak();left=0;}
+ const m=Math.floor(left/60000),s=Math.floor(left%60000/1000);$("e-time").textContent=p2(m)+":"+p2(s);$("e-st").textContent="avant la pause";
+ $("e-arc").style.strokeDashoffset=465*(left/BREAK);$("e-go").textContent="⏹︎ Arrêter la session";$("e-count").textContent=`${E.count} pause(s) faite(s) aujourd’hui.`;}
+function eBreak(){eSec=20;$("e-over").style.display="grid";$("e-sec").textContent=eSec;if(navigator.vibrate)navigator.vibrate([200,100,200]);
+ if(document.hidden&&("Notification"in window)&&Notification.permission==="granted")notify("👀 Pause yeux","Regarde au loin (6 m) pendant 20 secondes.");
+ const iv=setInterval(()=>{eSec--;$("e-sec").textContent=eSec;if(eSec<=0){clearInterval(iv);eEnd();}},1000);$("e-skip").onclick=()=>{clearInterval(iv);eEnd();};}
+function eEnd(){eSec=0;$("e-over").style.display="none";E.count++;E.next=Date.now()+BREAK;LS.set("eye",E);if(navigator.vibrate)navigator.vibrate(60);eTick();}
+$("e-go").onclick=()=>{E.on=!E.on;E.next=Date.now()+BREAK;LS.set("eye",E);eTick();};
+setInterval(eTick,1000);
+const VF=["date","doc","ods","odc","oda","ogs","ogc","oga","ep","epn","verres","next"];
+function vLoad(){const v=LS.get("vision",{});VF.forEach(f=>$("v-"+f).value=v[f]||"");vLeft();}
+function vSave(){const v={};VF.forEach(f=>v[f]=$("v-"+f).value.trim());LS.set("vision",v);return v;}
+function vLeft(){const n=$("v-next").value;if(!n){$("v-left").textContent="";return;}const d=Math.ceil((new Date(n+"T09:00:00")-Date.now())/86400000);$("v-left").textContent=d>=0?`Dans ${d} jour(s).`:`Date dépassée de ${-d} jour(s) : prends rendez-vous.`;}
+$("v-save").onclick=()=>{vSave();$("v-msg").textContent="✅ Enregistré sur ce téléphone.";};
+$("v-copy").onclick=async()=>{const v=vSave(),t=`Ordonnance ${v.date||""} ${v.doc||""}\nOD : SPH ${v.ods} CYL ${v.odc} AXE ${v.oda}\nOG : SPH ${v.ogs} CYL ${v.ogc} AXE ${v.oga}\nÉcart pupillaire : loin ${v.ep} mm${v.epn?", près "+v.epn+" mm":""}\nVerres : ${v.verres}`;
+ try{await navigator.clipboard.writeText(t);$("v-msg").textContent="📋 Mesures copiées.";}catch(e){prompt("Copie ces mesures :",t);}};
+$("v-next").onchange=()=>{vSave();vLeft();};
+$("v-ics").onclick=()=>{const n=$("v-next").value;if(!n){alert("Choisis d’abord la date.");return;}vSave();const d=n.replace(/-/g,""),st=new Date().toISOString().replace(/[-:]/g,"").slice(0,15)+"Z";
+ const s=`BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//CLB Health//Vision//FR\r\nBEGIN:VEVENT\r\nUID:clb-vision-${d}@clb\r\nDTSTAMP:${st}\r\nDTSTART;VALUE=DATE:${d}\r\nSUMMARY:👓 Contrôle de la vue\r\nDESCRIPTION:Rappel CLB Health : contrôle chez l'ophtalmologue.\r\nBEGIN:VALARM\r\nACTION:DISPLAY\r\nDESCRIPTION:Contrôle de la vue dans 7 jours\r\nTRIGGER:-P7D\r\nEND:VALARM\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n`;
+ const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([s],{type:"text/calendar"}));a.download="controle-vue-CLB.ics";document.body.appendChild(a);a.click();a.remove();};
+
+/* ---------- fiche santé ---------- */
+const FF=["nom","gs","all","trt","med","medt","ice","icet","ass"];
+function fRender(){const f=LS.get("fiche",{});FF.forEach(k=>$("f-"+k).value=f[k]||"");
+ const L=[["Nom",f.nom],["Groupe sanguin",f.gs],["Allergies",f.all],["Traitements",f.trt],["Médecin",f.med],["Personne à prévenir",f.ice],["Assurance",f.ass]].filter(x=>x[1]);
+ $("f-view").innerHTML=(L.length?L.map(x=>`<div class="fl"><span>${x[0]}</span><b style="white-space:pre-wrap">${esc(x[1])}</b></div>`).join(""):'<div class="note">Fiche vide : remplis-la une fois, elle peut sauver du temps aux secours.</div>')+
+ [[f.icet,"📞 Appeler "+(f.ice||"mon contact")],[f.medt,"🩺 Appeler "+(f.med||"mon médecin")]].filter(x=>x[0]).map(x=>`<a class="btn gold full" style="display:block;text-align:center;text-decoration:none" href="${telHref(x[0])}">${esc(x[1])}</a>`).join("");}
+$("f-save").onclick=()=>{const f={};FF.forEach(k=>f[k]=$("f-"+k).value.trim());LS.set("fiche",f);fRender();document.querySelector("#t-sos details").open=false;};
 /* ---------- démarrage ---------- */
 if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(r=>r.update()).catch(()=>{});
-const start=(location.hash||"").slice(1);go(["ph","eau","car","sos"].includes(start)?start:LS.get("tab","ph"));
+const start=(location.hash||"").slice(1);go(["ph","eau","eye","car","sos"].includes(start)?start:LS.get("tab","ph"));
 nudge();
 </script></body></html>
