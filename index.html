@@ -373,7 +373,9 @@ const _loc=locate;locate=function(){$("loc").classList.add("spin");_loc();setTim
 $("loc").onclick=locate;
 const _eb=eBreak;eBreak=function(){_eb();$("e-over").classList.add("show");haptic([200,100,200]);};
 /* ---------- démarrage ---------- */
-if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(r=>r.update()).catch(()=>{});
+if("serviceWorker"in navigator){let had=!!navigator.serviceWorker.controller,reloaded=false;
+ navigator.serviceWorker.addEventListener("controllerchange",()=>{if(had&&!reloaded){reloaded=true;location.reload();}had=true;});
+ navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(r=>{r.update();document.addEventListener("visibilitychange",()=>{if(!document.hidden)r.update();});}).catch(()=>{});}
 const start=(location.hash||"").slice(1);go(["ph","eau","eye","sos"].includes(start)?start:(["ph","eau","eye","sos"].includes(LS.get("tab","ph"))?LS.get("tab","ph"):"ph"));
 nudge();
 </script></body></html>
