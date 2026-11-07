@@ -109,8 +109,17 @@ body.quiz nav{transform:translateY(160%)}body.quiz #snd{top:auto;bottom:calc(env
 @keyframes bounce{50%{transform:translateY(-6px)}}
 #splash.out{transform:perspective(900px) rotateY(-95deg);transform-origin:left center;opacity:0;pointer-events:none}
 @media (min-width:900px){.qtext{font-size:28px}.opts{grid-template-columns:1fr 1fr}}
+.tts{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+.tts-play{background:var(--sun)!important}.tts-play.on{background:var(--mint)!important;color:#fff!important;animation:pulseb 1.4s ease-in-out infinite}
+@keyframes pulseb{50%{box-shadow:0 4px 0 var(--ink),0 0 0 8px rgba(34,195,166,.25)}}
+.tts-auto{display:flex;align-items:center;gap:8px;font:800 14px Nunito,system-ui,sans-serif;color:var(--muted)}.tts-auto input{width:20px;height:20px;accent-color:#FF6B4A}
+.card.reading{outline:4px solid var(--mint);outline-offset:3px;transform:scale(1.02);transition:transform .4s var(--spring),outline-color .3s}
+.card{transition:transform .4s var(--spring)}
+.wave{display:inline-flex;gap:3px;align-items:end;height:16px;margin-left:6px;vertical-align:middle}.wave i{width:3px;background:#fff;border-radius:2px;animation:wv .9s ease-in-out infinite}.wave i:nth-child(2){animation-delay:.15s}.wave i:nth-child(3){animation-delay:.3s}.wave i:nth-child(4){animation-delay:.45s}
+@keyframes wv{0%,100%{height:4px}50%{height:16px}}
+.qcard{position:relative}.qsay{position:absolute;top:-16px;right:14px;width:40px;height:40px;border-radius:13px;border:2.5px solid var(--ink);background:var(--sun);box-shadow:0 3px 0 var(--ink);font-size:17px}
 </style></head><body>
-<div id="splash" role="button" tabindex="0" aria-label="Entrer"><div><img src="icon-512.png" alt=""><div class="ttl"><i style="animation-delay:0.50s">C</i><i style="animation-delay:0.55s">L</i><i style="animation-delay:0.60s">B</i><i style="animation-delay:0.65s">&nbsp;</i><i style="animation-delay:0.70s">G</i><i style="animation-delay:0.75s">r</i><i style="animation-delay:0.80s">a</i><i style="animation-delay:0.85s">m</i><i style="animation-delay:0.90s">m</i><i style="animation-delay:0.95s">a</i><i style="animation-delay:1.00s">r</i></div><span class="tap">Touche pour entrer</span><small style="display:block;margin-top:26px;color:#6E6890;font-size:11px;font-weight:800">version 2 · 7 nov. 2026</small></div></div>
+<div id="splash" role="button" tabindex="0" aria-label="Entrer"><div><img src="icon-512.png" alt=""><div class="ttl"><i style="animation-delay:0.50s">C</i><i style="animation-delay:0.55s">L</i><i style="animation-delay:0.60s">B</i><i style="animation-delay:0.65s">&nbsp;</i><i style="animation-delay:0.70s">G</i><i style="animation-delay:0.75s">r</i><i style="animation-delay:0.80s">a</i><i style="animation-delay:0.85s">m</i><i style="animation-delay:0.90s">m</i><i style="animation-delay:0.95s">a</i><i style="animation-delay:1.00s">r</i></div><span class="tap">Touche pour entrer</span><small style="display:block;margin-top:26px;color:#6E6890;font-size:11px;font-weight:800">version 3 · 7 nov. 2026</small></div></div>
 <button id="snd" aria-label="Son" style="display:none">🔊</button>
 <div class="wrap">
 
@@ -130,9 +139,10 @@ body.quiz nav{transform:translateY(160%)}body.quiz #snd{top:auto;bottom:calc(env
 <section class="view" id="v-lesson">
  <button class="back" data-go="lessons">‹ Leçons</button>
  <div class="brand" id="ld-cat"></div><h1 id="ld-t"></h1>
- <div class="card rule"><h3>📖 La règle</h3><div id="ld-r"></div></div>
- <div class="card tip"><h3>💡 L'astuce</h3><div id="ld-tip"></div></div>
- <div class="card ex"><h3>✍️ Exemples</h3><div id="ld-ex"></div></div>
+ <div class="tts"><button class="btn tts-play" id="tts-play">🔈 Écouter la leçon</button><button class="btn" id="tts-stop" style="display:none">⏹</button><label class="tts-auto"><input type="checkbox" id="tts-auto"> Lecture auto</label></div>
+ <div class="card rule" data-tts="1"><h3>📖 La règle</h3><div id="ld-r"></div></div>
+ <div class="card tip" data-tts="2"><h3>💡 L'astuce</h3><div id="ld-tip"></div></div>
+ <div class="card ex" data-tts="3"><h3>✍️ Exemples</h3><div id="ld-ex"></div></div>
  <button class="big" id="ld-go">🎯 M'entraîner sur cette leçon</button>
 </section>
 
@@ -140,7 +150,7 @@ body.quiz nav{transform:translateY(160%)}body.quiz #snd{top:auto;bottom:calc(env
  <div class="qtop"><button class="x" id="q-x" aria-label="Quitter">✕</button><div class="bar"><i id="q-bar" style="width:0"></i></div></div>
  <div class="qcount" id="q-count"></div>
  <div class="qtitle" id="q-les"></div>
- <div class="qcard" id="q-card"><div class="qtext" id="q-text"></div></div>
+ <div class="qcard" id="q-card"><button class="qsay" id="q-say" aria-label="Lire la question">🔈</button><div class="qtext" id="q-text"></div></div>
  <div class="opts" id="q-opts"></div>
  <div class="fb" id="q-fb"></div>
  <button class="big next" id="q-next">Continuer</button>
@@ -162,6 +172,7 @@ body.quiz nav{transform:translateY(160%)}body.quiz #snd{top:auto;bottom:calc(env
  <div class="brand">CLB Grammar</div><h1>Mes <span>progrès</span></h1>
  <div class="card"><h3>📊 Réponses justes, 7 derniers jours</h3><div class="week" id="st-week"></div></div>
  <div class="card"><h3>🎯 Maîtrise par catégorie</h3><div id="st-cat"></div></div>
+ <div class="card"><h3>🗣️ Lecture à voix haute</h3><label class="tts-auto" style="margin:0"><input type="checkbox" id="st-auto"> Lire automatiquement chaque leçon à l'ouverture</label><div style="display:flex;gap:10px;align-items:center;margin-top:12px"><span class="sub">Vitesse</span><input type="range" id="st-rate" min="0.7" max="1.3" step="0.05" style="flex:1;accent-color:#FF6B4A"><b id="st-rate-v"></b></div><div style="display:flex;gap:10px;align-items:center;margin-top:10px"><span class="sub">Voix</span><select id="st-voice" style="flex:1;border:2.5px solid #2B2350;border-radius:12px;padding:8px;font:700 14px Nunito,system-ui;background:#fff;color:#2B2350"></select></div><button class="btn" style="margin-top:12px" id="st-test">🔈 Tester la voix</button></div>
  <div class="card"><h3>⚙️ Données</h3><div class="sub">Ta progression est enregistrée sur cet appareil.</div><button class="btn" style="margin-top:10px" id="st-reset">Remettre à zéro</button></div>
 </section>
 </div>
@@ -202,10 +213,10 @@ function sparks(x,y){const c=["#FF6B4A","#FFC93C","#22C3A6","#4D9DFF","#8E7CFF"]
  s.style.cssText=`left:${x}px;top:${y}px;background:${c[i%5]};--dx:${Math.cos(a)*r}px;--dy:${Math.sin(a)*r}px`;document.body.appendChild(s);setTimeout(()=>s.remove(),750);}}
 /* ---------- navigation ---------- */
 let VIEW="home";
-function go(v){VIEW=v;document.querySelectorAll(".view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));document.body.classList.toggle("quiz",v==="quiz"||v==="result");
+function go(v){if(v!=="lesson"&&typeof stopRead==="function"&&READING)stopRead();VIEW=v;document.querySelectorAll(".view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));document.body.classList.toggle("quiz",v==="quiz"||v==="result");
  const map={lesson:"lessons",quiz:null,result:null};const nv=map[v]!==undefined?map[v]:v;
  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.go===nv));pill();window.scrollTo({top:0,behavior:"smooth"});
- if(v==="home")home();if(v==="lessons")lessons();if(v==="review")review();if(v==="stats")stats();}
+ if(v==="home")home();if(v==="lessons")lessons();if(v==="review")review();if(v==="stats"){stats();ttsSettings();}}
 function pill(){const b=document.querySelector("nav button.on"),p=$("pill");if(!b){return;}p.style.left=b.offsetLeft+"px";p.style.width=b.offsetWidth+"px";}
 document.addEventListener("click",e=>{const b=e.target.closest("[data-go]");if(b){SFX.tap();go(b.dataset.go);}});
 addEventListener("resize",pill);
@@ -227,9 +238,35 @@ function lessons(){let h="",cat="";LESSONS.forEach(l=>{if(l.cat!==cat){cat=l.cat
  h+=`<button class="ls" data-les="${l.id}"><span class="ico">${m>=.99?"✓":esc(l.t.split(" ")[0])}</span><span class="tx"><b>${esc(l.t)}</b><small>${l.q.length} exercices · ${Math.round(m*100)} %</small><div class="bar"><i style="width:${m*100}%"></i></div></span></button>`;});
  $("l-list").innerHTML=h;}
 let CUR=null;
-function openLesson(id){CUR=LESSONS.find(l=>l.id===id);$("ld-cat").textContent=CUR.cat;$("ld-t").textContent=CUR.t;$("ld-r").innerHTML=CUR.r;$("ld-tip").innerHTML=CUR.tip;$("ld-ex").innerHTML=CUR.ex.map(x=>`<div>${x}</div>`).join("");go("lesson");}
+function openLesson(id){CUR=LESSONS.find(l=>l.id===id);$("ld-cat").textContent=CUR.cat;$("ld-t").textContent=CUR.t;$("ld-r").innerHTML=CUR.r;$("ld-tip").innerHTML=CUR.tip;$("ld-ex").innerHTML=CUR.ex.map(x=>`<div>${x}</div>`).join("");stopRead();$("tts-auto").checked=TTS.auto;go("lesson");if(TTS.auto)setTimeout(readLesson,350);}
 $("ld-go").onclick=()=>startQuiz(shuffle(CUR.q.map((q,i)=>({k:CUR.id+"-"+i,l:CUR,q}))),"lesson");
 
+/* ---------- lecture à voix haute ---------- */
+const SY=window.speechSynthesis;let VOICES=[],READING=false,RQ=[];
+const TTS=LS.get("gtts",{auto:false,rate:1,voice:""});
+function loadVoices(){if(!SY)return;VOICES=SY.getVoices().filter(v=>/^fr/i.test(v.lang));
+ const rank=v=>(/premium|enhanced|amélie|amelie|thomas|audrey|aurélie|marie|google/i.test(v.name)?0:1)+(/fr-FR/i.test(v.lang)?0:.5);VOICES.sort((a,b)=>rank(a)-rank(b));
+ const s=$("st-voice");if(s){s.innerHTML=VOICES.length?VOICES.map(v=>`<option value="${esc(v.name)}">${esc(v.name)} (${esc(v.lang)})</option>`).join(""):'<option>Voix française par défaut</option>';if(TTS.voice)s.value=TTS.voice;}}
+if(SY){loadVoices();SY.onvoiceschanged=loadVoices;}
+function voice(){return VOICES.find(v=>v.name===TTS.voice)||VOICES[0]||null;}
+function clean(html,quiz){const d=document.createElement("div");d.innerHTML=html;return d.textContent.replace(/…/g,quiz?" blanc ":" etc. ").replace(/\bCOD\b/g,"C.O.D.").replace(/\bF\b/g,"francs").replace(/\s\/\s/g," ou ").replace(/\//g," ou ").replace(/→/g,", donne ").replace(/\(([^)]*)\)/g,", $1,").replace(/\s+/g," ").trim();}
+function say(text,onend){if(!SY){alert("La lecture vocale n'est pas disponible sur cet appareil.");return;}const u=new SpeechSynthesisUtterance(text);u.lang="fr-FR";const v=voice();if(v)u.voice=v;u.rate=TTS.rate;u.pitch=1;u.onend=onend;u.onerror=onend;SY.speak(u);}
+function stopRead(){READING=false;RQ=[];if(SY)SY.cancel();document.querySelectorAll(".card.reading").forEach(c=>c.classList.remove("reading"));
+ $("tts-play").classList.remove("on");$("tts-play").innerHTML="🔈 Écouter la leçon";$("tts-stop").style.display="none";}
+function readLesson(){if(!CUR)return;if(READING){stopRead();return;}if(SY)SY.cancel();READING=true;
+ $("tts-play").classList.add("on");$("tts-play").innerHTML='En lecture<span class="wave"><i></i><i></i><i></i><i></i></span>';$("tts-stop").style.display="";
+ RQ=[[null,"Leçon : "+clean(CUR.t)+"."],["1","La règle. "+clean(CUR.r)],["2","L'astuce. "+clean(CUR.tip)],["3","Exemples. "+CUR.ex.map(clean).join(" . ")]];
+ const step=()=>{document.querySelectorAll(".card.reading").forEach(c=>c.classList.remove("reading"));if(!READING)return;const n=RQ.shift();if(!n){stopRead();return;}
+  if(n[0]){const c=document.querySelector(`#v-lesson [data-tts="${n[0]}"]`);if(c){c.classList.add("reading");c.scrollIntoView({behavior:"smooth",block:"center"});}}say(n[1],step);};
+ step();}
+$("tts-play").onclick=readLesson;$("tts-stop").onclick=stopRead;
+$("tts-auto").onchange=e=>{TTS.auto=e.target.checked;LS.set("gtts",TTS);if($("st-auto"))$("st-auto").checked=TTS.auto;};
+$("q-say").onclick=()=>{if(!QZ)return;const q=QZ.items[QZ.i].q;if(SY)SY.cancel();say(clean(q[0],true)+" . Choix : "+q[1].join(", ou, "));};
+function ttsSettings(){$("st-auto").checked=TTS.auto;$("st-rate").value=TTS.rate;$("st-rate-v").textContent="×"+(+TTS.rate).toFixed(2).replace(".",",");loadVoices();}
+$("st-auto").onchange=e=>{TTS.auto=e.target.checked;LS.set("gtts",TTS);};
+$("st-rate").oninput=e=>{TTS.rate=+e.target.value;LS.set("gtts",TTS);$("st-rate-v").textContent="×"+TTS.rate.toFixed(2).replace(".",",");};
+$("st-voice").onchange=e=>{TTS.voice=e.target.value;LS.set("gtts",TTS);};
+$("st-test").onclick=()=>{if(SY)SY.cancel();say("Bonjour Charles. Je lirai tes leçons de grammaire avec cette voix.");};
 /* ---------- quiz ---------- */
 let QZ=null;
 function startQuiz(items,mode){if(!items.length)return;QZ={items,i:0,ok:0,mode,again:items.slice()};go("quiz");showQ();}
