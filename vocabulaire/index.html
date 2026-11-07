@@ -117,8 +117,20 @@ body.quiz nav{transform:translateY(160%)}
 .sparkle{position:fixed;width:6px;height:6px;border-radius:50%;background:var(--gold2);pointer-events:none;z-index:60;box-shadow:0 0 10px var(--gold2);animation:spk .8s ease-out forwards}
 @keyframes spk{to{transform:translate(var(--dx),var(--dy));opacity:0}}
 @media (min-width:900px){.opts{grid-template-columns:1fr 1fr}.modes{grid-template-columns:repeat(4,1fr)}}
+.din{flex:1;min-height:56px;border:1px solid rgba(201,162,39,.5);background:rgba(255,255,255,.1);color:#fff;border-radius:14px;padding:12px;font:700 22px var(--serif);display:flex;align-items:center;justify-content:center;gap:2px;word-break:break-all}
+.din.good{border-color:#5fd39c;background:rgba(46,158,106,.3)}.din.bad{border-color:#ff8a83;background:rgba(200,65,59,.25);animation:shake .45s}
+.din .caret{display:inline-block;width:2px;height:26px;background:var(--gold2);animation:blinkc 1s steps(1) infinite}.din.good .caret,.din.bad .caret{display:none}
+@keyframes blinkc{50%{opacity:0}}
+.note-k{font-size:12px;color:#9FB4AA;text-align:center;margin:8px 0 2px}
+.kbd{margin-top:8px;padding:8px 4px;border-radius:16px;background:rgba(0,0,0,.25);border:1px solid rgba(201,162,39,.25);user-select:none;-webkit-user-select:none;touch-action:manipulation;transition:opacity .3s}
+.kbd.off{opacity:.35;pointer-events:none}
+.kr{display:flex;gap:5px;justify-content:center;margin:5px 0}
+.k{flex:1;max-width:44px;height:44px;border:0;border-radius:9px;background:var(--ivory);color:var(--ink);font:700 18px var(--sans);box-shadow:0 2px 0 rgba(0,0,0,.35);transition:transform .08s}
+.kr:first-child .k{background:#F3E2B0}
+.k.w{max-width:66px;flex:1.5;background:rgba(251,246,234,.75);font-size:16px}.k.ok{background:var(--gold);color:var(--ink);font-weight:800}
+.k.p{transform:scale(1.18) translateY(-4px);background:#fff}
 </style></head><body>
-<div id="splash" role="button" tabindex="0"><div><img src="icon-512.png" alt=""><div class="t">CLB <em>Lexicon</em></div><div class="q">« Le mot juste, au bon moment. »</div><span class="tap">Ouvrir le lexique</span><small style="display:block;margin-top:26px;color:#6f8b7f;font-size:11px">version 1 · 7 nov. 2026</small></div></div>
+<div id="splash" role="button" tabindex="0"><div><img src="icon-512.png" alt=""><div class="t">CLB <em>Lexicon</em></div><div class="q">« Le mot juste, au bon moment. »</div><span class="tap">Ouvrir le lexique</span><small style="display:block;margin-top:26px;color:#6f8b7f;font-size:11px">version 2 · 8 nov. 2026</small></div></div>
 <div class="wrap">
 
 <section class="view" id="v-home">
@@ -236,6 +248,18 @@ $("scrim").onclick=closeSheet;let y0=null;$("sheet").addEventListener("touchstar
 /* ---------- orthographe ---------- */
 function ortho(){$("o-list").innerHTML=ORTHO.map(o=>`<div style="padding:8px 0;border-bottom:1px solid rgba(30,42,36,.08)"><b style="font:700 18px var(--serif);color:var(--bg)">${esc(o[0])}</b> <span style="color:#a33;text-decoration:line-through;font-size:13px">${esc(o[1][0])}</span><div style="font-size:13px;color:var(--muted)">${esc(o[2])}</div></div>`).join("");}
 
+/* ---------- clavier intégré (sans correction iOS) ---------- */
+let TYPED="",SHIFT=false;
+const ROWS=[["é","è","ê","à","â","ç","ù","û","î","ô"],["a","z","e","r","t","y","u","i","o","p"],["q","s","d","f","g","h","j","k","l","m"],["⇧","w","x","c","v","b","n","'","-","⌫"],["ë","ï","œ","æ","espace","OK"]];
+function kbd(){return `<div class="kbd">${ROWS.map(r=>`<div class="kr">${r.map(k=>`<button class="k ${k.length>1&&k!=="œ"&&k!=="æ"?"w":""} ${k==="OK"?"ok":""}" data-k="${k}">${k==="espace"?"␣":k}</button>`).join("")}</div>`).join("")}</div>`;}
+function upd(){const t=$("q-txt");if(t)t.textContent=TYPED;}
+function press(k){const inp=$("q-in");if(!inp||inp.dataset.done)return;
+ if(k==="⌫")TYPED=TYPED.slice(0,-1);else if(k==="⇧"){SHIFT=!SHIFT;document.querySelectorAll(".k").forEach(b=>{const v=b.dataset.k;if(v.length===1&&v.toLowerCase()!==v.toUpperCase())b.textContent=SHIFT?v.toUpperCase():v;});return;}
+ else if(k==="espace")TYPED+=" ";else if(k==="OK"){check(TYPED);return;}else{TYPED+=SHIFT?k.toUpperCase():k;if(SHIFT){SHIFT=false;document.querySelectorAll(".k").forEach(b=>{const v=b.dataset.k;if(v.length===1)b.textContent=v;});}}
+ upd();mar(1200,0,.08,.03);}
+$("q-ans").addEventListener("pointerdown",e=>{const b=e.target.closest(".k");if(!b)return;e.preventDefault();b.classList.add("p");setTimeout(()=>b.classList.remove("p"),120);press(b.dataset.k);});
+document.addEventListener("keydown",e=>{if(!$("q-in")||!document.getElementById("v-quiz").classList.contains("on"))return;if(e.metaKey||e.ctrlKey)return;
+ if(e.key==="Enter"){e.preventDefault();if($("q-in").dataset.done)$("q-next").click();else check(TYPED);}else if(e.key==="Backspace"){e.preventDefault();press("⌫");}else if(e.key.length===1){e.preventDefault();TYPED+=e.key;upd();}});
 /* ---------- quiz ---------- */
 let Q=null;
 const KIND={dictee:"Dictée",graphie:"Bonne graphie",def:"Définition → mot",sens:"Mot → sens",syn:"Synonymes",paro:"Mots confondus",fc:"Révision"};
@@ -251,15 +275,15 @@ function start(k,items){Q={k,items:items||build(k),i:0,ok:0};stopQ=false;$("q-sn
 function show(){const it=Q.items[Q.i];$("q-bar").style.width=(Q.i/Q.items.length*100)+"%";$("q-kind").textContent=KIND[Q.k]+" · "+(Q.i+1)+" / "+Q.items.length;
  const f=$("q-face");f.classList.remove("in");void f.offsetWidth;f.classList.add("in");$("q-fb").className="fb";$("q-next").classList.remove("on");
  if(it.dict){f.innerHTML=`<div class="qprompt" style="text-align:center">Écoute puis écris le mot</div><button class="speak" id="q-play">🔈</button><div class="qhint" style="text-align:center">Touche le bouton pour réécouter. Accents compris.</div>`;
-  $("q-ans").innerHTML=`<div class="dict"><input id="q-in" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Écris ici…"><button class="x" style="width:auto;padding:0 16px;background:var(--gold);color:var(--ink);font-weight:800" id="q-ok">OK</button></div>`;
-  $("q-play").onclick=()=>say(it.dict,.85);say(it.dict,.85);const inp=$("q-in");inp.focus();$("q-ok").onclick=()=>check(inp.value);inp.onkeydown=e=>{if(e.key==="Enter")check(inp.value);};return;}
+  $("q-ans").innerHTML=`<div class="dict"><div id="q-in" class="din" role="textbox" aria-label="Ta réponse"><span id="q-txt"></span><i class="caret"></i></div><button class="x" style="width:auto;padding:0 16px;background:var(--gold);color:var(--ink);font-weight:800" id="q-ok">OK</button></div><div class="note-k">Clavier sans correction automatique : c'est toi qui écris.</div>${kbd()}`;
+  $("q-play").onclick=()=>say(it.dict,.85);say(it.dict,.85);TYPED="";upd();$("q-ok").onclick=()=>check(TYPED);return;}
  f.innerHTML=it.p;$("q-ans").innerHTML=`<div class="opts">${it.o.map((o,i)=>`<button class="opt ${it.serif?"serif":""}" data-i="${i}">${esc(o)}</button>`).join("")}</div>`;}
 $("q-ans").addEventListener("click",e=>{const b=e.target.closest(".opt");if(!b||b.disabled)return;const it=Q.items[Q.i],v=it.o[+b.dataset.i],good=v===it.a;
  document.querySelectorAll(".opt").forEach(o=>{o.disabled=true;if(it.o[+o.dataset.i]===it.a)o.classList.add("good");});if(!good)b.classList.add("bad");
  result(good,good?"Exact !":"Réponse : "+it.a,it.x,b);});
-function check(v){const it=Q.items[Q.i],inp=$("q-in");if(inp.disabled)return;const a=it.dict.trim(),u=v.trim();let good=u===a,msg;
+function check(v){const it=Q.items[Q.i],inp=$("q-in");if(!inp||inp.dataset.done)return;if(!v.trim())return;const a=it.dict.trim(),u=v.trim();let good=u===a,msg;
  if(good)msg="Parfait, sans faute !";else if(u.toLowerCase()===a.toLowerCase()){good=true;msg="Juste (attention aux majuscules).";}else if(N(u)===N(a))msg="Presque ! Attention aux accents : "+a;else msg="Il fallait écrire : "+a;
- inp.disabled=true;inp.classList.add(good?"good":"bad");if(!good)inp.value=a;result(good,msg,it.x,inp);}
+ inp.dataset.done=1;inp.classList.add(good?"good":"bad");if(!good)$("q-txt").innerHTML=`<s style="opacity:.6">${esc(v)}</s> → ${esc(a)}`;const k=document.querySelector(".kbd");if(k)k.classList.add("off");result(good,msg,it.x,inp);}
 function result(good,title,x,el){const it=Q.items[Q.i];const c=S.cards[it.k]||{b:0};c.b=good?Math.min(5,c.b+1):0;c.t=Date.now();S.cards[it.k]=c;tick();
  if(good){Q.ok++;S.xp+=10;SFX.ok();const r=el.getBoundingClientRect();sparkle(r.left+r.width/2,r.top+r.height/2);}else SFX.ko();save();
  $("q-fb").className="fb "+(good?"ok":"ko");$("q-fb").innerHTML=`<b>${good?"✅ ":"❌ "}${esc(title)}</b>${x?esc(x):""}`;$("q-next").classList.add("on");setTimeout(()=>$("q-next").scrollIntoView({behavior:"smooth",block:"nearest"}),100);}
