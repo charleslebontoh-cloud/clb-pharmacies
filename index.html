@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="fr"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <title>CLB Health</title>
 <meta name="theme-color" content="#061433">
 <link rel="manifest" href="manifest.json">
-<link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
-<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="CLB Health">
+<link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="format-detection" content="telephone=no"><meta name="apple-mobile-web-app-title" content="CLB Health">
 <style>
 :root{--bg:#061433;--card:#0f1d4a;--line:#24397a;--ink:#f4f6ff;--muted:#a3b2d9;--gold:#edbb00;--grana:#a50044;--ok:#34c77b}
 *{box-sizing:border-box}body{margin:0;font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:linear-gradient(180deg,#0b2a6b,#061433 40%);color:var(--ink);min-height:100vh}
@@ -58,7 +58,59 @@ textarea{width:100%;min-height:70px}
 .fl{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--line)}.fl span{color:var(--muted)}.fl b{text-align:right}
 #e-over{position:fixed;inset:0;background:rgba(6,20,51,.97);z-index:20;display:none;place-content:center;text-align:center;padding:30px}#e-over .big{font-size:90px;font-weight:900;color:var(--gold)}
 .banner{margin:8px 18px 0;padding:10px 12px;border-radius:12px;background:rgba(27,99,198,.25);border:1px solid #1b63c6;font-weight:600;display:none}
+
+/* ===== iPhone : verre, encoches, animations ===== */
+html{-webkit-text-size-adjust:100%;background:#061433}
+body{-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;overscroll-behavior-y:none;font-family:-apple-system,"SF Pro Text",system-ui,sans-serif}
+input,textarea,select{-webkit-user-select:text;user-select:text;font-size:16px!important}
+h1{font-family:-apple-system,"SF Pro Display",system-ui;font-size:30px;letter-spacing:-.02em}
+header{padding-top:calc(env(safe-area-inset-top) + 18px)!important;padding-left:max(18px,env(safe-area-inset-left));padding-right:max(18px,env(safe-area-inset-right))}
+.bar{top:env(safe-area-inset-top)!important;-webkit-backdrop-filter:blur(18px) saturate(1.6);backdrop-filter:blur(18px) saturate(1.6);background:rgba(6,20,51,.72)!important}
+nav{background:rgba(10,22,58,.66)!important;-webkit-backdrop-filter:blur(22px) saturate(1.8);backdrop-filter:blur(22px) saturate(1.8);border-top:.5px solid rgba(255,255,255,.12)!important;padding-top:8px!important}
+nav button{position:relative;transition:color .25s;font-size:11px}
+nav button b{transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+nav button.on b{transform:translateY(-2px) scale(1.18)}
+nav button::after{content:"";position:absolute;top:-8px;left:50%;width:0;height:3px;border-radius:3px;background:var(--gold);transform:translateX(-50%);transition:width .35s cubic-bezier(.34,1.56,.64,1)}
+nav button.on::after{width:26px}
+.tab.on{animation:tabIn .42s cubic-bezier(.22,1,.36,1)}
+@keyframes tabIn{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
+.c,.card2,.urg>a{animation:cardIn .5s cubic-bezier(.22,1,.36,1) both}
+.c:nth-child(2),.card2:nth-child(2),.urg>a:nth-child(2){animation-delay:.04s}.c:nth-child(3),.card2:nth-child(3),.urg>a:nth-child(3){animation-delay:.08s}
+.c:nth-child(4),.card2:nth-child(4),.urg>a:nth-child(4){animation-delay:.12s}.c:nth-child(n+5),.card2:nth-child(n+5),.urg>a:nth-child(n+5){animation-delay:.16s}
+@keyframes cardIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.c,.card2,.urg a{border-radius:20px!important;box-shadow:0 10px 30px -18px rgba(0,0,0,.8)}
+button,.btn,.a a,.urg a,.hours a,.drinks button{transition:transform .18s cubic-bezier(.34,1.56,.64,1),filter .2s}
+button:active,.btn:active,.a a:active,.urg a:active,.hours a:active,.drinks button:active{transform:scale(.94);filter:brightness(1.15)}
+.drinks button{border-radius:20px!important;position:relative;overflow:hidden}
+.ripple{position:absolute;border-radius:50%;background:rgba(27,156,240,.45);transform:scale(0);animation:rip .6s ease-out forwards;pointer-events:none}
+@keyframes rip{to{transform:scale(4);opacity:0}}
+.float{position:fixed;font-weight:900;font-size:22px;color:#7fd0ff;pointer-events:none;z-index:30;animation:flt 1s cubic-bezier(.22,1,.36,1) forwards;text-shadow:0 2px 10px rgba(27,156,240,.7)}
+@keyframes flt{from{opacity:1;transform:translate(-50%,0) scale(.8)}to{opacity:0;transform:translate(-50%,-90px) scale(1.25)}}
+.ring.pop{animation:pop .5s cubic-bezier(.34,1.56,.64,1)}@keyframes pop{40%{transform:scale(1.06)}}
+.ring .big{transition:transform .3s}
+#w-arc{transition:stroke-dashoffset .9s cubic-bezier(.22,1,.36,1),stroke .4s!important;filter:drop-shadow(0 0 8px rgba(27,156,240,.6))}
+.wave{position:absolute;inset:16px;border-radius:50%;overflow:hidden;pointer-events:none}
+.wave i{position:absolute;left:-50%;width:200%;height:200%;border-radius:42%;background:rgba(27,156,240,.16);animation:spin 9s linear infinite;transition:top 1s cubic-bezier(.22,1,.36,1)}
+.wave i+i{background:rgba(27,156,240,.10);animation-duration:13s;border-radius:38%}
+@keyframes spin{to{transform:rotate(360deg)}}
+.confetti{position:fixed;width:8px;height:12px;z-index:40;pointer-events:none;animation:fall 1.6s cubic-bezier(.2,.6,.4,1) forwards;border-radius:2px}
+@keyframes fall{to{transform:translate(var(--dx),110vh) rotate(var(--r));opacity:.7}}
+#loc{transition:transform .5s}#loc.spin{animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(237,187,0,.6)}50%{box-shadow:0 0 0 10px rgba(237,187,0,0)}}
+#e-over{-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);background:rgba(6,20,51,.85)!important}
+#e-over.show{animation:tabIn .4s cubic-bezier(.22,1,.36,1)}
+#e-sec{animation:beat 1s ease-in-out infinite}@keyframes beat{50%{transform:scale(1.08)}}
+.banner{border-radius:16px!important;animation:slideDown .5s cubic-bezier(.34,1.56,.64,1);margin-top:calc(env(safe-area-inset-top) + 8px)!important}
+@keyframes slideDown{from{opacity:0;transform:translateY(-30px)}to{opacity:1;transform:none}}
+#splash{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:radial-gradient(circle at 50% 45%,#0b2a6b,#061433 60%);transition:opacity .6s,visibility .6s}
+#splash img{width:112px;height:112px;border-radius:28px;animation:sIn .9s cubic-bezier(.34,1.56,.64,1)}
+#splash b{display:block;margin-top:16px;text-align:center;font:800 15px -apple-system;letter-spacing:.2em;color:var(--gold);animation:cardIn .8s .2s both}
+#splash.out{opacity:0;visibility:hidden}
+@keyframes sIn{from{transform:scale(.4) rotate(-90deg);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@media (min-width:430px){.drinks button{padding:18px 6px}}
 </style></head><body>
+<div id="splash"><div><img src="icon-192.png" alt=""><b>CLB HEALTH</b></div></div>
 <div class="banner" id="nudge"></div>
 
 <!-- PHARMACIES -->
@@ -75,7 +127,7 @@ textarea{width:100%;min-height:70px}
 <section class="tab" id="t-eau">
 <header><div class="brand">CLB Health</div><h1>Hydratation <span>du jour</span></h1><div class="per" id="w-date"></div></header>
 <div class="pad">
- <div class="ring"><svg width="210" height="210" viewBox="0 0 210 210"><circle cx="105" cy="105" r="92" fill="none" stroke="#1d2d63" stroke-width="16"/><circle id="w-arc" cx="105" cy="105" r="92" fill="none" stroke="#1b9cf0" stroke-width="16" stroke-linecap="round" stroke-dasharray="578" stroke-dashoffset="578" style="transition:stroke-dashoffset .6s"/></svg>
+ <div class="ring" id="w-ring"><div class="wave"><i id="wv1"></i><i id="wv2"></i></div><svg width="210" height="210" viewBox="0 0 210 210"><circle cx="105" cy="105" r="92" fill="none" stroke="#1d2d63" stroke-width="16"/><circle id="w-arc" cx="105" cy="105" r="92" fill="none" stroke="#1b9cf0" stroke-width="16" stroke-linecap="round" stroke-dasharray="578" stroke-dashoffset="578" style="transition:stroke-dashoffset .6s"/></svg>
   <div class="in"><div class="big" id="w-tot">0 ml</div><div class="sm" id="w-goal">sur 2 000 ml</div></div></div>
  <div class="pace" id="w-pace"></div>
  <div class="drinks"><button data-ml="250"><span>🥛</span>Verre<br>250 ml</button><button data-ml="500"><span>🧴</span>Bouteille<br>50 cl</button><button data-ml="1500"><span>💧</span>Grande<br>1,5 L</button></div>
@@ -302,6 +354,24 @@ function fRender(){const f=LS.get("fiche",{});FF.forEach(k=>$("f-"+k).value=f[k]
  $("f-view").innerHTML=(L.length?L.map(x=>`<div class="fl"><span>${x[0]}</span><b style="white-space:pre-wrap">${esc(x[1])}</b></div>`).join(""):'<div class="note">Fiche vide : remplis-la une fois, elle peut sauver du temps aux secours.</div>')+
  [[f.icet,"📞 Appeler "+(f.ice||"mon contact")],[f.medt,"🩺 Appeler "+(f.med||"mon médecin")]].filter(x=>x[0]).map(x=>`<a class="btn gold full" style="display:block;text-align:center;text-decoration:none" href="${telHref(x[0])}">${esc(x[1])}</a>`).join("");}
 $("f-save").onclick=()=>{const f={};FF.forEach(k=>f[k]=$("f-"+k).value.trim());LS.set("fiche",f);fRender();document.querySelector("#t-sos details").open=false;};
+
+/* ---------- animations iPhone ---------- */
+setTimeout(()=>$("splash").classList.add("out"),900);setTimeout(()=>$("splash").remove(),1600);
+const haptic=(p=12)=>{try{navigator.vibrate&&navigator.vibrate(p);}catch(e){}};
+document.addEventListener("click",e=>{const b=e.target.closest(".drinks button");if(!b)return;const r=b.getBoundingClientRect(),s=document.createElement("span"),d=Math.max(r.width,r.height);
+ s.className="ripple";s.style.cssText=`width:${d}px;height:${d}px;left:${e.clientX-r.left-d/2}px;top:${e.clientY-r.top-d/2}px`;b.appendChild(s);setTimeout(()=>s.remove(),650);
+ const f=document.createElement("div");f.className="float";f.textContent="+"+fr(+b.dataset.ml)+" ml";f.style.left=e.clientX+"px";f.style.top=(e.clientY-20)+"px";document.body.appendChild(f);setTimeout(()=>f.remove(),1000);
+ const ring=$("w-ring");ring.classList.remove("pop");void ring.offsetWidth;ring.classList.add("pop");},true);
+function waveLevel(){const p=Math.min(1,tot(today())/W.goal),top=(1-p)*100+"%";["wv1","wv2"].forEach(id=>{const el=$(id);if(el)el.style.top=`calc(${top} - 8%)`;});}
+function confetti(){const c=["#a50044","#004d98","#edbb00","#34c77b","#1b9cf0"];for(let i=0;i<60;i++){const d=document.createElement("i");d.className="confetti";d.style.left=Math.random()*100+"vw";d.style.top="-20px";d.style.background=c[i%5];d.style.setProperty("--dx",(Math.random()*160-80)+"px");d.style.setProperty("--r",(Math.random()*720)+"deg");d.style.animationDelay=Math.random()*.4+"s";document.body.appendChild(d);setTimeout(()=>d.remove(),2200);}}
+const _wr=wRender;let _wasDone=null;
+wRender=function(){_wr();waveLevel();const done=tot(today())>=W.goal;if(_wasDone===false&&done){confetti();haptic([30,60,30]);}_wasDone=done;};
+const _add=add;add=function(ml){haptic(15);_add(ml);};
+const _go=go;go=function(t){haptic(8);_go(t);};
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.t));
+const _loc=locate;locate=function(){$("loc").classList.add("spin");_loc();setTimeout(()=>$("loc").classList.remove("spin"),2500);};
+$("loc").onclick=locate;
+const _eb=eBreak;eBreak=function(){_eb();$("e-over").classList.add("show");haptic([200,100,200]);};
 /* ---------- démarrage ---------- */
 if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(r=>r.update()).catch(()=>{});
 const start=(location.hash||"").slice(1);go(["ph","eau","eye","sos"].includes(start)?start:(["ph","eau","eye","sos"].includes(LS.get("tab","ph"))?LS.get("tab","ph"):"ph"));
