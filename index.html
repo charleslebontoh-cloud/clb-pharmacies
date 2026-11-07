@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="fr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>CLB Pharmacies</title>
+<title>CLB Utilities</title>
 <meta name="theme-color" content="#061433">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
-<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="CLB Pharmacies">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="CLB Utilities">
 <style>
 :root{--bg:#061433;--card:#0f1d4a;--line:#24397a;--ink:#f4f6ff;--muted:#a3b2d9;--gold:#edbb00;--grana:#a50044;--ok:#34c77b}
 *{box-sizing:border-box}body{margin:0;font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:linear-gradient(180deg,#0b2a6b,#061433 40%);color:var(--ink);min-height:100vh}
@@ -25,14 +25,102 @@ h1{margin:4px 0 2px;font-size:24px}h1 span{color:#ff4f8b}
 .call{background:var(--ok);color:#062b17}.map{background:rgba(237,187,0,.15);color:var(--gold);border:1px solid rgba(237,187,0,.5)}
 .h{color:var(--gold);font-weight:800;margin:8px 0 0}.empty{color:var(--muted);text-align:center;padding:24px;border:1px dashed var(--line);border-radius:14px}
 footer{color:var(--muted);font-size:12px;padding:0 18px 30px}footer a{color:var(--gold)}
+
+body{padding-bottom:calc(env(safe-area-inset-bottom) + 72px)}
+.tab{display:none}.tab.on{display:block}
+nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);background:rgba(6,20,51,.97);border-top:1px solid var(--line);padding:6px 4px calc(env(safe-area-inset-bottom) + 6px);z-index:5}
+nav button{background:none;border:0;color:var(--muted);font:600 11px system-ui;display:grid;gap:2px;justify-items:center;padding:4px}
+nav button b{font-size:21px;line-height:1}nav button.on{color:var(--gold)}
+.pad{padding:0 18px}
+.ring{position:relative;width:210px;height:210px;margin:8px auto 4px}.ring svg{transform:rotate(-90deg)}
+.ring .in{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.ring .big{font-size:38px;font-weight:900}.ring .sm{color:var(--muted);font-size:13px}
+.drinks{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.drinks button,.btn{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:14px 6px;font:700 15px system-ui}
+.drinks button span{display:block;font-size:24px}
+.btn.gold{background:var(--gold);color:#1b1300;border-color:var(--gold)}.btn.full{width:100%;margin-top:10px}
+.pace{text-align:center;font-weight:700;margin:4px 0 2px}
+.card2{background:rgba(16,29,74,.85);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:12px}
+.card2 h3{margin:0 0 8px;font-size:15px;color:var(--gold)}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;align-items:end;height:110px}
+.week div{display:grid;gap:4px;align-items:end;justify-items:center;height:100%}.week i{display:block;width:70%;border-radius:6px 6px 2px 2px;background:#1b63c6;min-height:3px}
+.week i.ok{background:var(--ok)}.week small{color:var(--muted);font-size:11px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row label{flex:1;color:var(--muted);font-size:13px}
+.row input,.row select,textarea{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:9px;font:inherit}
+textarea{width:100%;min-height:70px}
+.hours{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.hours a{padding:7px 10px;border-radius:999px;background:rgba(237,187,0,.15);color:var(--gold);border:1px solid rgba(237,187,0,.5);text-decoration:none;font-weight:700;font-size:13px}
+.note{color:var(--muted);font-size:12px;margin-top:8px}
+.log{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.log span{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 9px;font-size:12px;color:var(--muted)}
+.urg{display:grid;gap:10px}.urg a{display:flex;justify-content:space-between;align-items:center;background:rgba(16,29,74,.85);border:1px solid var(--line);border-left:4px solid var(--grana);border-radius:14px;padding:14px;color:var(--ink);text-decoration:none}
+.urg a b{font-size:24px;color:var(--gold)}.urg a span{font-weight:700}.urg a small{display:block;color:var(--muted);font-weight:400}
+.banner{margin:8px 18px 0;padding:10px 12px;border-radius:12px;background:rgba(27,99,198,.25);border:1px solid #1b63c6;font-weight:600;display:none}
 </style></head><body>
+<div class="banner" id="nudge"></div>
+
+<!-- PHARMACIES -->
+<section class="tab" id="t-ph">
 <header><div class="brand">CLB Utilities</div><h1>Pharmacies <span>de garde</span></h1><div class="per" id="per">Chargement…</div></header>
 <div class="bar"><select id="zone" aria-label="Commune"></select><button id="loc" aria-label="Me relocaliser">📍</button></div>
 <div class="bar" style="padding-top:0"><input id="q" type="search" placeholder="Rechercher une pharmacie, une ville…" aria-label="Rechercher"></div>
 <div id="msg" role="status"></div>
 <div id="list"></div>
-<footer>Planning officiel UNPPCI, mis à jour chaque samedi. Appelle avant de te déplacer. Urgence : SAMU <a href="tel:185">185</a>.</footer>
+<footer>Planning officiel UNPPCI, mis à jour chaque samedi. Appelle avant de te déplacer.</footer>
+</section>
+
+<!-- EAU -->
+<section class="tab" id="t-eau">
+<header><div class="brand">CLB Utilities</div><h1>Hydratation <span>du jour</span></h1><div class="per" id="w-date"></div></header>
+<div class="pad">
+ <div class="ring"><svg width="210" height="210" viewBox="0 0 210 210"><circle cx="105" cy="105" r="92" fill="none" stroke="#1d2d63" stroke-width="16"/><circle id="w-arc" cx="105" cy="105" r="92" fill="none" stroke="#1b9cf0" stroke-width="16" stroke-linecap="round" stroke-dasharray="578" stroke-dashoffset="578" style="transition:stroke-dashoffset .6s"/></svg>
+  <div class="in"><div class="big" id="w-tot">0 ml</div><div class="sm" id="w-goal">sur 2 000 ml</div></div></div>
+ <div class="pace" id="w-pace"></div>
+ <div class="drinks"><button data-ml="250"><span>🥛</span>Verre<br>250 ml</button><button data-ml="500"><span>🧴</span>Bouteille<br>50 cl</button><button data-ml="1500"><span>💧</span>Grande<br>1,5 L</button></div>
+ <div class="row"><button class="btn" id="w-undo" style="flex:1">↩︎ Annuler le dernier</button><button class="btn" id="w-custom" style="flex:1">＋ Autre quantité</button></div>
+ <div class="log" id="w-log"></div>
+ <div class="card2"><h3>📊 7 derniers jours</h3><div class="week" id="w-week"></div></div>
+ <div class="card2"><h3>⏰ Rappels</h3>
+  <div class="row"><label for="w-from">De</label><select id="w-from"></select><label for="w-to">à</label><select id="w-to"></select><label for="w-every">toutes les</label><select id="w-every"><option value="1">1 h</option><option value="2" selected>2 h</option><option value="3">3 h</option></select></div>
+  <button class="btn gold full" id="w-notif">🔔 Activer les notifications de l’appli</button>
+  <button class="btn full" id="w-ics">📅 Ajouter tous les rappels à mon agenda (iPhone, Samsung)</button>
+  <div class="note">Sur Android avec Google Agenda, touche chaque heure pour créer un rappel quotidien :</div>
+  <div class="hours" id="w-gcal"></div>
+  <div class="note">Les notifications de l’appli sonnent quand l’appli est ouverte ou en arrière-plan récent. Les rappels d’agenda sonnent toujours, même téléphone verrouillé : c’est le plus fiable.</div>
+ </div>
+ <div class="card2"><h3>🎯 Objectif</h3><div class="row"><label for="w-target">Objectif quotidien en boissons</label><select id="w-target"></select></div>
+ <div class="note">Repère européen (EFSA) pour un homme : environ 2,5 L d’eau par jour au total, dont près de 2 L par les boissons. Avec la chaleur d’Abidjan ou du sport, vise plus haut.</div></div>
+</div>
+</section>
+
+<!-- PARKING -->
+<section class="tab" id="t-car">
+<header><div class="brand">CLB Utilities</div><h1>Où je suis <span>garé</span></h1><div class="per">Enregistre la position de la voiture, retrouve-la en un geste.</div></header>
+<div class="pad">
+ <div class="card2" id="p-saved"></div>
+ <div class="card2"><h3>📍 Nouvelle place</h3>
+  <textarea id="p-note" placeholder="Niveau, rangée, allée, n° de place, repère… (ex. Niveau -2, allée C, place 47)"></textarea>
+  <button class="btn gold full" id="p-save">🚗 Enregistrer ma place ici</button>
+  <div class="note" id="p-msg"></div></div>
+</div>
+</section>
+
+<!-- URGENCES -->
+<section class="tab" id="t-sos">
+<header><div class="brand">CLB Utilities</div><h1>Numéros <span>d’urgence</span></h1><div class="per">Un toucher pour appeler. Appels gratuits.</div></header>
+<div class="pad urg">
+ <a href="tel:185"><span>SAMU<small>Urgence médicale, ambulance</small></span><b>185</b></a>
+ <a href="tel:180"><span>Sapeurs-pompiers<small>Incendie, accident, secours</small></span><b>180</b></a>
+ <a href="tel:170"><span>Police secours<small>Aussi 110 ou 111</small></span><b>170</b></a>
+ <a href="tel:111"><span>Police secours<small>Numéro alternatif</small></span><b>111</b></a>
+ <div class="card2"><h3>🇫🇷 En France</h3><div class="urg">
+ <a href="tel:112"><span>Urgence européenne<small>Tous secours</small></span><b>112</b></a>
+ <a href="tel:15"><span>SAMU<small>Urgence médicale</small></span><b>15</b></a>
+ <a href="tel:3237"><span>Pharmacie de garde<small>Service téléphonique</small></span><b>3237</b></a></div></div>
+</div>
+</section>
+
+<nav><button data-t="ph"><b>💊</b>Pharmacies</button><button data-t="eau"><b>💧</b>Eau</button><button data-t="car"><b>🚗</b>Parking</button><button data-t="sos"><b>🆘</b>Urgences</button></nav>
 <script>
+
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const C={"Abobo":[5.423,-4.020],"Abobo PK 18":[5.462,-4.050],"Anyama":[5.494,-4.052],"Alépé":[5.500,-3.663],"Adjamé":[5.360,-4.022],"Williamsville":[5.377,-4.010],"Attécoubé":[5.335,-4.045],"Bingerville":[5.356,-3.885],"Cocody Akouédo / Palmeraie / Abatta":[5.365,-3.935],"Cocody Riviera":[5.357,-3.962],"Cocody Centre":[5.336,-3.990],"Cocody II Plateaux / Angré":[5.380,-3.995],"Koumassi":[5.296,-3.950],"Marcory":[5.301,-3.983],"Plateau":[5.321,-4.020],"Port-Bouët":[5.255,-3.935],"Treichville":[5.300,-4.010],"Yopougon":[5.345,-4.080],"Songon":[5.320,-4.255],
@@ -76,11 +164,92 @@ function locate(){if(!navigator.geolocation){$("msg").textContent="Localisation 
 $("loc").onclick=locate;
 $("zone").onchange=e=>{cur=e.target.value||null;try{localStorage.setItem("zone",cur||"");}catch(x){} if(!cur)locate();else{$("msg").textContent="";render();}};
 $("q").oninput=render;
-document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!cur)locate();});
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&TAB==="ph"&&!cur)locate();});
 fetch("pharmacies.json?"+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(d=>{data={...d,liste:d.liste.map(p=>({...p,c:commune(p.z)}))};
  const old=new Date().toISOString().slice(0,10)>d.au;
  $("per").innerHTML=`Semaine du ${esc(fmtD(d.du))} au ${esc(fmtD(d.au))} · ${d.liste.length} pharmacies · 24 h/24`+(old?' · <b style="color:#f7b733">mise à jour en cours</b>':"");
  fillSel();render();}).catch(()=>{$("per").textContent="Liste indisponible, vérifie ta connexion.";});
-if(!cur)locate();
+
+
+
+/* ---------- onglets ---------- */
+let TAB="ph";
+const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+let phLoaded=false;
+function go(t){TAB=t;document.querySelectorAll(".tab").forEach(s=>s.classList.toggle("on",s.id==="t-"+t));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));
+ LS.set("tab",t);if(location.hash!=="#"+t)history.replaceState(null,"","#"+t);window.scrollTo(0,0);
+ if(t==="ph"&&!phLoaded){phLoaded=true;if(!cur)locate();} if(t==="eau")wRender(); if(t==="car")pRender();}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.t));
+
+/* ---------- eau ---------- */
+const dkey=d=>{const x=new Date(d);return x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0");};
+let W=LS.get("water",{goal:2000,from:8,to:20,every:2,log:{},notif:false});
+const today=()=>dkey(Date.now());
+const tot=k=>(W.log[k]||[]).reduce((s,e)=>s+e[1],0);
+const fr=n=>n.toLocaleString("fr-FR");
+function save(){LS.set("water",W);}
+function add(ml){const k=today();(W.log[k]=W.log[k]||[]).push([Date.now(),ml]);
+ const keys=Object.keys(W.log).sort();while(keys.length>40)delete W.log[keys.shift()];
+ save();wRender();if(navigator.vibrate)navigator.vibrate(30);}
+function expectedNow(){const h=new Date().getHours()+new Date().getMinutes()/60;if(h<=W.from)return 0;if(h>=W.to)return W.goal;return W.goal*(h-W.from)/(W.to-W.from);}
+function wRender(){const k=today(),t=tot(k),p=Math.min(1,t/W.goal);
+ $("w-date").textContent=new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
+ $("w-tot").textContent=fr(t)+" ml";$("w-goal").textContent="sur "+fr(W.goal)+" ml · "+Math.round(p*100)+" %";
+ $("w-arc").style.strokeDashoffset=578*(1-p);$("w-arc").style.stroke=p>=1?"#34c77b":"#1b9cf0";
+ const e=expectedNow(),diff=t-e,rest=Math.max(0,W.goal-t);
+ $("w-pace").innerHTML=p>=1?"✅ Objectif atteint, bravo !":diff>=0?`👍 Tu es dans les temps. Encore ${fr(rest)} ml (≈ ${Math.ceil(rest/250)} verres).`:`<span style="color:#f7b733">⏳ En retard de ${fr(Math.round(-diff/50)*50)} ml sur le rythme. Bois un verre maintenant.</span>`;
+ $("w-log").innerHTML=(W.log[k]||[]).map(x=>`<span>${new Date(x[0]).toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})} · ${fr(x[1])} ml</span>`).join("");
+ let h="";for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const kk=dkey(d),v=tot(kk);h+=`<div><small>${v?(v/1000).toLocaleString("fr-FR",{maximumFractionDigits:1})+" L":""}</small><i class="${v>=W.goal?"ok":""}" style="height:${Math.min(100,v/W.goal*100)*0.75}%"></i><small>${d.toLocaleDateString("fr-FR",{weekday:"short"}).slice(0,3)}</small></div>`;}
+ $("w-week").innerHTML=h;
+ $("w-notif").textContent=W.notif&&("Notification"in window)&&Notification.permission==="granted"?"🔕 Désactiver les notifications de l’appli":"🔔 Activer les notifications de l’appli";
+ gcal();nudge();}
+document.querySelectorAll("[data-ml]").forEach(b=>b.onclick=()=>add(+b.dataset.ml));
+$("w-undo").onclick=()=>{const a=W.log[today()];if(a&&a.length){a.pop();save();wRender();}};
+$("w-custom").onclick=()=>{const v=prompt("Quantité bue (en ml) :","330");const n=parseInt(v,10);if(n>0&&n<5000)add(n);};
+const H=[...Array(24).keys()];
+$("w-from").innerHTML=H.map(h=>`<option value="${h}">${h} h</option>`).join("");$("w-to").innerHTML=$("w-from").innerHTML;
+$("w-target").innerHTML=[1500,1750,2000,2250,2500,2750,3000,3500].map(v=>`<option value="${v}">${fr(v)} ml</option>`).join("");
+$("w-from").value=W.from;$("w-to").value=W.to;$("w-every").value=W.every;$("w-target").value=W.goal;
+["w-from","w-to","w-every","w-target"].forEach(id=>$(id).onchange=()=>{W.from=+$("w-from").value;W.to=+$("w-to").value;W.every=+$("w-every").value;W.goal=+$("w-target").value;if(W.to<=W.from)W.to=Math.min(23,W.from+1);$("w-to").value=W.to;save();wRender();});
+function slots(){const s=[];for(let h=W.from;h<=W.to;h+=W.every)s.push(h);return s;}
+const p2=n=>String(n).padStart(2,"0");
+function gcal(){const d=new Date(),ymd=d.getFullYear()+p2(d.getMonth()+1)+p2(d.getDate());
+ $("w-gcal").innerHTML=slots().map(h=>{const u="https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent("💧 Boire un verre d'eau")+"&dates="+ymd+"T"+p2(h)+"0000/"+ymd+"T"+p2(h)+"0500&recur="+encodeURIComponent("RRULE:FREQ=DAILY")+"&details="+encodeURIComponent("Rappel CLB Utilities : un verre de 250 ml.");return `<a href="${u}" target="_blank" rel="noopener">${h} h</a>`;}).join("");}
+$("w-ics").onclick=()=>{const d=new Date(),ymd=d.getFullYear()+p2(d.getMonth()+1)+p2(d.getDate()),st=new Date().toISOString().replace(/[-:]/g,"").slice(0,15)+"Z";
+ let s="BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//CLB Utilities//Eau//FR\r\nCALSCALE:GREGORIAN\r\n";
+ slots().forEach(h=>{s+=`BEGIN:VEVENT\r\nUID:clb-eau-${h}-${ymd}@clb\r\nDTSTAMP:${st}\r\nDTSTART:${ymd}T${p2(h)}0000\r\nDTEND:${ymd}T${p2(h)}0500\r\nRRULE:FREQ=DAILY\r\nSUMMARY:💧 Boire un verre d'eau\r\nDESCRIPTION:Rappel CLB Utilities : un verre de 250 ml.\r\nBEGIN:VALARM\r\nACTION:DISPLAY\r\nDESCRIPTION:Bois un verre d'eau\r\nTRIGGER:PT0M\r\nEND:VALARM\r\nEND:VEVENT\r\n`;});
+ s+="END:VCALENDAR\r\n";const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([s],{type:"text/calendar"}));a.download="rappels-eau-CLB.ics";document.body.appendChild(a);a.click();a.remove();};
+$("w-notif").onclick=async()=>{if(!("Notification"in window)){alert("Les notifications ne sont pas disponibles ici. Utilise les rappels d’agenda.");return;}
+ if(W.notif&&Notification.permission==="granted"){W.notif=false;save();wRender();return;}
+ const r=await Notification.requestPermission();W.notif=r==="granted";save();wRender();
+ if(W.notif)notify("💧 Rappels activés","Je te ferai signe toutes les "+W.every+" h entre "+W.from+" h et "+W.to+" h.");
+ else alert("Notifications refusées. Tu peux les réactiver dans les réglages du navigateur, ou utiliser les rappels d’agenda.");};
+async function notify(t,b){try{const r=await navigator.serviceWorker.getRegistration();if(r){r.showNotification(t,{body:b,icon:"icon-192.png",badge:"icon-192.png",tag:"clb-eau",renotify:true,data:{url:"./#eau"}});return;}}catch(e){} try{new Notification(t,{body:b,icon:"icon-192.png"});}catch(e){}}
+function lastDrink(){const a=W.log[today()]||[];return a.length?a[a.length-1][0]:null;}
+function nudge(){const n=$("nudge"),h=new Date().getHours(),l=lastDrink();
+ if(h<W.from||h>W.to||tot(today())>=W.goal){n.style.display="none";return;}
+ const since=l?(Date.now()-l)/3600000:(h-W.from);
+ if(since>=W.every){n.style.display="block";n.innerHTML=`💧 ${l?"Pas d’eau depuis "+Math.floor(since)+" h":"Pas encore bu aujourd’hui"} : <a href="#eau" style="color:var(--gold)">bois un verre</a>`;}else n.style.display="none";}
+$("nudge").onclick=()=>go("eau");
+setInterval(()=>{nudge();if(!W.notif||!("Notification"in window)||Notification.permission!=="granted")return;
+ const d=new Date(),h=d.getHours(),k=today()+"-"+h;if(d.getMinutes()>10||!slots().includes(h)||LS.get("lastNotif","")===k||tot(today())>=W.goal)return;
+ const l=lastDrink();if(l&&Date.now()-l<45*60000)return;LS.set("lastNotif",k);notify("💧 C’est l’heure de boire","Un verre de 250 ml. Total du jour : "+fr(tot(today()))+" / "+fr(W.goal)+" ml.");},60000);
+
+/* ---------- parking ---------- */
+function pRender(){const p=LS.get("parking",null),el=$("p-saved");
+ if(!p){el.innerHTML='<h3>🚗 Aucune place enregistrée</h3><div class="note">Quand tu te gares, note le niveau et la place ci-dessous puis touche « Enregistrer ma place ici ».</div>';return;}
+ const when=new Date(p.t).toLocaleString("fr-FR",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+ const map=p.lat!=null?`https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=walking`:null;
+ el.innerHTML=`<h3>🚗 Ma voiture</h3><div style="font-size:17px;font-weight:800;white-space:pre-wrap">${esc(p.note||"(sans note)")}</div><div class="note">Garée ${esc(when)}${p.acc?` · précision ±${Math.round(p.acc)} m`:""}${p.lat==null?" · position GPS non enregistrée":""}</div>`+
+ (map?`<a class="btn gold full" style="display:block;text-align:center;text-decoration:none" href="${map}" target="_blank" rel="noopener">🧭 Retrouver ma voiture</a>`:"")+`<button class="btn full" id="p-clear">✔︎ J’ai récupéré la voiture</button>`;
+ $("p-clear").onclick=()=>{if(confirm("Effacer la place enregistrée ?")){localStorage.removeItem("parking");pRender();}};}
+$("p-save").onclick=()=>{const note=$("p-note").value.trim(),m=$("p-msg");m.textContent="📡 Prise de la position…";
+ const done=(lat,lng,acc)=>{LS.set("parking",{note,t:Date.now(),lat,lng,acc});$("p-note").value="";m.textContent=lat!=null?"✅ Place enregistrée avec la position GPS.":"✅ Note enregistrée (sans GPS : autorise la localisation pour l’itinéraire).";pRender();};
+ if(!navigator.geolocation){done(null,null,null);return;}
+ navigator.geolocation.getCurrentPosition(p=>done(p.coords.latitude,p.coords.longitude,p.coords.accuracy),()=>done(null,null,null),{enableHighAccuracy:true,timeout:15000,maximumAge:0});};
+
+/* ---------- démarrage ---------- */
 if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+const start=(location.hash||"").slice(1);go(["ph","eau","car","sos"].includes(start)?start:LS.get("tab","ph"));
+nudge();
 </script></body></html>

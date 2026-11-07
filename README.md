@@ -1,5 +1,5 @@
-# CLB Pharmacies
+# CLB Utilities (mobile)
 
-Pharmacies de garde en Côte d'Ivoire, autour de toi (GPS). Liste officielle UNPPCI mise à jour chaque samedi.
+Pharmacies de garde autour de toi (GPS), suivi d’'eau avec rappels, parking, numéros d’'urgence. Liste officielle UNPPCI mise à jour chaque samedi.
 
 https://charleslebontoh-cloud.github.io/clb-pharmacies/
