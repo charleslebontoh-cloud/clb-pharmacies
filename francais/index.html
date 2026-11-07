@@ -119,7 +119,7 @@ body.quiz nav{transform:translateY(160%)}body.quiz #snd{top:auto;bottom:calc(env
 @keyframes wv{0%,100%{height:4px}50%{height:16px}}
 .qcard{position:relative}.qsay{position:absolute;top:-16px;right:14px;width:40px;height:40px;border-radius:13px;border:2.5px solid var(--ink);background:var(--sun);box-shadow:0 3px 0 var(--ink);font-size:17px}
 </style></head><body>
-<div id="splash" role="button" tabindex="0" aria-label="Entrer"><div><img src="icon-512.png" alt=""><div class="ttl"><i style="animation-delay:0.50s">C</i><i style="animation-delay:0.55s">L</i><i style="animation-delay:0.60s">B</i><i style="animation-delay:0.65s">&nbsp;</i><i style="animation-delay:0.70s">G</i><i style="animation-delay:0.75s">r</i><i style="animation-delay:0.80s">a</i><i style="animation-delay:0.85s">m</i><i style="animation-delay:0.90s">m</i><i style="animation-delay:0.95s">a</i><i style="animation-delay:1.00s">r</i></div><span class="tap">Touche pour entrer</span><small style="display:block;margin-top:26px;color:#6E6890;font-size:11px;font-weight:800">version 3 · 7 nov. 2026</small></div></div>
+<div id="splash" role="button" tabindex="0" aria-label="Entrer"><div><img src="icon-512.png" alt=""><div class="ttl"><i style="animation-delay:0.50s">C</i><i style="animation-delay:0.55s">L</i><i style="animation-delay:0.60s">B</i><i style="animation-delay:0.65s">&nbsp;</i><i style="animation-delay:0.70s">G</i><i style="animation-delay:0.75s">r</i><i style="animation-delay:0.80s">a</i><i style="animation-delay:0.85s">m</i><i style="animation-delay:0.90s">m</i><i style="animation-delay:0.95s">a</i><i style="animation-delay:1.00s">r</i></div><span class="tap">Touche pour entrer</span><small style="display:block;margin-top:26px;color:#6E6890;font-size:11px;font-weight:800">version 4 · 7 nov. 2026</small></div></div>
 <button id="snd" aria-label="Son" style="display:none">🔊</button>
 <div class="wrap">
 
@@ -139,7 +139,7 @@ body.quiz nav{transform:translateY(160%)}body.quiz #snd{top:auto;bottom:calc(env
 <section class="view" id="v-lesson">
  <button class="back" data-go="lessons">‹ Leçons</button>
  <div class="brand" id="ld-cat"></div><h1 id="ld-t"></h1>
- <div class="tts"><button class="btn tts-play" id="tts-play">🔈 Écouter la leçon</button><button class="btn" id="tts-stop" style="display:none">⏹</button><label class="tts-auto"><input type="checkbox" id="tts-auto"> Lecture auto</label></div>
+ <div class="tts"><button class="btn tts-play" id="tts-play">🔈 Écouter la leçon</button><button class="btn" id="tts-stop" style="display:none">⏹</button><label class="tts-auto"><input type="checkbox" id="tts-auto"> Lecture auto</label></div><div class="sub" id="tts-msg" style="color:#F0435B;font-weight:800;margin-top:6px"></div>
  <div class="card rule" data-tts="1"><h3>📖 La règle</h3><div id="ld-r"></div></div>
  <div class="card tip" data-tts="2"><h3>💡 L'astuce</h3><div id="ld-tip"></div></div>
  <div class="card ex" data-tts="3"><h3>✍️ Exemples</h3><div id="ld-ex"></div></div>
@@ -238,7 +238,7 @@ function lessons(){let h="",cat="";LESSONS.forEach(l=>{if(l.cat!==cat){cat=l.cat
  h+=`<button class="ls" data-les="${l.id}"><span class="ico">${m>=.99?"✓":esc(l.t.split(" ")[0])}</span><span class="tx"><b>${esc(l.t)}</b><small>${l.q.length} exercices · ${Math.round(m*100)} %</small><div class="bar"><i style="width:${m*100}%"></i></div></span></button>`;});
  $("l-list").innerHTML=h;}
 let CUR=null;
-function openLesson(id){CUR=LESSONS.find(l=>l.id===id);$("ld-cat").textContent=CUR.cat;$("ld-t").textContent=CUR.t;$("ld-r").innerHTML=CUR.r;$("ld-tip").innerHTML=CUR.tip;$("ld-ex").innerHTML=CUR.ex.map(x=>`<div>${x}</div>`).join("");stopRead();$("tts-auto").checked=TTS.auto;go("lesson");if(TTS.auto)setTimeout(readLesson,350);}
+function openLesson(id){CUR=LESSONS.find(l=>l.id===id);$("ld-cat").textContent=CUR.cat;$("ld-t").textContent=CUR.t;$("ld-r").innerHTML=CUR.r;$("ld-tip").innerHTML=CUR.tip;$("ld-ex").innerHTML=CUR.ex.map(x=>`<div>${x}</div>`).join("");stopRead();$("tts-auto").checked=TTS.auto;go("lesson");if(TTS.auto)readLesson();}
 $("ld-go").onclick=()=>startQuiz(shuffle(CUR.q.map((q,i)=>({k:CUR.id+"-"+i,l:CUR,q}))),"lesson");
 
 /* ---------- lecture à voix haute ---------- */
@@ -249,11 +249,21 @@ function loadVoices(){if(!SY)return;VOICES=SY.getVoices().filter(v=>/^fr/i.test(
  const s=$("st-voice");if(s){s.innerHTML=VOICES.length?VOICES.map(v=>`<option value="${esc(v.name)}">${esc(v.name)} (${esc(v.lang)})</option>`).join(""):'<option>Voix française par défaut</option>';if(TTS.voice)s.value=TTS.voice;}}
 if(SY){loadVoices();SY.onvoiceschanged=loadVoices;}
 function voice(){return VOICES.find(v=>v.name===TTS.voice)||VOICES[0]||null;}
-function clean(html,quiz){const d=document.createElement("div");d.innerHTML=html;return d.textContent.replace(/…/g,quiz?" blanc ":" etc. ").replace(/\bCOD\b/g,"C.O.D.").replace(/\bF\b/g,"francs").replace(/\s\/\s/g," ou ").replace(/\//g," ou ").replace(/→/g,", donne ").replace(/\(([^)]*)\)/g,", $1,").replace(/\s+/g," ").trim();}
-function say(text,onend){if(!SY){alert("La lecture vocale n'est pas disponible sur cet appareil.");return;}const u=new SpeechSynthesisUtterance(text);u.lang="fr-FR";const v=voice();if(v)u.voice=v;u.rate=TTS.rate;u.pitch=1;u.onend=onend;u.onerror=onend;SY.speak(u);}
-function stopRead(){READING=false;RQ=[];if(SY)SY.cancel();document.querySelectorAll(".card.reading").forEach(c=>c.classList.remove("reading"));
+function clean(html,quiz){const d=document.createElement("div");d.innerHTML=html;return d.textContent.replace(/…/g,quiz?" blanc ":" etc. ").replace(/\bCOD\b/g,"cé o dé").replace(/\bF\b/g,"francs").replace(/\s\/\s/g," ou ").replace(/\//g," ou ").replace(/→/g,", donne ").replace(/\(([^)]*)\)/g,", $1,").replace(/\s+/g," ").trim();}
+let UTT=[];
+function unlockTTS(){if(!SY||unlockTTS.done)return;unlockTTS.done=true;try{const u=new SpeechSynthesisUtterance(" ");u.volume=0;u.lang="fr-FR";UTT.push(u);SY.speak(u);}catch(e){}}
+document.addEventListener("touchend",unlockTTS,{once:true,passive:true});document.addEventListener("click",unlockTTS,{once:true});
+function chunks(t){return (t.match(/[^.!?;:]+[.!?;:]*/g)||[t]).map(s=>s.trim()).filter(Boolean).reduce((a,s)=>{if(a.length&&(a[a.length-1]+" "+s).length<160)a[a.length-1]+=" "+s;else a.push(s);return a;},[]);}
+function say(text,onend){if(!SY||!window.SpeechSynthesisUtterance){ttsMsg("La lecture vocale n’est pas disponible sur cet appareil.");onend&&onend();return;}
+ const parts=chunks(text);let started=false;
+ const next=()=>{const p=parts.shift();if(p==null){onend&&onend();return;}const u=new SpeechSynthesisUtterance(p);u.lang="fr-FR";const v=voice();if(v)u.voice=v;u.rate=TTS.rate;u.pitch=1;u.volume=1;
+  u.onstart=()=>{started=true;ttsMsg("");};u.onend=()=>{UTT=UTT.filter(x=>x!==u);next();};u.onerror=e=>{UTT=UTT.filter(x=>x!==u);if(e&&e.error==="interrupted"||e&&e.error==="canceled")return;next();};UTT.push(u);SY.speak(u);};
+ if(SY.paused)SY.resume();next();
+ setTimeout(()=>{if(!started&&READING!==false)ttsMsg("🔇 Aucun son ? Désactive le mode silencieux (bouton sur le côté de l’iPhone) et monte le volume, puis réessaie.");},2500);}
+function ttsMsg(t){const el=$("tts-msg");if(el)el.textContent=t;}
+function stopRead(){READING=false;RQ=[];if(SY&&(SY.speaking||SY.pending))SY.cancel();UTT=[];document.querySelectorAll(".card.reading").forEach(c=>c.classList.remove("reading"));
  $("tts-play").classList.remove("on");$("tts-play").innerHTML="🔈 Écouter la leçon";$("tts-stop").style.display="none";}
-function readLesson(){if(!CUR)return;if(READING){stopRead();return;}if(SY)SY.cancel();READING=true;
+function readLesson(){if(!CUR)return;if(READING){stopRead();return;}if(SY&&(SY.speaking||SY.pending))SY.cancel();READING=true;
  $("tts-play").classList.add("on");$("tts-play").innerHTML='En lecture<span class="wave"><i></i><i></i><i></i><i></i></span>';$("tts-stop").style.display="";
  RQ=[[null,"Leçon : "+clean(CUR.t)+"."],["1","La règle. "+clean(CUR.r)],["2","L'astuce. "+clean(CUR.tip)],["3","Exemples. "+CUR.ex.map(clean).join(" . ")]];
  const step=()=>{document.querySelectorAll(".card.reading").forEach(c=>c.classList.remove("reading"));if(!READING)return;const n=RQ.shift();if(!n){stopRead();return;}
@@ -261,12 +271,12 @@ function readLesson(){if(!CUR)return;if(READING){stopRead();return;}if(SY)SY.can
  step();}
 $("tts-play").onclick=readLesson;$("tts-stop").onclick=stopRead;
 $("tts-auto").onchange=e=>{TTS.auto=e.target.checked;LS.set("gtts",TTS);if($("st-auto"))$("st-auto").checked=TTS.auto;};
-$("q-say").onclick=()=>{if(!QZ)return;const q=QZ.items[QZ.i].q;if(SY)SY.cancel();say(clean(q[0],true)+" . Choix : "+q[1].join(", ou, "));};
+$("q-say").onclick=()=>{if(!QZ)return;const q=QZ.items[QZ.i].q;if(SY&&(SY.speaking||SY.pending))SY.cancel();say(clean(q[0],true)+" . Choix : "+q[1].join(", ou, "));};
 function ttsSettings(){$("st-auto").checked=TTS.auto;$("st-rate").value=TTS.rate;$("st-rate-v").textContent="×"+(+TTS.rate).toFixed(2).replace(".",",");loadVoices();}
 $("st-auto").onchange=e=>{TTS.auto=e.target.checked;LS.set("gtts",TTS);};
 $("st-rate").oninput=e=>{TTS.rate=+e.target.value;LS.set("gtts",TTS);$("st-rate-v").textContent="×"+TTS.rate.toFixed(2).replace(".",",");};
 $("st-voice").onchange=e=>{TTS.voice=e.target.value;LS.set("gtts",TTS);};
-$("st-test").onclick=()=>{if(SY)SY.cancel();say("Bonjour Charles. Je lirai tes leçons de grammaire avec cette voix.");};
+$("st-test").onclick=()=>{if(SY&&(SY.speaking||SY.pending))SY.cancel();say("Bonjour Charles. Je lirai tes leçons de grammaire avec cette voix.");};
 /* ---------- quiz ---------- */
 let QZ=null;
 function startQuiz(items,mode){if(!items.length)return;QZ={items,i:0,ok:0,mode,again:items.slice()};go("quiz");showQ();}
