@@ -249,7 +249,7 @@ $("p-save").onclick=()=>{const note=$("p-note").value.trim(),m=$("p-msg");m.text
  navigator.geolocation.getCurrentPosition(p=>done(p.coords.latitude,p.coords.longitude,p.coords.accuracy),()=>done(null,null,null),{enableHighAccuracy:true,timeout:15000,maximumAge:0});};
 
 /* ---------- démarrage ---------- */
-if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(r=>r.update()).catch(()=>{});
 const start=(location.hash||"").slice(1);go(["ph","eau","car","sos"].includes(start)?start:LS.get("tab","ph"));
 nudge();
 </script></body></html>
