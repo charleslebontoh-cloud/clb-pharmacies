@@ -114,7 +114,7 @@ button:active,.btn:active,.a a:active,.urg a:active,.hours a:active,.drinks butt
 
 @media (min-width:430px){.drinks button{padding:18px 6px}}
 </style></head><body>
-<div id="splash" role="button" tabindex="0" aria-label="Entrer dans CLB Health"><div><img src="icon-512.png?v=2" alt=""><b>CLB HEALTH</b><span class="tap">Touche pour entrer</span><small style="display:block;margin-top:30px;color:#4d5d8f;font-size:11px">version 11 · 7 nov. 2026</small></div></div>
+<div id="splash" role="button" tabindex="0" aria-label="Entrer dans CLB Health"><div><img src="icon-512.png?v=2" alt=""><b>CLB HEALTH</b><span class="tap" id="sp-tap">Touche pour entrer</span><div id="sp-err" style="min-height:1.3em;margin-top:10px;color:#ff8a8a;font-size:13px;font-weight:600"></div><a id="sp-sos" href="tel:185" onclick="event.stopPropagation()" style="display:inline-block;margin-top:18px;padding:8px 14px;border-radius:999px;border:1px solid rgba(255,90,120,.5);color:#ff9fb3;text-decoration:none;font:700 13px -apple-system">🆘 SAMU 185</a><small style="display:block;margin-top:24px;color:#4d5d8f;font-size:11px">version 12 · 7 nov. 2026</small></div></div>
 <div class="banner" id="nudge"></div>
 
 <!-- PHARMACIES -->
@@ -183,6 +183,7 @@ button:active,.btn:active,.a a:active,.urg a:active,.hours a:active,.drinks butt
 <section class="tab" id="t-sos">
 <header><div class="brand">CLB Health</div><h1>Urgence <span>& fiche santé</span></h1><div class="per">Un toucher pour appeler. Appels gratuits.</div></header>
 <div class="pad urg">
+ <div class="card2" style="border-left:4px solid #edbb00"><h3>🔒 Verrouillage Face ID</h3><div id="lk-box"></div><div class="note" id="lk-msg">Protège ta fiche santé et tes données : l’appli demande Face ID à l’ouverture. Les numéros d’urgence restent accessibles sans déverrouiller.</div></div>
  <div class="card2" style="border-left:4px solid #34c77b"><h3>🩺 Ma fiche santé</h3>
   <div id="f-view"></div>
   <details style="margin-top:8px"><summary style="color:var(--gold);font-weight:700">Modifier ma fiche</summary>
@@ -268,7 +269,7 @@ const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.
 let phLoaded=false;
 function go(t){TAB=t;document.querySelectorAll(".tab").forEach(s=>s.classList.toggle("on",s.id==="t-"+t));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));
  LS.set("tab",t);if(location.hash!=="#"+t)history.replaceState(null,"","#"+t);window.scrollTo(0,0);
- if(t==="ph"&&!phLoaded){phLoaded=true;if(!cur)locate();} if(t==="eau")wRender(); if(t==="eye"){vLoad();eTick();} if(t==="sos")fRender();}
+ if(t==="ph"&&!phLoaded){phLoaded=true;if(!cur)locate();} if(t==="eau")wRender(); if(t==="eye"){vLoad();eTick();} if(t==="sos"){fRender();lockRender();}}
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.t));
 
 /* ---------- eau ---------- */
@@ -361,8 +362,35 @@ $("f-save").onclick=()=>{const f={};FF.forEach(k=>f[k]=$("f-"+k).value.trim());L
 
 /* ---------- animations iPhone ---------- */
 const haptic=(p=12)=>{try{navigator.vibrate&&navigator.vibrate(p);}catch(e){}};
-(()=>{const s=$("splash");let done=false;const enter=()=>{if(done)return;done=true;haptic(20);s.classList.add("out");setTimeout(()=>s.remove(),700);};
- s.addEventListener("click",enter);s.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" ")enter();});})();
+/* ---------- Face ID ---------- */
+const b64=u=>btoa(String.fromCharCode(...new Uint8Array(u))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+const unb64=s=>Uint8Array.from(atob(s.replace(/-/g,"+").replace(/_/g,"/")+"===".slice((s.length+3)%4)),c=>c.charCodeAt(0));
+const rnd=n=>crypto.getRandomValues(new Uint8Array(n));
+let LOCK=LS.get("lock",null);
+async function faAvail(){try{return !!(window.PublicKeyCredential&&await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable());}catch(e){return false;}}
+async function faVerify(){if(!LOCK)return true;
+ const c=await navigator.credentials.get({publicKey:{challenge:rnd(32),allowCredentials:[{type:"public-key",id:unb64(LOCK.id),transports:["internal","hybrid"]}],userVerification:"required",timeout:60000}});
+ const flags=new Uint8Array(c.response.authenticatorData)[32];if(!(flags&4))throw new Error("uv");return true;}
+async function faSetup(){const c=await navigator.credentials.create({publicKey:{challenge:rnd(32),rp:{name:"CLB Health"},user:{id:rnd(16),name:"CLB Health",displayName:"Charles le Bon"},
+ pubKeyCredParams:[{type:"public-key",alg:-7},{type:"public-key",alg:-257}],authenticatorSelection:{authenticatorAttachment:"platform",userVerification:"required",residentKey:"preferred"},timeout:60000,attestation:"none"}});
+ LOCK={id:b64(c.rawId),t:Date.now()};LS.set("lock",LOCK);}
+let unlocked=false,hiddenAt=0;
+function showSplash(){let s=$("splash");if(!s)return;s.classList.remove("out");s.style.display="grid";$("sp-tap").textContent=LOCK?"🔒 Touche pour déverrouiller avec Face ID":"Touche pour entrer";$("sp-err").textContent="";}
+(()=>{const s=$("splash");let busy=false;showSplash();
+ const enter=async()=>{if(busy||unlocked)return;busy=true;$("sp-err").textContent="";
+  try{await faVerify();unlocked=true;haptic(20);s.classList.add("out");setTimeout(()=>{s.style.display="none";},700);}
+  catch(e){$("sp-err").textContent=e&&e.name==="NotAllowedError"?"Face ID annulé ou non reconnu. Touche pour réessayer.":"Déverrouillage impossible. Touche pour réessayer.";}
+  busy=false;};
+ s.addEventListener("click",enter);s.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" ")enter();});
+ document.addEventListener("visibilitychange",()=>{if(document.hidden){hiddenAt=Date.now();}else if(LOCK&&unlocked&&Date.now()-hiddenAt>LS.get("lockDelay",5)*60000){unlocked=false;showSplash();}});})();
+async function lockRender(){const el=$("lk-box");if(!el)return;const av=await faAvail();
+ el.innerHTML=!av?'<div class="note">Face ID / Touch ID n’est pas disponible ici. Ouvre l’appli installée sur ton iPhone (Safari, écran d’accueil).</div>':
+ LOCK?`<div class="fl"><span>Statut</span><b style="color:#34c77b">Activé</b></div><div class="row" style="margin-top:8px"><label>Reverrouiller après</label><select id="lk-delay">${[0,1,5,15,60].map(m=>`<option value="${m}">${m?m+" min":"immédiatement"}</option>`).join("")}</select></div><button class="btn full" id="lk-off">Désactiver Face ID</button>`:
+ '<button class="btn gold full" id="lk-on">🔒 Activer Face ID</button>';
+ if($("lk-delay")){$("lk-delay").value=LS.get("lockDelay",5);$("lk-delay").onchange=e=>LS.set("lockDelay",+e.target.value);}
+ if($("lk-on"))$("lk-on").onclick=async()=>{try{await faSetup();await faVerify();$("lk-msg").textContent="✅ Face ID activé : il sera demandé à chaque ouverture.";}catch(e){LOCK=null;LS.set("lock",null);$("lk-msg").textContent="Activation annulée ("+(e.name||"erreur")+").";}lockRender();};
+ if($("lk-off"))$("lk-off").onclick=async()=>{try{await faVerify();LOCK=null;LS.set("lock",null);$("lk-msg").textContent="Face ID désactivé.";}catch(e){$("lk-msg").textContent="Confirmation Face ID requise pour désactiver.";}lockRender();};}
+
 document.addEventListener("click",e=>{const b=e.target.closest(".drinks button");if(!b)return;const r=b.getBoundingClientRect(),s=document.createElement("span"),d=Math.max(r.width,r.height);
  s.className="ripple";s.style.cssText=`width:${d}px;height:${d}px;left:${e.clientX-r.left-d/2}px;top:${e.clientY-r.top-d/2}px`;b.appendChild(s);setTimeout(()=>s.remove(),650);
  const f=document.createElement("div");f.className="float";f.textContent="+"+fr(+b.dataset.ml)+" ml";f.style.left=e.clientX+"px";f.style.top=(e.clientY-20)+"px";document.body.appendChild(f);setTimeout(()=>f.remove(),1000);
