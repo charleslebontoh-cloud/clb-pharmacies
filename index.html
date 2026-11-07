@@ -107,10 +107,14 @@ button:active,.btn:active,.a a:active,.urg a:active,.hours a:active,.drinks butt
 #splash b{display:block;margin-top:16px;text-align:center;font:800 15px -apple-system;letter-spacing:.2em;color:var(--gold);animation:cardIn .8s .2s both}
 #splash.out{opacity:0;visibility:hidden}
 @keyframes sIn{from{transform:scale(.4) rotate(-90deg);opacity:0}to{transform:none;opacity:1}}
+#splash{cursor:pointer}#splash>div{text-align:center}#splash img{display:block;margin:0 auto;width:170px;height:170px;filter:drop-shadow(0 22px 30px rgba(0,0,0,.6));animation:sIn .9s cubic-bezier(.34,1.56,.64,1),bob 2.6s 1s ease-in-out infinite}
+#splash .tap{display:block;margin-top:22px;text-align:center;font:700 12px -apple-system;letter-spacing:.14em;text-transform:uppercase;color:#a3b2d9;animation:cardIn .8s .6s both,blink 2s 1.4s ease-in-out infinite}
+#splash.out img{transform:scale(1.6);opacity:0;transition:transform .6s cubic-bezier(.22,1,.36,1),opacity .5s}
+@keyframes bob{50%{transform:translateY(-10px)}}@keyframes blink{50%{opacity:.35}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 @media (min-width:430px){.drinks button{padding:18px 6px}}
 </style></head><body>
-<div id="splash"><div><img src="icon-192.png" alt=""><b>CLB HEALTH</b></div></div>
+<div id="splash" role="button" tabindex="0" aria-label="Entrer dans CLB Health"><div><img src="ball.png" alt=""><b>CLB HEALTH</b><span class="tap">Touche le ballon pour entrer</span></div></div>
 <div class="banner" id="nudge"></div>
 
 <!-- PHARMACIES -->
@@ -356,8 +360,9 @@ function fRender(){const f=LS.get("fiche",{});FF.forEach(k=>$("f-"+k).value=f[k]
 $("f-save").onclick=()=>{const f={};FF.forEach(k=>f[k]=$("f-"+k).value.trim());LS.set("fiche",f);fRender();document.querySelector("#t-sos details").open=false;};
 
 /* ---------- animations iPhone ---------- */
-setTimeout(()=>$("splash").classList.add("out"),900);setTimeout(()=>$("splash").remove(),1600);
 const haptic=(p=12)=>{try{navigator.vibrate&&navigator.vibrate(p);}catch(e){}};
+(()=>{const s=$("splash");let done=false;const enter=()=>{if(done)return;done=true;haptic(20);s.classList.add("out");setTimeout(()=>s.remove(),700);};
+ s.addEventListener("click",enter);s.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" ")enter();});})();
 document.addEventListener("click",e=>{const b=e.target.closest(".drinks button");if(!b)return;const r=b.getBoundingClientRect(),s=document.createElement("span"),d=Math.max(r.width,r.height);
  s.className="ripple";s.style.cssText=`width:${d}px;height:${d}px;left:${e.clientX-r.left-d/2}px;top:${e.clientY-r.top-d/2}px`;b.appendChild(s);setTimeout(()=>s.remove(),650);
  const f=document.createElement("div");f.className="float";f.textContent="+"+fr(+b.dataset.ml)+" ml";f.style.left=e.clientX+"px";f.style.top=(e.clientY-20)+"px";document.body.appendChild(f);setTimeout(()=>f.remove(),1000);
