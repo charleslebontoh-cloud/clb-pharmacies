@@ -246,7 +246,7 @@ const SY=window.speechSynthesis;let VOICES=[],READING=false,RQ=[];
 const TTS=LS.get("gtts",{auto:false,rate:1,voice:""});
 function vrank(v){const n=v.name.toLowerCase();return (/premium/.test(n)?0:/enhanced|amélior|ameliore|neural|natural|siri/.test(n)?1:/amélie|amelie|thomas|audrey|aurélie|aurelie|marie|daniel|google/.test(n)?2:3)+(/fr-fr/i.test(v.lang)?0:.4)+(v.localService===false?.2:0);}
 function vlabel(v){const r=vrank(v);return (r<1?"⭐⭐ ":r<2?"⭐ ":"")+v.name+" ("+v.lang+")";}
-function loadVoices(){if(!SY)return;VOICES=SY.getVoices().filter(v=>/^fr/i.test(v.lang)).sort((a,b)=>vrank(a)-vrank(b));
+function loadVoices(){if(!SY)return;const seen=new Set();VOICES=SY.getVoices().filter(v=>/^fr/i.test(v.lang)).sort((a,b)=>vrank(a)-vrank(b)).filter(v=>{const k=v.name+"|"+v.lang;if(seen.has(k))return false;seen.add(k);return true;});
  const s=$("st-voice");if(s){s.innerHTML=VOICES.length?VOICES.map(v=>`<option value="${esc(v.name)}">${esc(vlabel(v))}</option>`).join(""):'<option>Voix française par défaut</option>';s.value=(voice()||{}).name||"";}}
 if(SY){loadVoices();SY.onvoiceschanged=loadVoices;}
 function voice(){const best=VOICES[0]||null,pick=VOICES.find(v=>v.name===TTS.voice);if(pick&&best&&vrank(best)<vrank(pick)&&!TTS.locked)return best;return pick||best;}
