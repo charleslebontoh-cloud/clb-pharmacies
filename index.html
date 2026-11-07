@@ -28,7 +28,7 @@ footer{color:var(--muted);font-size:12px;padding:0 18px 30px}footer a{color:var(
 
 body{padding-bottom:calc(env(safe-area-inset-bottom) + 72px)}
 .tab{display:none}.tab.on{display:block}
-nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,1fr);background:rgba(6,20,51,.97);border-top:1px solid var(--line);padding:6px 4px calc(env(safe-area-inset-bottom) + 6px);z-index:5}
+nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);background:rgba(6,20,51,.97);border-top:1px solid var(--line);padding:6px 4px calc(env(safe-area-inset-bottom) + 6px);z-index:5}
 nav button{background:none;border:0;color:var(--muted);font:600 11px system-ui;display:grid;gap:2px;justify-items:center;padding:4px}
 nav button b{font-size:21px;line-height:1}nav button.on{color:var(--gold)}
 .pad{padding:0 18px}
@@ -95,17 +95,6 @@ textarea{width:100%;min-height:70px}
 </div>
 </section>
 
-<!-- PARKING -->
-<section class="tab" id="t-car">
-<header><div class="brand">CLB Health</div><h1>Où je suis <span>garé</span></h1><div class="per">Enregistre la position de la voiture, retrouve-la en un geste.</div></header>
-<div class="pad">
- <div class="card2" id="p-saved"></div>
- <div class="card2"><h3>📍 Nouvelle place</h3>
-  <textarea id="p-note" placeholder="Niveau, rangée, allée, n° de place, repère… (ex. Niveau -2, allée C, place 47)"></textarea>
-  <button class="btn gold full" id="p-save">🚗 Enregistrer ma place ici</button>
-  <div class="note" id="p-msg"></div></div>
-</div>
-</section>
 
 <!-- VISION -->
 <section class="tab" id="t-eye">
@@ -163,7 +152,7 @@ textarea{width:100%;min-height:70px}
 </section>
 
 <div id="e-over"><div style="font-size:50px">🌳</div><div style="font-size:22px;font-weight:800;margin:10px 0">Regarde au loin</div><div class="note" style="font-size:15px">Fixe un point à environ 6 mètres, cligne des yeux.</div><div class="big" id="e-sec">20</div><button class="btn" id="e-skip">Passer</button></div>
-<nav><button data-t="ph"><b>💊</b>Pharmacies</button><button data-t="eau"><b>💧</b>Eau</button><button data-t="eye"><b>👓</b>Vision</button><button data-t="sos"><b>🆘</b>Urgence</button><button data-t="car"><b>🚗</b>Parking</button></nav>
+<nav><button data-t="ph"><b>💊</b>Pharmacies</button><button data-t="eau"><b>💧</b>Eau</button><button data-t="eye"><b>👓</b>Vision</button><button data-t="sos"><b>🆘</b>Urgence</button></nav>
 <script>
 
 const $=id=>document.getElementById(id);
@@ -223,7 +212,7 @@ const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.
 let phLoaded=false;
 function go(t){TAB=t;document.querySelectorAll(".tab").forEach(s=>s.classList.toggle("on",s.id==="t-"+t));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));
  LS.set("tab",t);if(location.hash!=="#"+t)history.replaceState(null,"","#"+t);window.scrollTo(0,0);
- if(t==="ph"&&!phLoaded){phLoaded=true;if(!cur)locate();} if(t==="eau")wRender(); if(t==="car")pRender(); if(t==="eye"){vLoad();eTick();} if(t==="sos")fRender();}
+ if(t==="ph"&&!phLoaded){phLoaded=true;if(!cur)locate();} if(t==="eau")wRender(); if(t==="eye"){vLoad();eTick();} if(t==="sos")fRender();}
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.t));
 
 /* ---------- eau ---------- */
@@ -280,20 +269,6 @@ setInterval(()=>{nudge();if(!W.notif||!("Notification"in window)||Notification.p
  const d=new Date(),h=d.getHours(),k=today()+"-"+h;if(d.getMinutes()>10||!slots().includes(h)||LS.get("lastNotif","")===k||tot(today())>=W.goal)return;
  const l=lastDrink();if(l&&Date.now()-l<45*60000)return;LS.set("lastNotif",k);notify("💧 C’est l’heure de boire","Un verre de 250 ml. Total du jour : "+fr(tot(today()))+" / "+fr(W.goal)+" ml.");},60000);
 
-/* ---------- parking ---------- */
-function pRender(){const p=LS.get("parking",null),el=$("p-saved");
- if(!p){el.innerHTML='<h3>🚗 Aucune place enregistrée</h3><div class="note">Quand tu te gares, note le niveau et la place ci-dessous puis touche « Enregistrer ma place ici ».</div>';return;}
- const when=new Date(p.t).toLocaleString("fr-FR",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
- const map=p.lat!=null?`https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=walking`:null;
- el.innerHTML=`<h3>🚗 Ma voiture</h3><div style="font-size:17px;font-weight:800;white-space:pre-wrap">${esc(p.note||"(sans note)")}</div><div class="note">Garée ${esc(when)}${p.acc?` · précision ±${Math.round(p.acc)} m`:""}${p.lat==null?" · position GPS non enregistrée":""}</div>`+
- (map?`<a class="btn gold full" style="display:block;text-align:center;text-decoration:none" href="${map}" target="_blank" rel="noopener">🧭 Retrouver ma voiture</a>`:"")+`<button class="btn full" id="p-clear">✔︎ J’ai récupéré la voiture</button>`;
- $("p-clear").onclick=()=>{if(confirm("Effacer la place enregistrée ?")){localStorage.removeItem("parking");pRender();}};}
-$("p-save").onclick=()=>{const note=$("p-note").value.trim(),m=$("p-msg");m.textContent="📡 Prise de la position…";
- const done=(lat,lng,acc)=>{LS.set("parking",{note,t:Date.now(),lat,lng,acc});$("p-note").value="";m.textContent=lat!=null?"✅ Place enregistrée avec la position GPS.":"✅ Note enregistrée (sans GPS : autorise la localisation pour l’itinéraire).";pRender();};
- if(!navigator.geolocation){done(null,null,null);return;}
- navigator.geolocation.getCurrentPosition(p=>done(p.coords.latitude,p.coords.longitude,p.coords.accuracy),()=>done(null,null,null),{enableHighAccuracy:true,timeout:15000,maximumAge:0});};
-
-
 /* ---------- vision ---------- */
 let E=LS.get("eye",{on:false,next:0,count:0,day:""});
 const BREAK=20*60000;let eTimer=null,eSec=0;
@@ -329,6 +304,6 @@ function fRender(){const f=LS.get("fiche",{});FF.forEach(k=>$("f-"+k).value=f[k]
 $("f-save").onclick=()=>{const f={};FF.forEach(k=>f[k]=$("f-"+k).value.trim());LS.set("fiche",f);fRender();document.querySelector("#t-sos details").open=false;};
 /* ---------- démarrage ---------- */
 if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(r=>r.update()).catch(()=>{});
-const start=(location.hash||"").slice(1);go(["ph","eau","eye","car","sos"].includes(start)?start:LS.get("tab","ph"));
+const start=(location.hash||"").slice(1);go(["ph","eau","eye","sos"].includes(start)?start:(["ph","eau","eye","sos"].includes(LS.get("tab","ph"))?LS.get("tab","ph"):"ph"));
 nudge();
 </script></body></html>

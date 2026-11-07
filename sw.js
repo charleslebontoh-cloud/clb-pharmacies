@@ -1,4 +1,4 @@
-const K="clb-v4",A=["./","index.html","manifest.json","icon-192.png","icon-512.png"];
+const K="clb-v5",A=["./","index.html","manifest.json","icon-192.png","icon-512.png"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(K).then(c=>c.addAll(A)));self.skipWaiting();});
 self.addEventListener("activate",e=>e.waitUntil(self.clients.claim()));
 self.addEventListener("fetch",e=>{const u=new URL(e.request.url);if(u.origin!==location.origin)return;
