@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CLB Pharmacies</title>
+<meta name="theme-color" content="#061433">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="CLB Pharmacies">
+<style>
+:root{--bg:#061433;--card:#0f1d4a;--line:#24397a;--ink:#f4f6ff;--muted:#a3b2d9;--gold:#edbb00;--grana:#a50044;--ok:#34c77b}
+*{box-sizing:border-box}body{margin:0;font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:linear-gradient(180deg,#0b2a6b,#061433 40%);color:var(--ink);min-height:100vh}
+header{padding:calc(env(safe-area-inset-top) + 16px) 18px 10px}
+.brand{font-weight:800;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+h1{margin:4px 0 2px;font-size:24px}h1 span{color:#ff4f8b}
+.per{color:var(--muted);font-size:13px}
+.bar{display:flex;gap:8px;padding:8px 18px;position:sticky;top:0;background:rgba(6,20,51,.92);backdrop-filter:blur(6px);z-index:2}
+.bar select,.bar input{flex:1;min-width:0;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit}
+.bar button{background:var(--gold);color:#1b1300;border:0;border-radius:10px;padding:0 14px;font-weight:800;font-size:18px}
+#msg{padding:6px 18px;color:var(--gold);font-weight:600;min-height:1.4em}
+#list{display:grid;gap:10px;padding:6px 18px calc(env(safe-area-inset-bottom) + 24px)}
+.c{background:rgba(16,29,74,.85);border:1px solid var(--line);border-left:4px solid var(--ok);border-radius:14px;padding:13px}
+.top{display:flex;justify-content:space-between;gap:8px}.n{font-weight:800}.d{color:var(--gold);font-weight:800;white-space:nowrap}
+.z{color:var(--muted);font-size:13px}.a{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.a a{padding:9px 13px;border-radius:999px;font-weight:700;font-size:14px;text-decoration:none}
+.call{background:var(--ok);color:#062b17}.map{background:rgba(237,187,0,.15);color:var(--gold);border:1px solid rgba(237,187,0,.5)}
+.h{color:var(--gold);font-weight:800;margin:8px 0 0}.empty{color:var(--muted);text-align:center;padding:24px;border:1px dashed var(--line);border-radius:14px}
+footer{color:var(--muted);font-size:12px;padding:0 18px 30px}footer a{color:var(--gold)}
+</style></head><body>
+<header><div class="brand">CLB Utilities</div><h1>Pharmacies <span>de garde</span></h1><div class="per" id="per">Chargement…</div></header>
+<div class="bar"><select id="zone" aria-label="Commune"></select><button id="loc" aria-label="Me relocaliser">📍</button></div>
+<div class="bar" style="padding-top:0"><input id="q" type="search" placeholder="Rechercher une pharmacie, une ville…" aria-label="Rechercher"></div>
+<div id="msg" role="status"></div>
+<div id="list"></div>
+<footer>Planning officiel UNPPCI, mis à jour chaque samedi. Appelle avant de te déplacer. Urgence : SAMU <a href="tel:185">185</a>.</footer>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const C={"Abobo":[5.423,-4.020],"Abobo PK 18":[5.462,-4.050],"Anyama":[5.494,-4.052],"Alépé":[5.500,-3.663],"Adjamé":[5.360,-4.022],"Williamsville":[5.377,-4.010],"Attécoubé":[5.335,-4.045],"Bingerville":[5.356,-3.885],"Cocody Akouédo / Palmeraie / Abatta":[5.365,-3.935],"Cocody Riviera":[5.357,-3.962],"Cocody Centre":[5.336,-3.990],"Cocody II Plateaux / Angré":[5.380,-3.995],"Koumassi":[5.296,-3.950],"Marcory":[5.301,-3.983],"Plateau":[5.321,-4.020],"Port-Bouët":[5.255,-3.935],"Treichville":[5.300,-4.010],"Yopougon":[5.345,-4.080],"Songon":[5.320,-4.255],
+"Abengourou":[6.730,-3.490],"Aboisso":[5.468,-3.207],"Adiaké":[5.287,-3.304],"Adzopé":[6.107,-3.860],"Agboville":[5.928,-4.213],"Agnibilékro":[7.130,-3.200],"Azaguié":[5.630,-4.082],"Bayota":[5.980,-5.880],"Bondoukou":[8.040,-2.800],"Bonoua":[5.272,-3.596],"Bouaflé":[6.990,-5.745],"Bouaké":[7.690,-5.030],"Dabou":[5.325,-4.377],"Daloa":[6.877,-6.450],"Danané":[7.260,-8.155],"Diégonéfla":[6.150,-5.650],"Divo":[5.837,-5.357],"Duékoué":[6.742,-7.350],"Gagnoa":[6.132,-5.951],"Grand-Bassam":[5.211,-3.739],"Guiglo":[6.543,-7.493],"Hiré":[6.183,-5.290],"Issia":[6.492,-6.586],"Katiola":[8.137,-5.101],"Korhogo":[9.458,-5.630],"Man":[7.412,-7.554],"Odienné":[9.510,-7.565],"San Pedro":[4.748,-6.636],"Sinfra":[6.621,-5.912],"Soubré":[5.785,-6.606],"Tiassalé":[5.898,-4.823],"Yamoussoukro":[6.820,-5.277]};
+const N=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toUpperCase();
+const KEYS=Object.keys(C).sort((a,b)=>b.length-a.length);
+function commune(z){const u=N(z);
+ if(/PK ?18/.test(u))return"Abobo PK 18"; if(/WILLIAMSVILLE/.test(u))return"Williamsville"; if(/ALEPE/.test(u))return"Alépé";
+ if(/AKOUEDO|PALMERAIE EXT|ABATTA/.test(u))return"Cocody Akouédo / Palmeraie / Abatta"; if(/RIVIERA/.test(u))return"Cocody Riviera";
+ if(/II PLATEAU|ANGRE/.test(u))return"Cocody II Plateaux / Angré"; if(/^COCODY/.test(u))return"Cocody Centre";
+ if(/^MARCORY/.test(u))return"Marcory"; if(/^PORT.?BOUET/.test(u))return"Port-Bouët"; if(/^YOPOUGON/.test(u))return"Yopougon"; if(/^SONGON/.test(u))return"Songon";
+ for(const k of KEYS)if(u.startsWith(N(k)))return k; return z;}
+
+const ABJ=["Abobo","Abobo PK 18","Adjamé","Williamsville","Anyama","Attécoubé","Bingerville","Cocody Centre","Cocody II Plateaux / Angré","Cocody Riviera","Cocody Akouédo / Palmeraie / Abatta","Koumassi","Marcory","Plateau","Port-Bouët","Treichville","Yopougon","Songon","Alépé"];
+let data=null,gps=null,cur=null;
+try{cur=localStorage.getItem("zone")||null;}catch(e){}
+const dist=(a,b)=>{const R=6371,r=Math.PI/180,dl=(b[0]-a[0])*r,dg=(b[1]-a[1])*r,x=Math.sin(dl/2)**2+Math.cos(a[0]*r)*Math.cos(b[0]*r)*Math.sin(dg/2)**2;return 2*R*Math.asin(Math.sqrt(x));};
+const fmt=x=>x.toLocaleString("fr-FR",{maximumFractionDigits:1});
+const fmtD=s=>{try{return new Date(s+"T12:00:00").toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});}catch(e){return s;}};
+const telHref=t=>{let d=t.replace(/\D/g,"");if(d.length===10)d="225"+d;return"tel:+"+d;};
+function card(p,km){const tels=p.t.split("/").map(x=>x.trim()).filter(Boolean),map="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(p.n+", "+p.c+", Côte d'Ivoire");
+ return `<div class="c"><div class="top"><div class="n">${esc(p.n.replace(/^PHARMACIE /,"Pharmacie "))}</div>${km!=null?`<div class="d">~${fmt(km)} km</div>`:""}</div><div class="z">${esc(p.z)}</div><div class="a">${tels.map(t=>`<a class="call" href="${telHref(t)}">📞 ${esc(t)}</a>`).join("")}<a class="map" href="${map}" target="_blank" rel="noopener">🧭 Itinéraire</a></div></div>`;}
+function render(){const L=$("list");if(!data)return;const q=N($("q").value.trim());
+ if(q){const it=data.liste.filter(p=>N(p.n+" "+p.z+" "+p.c).includes(q));L.innerHTML=it.length?it.map(p=>card(p,gps&&C[p.c]?dist(gps,C[p.c]):null)).join(""):'<div class="empty">Aucun résultat.</div>';return;}
+ if(gps&&!cur){const byC={};data.liste.forEach(p=>{if(C[p.c])(byC[p.c]=byC[p.c]||[]).push(p);});
+  const cs=Object.keys(byC).map(c=>[c,dist(gps,C[c])]).sort((a,b)=>a[1]-b[1]).filter((x,i)=>i<4||x[1]<5);
+  L.innerHTML=cs.map(([c,km])=>`<div class="h">${esc(c)} · ~${fmt(km)} km</div>`+byC[c].map(p=>card(p,km)).join("")).join("");return;}
+ if(cur){const it=data.liste.filter(p=>p.c===cur);L.innerHTML=it.length?it.map(p=>card(p,gps&&C[cur]?dist(gps,C[cur]):null)).join(""):'<div class="empty">Aucune pharmacie de garde listée ici cette semaine.</div>';return;}
+ L.innerHTML='<div class="empty">Autorise la localisation, ou choisis ta commune.</div>';}
+function fillSel(){const have=new Set(data.liste.map(p=>p.c)),abj=ABJ.filter(c=>have.has(c)),int=[...have].filter(c=>!ABJ.includes(c)).sort((a,b)=>a.localeCompare(b,"fr"));
+ $("zone").innerHTML='<option value="">📍 Autour de moi</option><optgroup label="Abidjan et environs">'+abj.map(c=>`<option>${esc(c)}</option>`).join("")+'</optgroup><optgroup label="Intérieur">'+int.map(c=>`<option>${esc(c)}</option>`).join("")+"</optgroup>";$("zone").value=cur||"";}
+function locate(){if(!navigator.geolocation){$("msg").textContent="Localisation indisponible : choisis ta commune.";return;}
+ $("msg").textContent="📡 Localisation…";
+ navigator.geolocation.getCurrentPosition(p=>{gps=[p.coords.latitude,p.coords.longitude];
+  let best=null,bd=1e9;for(const c in C){const d=dist(gps,C[c]);if(d<bd){bd=d;best=c;}}
+  if(bd>80){$("msg").textContent="Tu es hors de Côte d’Ivoire. En France, compose le 3237.";gps=null;render();return;}
+  cur=null;$("zone").value="";try{localStorage.setItem("zone","");}catch(e){}
+  $("msg").textContent=`📍 Tu es vers ${best}. Les plus proches d’abord :`;render();},
+  e=>{$("msg").textContent=e.code===1?"Localisation refusée : autorise-la dans les réglages du navigateur, ou choisis ta commune.":"Position introuvable : active le GPS ou choisis ta commune.";render();},
+  {enableHighAccuracy:true,timeout:15000,maximumAge:120000});}
+$("loc").onclick=locate;
+$("zone").onchange=e=>{cur=e.target.value||null;try{localStorage.setItem("zone",cur||"");}catch(x){} if(!cur)locate();else{$("msg").textContent="";render();}};
+$("q").oninput=render;
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!cur)locate();});
+fetch("pharmacies.json?"+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(d=>{data={...d,liste:d.liste.map(p=>({...p,c:commune(p.z)}))};
+ const old=new Date().toISOString().slice(0,10)>d.au;
+ $("per").innerHTML=`Semaine du ${esc(fmtD(d.du))} au ${esc(fmtD(d.au))} · ${d.liste.length} pharmacies · 24 h/24`+(old?' · <b style="color:#f7b733">mise à jour en cours</b>':"");
+ fillSel();render();}).catch(()=>{$("per").textContent="Liste indisponible, vérifie ta connexion.";});
+if(!cur)locate();
+if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script></body></html>
