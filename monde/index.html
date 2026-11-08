@@ -227,7 +227,7 @@ nav button.on{color:#fff}nav button.on svg.i{transform:translateY(-1px) scale(1.
 <div id="splash" role="button" tabindex="0">
  <div class="plane">✈️</div>
  <svg class="waves" viewBox="0 0 400 140" preserveAspectRatio="none"><path d="M0 60 Q50 30 100 60 T200 60 T300 60 T400 60 T500 60 V140 H0z" fill="rgba(0,180,198,.55)"/><path d="M0 85 Q50 55 100 85 T200 85 T300 85 T400 85 T500 85 V140 H0z" fill="rgba(0,119,182,.85)"/></svg>
- <div class="c"><img src="icon-512.png" alt=""><div class="t">CLB World</div><div class="q">Culture, voyages, football. Le monde entier, chaque jour.</div><span class="tap">Embarquer <svg class="i"><use href="#i-arrow"/></svg></span><small style="display:block;margin-top:24px;opacity:.85;font-size:11px;font-weight:600">version 7.0.2 · 8 nov. 2026</small></div>
+ <div class="c"><img src="icon-512.png" alt=""><div class="t">CLB World</div><div class="q">Culture, voyages, football. Le monde entier, chaque jour.</div><span class="tap">Embarquer <svg class="i"><use href="#i-arrow"/></svg></span><small style="display:block;margin-top:24px;opacity:.85;font-size:11px;font-weight:600">version 7.1.0 · 8 nov. 2026</small></div>
 </div>
 
 <div id="app">
@@ -522,26 +522,25 @@ const ST=e=>e.competitions[0].status.type.state;
 const SC=t=>t.score&&typeof t.score==="object"?(t.score.displayValue??t.score.value??""):(t.score??"");
 const tname=t=>t.team.shortDisplayName||t.team.displayName||t.team.name||"";
 const lgName=(code,r)=>(LIVE_LG.find(x=>x[0]===code)||[0,(r&&r.leagues&&r.leagues[0]&&r.leagues[0].name)||code])[1];
-async function events(code,a=-10,b=21,fresh){try{if(Date.now()<espnDeadUntil)throw 0;const parts=[];for(let x=a;x<=b;x+=7)parts.push([x,Math.min(b,x+6)]);
- const rs=await Promise.all(parts.map(([x,y])=>{const u=`${ESPN}${code}/scoreboard?limit=200&dates=${range(x,y)}`;return fresh?JX(u+"&_="+Date.now()):CX(u);}));
- const out=[];rs.forEach(r=>(r.events||[]).forEach(e=>out.push({...e,_lg:lgName(code,r),_code:code})));return dedupe(out);}
- catch(e){const t=await tsEvents(code,a,b);if(t){return t;}lastErr=[lastErr,ERRS.length?"secours TSDB bloqué":""].filter(Boolean).join(" · ");return null;}}
-async function evOn(code,ymd){try{const r=await CX(`${ESPN}${code}/scoreboard?dates=${ymd}`);return(r.events||[]).map(e=>({...e,_code:code}));}catch(e){try{const id=TID[code];const r=await CJ(TSDB+"eventspastleague.php?id="+id);return((r&&r.events)||[]).map(x=>tsEv(x,code));}catch(e2){return null;}}}
+/* Source principale : fichier préparé toutes les 5 min par un robot GitHub (données ESPN), même chemin pour tous */
+const RAW="https://raw.githubusercontent.com/charleslebontoh-cloud/clb-pharmacies/foot-data/foot.json";
+let FD=null,FDt=0;
+async function foot(force){if(FD&&!force&&Date.now()-FDt<60000)return FD;try{FD=await J(RAW+"?t="+Math.floor(Date.now()/60000),10000);FDt=Date.now();}catch(e){lastErr="données serveur : "+ename(e);}return FD;}
+const ymdOf=d=>d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate());
+/* Accès direct ESPN (temps réel) : une requête par jour, sans paramètre superflu ; coupé 5 min s'il échoue */
+let directOff=0;
+async function direct(code,ymd){if(Date.now()<directOff)return null;try{const r=await J(`${ESPN}${code}/scoreboard?dates=${ymd}`,7000);return(r.events||[]).map(e=>({...e,_lg:lgName(code),_code:code}));}catch(e){directOff=Date.now()+300000;lastErr="direct "+ename(e);return null;}}
+async function events(code,a=-10,b=21,fresh){const d1=new Date(),d2=new Date();d1.setDate(d1.getDate()+a);d1.setHours(0,0,0,0);d2.setDate(d2.getDate()+b);d2.setHours(23,59,59,999);
+ const f=await foot(fresh);let L=f&&f.events&&f.events[code]?f.events[code].map(e=>({...e,_lg:lgName(code)})).filter(e=>{const t=new Date(e.date);return t>=d1&&t<=d2;}):null;
+ if(fresh&&a<=0&&b>=0){const live=await direct(code,ymdOf(new Date()));if(live){const m=new Map(live.map(e=>[e.id,e]));L=(L||[]).map(e=>m.get(e.id)||e);live.forEach(e=>{if(!L.some(x=>x.id===e.id))L.push(e);});}}
+ return L;}
+async function evOn(code,ymd){const f=await foot();const L=f&&f.events&&f.events[code];const x=L?L.filter(e=>ymdOf(new Date(e.date))===ymd||(e.date||"").slice(0,10).replace(/-/g,"")===ymd):[];if(x.length)return x;return await direct(code,ymd);}
 const dedupe=L=>{const seen=new Set();return L.filter(e=>{const[h]=sides(e),k=(e.date||"").slice(0,10)+(h?h.team.displayName:"")+(e.id||"");if(seen.has(k))return false;seen.add(k);return true;});};
 async function teamEvents(key){const T=TEAMS[key],isT=e=>(e.competitions[0].competitors||[]).some(c=>c.team&&T.re.test(c.team.displayName||c.team.name||"")&&!T.not.test(c.team.displayName||""));
- const codes=["esp.1","uefa.champions","esp.copa_del_rey","esp.super_cup"];let L=[];
- // 1) calendrier officiel de l'équipe (résultats + matchs à venir)
- if(Date.now()>=espnDeadUntil){const urls=[];codes.slice(0,3).forEach(c=>{urls.push([c,`${ESPN}${c}/teams/${T.espn}/schedule`]);urls.push([c,`${ESPN}${c}/teams/${T.espn}/schedule?fixture=true`]);});
-  const rs=await Promise.all(urls.map(([c,u])=>CX(u).then(r=>(r.events||[]).map(e=>({...e,_lg:lgName(c),_code:c}))).catch(()=>[])));L=rs.flat();}
- // 2) matchs du jour en temps réel (score et minute à jour)
- const today=(await Promise.all(codes.slice(0,3).map(c=>events(c,-1,1,true)))).filter(Boolean).flat().filter(isT);
- const tk=e=>{const[h,a]=sides(e);return(h.team.displayName||"")+"|"+(a.team.displayName||"")+"|"+(e.date||"").slice(0,10);};
- const tmap=new Map(today.map(e=>[tk(e),e]));L=L.filter(isT).map(e=>tmap.get(tk(e))||e);today.forEach(e=>{if(!L.some(x=>tk(x)===tk(e)))L.push(e);});
- // 3) secours TheSportsDB
- if(!L.length){try{const[n,p]=await Promise.all([CJ(TSDB+"eventsnext.php?id="+T.ts).catch(()=>null),CJ(TSDB+"eventslast.php?id="+T.ts).catch(()=>null)]);
-  L=[...((n&&n.events)||[]),...((p&&p.results)||[])].map(x=>tsEv(x,"esp.1")).map(e=>({...e,_lg:e.name&&/champions/i.test(e._lg)?"Ligue des champions":e._lg}));}catch(e){}
-  if(!L.length&&!today.length)return null;}
- return dedupe(L);}
+ const f=await foot();let L=f&&f.teams&&f.teams[key]?f.teams[key].map(e=>({...e,_lg:lgName(e._code)})):[];
+ const today=(await Promise.all(["esp.1","uefa.champions","esp.copa_del_rey"].map(c=>events(c,-1,1,true)))).filter(Boolean).flat().filter(isT);
+ const m=new Map(today.map(e=>[e.id,e]));L=L.map(e=>m.get(e.id)||e);today.forEach(e=>{if(!L.some(x=>x.id===e.id))L.push(e);});
+ if(!L.length&&!f)return null;return dedupe(L);}
 const logo=t=>t.team.logo||(t.team.logos&&t.team.logos[0]&&t.team.logos[0].href)||"";
 const sides=e=>{const c=e.competitions[0];return[c.competitors.find(x=>x.homeAway==="home")||c.competitors[0],c.competitors.find(x=>x.homeAway==="away")||c.competitors[1]];};
 function mRow(e){const[h,a]=sides(e),s=e.competitions[0].status.type,d=new Date(e.date);
@@ -585,11 +584,7 @@ async function nextBarca(){const L=await teamEvents("barca"),h=$("homeMatch");
 const TBL=[["esp.1","🇪🇸 Liga"],["eng.1","🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League"],["fra.1","🇫🇷 Ligue 1"],["ita.1","🇮🇹 Serie A"],["ger.1","🇩🇪 Bundesliga"]];let tl="esp.1",tblTimer=null;
 $("tblChips").innerHTML=TBL.map(([k,l])=>`<button class="chip ${k===tl?"on":""}" data-k="${k}">${l}</button>`).join("");
 $("tblChips").onclick=e=>{const b=e.target.closest(".chip");if(!b)return;tl=b.dataset.k;$("tblChips").querySelectorAll(".chip").forEach(c=>c.classList.toggle("on",c===b));renderTable();};
-async function standRows(code){if(Date.now()>=espnDeadUntil){try{const r=await JX(`${ESPN2}${code}/standings?_=${Date.now()}`);const ents=(r.children||[r]).map(c=>(c.standings||{}).entries||[]).flat();
-  if(ents.length)return ents.map(e=>({team:e.team.displayName,short:e.team.shortDisplayName||e.team.displayName,logo:(e.team.logos&&e.team.logos[0]&&e.team.logos[0].href)||"",gp:statv(e,["gamesPlayed","GP"]),w:statv(e,["wins","W"]),d:statv(e,["ties","D"]),l:statv(e,["losses","L"]),gd:statv(e,["pointDifferential","GD"]),pts:statv(e,["points","P"]),rk:statv(e,["rank","R"])}))
-   .sort((a,b)=>(a.rk||99)-(b.rk||99)||b.pts-a.pts||b.gd-a.gd);}catch(e){}}
- const id=TID[code];const y=new Date().getFullYear(),m=new Date().getMonth(),ss=m>=6?y+"-"+(y+1):(y-1)+"-"+y;
- try{const r=await J(TSDB+"lookuptable.php?l="+id+"&s="+ss);return(r.table||[]).map(t=>({team:t.strTeam,short:t.strTeam,logo:t.strBadge?t.strBadge+"/tiny":"",gp:+t.intPlayed,w:+t.intWin,d:+t.intDraw,l:+t.intLoss,gd:+t.intGoalDifference,pts:+t.intPoints,rk:+t.intRank}));}catch(e){return null;}}
+async function standRows(code){const f=await foot(true);const R=f&&f.standings&&f.standings[code];return R&&R.length?R:null;}
 async function renderTable(){const box=$("tbl"),my=tl;if(!box.dataset.init){box.dataset.init=1;box.innerHTML=`<div class="skel"></div><div class="skel"></div><div class="skel"></div>`;}
  const R=await standRows(tl);if(my!==tl)return;
  if(!R||!R.length){box.innerHTML=`<p class="sub" style="margin:0">Classement indisponible pour le moment.</p>`;return;}
@@ -608,12 +603,8 @@ $("tvbox").innerHTML=`
 const fact=n=>{let r=1;for(let i=2;i<=n;i++)r*=i;return r;},pois=(k,l)=>Math.exp(-l)*Math.pow(l,k)/fact(k);
 function model(lh,la){let p1=0,pn=0,p2=0,o25=0,btts=0;for(let i=0;i<=8;i++)for(let j=0;j<=8;j++){const p=pois(i,lh)*pois(j,la);if(i>j)p1+=p;else if(i===j)pn+=p;else p2+=p;if(i+j>=3)o25+=p;if(i>0&&j>0)btts+=p;}const s=p1+pn+p2;return{p1:p1/s,pn:pn/s,p2:p2/s,o25,btts};}
 function statv(en,names){for(const s of en.stats||[]){if(names.includes(s.name)||names.includes(s.abbreviation)||names.includes(s.type))return +s.value;}return NaN;}
-async function table(code){try{if(Date.now()<espnDeadUntil)throw 0;const r=await CX(`${ESPN2}${code}/standings`);const grp=(r.children||[r]).map(c=>(c.standings||{}).entries||[]).flat();const T={};
- grp.forEach(e=>{const gp=statv(e,["gamesPlayed","GP"]),gf=statv(e,["pointsFor","F","goalsFor"]),ga=statv(e,["pointsAgainst","A","goalsAgainst"]);if(gp>0)T[e.team.displayName]={gp,gf:gf/gp,ga:ga/gp};});
- const v=Object.values(T);if(!v.length)throw 0;T._avg=v.reduce((s,x)=>s+x.gf,0)/v.length;return T;}catch(e){return tsTable(code);}}
-async function tsTable(code){const id=TID[code];if(!id)return null;const y=new Date().getFullYear(),m=new Date().getMonth(),ss=m>=6?y+"-"+(y+1):(y-1)+"-"+y;
- try{const r=await CJ(TSDB+"lookuptable.php?l="+id+"&s="+ss);const T={};(r.table||[]).forEach(t=>{const gp=+t.intPlayed;if(gp>0)T[t.strTeam]={gp,gf:+t.intGoalsFor/gp,ga:+t.intGoalsAgainst/gp};});
- const v=Object.values(T);if(!v.length)return null;T._avg=v.reduce((s,x)=>s+x.gf,0)/v.length;return T;}catch(e){ERRS.push("TSDB table "+ename(e));return null;}}
+async function table(code){if(!code)return null;const f=await foot();const R=f&&f.standings&&f.standings[code];if(!R||!R.length)return null;const T={};
+ R.forEach(t=>{if(t.gp>0)T[t.team]={gp:t.gp,gf:t.gf/t.gp,ga:t.ga/t.gp};});const v=Object.values(T);if(!v.length)return null;T._avg=v.reduce((s,x)=>s+x.gf,0)/v.length;return T;}
 /* apprentissage : facteur de correction par type de pari, calculé sur le bilan */
 const HIST=LS.get("hist",{});
 function calib(){const c={};Object.values(HIST).forEach(d=>d.coupons.forEach(cp=>cp.picks.forEach(p=>{if(p.res==null)return;const k=p.mk;c[k]=c[k]||{n:0,hit:0,sp:0};c[k].n++;c[k].hit+=p.res?1:0;c[k].sp+=p.p;})));
@@ -630,7 +621,7 @@ async function renderBets(){renderBudget();const box=$("coupons");const{f}=calib
  const big={};res.forEach(r=>{if(r.tb)Object.assign(big,r.tb);});big._avg=1.4;
  const picks=[];const now=Date.now();
  for(const{c,n,ev,tb}of res){const TB=tb||big;for(const e of ev){if(ST(e)!=="pre"||new Date(e.date)-now<15*60e3)continue;const[h,a]=sides(e),H=TB[h.team.displayName]||big[h.team.displayName],A=TB[a.team.displayName]||big[a.team.displayName];if(!H||!A)continue;
-  const avg=TB._avg||1.4,lh=Math.max(.2,(H.gf*A.ga/avg))*1.12,la=Math.max(.2,(A.gf*H.ga/avg))*.9,m=model(lh,la),hn=tname(h),an=tname(a),F=k=>p=>Math.min(.97,p*(f[k]||1));
+  const avg=TB._avg||1.4,lh=Math.max(.2,(H.gf*A.ga/avg))*1.12,la=Math.max(.2,(A.gf*H.ga/avg))*.9,m=model(lh,la),hn=tname(h),an=tname(a),F=k=>p=>Math.min(.9,(.85*p+.15*.5)*(f[k]||1));
   const opts=[["1",`Victoire ${hn}`,F("1")(m.p1)],["2",`Victoire ${an}`,F("2")(m.p2)],["1N",`${hn} ou nul`,F("1N")(m.p1+m.pn)],["N2",`${an} ou nul`,F("N2")(m.p2+m.pn)],["+2,5","Plus de 2,5 buts",F("+2,5")(m.o25)],["-2,5","Moins de 2,5 buts",F("-2,5")(1-m.o25)],["BTTS","Les deux équipes marquent",F("BTTS")(m.btts)]];
   picks.push({e,n,c,m,h,a,hn,an,opts});}}
  if(picks.length<2){box.innerHTML=`<div class="card"><p class="sub" style="margin:0 0 10px">Pas assez de matchs à venir pour composer des combinés (moins de 2 matchs dans les 3 prochains jours avec des statistiques disponibles).</p><p class="note">${lastErr?"Détail : "+esc(lastErr):""}</p><button class="btn ghost sm" onclick="renderBets()">${I("refresh")} Réessayer</button></div>`;return;}
