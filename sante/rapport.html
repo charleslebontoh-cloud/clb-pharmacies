@@ -13,10 +13,12 @@ h2{font-size:17px;margin:22px 0 10px}.bars{background:#fff;border-radius:20px;pa
 const NS="clb-health-cl8x",G=k=>fetch(`https://abacus.jasoncameron.dev/get/${NS}/${k}`).then(r=>r.ok?r.json():{value:0}).then(j=>j.value||0).catch(()=>0);
 const p=n=>String(n).padStart(2,"0"),dk=d=>d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate());
 (async()=>{document.getElementById("maj").textContent=new Date().toLocaleString("fr-FR");
- const K=[["appareils","📱 Appareils équipés"],["ouvertures","🚪 Ouvertures"],["actifs-total","👥 Jours-utilisateurs"],["partage","📤 Partages"],["med-ajout","💊 Traitements ajoutés"],["med-pris","✅ Prises cochées"],["eau-ajout","💧 Boissons notées"],["effets","🤒 Effets analysés"]];
+ const K=[["appareils","📱 Appareils équipés"],["ouvertures","🚪 Ouvertures"],["actifs-total","👥 Jours-utilisateurs"],["partage","📤 Partages"],["med-ajout","💊 Traitements ajoutés"],["med-pris","✅ Prises cochées"],["eau-ajout","💧 Boissons notées"],["effets","🤒 Effets analysés"],["med-claude","🤖 Analyses Claude"],["traitement-termine","🏁 Traitements terminés"]];
  const v=await Promise.all(K.map(([k])=>G(k)));document.getElementById("kpi").innerHTML=K.map(([k,l],i)=>`<div class="k"><b>${v[i].toLocaleString("fr-FR")}</b><small>${l}</small></div>`).join("");
  const D=[...Array(14).keys()].map(i=>{const d=new Date();d.setDate(d.getDate()-13+i);return d;});const dv=await Promise.all(D.map(d=>G("actifs-"+dk(d))));const mx=Math.max(1,...dv);
  document.getElementById("days").innerHTML=D.map((d,i)=>`<div class="b"><span>${d.toLocaleDateString("fr-FR",{weekday:"short",day:"numeric"})}</span><i style="width:${dv[i]*100/mx}%"></i><span>${dv[i]}</span></div>`).join("");
  const T=[["moi","Moi"],["eau","Eau"],["med","Médocs"],["ph","Pharmacies"],["sos","Urgence"],["eye","Plus"]];const tv=await Promise.all(T.map(([t])=>G("onglet-"+t)));const tm=Math.max(1,...tv);
- document.getElementById("tabs").innerHTML=T.map(([t,l],i)=>`<div class="b"><span>${l}</span><i style="width:${tv[i]*100/tm}%"></i><span>${tv[i]}</span></div>`).join("");})();
+ document.getElementById("tabs").innerHTML=T.map(([t,l],i)=>`<div class="b"><span>${l}</span><i style="width:${tv[i]*100/tm}%"></i><span>${tv[i]}</span></div>`).join("");
+ const RS=[["gueri","✅ Guéri"],["mieux","🙂 Amélioré"],["fini","📦 Terminé"],["aucun","😐 Pas d'effet"],["pire","😟 Aggravation"],["fx","🤒 Effets indésirables"],["arret","⏹️ Arrêté"]];const rv=await Promise.all(RS.map(([r])=>G("fin-"+r)));const rm=Math.max(1,...rv);
+ document.getElementById("tabs").insertAdjacentHTML("afterend","<h2>🏁 Résultats des traitements (anonymes)</h2><div class=\"bars\">"+RS.map(([r,l],i)=>`<div class="b"><span>${l}</span><i style="width:${rv[i]*100/rm}%"></i><span>${rv[i]}</span></div>`).join("")+"</div>");})();
 </script></body></html>
