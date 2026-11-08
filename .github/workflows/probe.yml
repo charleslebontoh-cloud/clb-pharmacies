@@ -8,15 +8,6 @@ jobs:
         run: |
           set +e
           AO(){ curl -s -m 30 "https://api.allorigins.win/raw?url=$(python3 -c "import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1],safe=''))" "$1")"; }
-          AO "https://www.parfumo.com/s_perfumes_x.php?in=1&filter=sauvage+dior" > /tmp/s
-          python3 - <<'P'
-          s=open('/tmp/s',encoding='utf-8',errors='ignore').read()
-          i=s.find('a28d94-sauvage-eau-de-toilette-dior');print(s[i-1500:i+1800])
-          P
-          for k in 1 2 3; do AO "https://www.parfumo.com/Perfumes/Dior/Sauvage_Eau_de_Toilette" > /tmp/b; wc -c /tmp/b; grep -c "og:image" /tmp/b && break; sleep 3; done
-          python3 - <<'P'
-          import re
-          s=open('/tmp/b',encoding='utf-8',errors='ignore').read()
-          for p in ['og:image','og:description','name="description"','pyramid','notes_list','Top Notes','Head notes','accord']:
-              i=s.find(p);print('##',p,i, re.sub(r'\s+',' ',s[max(0,i-200):i+500]) if i>=0 else '')
-          P
+          for k in 1 2 3 4; do AO "https://www.parfumo.com/s_perfumes_x.php?in=1&filter=sauvage+dior" > /tmp/s; [ $(wc -c </tmp/s) -gt 5000 ] && break; sleep 3; done
+          printf 'import re\ns=open("/tmp/s",encoding="utf-8",errors="ignore").read()\ni=s.find("a28d94-sauvage-eau-de-toilette-dior")\nprint(re.sub(r"\\s+"," ",s[i-1200:i+1600]))\n' > /tmp/x.py; python3 /tmp/x.py
+          echo; echo "== dur"; for k in 1 2 3 4 5; do /usr/bin/time -f "%e s" bash -c 'curl -s -m 30 -o /tmp/t "https://api.allorigins.win/raw?url=https%3A%2F%2Fwww.parfumo.com%2Fs_perfumes_x.php%3Fin%3D1%26filter%3Dkhamrah"'; wc -c </tmp/t; done
