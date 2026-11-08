@@ -1,0 +1,107 @@
+"""Construit reseaux/<nom>.json à partir du PDF du réseau de soins (texte pdftotext -layout), puis géocode (Photon/OSM)."""
+import re, json, os, sys, time, unicodedata, urllib.request, urllib.parse
+COMMUNES = ["ABOBO","ADJAME","ANYAMA","ATTECOUBE","BINGERVILLE","COCODY","KOUMASSI","MARCORY","PLATEAU","PORT-BOUET","PORT BOUET","TREICHVILLE","YOPOUGON","SONGON","BASSAM","GRAND-BASSAM","DABOU"]
+def norm(s): return unicodedata.normalize("NFD", s).encode("ascii","ignore").decode().upper().strip()
+def cat_of(h):
+    h = norm(h)
+    if "PHARMA" in h: return "pharmacie"
+    if "DENTAIRE" in h or "DENTIST" in h: return "dentiste"
+    if "OPTI" in h: return "opticien"
+    if "LABORATOIRE" in h or "IMAGERIE" in h or "IMMAGERIE" in h or "RADIO" in h: return "laboratoire"
+    if "HOPITAL" in h or "HOSPITALIER" in h or "CHR" == h or "CHU" in h: return "hopital"
+    if "CLINIQUE" in h or "POLYCLINIQUE" in h or "CENTRE MEDICAL" in h or "CABINET MEDICAL" in h or "INFIRMERIE" in h: return "clinique"
+    return None
+ENTRY = re.compile(r"^\s{0,4}(\d{1,3})\s{2,}(\S.*?)(?:\s{2,}(\S.*?))?(?:\s{2,}((?:\+?\d[\d .,]{6,}\d)(?:\s*/\s*[\d .,]+)?))?\s*$")
+def parse(txt):
+    out=[]; sec=None; ville=None; zone=None; cat=None; commune=None
+    for raw in txt.splitlines():
+        line = raw.rstrip()
+        if not line.strip(): continue
+        s = line.strip(); n = norm(s)
+        if "***" in s:
+            sec = "pharma" if "PHARMA" in n else "soins"; ville = "ABIDJAN" if "ABIDJAN" in n else None; zone=None; cat=None; commune=None
+            if "INTERIEUR" in n: ville=None
+            continue
+        if sec is None: continue
+        if n.startswith("RESEAU DE SOINS") or re.fullmatch(r"\d{1,3}", s) or n=="INTERIEUR DU PAYS": 
+            if n=="INTERIEUR DU PAYS": ville=None
+            continue
+        m = ENTRY.match(line)
+        if m and len(line) - len(line.lstrip()) < 6:
+            nom = re.sub(r"\s+"," ",m.group(2)).strip(); adr=(m.group(3) or "").strip(); tel=(m.group(4) or "").strip()
+            mt=re.search(r"\s{2,}((?:\d{2}[ .,]?){4}\d{2})$", adr)
+            if not tel and mt: tel, adr = mt.group(1), adr[:mt.start()].strip()
+            if not tel and re.fullmatch(r"[\d .,]{8,}", adr): tel, adr = adr, ""
+            c = "pharmacie" if sec=="pharma" else (cat or cat_of(nom) or "clinique")
+            if c!="pharmacie" and cat_of(nom)=="hopital": c="hopital"
+            out.append({"nom":nom.title().replace("D'","d'").replace(" De "," de ").replace(" Du "," du ").replace(" La "," la ").replace(" Des "," des "),"cat":c,"adr":adr.title(),"tel":re.sub(r"[ .,]","",tel),"ville":(ville or "").title(),"commune":(commune or "").title(),"zone":(zone or "").title()})
+            continue
+        if len(line) - len(line.lstrip()) >= 10 and not re.search(r"\d{6,}", s):
+            c = cat_of(s)
+            if c and not (sec=="pharma"): cat = c; continue
+            if c and sec=="pharma": continue
+            # lieu
+            if ville and norm(ville)=="ABIDJAN":
+                if n in COMMUNES or n.replace("-"," ") in COMMUNES: commune=s; zone=None; cat=None; continue
+                zone = s; cat=None if sec=="soins" else cat; continue
+            ville = s; zone=None; cat=None
+    return out
+def tidy(e):
+    # Abidjan : la "zone" peut être commune ou sous-zone ; on garde un libellé lisible
+    e["lieu"] = ", ".join(dict.fromkeys([x for x in [e["adr"], e["zone"], e["commune"], e["ville"]] if x]))
+    return e
+UA={"User-Agent":"CLB-Health/1.0 (github.com/charleslebontoh-cloud)"}
+def photon(q, extra=""):
+    u="https://photon.komoot.io/api/?q="+urllib.parse.quote(q)+"&limit=5&lang=fr&bbox=-8.7,4.2,-2.4,10.8"+extra
+    for k in range(3):
+        try:
+            with urllib.request.urlopen(urllib.request.Request(u,headers=UA),timeout=20) as r: return json.load(r).get("features",[])
+        except Exception: time.sleep(2+k*3)
+    return []
+def toks(s): return set(w for w in re.findall(r"[A-Z0-9]{3,}", norm(s)) if w not in {"PHARMACIE","CLINIQUE","MEDICALE","CENTRE","MEDICAL","CABINET","DENTAIRE","HOPITAL","GENERAL","POLYCLINIQUE","OPTIQUE","LABORATOIRE","DES","DES","LES","SAINTE","SAINT"})
+def km(a,b,c,d):
+    import math; r=math.pi/180; x=math.sin((c-a)*r/2)**2+math.cos(a*r)*math.cos(c*r)*math.sin((d-b)*r/2)**2; return 12742*math.asin(math.sqrt(x))
+def geocode(items, cache):
+    centers={}
+    def center(place):
+        k="C|"+place
+        if k in cache: return cache[k]
+        f=photon(place+" Côte d'Ivoire"); time.sleep(.4)
+        cache[k]=[f[0]["geometry"]["coordinates"][1],f[0]["geometry"]["coordinates"][0]] if f else None; return cache[k]
+    for i,e in enumerate(items):
+        key=e["cat"]+"|"+e["nom"]+"|"+e["lieu"]
+        if key in cache: e.update(cache[key]); continue
+        ref = (center(e["zone"]+" "+(e["commune"] or "")+" Abidjan") if e["ville"].upper()=="ABIDJAN" and e["zone"] else None) or (center(e["commune"]+" Abidjan") if e["commune"] else None) or center(e["ville"] or "Abidjan")
+        res=None; T=toks(e["nom"])
+        tags="&osm_tag=amenity&osm_tag=healthcare&osm_tag=shop"
+        for f in photon(e["nom"]+" "+(e["ville"] or ""), tags)+photon(e["nom"]):
+            p=f["properties"]; lat,lon=f["geometry"]["coordinates"][1],f["geometry"]["coordinates"][0]
+            if p.get("countrycode")!="CI": continue
+            if T and not (T & toks(p.get("name",""))): continue
+            if ref and km(ref[0],ref[1],lat,lon)>25: continue
+            res={"lat":round(lat,6),"lon":round(lon,6),"prec":"exacte"}; break
+        time.sleep(.5)
+        if not res and e["adr"]:
+            f=photon(e["adr"]+" "+(e["commune"] or e["ville"] or "")); time.sleep(.4)
+            f=[x for x in f if not ref or km(ref[0],ref[1],x["geometry"]["coordinates"][1],x["geometry"]["coordinates"][0])<15]
+            if f: res={"lat":round(f[0]["geometry"]["coordinates"][1],6),"lon":round(f[0]["geometry"]["coordinates"][0],6),"prec":"quartier"}
+        if not res and ref: res={"lat":ref[0],"lon":ref[1],"prec":"ville"}
+        res=res or {}; cache[key]=res; e.update(res)
+        if i%25==0: print(i,len(items),e["nom"],res.get("prec"),flush=True)
+    return items
+if __name__=="__main__":
+    src=sys.argv[1] if len(sys.argv)>1 else "reseaux/raw/vitalis-full.txt"
+    items=[tidy(e) for e in parse(open(src,encoding="utf-8").read())]
+    # dédoublonne
+    seen=set(); U=[]
+    for e in items:
+        k=(e["cat"],norm(e["nom"]),norm(e["lieu"]))
+        if k in seen: continue
+        seen.add(k); U.append(e)
+    if "--nogeo" in sys.argv:
+        from collections import Counter; print(len(U), Counter(e["cat"] for e in U)); [print(e) for e in U[:5]+U[600:605]+U[-5:]]; sys.exit()
+    cp="reseaux/geocache.json"; cache=json.load(open(cp)) if os.path.exists(cp) else {}
+    try: geocode(U, cache)
+    finally: json.dump(cache, open(cp,"w"), ensure_ascii=False)
+    from collections import Counter; print(Counter(e.get("prec") for e in U))
+    json.dump({"nom":"Vitalis Santé","source":"https://services.vitalis-ci.com/reseaudesoin/PRESENTATION.pdf","maj":time.strftime("%Y-%m-%d"),"lieux":[{k:v for k,v in e.items() if k!="lieu"} for e in U]}, open("reseaux/vitalis.json","w"), ensure_ascii=False, separators=(",",":"))
