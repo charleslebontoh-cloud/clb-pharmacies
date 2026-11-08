@@ -149,3 +149,38 @@ const QZ=[
 ["cin","Quel instrument est associé à la musique traditionnelle mandingue ?",["La kora","Le balafon seulement","La cornemuse","Le sitar"],0,"La kora est une harpe-luth à 21 cordes (le balafon est aussi mandingue)."],
 ["cin","Quel film d'animation met en scène le lion Simba ?",["Madagascar","Le Roi lion","Zootopie","Kung Fu Panda"],1,"Le Roi lion, Disney, 1994."]
 ];
+
+QZ.push(
+["his","Qui était le premier empereur romain ?",["Jules César","Auguste","Néron","Constantin"],1,"Octave prend le titre d'Auguste en 27 av. J.-C. ; Jules César n'a jamais été empereur."],
+["his","En quelle année Christophe Colomb atteint-il les Amériques ?",["1453","1492","1515","1520"],1,"Il débarque aux Bahamas le 12 octobre 1492."],
+["his","Quelle reine a régné sur l'Égypte et s'est alliée à Marc Antoine ?",["Néfertiti","Cléopâtre VII","Hatchepsout","Nefertari"],1,"Cléopâtre VII, dernière souveraine de la dynastie des Ptolémées."],
+["his","Quel mur sépara Berlin de 1961 à 1989 ?",["Mur d'Hadrien","Mur de Berlin","Mur de l'Atlantique","Grande Muraille"],1,"Construit par la RDA en août 1961."],
+["geo","Quelle est la capitale du Japon ?",["Osaka","Kyoto","Tokyo","Hiroshima"],2,"Tokyo est la capitale depuis 1868."],
+["geo","Quel pays a la forme d'une botte ?",["Grèce","Italie","Portugal","Croatie"],1,"La péninsule italienne ressemble à une botte."],
+["geo","Quelle ville est surnommée « la Grosse Pomme » ?",["Chicago","Los Angeles","New York","Boston"],2,"« The Big Apple » désigne New York."],
+["geo","Quelle est la capitale du Ghana ?",["Kumasi","Accra","Lomé","Tamale"],1,"Accra, sur le golfe de Guinée."],
+["sci","Combien de planètes compte le système solaire ?",["7","8","9","10"],1,"Huit depuis que Pluton a été reclassée planète naine en 2006."],
+["sci","Quel est le symbole chimique de l'or ?",["Or","Ag","Au","Go"],2,"Au, du latin aurum."],
+["sci","Quel est l'organe le plus grand du corps humain ?",["Le foie","La peau","Les poumons","Le cerveau"],1,"La peau couvre environ 2 m² chez l'adulte."],
+["sci","À quelle température l'eau bout-elle au niveau de la mer ?",["90 °C","100 °C","110 °C","120 °C"],1,"100 °C à la pression atmosphérique normale."],
+["art","Qui a composé « Les Quatre Saisons » ?",["Bach","Vivaldi","Mozart","Haendel"],1,"Antonio Vivaldi, vers 1720."],
+["art","Quel peintre s'est coupé une partie de l'oreille ?",["Monet","Van Gogh","Gauguin","Cézanne"],1,"Vincent van Gogh, en 1888 à Arles."],
+["art","Qui a écrit « Roméo et Juliette » ?",["Molière","Shakespeare","Racine","Goethe"],1,"William Shakespeare, vers 1597."],
+["art","Quel écrivain a créé le détective Sherlock Holmes ?",["Agatha Christie","Arthur Conan Doyle","Edgar Allan Poe","Georges Simenon"],1,"Arthur Conan Doyle, à partir de 1887."],
+["eco","Que signifie l'abréviation « TVA » ?",["Taxe sur la valeur ajoutée","Taux variable annuel","Tarif de vente agréé","Taxe variable d'achat"],0,"Impôt indirect payé par le consommateur final."],
+["eco","Quel est le taux de TVA normal en Côte d'Ivoire ?",["10 %","15 %","18 %","20 %"],2,"Le taux normal est de 18 %."],
+["eco","Qu'est-ce qu'une action en bourse ?",["Un prêt à l'État","Une part du capital d'une société","Un compte d'épargne","Une assurance"],1,"Elle donne droit à des dividendes et au vote en assemblée."],
+["eco","Quelle crise financière mondiale a éclaté en 2008 ?",["Crise des subprimes","Krach de 1929","Bulle Internet","Crise de la dette grecque"],0,"Partie des crédits immobiliers à risque aux États-Unis."],
+["afr","Quelle est la capitale du Nigeria ?",["Lagos","Abuja","Kano","Ibadan"],1,"Abuja a remplacé Lagos en 1991."],
+["afr","Quel ivoirien a remporté le Ballon d'or africain en 2006 et 2009 ?",["Yaya Touré","Didier Drogba","Kolo Touré","Emmanuel Eboué"],1,"Didier Drogba ; Yaya Touré l'a gagné quatre fois de suite (2011-2014)."],
+["afr","Quel plat ivoirien est fait de semoule de manioc ?",["Foutou","Attiéké","Garba seul","Placali"],1,"L'attiéké accompagne souvent le poisson braisé ; le garba = attiéké + thon frit."],
+["afr","Dans quel pays se trouve la ville de Zanzibar ?",["Kenya","Tanzanie","Mozambique","Madagascar"],1,"L'archipel de Zanzibar est semi-autonome au sein de la Tanzanie."],
+["spo","Combien de joueurs compte une équipe de basket sur le terrain ?",["4","5","6","7"],1,"Cinq joueurs par équipe."],
+["spo","Quel joueur est surnommé « CR7 » ?",["Cristiano Ronaldo","Carlos Roa","Clarence Seedorf","Christian Vieri"],0,"Cristiano Ronaldo, qui portait le numéro 7."],
+["spo","Dans quel pays se déroule le Tour de France ?",["Belgique","France","Italie","Espagne"],1,"Avec parfois des étapes à l'étranger, mais en France principalement."],
+["spo","Quel club a pour surnom « les Merengues » ?",["Atlético de Madrid","Real Madrid","Valence","Séville"],1,"Le Real Madrid, en référence à son maillot blanc."],
+["cin","Quel film a popularisé la réplique « Je suis ton père » ?",["Star Wars","Matrix","Le Parrain","Avatar"],0,"Star Wars : L'Empire contre-attaque (1980)."],
+["cin","Quel rappeur américain a sorti « Lose Yourself » ?",["Jay-Z","Eminem","Drake","50 Cent"],1,"Eminem, pour le film 8 Mile (2002)."],
+["cin","De quel instrument jouait Manu Dibango, auteur de « Soul Makossa » ?",["Guitare","Saxophone","Piano","Batterie"],1,"Le Camerounais Manu Dibango était saxophoniste ; « Soul Makossa » date de 1972."],
+["cin","Quelle plateforme a produit la série « La Casa de Papel » à l'international ?",["Netflix","Disney+","Amazon","HBO"],0,"Diffusée d'abord sur Antena 3, puis reprise et produite par Netflix."]
+);
