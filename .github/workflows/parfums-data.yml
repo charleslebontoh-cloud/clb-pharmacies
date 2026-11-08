@@ -15,7 +15,6 @@ jobs:
           echo "== OBF"; curl -s -D - -o /tmp/o.json -H "Origin: https://x.github.io" "https://world.openbeautyfacts.org/cgi/search.pl?search_terms=dior+sauvage&search_simple=1&json=1&page_size=3&fields=product_name,brands,image_front_url,code" | grep -i "access-control\|HTTP/"; head -c 800 /tmp/o.json
           echo; echo "== wiki"; curl -s "https://en.wikipedia.org/api/rest_v1/page/summary/Sauvage_(fragrance)" | head -c 300
           if [ "${{ inputs.step }}" = "build" ]; then python3 tools/parfums_db.py /tmp/p.csv; fi
-          if [ "${{ inputs.step }}" = "probe" ]; then grep -iE "^[^,]*,(Sauvage|Aventus|Bleu de Chanel[^,]*|1 Million|Baccarat Rouge 540|Le Male|Acqua di Giò[^,]*|Invictus|Fahrenheit|Terre d.Herm[^,]*)," /tmp/p.csv | cut -c1-260; fi
       - run: |
           git config user.name clb-bot; git config user.email bot@users.noreply.github.com
           git add parfums; git commit -m "parfums: base de données" || exit 0

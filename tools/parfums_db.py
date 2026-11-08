@@ -11,7 +11,9 @@ keep = []
 for r in rows:
     c = f(r["Rating_Count"]) or 0
     acc = L(r["Main_Accords"])
-    if c < 25 or not acc: continue
+    has_notes = any(L(r[k]) for k in ("Top_Notes","Middle_Notes","Base_Notes"))
+    if not acc or (c < 25 and not has_notes): continue
+    if not has_notes and c < 25: continue
     keep.append(r)
 keep.sort(key=lambda r: -(f(r["Rating_Count"]) or 0))
 AC = collections.Counter(a for r in keep for a in L(r["Main_Accords"]))
@@ -31,5 +33,5 @@ for r in keep:
 json.dump({"src": "Parfumo via TidyTuesday 2024-12-10", "accords": acc_list, "notes": note_list,
            "cols": ["nom","marque","annee","conc","note","votes","accords","tete","coeur","fond","url"], "p": out},
           open("parfums/db.json", "w"), ensure_ascii=False, separators=(",", ":"))
-print("kept", len(out)); print("accords", AC.most_common(40)); print("concs", collections.Counter(r["Concentration"] for r in keep).most_common(12))
+print("kept", len(out), os.path.getsize("parfums/db.json")); print("accords", AC.most_common(40)); print("concs", collections.Counter(r["Concentration"] for r in keep).most_common(12))
 print([o for o in out if "Sauvage" in o[0]][:2])
