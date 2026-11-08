@@ -149,7 +149,7 @@ body.quiz nav{transform:translateY(160%)}
 .gmsg{color:#B9CBC2;text-align:center;font-size:13px;margin-top:10px;min-height:1.2em}
 .invite{background:transparent;color:var(--gold2);border:1px solid rgba(201,162,39,.6);box-shadow:none;font-size:15px}
 </style></head><body>
-<div id="splash" role="button" tabindex="0"><div><img src="icon-512.png" alt=""><div class="t">CLB <em>Lexicon</em></div><div class="q">« Le mot juste, au bon moment. »</div><span class="tap">Ouvrir le lexique</span><small style="display:block;margin-top:26px;color:#6f8b7f;font-size:11px">version 4 · 8 nov. 2026</small></div></div>
+<div id="splash" role="button" tabindex="0"><div><img src="icon-512.png" alt=""><div class="t">CLB <em>Lexicon</em></div><div class="q">« Le mot juste, au bon moment. »</div><span class="tap">Ouvrir le lexique</span><small style="display:block;margin-top:26px;color:#6f8b7f;font-size:11px">version 5 · 8 nov. 2026</small></div></div>
 <div class="wrap">
 
 <section class="view" id="v-home">
@@ -300,12 +300,15 @@ document.addEventListener("keydown",e=>{if(!$("q-in")||!document.getElementById(
 /* ---------- quiz ---------- */
 let Q=null;
 const KIND={dictee:"Dictée",graphie:"Bonne graphie",def:"Définition → mot",sens:"Mot → sens",syn:"Synonymes",paro:"Mots confondus",fc:"Révision"};
+const SL=x=>x.s?x.s.split(",").map(t=>N(t.trim())):[];
+const near=(x,y)=>{const a=SL(x),b=SL(y);return a.includes(N(y.w))||b.includes(N(x.w))||a.some(t=>b.includes(t));};
+const DSKIP=["pallier","quelquefois","trafic","quatre-vingts"];/* homophones : impossibles à distinguer à l'oral */
 function build(k){const n=10;
  if(k==="graphie")return shuffle(ORTHO).slice(0,n).map(o=>({k:"o:"+o[0],p:`<div class="qprompt">Quelle est la bonne orthographe ?</div><div class="qhint">Un seul choix est juste.</div>`,o:shuffle([o[0],...o[1]]),a:o[0],x:o[2],serif:1}));
- if(k==="dictee")return shuffle([...ORTHO.map(o=>({w:o[0],x:o[2]})),...W.filter(w=>!w.w.includes(" ")).map(w=>({w:w.w,x:w.d}))]).slice(0,n).map(o=>({k:"d:"+o.w,dict:o.w,x:o.x}));
- if(k==="def")return shuffle(W).slice(0,n).map(x=>({k:"w:"+x.w,p:`<div class="qprompt">${esc(x.d)}</div><div class="qhint">${esc(x.n)} · ${esc(x.t)}</div>`,o:shuffle([x.w,...shuffle(W.filter(y=>y.w!==x.w&&y.n===x.n).concat(W.filter(y=>y.w!==x.w))).filter((v,i,a)=>a.indexOf(v)===i).slice(0,3).map(y=>y.w)]),a:x.w,x:x.e,serif:1}));
- if(k==="sens")return shuffle(W).slice(0,n).map(x=>({k:"w:"+x.w,p:`<div class="qprompt">Que signifie <span class="gap">${esc(x.w)}</span> ?</div>`,o:shuffle([x.d,...shuffle(W.filter(y=>y.w!==x.w)).slice(0,3).map(y=>y.d)]),a:x.d,x:x.e}));
- if(k==="syn")return shuffle(W.filter(x=>x.s)).slice(0,n).map(x=>{const s=x.s.split(",")[0].trim();return {k:"w:"+x.w,p:`<div class="qprompt">Quel est le synonyme de <span class="gap">${esc(x.w)}</span> ?</div>`,o:shuffle([s,...shuffle(W.filter(y=>y.w!==x.w&&y.s)).slice(0,3).map(y=>y.s.split(",")[0].trim())]),a:s,x:x.d};});
+ if(k==="dictee")return shuffle([...ORTHO.filter(o=>!DSKIP.includes(o[0])).map(o=>({w:o[0],x:o[2],alt:o[3]})),...W.filter(w=>!w.w.includes(" ")).map(w=>({w:w.w,x:w.d}))]).slice(0,n).map(o=>({k:"d:"+o.w,dict:o.w,alt:o.alt||[],x:o.x}));
+ if(k==="def")return shuffle(W).slice(0,n).map(x=>({k:"w:"+x.w,p:`<div class="qprompt">${esc(x.d)}</div><div class="qhint">${esc(x.n)} · ${esc(x.t)}</div>`,o:shuffle([x.w,...shuffle(W.filter(y=>y.w!==x.w&&y.n===x.n&&!near(x,y))).concat(shuffle(W.filter(y=>y.w!==x.w&&y.n!==x.n&&!near(x,y)))).slice(0,3).map(y=>y.w)]),a:x.w,x:x.e,serif:1}));
+ if(k==="sens")return shuffle(W).slice(0,n).map(x=>({k:"w:"+x.w,p:`<div class="qprompt">Que signifie <span class="gap">${esc(x.w)}</span> ?</div>`,o:shuffle([x.d,...shuffle(W.filter(y=>y.w!==x.w&&!near(x,y))).slice(0,3).map(y=>y.d)]),a:x.d,x:x.e}));
+ if(k==="syn")return shuffle(W.filter(x=>x.s)).slice(0,n).map(x=>{const s=x.s.split(",")[0].trim();const xs=SL(x),ds=[];shuffle(W.filter(y=>y.w!==x.w&&y.s&&!near(x,y))).forEach(y=>{const d=y.s.split(",")[0].trim();if(ds.length<3&&!xs.includes(N(d))&&!ds.includes(d)&&d!==s)ds.push(d);});return {k:"w:"+x.w,p:`<div class="qprompt">Quel est le synonyme de <span class="gap">${esc(x.w)}</span> ?</div>`,o:shuffle([s,...ds]),a:s,x:x.d};});
  if(k==="paro")return shuffle(PARO).slice(0,n).map(p=>({k:"p:"+p[0],p:`<div class="qprompt">${esc(p[0]).replace("…",'<span class="gap">…</span>')}</div>`,o:shuffle(p[1]),a:p[1][p[2]],x:p[3],serif:1}));
  return [];}
 function start(k,items){Q={k,items:items||build(k),i:0,ok:0};stopQ=false;$("q-snd").textContent=S.snd?"🔊":"🔇";go("quiz");show();}
@@ -319,7 +322,7 @@ $("q-ans").addEventListener("click",e=>{const b=e.target.closest(".opt");if(!b||
  document.querySelectorAll(".opt").forEach(o=>{o.disabled=true;if(it.o[+o.dataset.i]===it.a)o.classList.add("good");});if(!good)b.classList.add("bad");
  result(good,good?"Exact !":"Réponse : "+it.a,it.x,b);});
 function check(v){const it=Q.items[Q.i],inp=$("q-in");if(!inp||inp.dataset.done)return;if(!v.trim())return;const a=it.dict.trim(),u=v.trim();let good=u===a,msg;
- if(good)msg="Parfait, sans faute !";else if(u.toLowerCase()===a.toLowerCase()){good=true;msg="Juste (attention aux majuscules).";}else if(N(u)===N(a))msg="Presque ! Attention aux accents : "+a;else msg="Il fallait écrire : "+a;
+ if(good)msg="Parfait, sans faute !";else if((it.alt||[]).includes(u)){good=true;msg="Juste (orthographe rectifiée). Graphie traditionnelle : "+a;}else if(u.toLowerCase()===a.toLowerCase()){good=true;msg="Juste (attention aux majuscules).";}else if(N(u)===N(a))msg="Presque ! Attention aux accents : "+a;else msg="Il fallait écrire : "+a;
  inp.dataset.done=1;inp.classList.add(good?"good":"bad");if(!good)$("q-txt").innerHTML=`<s style="opacity:.6">${esc(v)}</s> → ${esc(a)}`;const k=document.querySelector(".kbd");if(k)k.classList.add("off");result(good,msg,it.x,inp);}
 function result(good,title,x,el){const it=Q.items[Q.i];const c=S.cards[it.k]||{b:0};c.b=good?Math.min(5,c.b+1):0;c.t=Date.now();S.cards[it.k]=c;tick();
  if(good){Q.ok++;S.xp+=10;SFX.ok();const r=el.getBoundingClientRect();sparkle(r.left+r.width/2,r.top+r.height/2);}else SFX.ko();save();
@@ -387,7 +390,8 @@ function onMsg(o){if(!G)return;
  if(o.t==="ansmark"&&!G.host){markAnswered(o.who);return;}
  if(o.t==="reveal"&&!G.host){showReveal(o);return;}
  if(o.t==="end"&&!G.host){showEnd(o.scores);return;}
- if(o.t==="bye"){if(G.players[o.from]&&o.from!==MYID){delete G.players[o.from];G.order=G.order.filter(x=>x!==o.from);if(G.host)broadcastLobby();renderG();}return;}}
+ if(o.t==="bye"){if(!G.host&&o.from===G.hostId){leave();go("game");$("g-msg")&&($("g-msg").textContent="L’hôte a quitté la partie.");return;}
+  if(G.players[o.from]&&o.from!==MYID){delete G.players[o.from];G.order=G.order.filter(x=>x!==o.from);delete G.ans[o.from];if(G.host){if(G.state==="lobby")broadcastLobby();else if(G.state==="play"&&G.order.length&&Object.keys(G.ans).length>=G.order.length)setTimeout(reveal,400);}renderG();}return;}}
 function leave(){if(G&&G.c){try{send({t:"bye"});G.c.end(true);}catch(e){}}if(G&&G.helloTimer)clearInterval(G.helloTimer);clearInterval(G&&G.tm);G=null;}
 function renderG(){if(!G)return game();if(G.state!=="lobby")return;const url=location.origin+location.pathname+"?room="+G.room;
  $("g-area").innerHTML=`<div class="paper" style="text-align:center"><h3>Code du salon</h3><div class="code">${G.room}</div><div class="nat">Tes amis ouvrent CLB Lexicon › Duel › Rejoindre, et tapent ce code.</div>
@@ -403,7 +407,9 @@ function hostNext(){G.qi++;if(G.qi>=G.qs.length){send({t:"end",scores:G.scores,n
 function askQ(i){if(!G)return;G.state="play";G.qi=i;G.picked=null;G.t0=performance.now();const q=G.qs[i];if(!q)return;go("game");document.body.classList.add("quiz");
  $("g-area").innerHTML=`<div class="eyebrow qkind">Question ${i+1} / ${G.qs.length}</div><div class="timer"><i id="g-tm" style="width:100%"></i></div>
  <div class="qcard"><div class="qface in">${q.p}</div></div><div class="opts">${q.o.map((o,k)=>`<button class="opt ${q.serif?"serif":""}" data-gk="${k}">${esc(o)}</button>`).join("")}</div>
- <div class="players" style="grid-template-columns:repeat(4,1fr)">${G.order.map((id,k)=>`<div class="pl ${id===MYID?"me":""}" id="gp-${id}" style="padding:8px">${avatar(G.players[id],k)}<small>${esc(G.players[id].name)}</small><div class="st" id="gs-${id}">…</div></div>`).join("")}</div>`;
+ <div class="players" style="grid-template-columns:repeat(4,1fr)">${G.order.map((id,k)=>`<div class="pl ${id===MYID?"me":""}" id="gp-${id}" style="padding:8px">${avatar(G.players[id],k)}<small>${esc(G.players[id].name)}</small><div class="st" id="gs-${id}">…</div></div>`).join("")}</div>
+ <button class="cta" id="g-stop" style="background:transparent;color:#B9CBC2;border:1px solid rgba(255,255,255,.2);box-shadow:none;padding:11px;font-size:14px">Quitter la partie</button>`;
+ $("g-stop").onclick=()=>{if(confirm("Quitter la partie en cours ?")){leave();go("home");}};
  clearInterval(G.tm);G.tm=setInterval(()=>{const left=Math.max(0,1-(performance.now()-G.t0)/QTIME);const b=$("g-tm");if(b)b.style.width=left*100+"%";if(left<=0){clearInterval(G.tm);document.querySelectorAll("[data-gk]").forEach(b=>b.disabled=true);}},100);
  document.querySelectorAll("[data-gk]").forEach(b=>b.onclick=()=>{if(G.picked!=null)return;const ms=Math.round(performance.now()-G.t0);if(ms>QTIME)return;G.picked=+b.dataset.gk;b.style.borderColor="var(--gold2)";b.style.background="rgba(231,201,100,.25)";
   document.querySelectorAll("[data-gk]").forEach(x=>x.disabled=true);SFX.tap();if(G.host){G.ans[MYID]={c:G.picked,ms};markAnswered(MYID);if(Object.keys(G.ans).length>=G.order.length)setTimeout(reveal,400);}else send({t:"ans",i,c:G.picked,ms});});}
@@ -417,12 +423,12 @@ function showReveal(o){if(!G)return;clearInterval(G.tm);const q=G.qs[o.i];G.scor
  const rank=G.order.slice().sort((a,b)=>(o.scores[b]||0)-(o.scores[a]||0));
  const el=document.createElement("div");el.className="board";el.innerHTML=`<div class="fb ${mine?"ok":"ko"}" style="display:block"><b>${mine?"✅ +"+mine+" points":"❌ Raté"}</b>${esc(q.x)}</div>`+rank.map((id,k)=>`<div class="brow" style="animation-delay:${k*.06}s"><span class="rk">${k+1}</span>${avatar(G.players[id],G.order.indexOf(id)).replace('class="av"','class="av" style="width:30px;height:30px;font-size:14px;margin:0;background:'+COLORS[G.order.indexOf(id)%4]+'"')}<span class="nm">${esc(G.players[id].name)}</span><span class="pt">${o.scores[id]||0}</span>${o.gain[id]?`<span class="dl">+${o.gain[id]}</span>`:""}</div>`).join("");
  $("g-area").appendChild(el);setTimeout(()=>el.scrollIntoView({behavior:"smooth",block:"nearest"}),150);}
-function showEnd(scores){if(!G)return;G.state="end";clearInterval(G.tm);go("game");document.body.classList.add("quiz");const rank=G.order.slice().sort((a,b)=>(scores[b]||0)-(scores[a]||0));const w=rank[0];
+function showEnd(scores){if(!G)return;G.state="end";clearInterval(G.tm);go("game");document.body.classList.add("quiz");const rank=G.order.slice().sort((a,b)=>(scores[b]||0)-(scores[a]||0));const w=rank[0],tie=rank.length>1&&(scores[rank[0]]||0)===(scores[rank[1]]||0);
  const pod=[rank[1],rank[0],rank[2]].map((id,k)=>id?`<div class="pod p${[2,1,3][k]}"><div class="m">${["🥈","🥇","🥉"][k]}</div>${esc(G.players[id].name)}<small>${scores[id]||0} pts</small></div>`:'<div style="width:30%"></div>').join("");
- $("g-area").innerHTML=`<div class="crown">👑</div><h1 style="text-align:center;margin-top:0">${w===MYID?"Tu as <em>gagné</em> !":esc(G.players[w].name)+" <em>gagne</em> !"}</h1><div class="podium">${pod}</div>
+ $("g-area").innerHTML=`<div class="crown">👑</div><h1 style="text-align:center;margin-top:0">${tie?"<em>Égalité</em> en tête !":w===MYID?"Tu as <em>gagné</em> !":esc(G.players[w].name)+" <em>gagne</em> !"}</h1><div class="podium">${pod}</div>
  <div class="board">${rank.map((id,k)=>`<div class="brow"><span class="rk">${k+1}</span><span class="nm">${esc(G.players[id].name)}${id===MYID?" (toi)":""}</span><span class="pt">${scores[id]||0}</span></div>`).join("")}</div>
  ${G.host?'<button class="cta" id="g-again">🔁 Revanche</button>':'<div class="gmsg">L’hôte peut lancer une revanche.</div>'}<button class="cta" id="g-out" style="background:transparent;color:#B9CBC2;border:1px solid rgba(255,255,255,.2);box-shadow:none">Quitter</button>`;
- if(w===MYID){SFX.win();for(let i=0;i<3;i++)setTimeout(()=>sparkle(innerWidth/2+(Math.random()*200-100),200+Math.random()*100),i*300);}else SFX.ok();
+ if(w===MYID&&!tie){SFX.win();for(let i=0;i<3;i++)setTimeout(()=>sparkle(innerWidth/2+(Math.random()*200-100),200+Math.random()*100),i*300);}else SFX.ok();
  S.xp+=Math.round((scores[MYID]||0)/50);tick();save();
  if($("g-again"))$("g-again").onclick=()=>{G.qi=-1;G.revealed=null;hostStart();};$("g-out").onclick=()=>{leave();go("home");};}
 addEventListener("pagehide",()=>{if(G)try{send({t:"bye"});}catch(e){}});

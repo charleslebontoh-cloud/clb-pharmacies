@@ -44,7 +44,7 @@ const DICO=[
 ["liquidité","n. f.","Disponibilité immédiate d'argent ; capacité d'un actif à être converti rapidement en argent.","L'entreprise manque de liquidités à court terme.","trésorerie, disponibilités","technique","Finance"],
 ["mandataire","n.","Personne chargée d'agir au nom et pour le compte d'une autre.","Le mandataire judiciaire a convoqué les créanciers.","représentant, fondé de pouvoir","juridique","Juridique"],
 ["moratoire","n. m.","Délai accordé pour suspendre l'exécution d'une obligation, notamment un paiement.","Un moratoire de six mois a été accordé.","suspension, sursis","juridique","Finance"],
-["nantissement","n. m.","Garantie qui affecte un bien meuble (fonds de commerce, matériel, titres) au paiement d'une dette.","Le prêt est assorti d'un nantissement du fonds de commerce.","gage, sûreté","technique","Finance"],
+["nantissement","n. m.","Garantie qui affecte un bien meuble incorporel (fonds de commerce, créances, titres, parts sociales) au paiement d'une dette ; pour un bien meuble corporel, on parle de gage.","Le prêt est assorti d'un nantissement du fonds de commerce.","gage, sûreté","technique","Finance"],
 ["obérer","v. tr.","Charger de dettes ; compromettre par une charge excessive.","Ces frais obèrent la rentabilité du projet.","grever, alourdir","soutenu","Finance"],
 ["obsolète","adj.","Dépassé, qui n'est plus en usage.","Ce matériel obsolète ne vaut plus grand-chose en garantie.","périmé, désuet","courant","Général"],
 ["onéreux","adj.","Qui coûte cher.","Ce mode de financement est trop onéreux.","coûteux, cher","soutenu","Finance"],
@@ -88,7 +88,7 @@ const DICO=[
 ["désuet","adj.","Qui n'est plus en usage, démodé.","Cette procédure désuète doit être revue.","démodé, suranné","soutenu","Général"]
 ];
 
-/* Orthographe : [bonne graphie, [variantes fautives], astuce] */
+/* Orthographe : [bonne graphie, [variantes fautives], astuce, [graphies aussi admises (facultatif)]] */
 const ORTHO=[
 ["apparemment",["apparament","aparemment"],"Adverbe tiré de « apparent » : -ent donne -emment, avec deux p."],
 ["acompte",["accompte","acomte"],"Un seul c : « à compte »."],
@@ -103,7 +103,7 @@ const ORTHO=[
 ["occurrence",["occurence","ocurrence"],"Deux c et deux r."],
 ["parmi",["parmis","parmit"],"Toujours sans s ni t."],
 ["professionnel",["proffessionnel","professionel"],"Un f, deux s, deux n."],
-["rémunération",["rénumération","rémunérassion"],"Vient de « munus » : ré-mu-né-ra-tion, comme monnaie."],
+["rémunération",["rénumération","rémunérassion"],"Du latin « munus » (don, charge) : le m vient avant le n, ré-mu-né-ra-tion."],
 ["succinct",["succint","sucinct"],"Deux c, puis -inct."],
 ["trafic",["traffic","trafique"],"Un seul f (deux en anglais)."],
 ["ressource",["ressourse","resource"],"Deux s au début (une seule en anglais)."],
@@ -114,10 +114,10 @@ const ORTHO=[
 ["accueil",["acceuil","acueil"],"Après c, on écrit -ueil : cueillir, accueil."],
 ["dysfonctionnement",["disfonctionnement","dysfonctionement"],"Préfixe grec dys- et deux n."],
 ["exercice",["excercice","exercisse"],"Pas de c après le x."],
-["mille-feuille",["millefeuille","mille feuilles"],"Avec un trait d'union."],
+["mille-feuille",["mille feuilles","mile-feuille"],"Avec un trait d'union (l'orthographe rectifiée de 1990 admet aussi « millefeuille »).",["millefeuille"]],
 ["aujourd'hui",["aujourdhui","aujour'd'hui"],"Avec une apostrophe."],
 ["chiffre d'affaires",["chiffre d'affaire","chiffres d'affaire"],"« affaires » toujours au pluriel."],
-["entre-temps",["entretemps","entre temps"],"Avec un trait d'union."],
+["entre-temps",["entre temps","entre-tant"],"Avec un trait d'union (l'orthographe rectifiée de 1990 admet aussi « entretemps »).",["entretemps"]],
 ["quelquefois",["quelque fois","quelques fois"],"En un mot quand il signifie « parfois »."],
 ["malgré tout",["malgrés tout","malgré-tout"],"Sans s ni trait d'union."],
 ["évidemment",["évidament","évidemmant"],"Comme « évident » : -emment."],
@@ -125,7 +125,7 @@ const ORTHO=[
 ["négligeable",["négligable","négligeabble"],"Le e garde le son « je » devant a : négli-geable."],
 ["acquérir",["aquérir","acquerrir"],"cq puis un seul r à l'infinitif (il acquerra)."],
 ["pallier",["palier (verbe)","paliller"],"Le verbe prend deux l ; le palier (d'escalier) n'en a qu'un."],
-["bailleur",["bayeur","bailler"],"Le bailleur de fonds : ai + double l."],
+["bailleur",["bayeur","baileur"],"Le bailleur de fonds : ai + double l."],
 ["comptable",["contable","comptabble"],"comp- comme dans compter."],
 ["rappeler",["rapeler","rappeller"],"Deux p, un l à l'infinitif."],
 ["recevoir",["resevoir","recevoire"],"Un c, pas de e final."],
@@ -138,7 +138,7 @@ const ORTHO=[
 ["millionnaire",["millionaire","milionnaire"],"Deux l et deux n."],
 ["personnalité",["personalité","personnallité"],"Deux n, un l."],
 ["accéder",["accèder","acéder"],"Deux c, accents aigus."],
-["pécuniaire",["pécunier","pécuniaires (sing.)"],"Toujours -aire, même au masculin : un avantage pécuniaire."]
+["pécuniaire",["pécunier","pécunière"],"Toujours -aire, même au masculin : un avantage pécuniaire."]
 ];
 
 /* Paronymes : [phrase avec …, [choix], bonne, explication] */
