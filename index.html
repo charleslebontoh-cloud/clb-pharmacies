@@ -2,7 +2,7 @@
 <html lang="fr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <title>CLB Health</title>
-<meta name="theme-color" content="#061433">
+<meta name="theme-color" content="#EEF7F6">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png?v=2"><link rel="apple-touch-icon" href="icon-180.png?v=2">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="format-detection" content="telephone=no"><meta name="apple-mobile-web-app-title" content="CLB Health">
@@ -113,8 +113,70 @@ button:active,.btn:active,.a a:active,.urg a:active,.hours a:active,.drinks butt
 @keyframes bob{50%{transform:translateY(-10px)}}@keyframes blink{50%{opacity:.35}}
 
 @media (min-width:430px){.drinks button{padding:18px 6px}}
+/* ===== Thème 13 : clinique lumineuse, photos, icônes ===== */
+:root{--bg:#EEF7F6;--card:#FFFFFF;--line:rgba(15,42,58,.09);--ink:#0F2A3A;--muted:#5F7684;--gold:#0EA5A4;--grana:#FF4D6D;--ok:#16A34A;
+--g-teal:linear-gradient(135deg,#2DD4BF,#0E7490);--g-sky:linear-gradient(135deg,#38BDF8,#2563EB);--g-coral:linear-gradient(135deg,#FF7A8A,#E11D48);--g-violet:linear-gradient(135deg,#A78BFA,#6D28D9);--g-amber:linear-gradient(135deg,#FCD34D,#F59E0B);--g-mint:linear-gradient(135deg,#6EE7B7,#059669)}
+html{background:#EEF7F6!important}
+body{background:radial-gradient(90% 40% at 100% 0,rgba(45,212,191,.18),transparent 70%),radial-gradient(80% 40% at 0 20%,rgba(56,189,248,.16),transparent 70%),linear-gradient(180deg,#F4FBFA,#EEF4FB)!important;color:var(--ink)!important}
+header.hero{position:relative;margin:calc(env(safe-area-inset-top) + 10px) 14px 12px;padding:0!important;height:210px;border-radius:28px;overflow:hidden;color:#fff;box-shadow:0 24px 40px -26px rgba(14,60,80,.8)}
+header.hero .ph{position:absolute;inset:0;background-size:cover;background-position:center;transform:scale(1.08);animation:kb 18s ease-in-out infinite alternate}
+@keyframes kb{to{transform:scale(1.2) translate(-2%,-2%)}}
+header.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15),rgba(5,30,45,.15) 40%,rgba(5,30,45,.82))}
+header.hero .hx{position:absolute;left:18px;right:18px;bottom:16px;z-index:1}
+header.hero .brand{color:#C9FFF6!important;display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.18);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:5px 10px;border-radius:999px;letter-spacing:.1em}
+header.hero h1{color:#fff;font-size:32px!important;margin:8px 0 2px;text-shadow:0 4px 20px rgba(0,0,0,.35)}header.hero h1 span{color:#9FF5E8}
+header.hero .per{color:#E6F6F8!important}
+header.hero .htile{position:absolute;top:14px;right:14px;z-index:1;width:52px;height:52px;border-radius:18px;display:grid;place-items:center;color:#fff;box-shadow:0 12px 24px -10px rgba(0,0,0,.5)}
+header.hero .htile svg{width:28px;height:28px}
+header.hero .cr{position:absolute;top:16px;left:18px;z-index:1;font:600 9px -apple-system;color:rgba(255,255,255,.7);max-width:60%}
+.tile{width:34px;height:34px;flex:0 0 34px;border-radius:12px;display:inline-grid;place-items:center;color:#fff;font-size:17px;box-shadow:0 8px 16px -8px rgba(0,0,0,.35);margin-right:10px;vertical-align:middle}
+.g-teal{background:var(--g-teal)}.g-sky{background:var(--g-sky)}.g-coral{background:var(--g-coral)}.g-violet{background:var(--g-violet)}.g-amber{background:var(--g-amber)}.g-mint{background:var(--g-mint)}
+.card2,.c{background:rgba(255,255,255,.88)!important;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.95)!important;box-shadow:0 18px 36px -24px rgba(14,60,80,.45)!important;color:var(--ink)}
+.c{border-left:5px solid #16A34A!important}
+.card2 h3{color:var(--ink)!important;font-size:17px!important;display:flex;align-items:center}
+.n{color:var(--ink)}.d{color:#0E7490!important}.z,.note,.per,.sm,.pace{color:var(--muted)}
+.bar{background:rgba(244,251,250,.8)!important}
+.bar select,.bar input,.row input,.row select,textarea,.vi,#t-sos input,#t-sos textarea{background:#fff!important;color:var(--ink)!important;border:1.5px solid rgba(15,42,58,.12)!important;border-radius:14px!important}
+.bar button{background:var(--g-teal)!important;color:#fff!important;border-radius:14px!important;box-shadow:0 10px 20px -10px rgba(14,116,144,.8)}
+.call{background:var(--g-mint)!important;color:#fff!important;box-shadow:0 8px 16px -8px rgba(5,150,105,.8)}
+.map{background:#E6F6F8!important;color:#0E7490!important;border:1px solid rgba(14,116,144,.25)!important}
+#msg,.h{color:#0E7490!important}
+.drinks button,.btn{background:#fff!important;color:var(--ink)!important;border:1.5px solid rgba(15,42,58,.08)!important;box-shadow:0 10px 22px -16px rgba(14,60,80,.6)}
+.drinks button span{font-size:30px!important;filter:drop-shadow(0 4px 6px rgba(56,189,248,.4))}
+.btn.gold{background:var(--g-teal)!important;color:#fff!important;border:0!important;box-shadow:0 12px 24px -12px rgba(14,116,144,.9)}
+.ring svg circle:first-of-type{stroke:#DCEFF2!important}
+.ring .big{color:var(--ink)}
+.week i{background:linear-gradient(180deg,#7DD3FC,#2563EB)!important;border-radius:8px 8px 3px 3px!important}.week i.ok{background:linear-gradient(180deg,#6EE7B7,#059669)!important}
+.hours a{background:#E6F6F8!important;color:#0E7490!important;border:1px solid rgba(14,116,144,.25)!important}
+.log span{background:#fff!important;color:var(--muted)!important;border:1px solid var(--line)!important}
+.urg a{background:#fff!important;color:var(--ink)!important;border:1px solid var(--line)!important;border-left:5px solid #E11D48!important;box-shadow:0 14px 28px -20px rgba(225,29,72,.6)!important}
+.urg a b{color:#fff!important;background:var(--g-coral);min-width:64px;text-align:center;padding:8px 10px;border-radius:14px;font-size:22px!important;box-shadow:0 10px 18px -10px rgba(225,29,72,.9)}
+.urg a small{color:var(--muted)!important}
+.fl{border-bottom:1px solid var(--line)!important}.fl span{color:var(--muted)!important}
+summary{color:#0E7490!important}
+nav{background:rgba(255,255,255,.78)!important;border-top:0!important;left:12px!important;right:12px!important;bottom:calc(env(safe-area-inset-bottom) + 10px)!important;border-radius:26px;padding:6px!important;box-shadow:0 20px 40px -14px rgba(14,60,80,.45);border:1px solid rgba(255,255,255,.95)!important}
+nav button{color:#7B8F9A!important;border-radius:20px;padding:7px 4px 5px!important;font-weight:700!important}
+nav button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+nav button.on{color:#fff!important;background:var(--g-teal);box-shadow:0 10px 20px -10px rgba(14,116,144,.9)}
+nav button[data-t="eau"].on{background:var(--g-sky)}nav button[data-t="eye"].on{background:var(--g-violet)}nav button[data-t="sos"].on{background:var(--g-coral)}
+nav button.on svg{transform:translateY(-1px) scale(1.1)}nav button::after{display:none}
+body{padding-bottom:calc(env(safe-area-inset-bottom) + 100px)!important}
+.banner{background:#E0F2FE!important;border:1px solid #7DD3FC!important;color:#075985}
+#e-over{background:rgba(238,247,246,.9)!important;color:var(--ink)}#e-over .big{color:#0E7490!important}
+#splash{background:#0b3b4a!important}
+#splash .sbg{position:absolute;inset:0;background:url(sante/hero-eau.jpg) center/cover;opacity:.55;animation:kb 16s ease-in-out infinite alternate}
+#splash:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,40,55,.3),rgba(5,40,55,.85))}
+#splash>div{position:relative;z-index:1}#splash b{color:#9FF5E8!important}
+#splash .tap{color:#E6F6F8!important;border:1px solid rgba(255,255,255,.5);border-radius:999px;padding:10px 16px;display:inline-block!important;background:rgba(255,255,255,.12);backdrop-filter:blur(8px)}
+/* cookies & publicité */
+#ck{position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom) + 92px);z-index:60;background:#fff;border-radius:22px;padding:16px;box-shadow:0 24px 50px -16px rgba(14,60,80,.55);border:1px solid var(--line);animation:cardIn .5s cubic-bezier(.22,1,.36,1);color:var(--ink)}
+#ck b{font-size:16px}#ck p{margin:6px 0 12px;font-size:13.5px;color:var(--muted)}#ck .row{gap:8px}#ck button{flex:1;border-radius:14px;padding:12px;font-weight:800;border:0}
+#ck .yes{background:var(--g-teal);color:#fff}#ck .no{background:#EEF3F5;color:var(--ink)}
+.adbox{margin:14px 18px;border-radius:18px;overflow:hidden;background:#fff;border:1px dashed rgba(15,42,58,.15);min-height:60px;position:relative}
+.adbox:before{content:"Publicité";position:absolute;top:4px;right:10px;font:700 9px -apple-system;color:#9AAAB3;letter-spacing:.08em;text-transform:uppercase}
+.priv{margin:4px 18px 20px;font-size:12px;color:var(--muted);text-align:center}.priv a{color:#0E7490;font-weight:700}
 </style></head><body>
-<div id="splash" role="button" tabindex="0" aria-label="Entrer dans CLB Health"><div><img src="icon-512.png?v=2" alt=""><b>CLB HEALTH</b><span class="tap" id="sp-tap">Touche pour entrer</span><div id="sp-err" style="min-height:1.3em;margin-top:10px;color:#ff8a8a;font-size:13px;font-weight:600"></div><a id="sp-sos" href="tel:185" onclick="event.stopPropagation()" style="display:inline-block;margin-top:18px;padding:8px 14px;border-radius:999px;border:1px solid rgba(255,90,120,.5);color:#ff9fb3;text-decoration:none;font:700 13px -apple-system">🆘 SAMU 185</a><small style="display:block;margin-top:24px;color:#4d5d8f;font-size:11px">version 12.0.0 · 7 nov. 2026</small></div></div>
+<div id="splash" role="button" tabindex="0" aria-label="Entrer dans CLB Health"><div><img src="icon-512.png?v=2" alt=""><b>CLB HEALTH</b><span class="tap" id="sp-tap">Touche pour entrer</span><div id="sp-err" style="min-height:1.3em;margin-top:10px;color:#ff8a8a;font-size:13px;font-weight:600"></div><a id="sp-sos" href="tel:185" onclick="event.stopPropagation()" style="display:inline-block;margin-top:18px;padding:8px 14px;border-radius:999px;border:1px solid rgba(255,90,120,.5);color:#ff9fb3;text-decoration:none;font:700 13px -apple-system">🆘 SAMU 185</a><small style="display:block;margin-top:24px;color:#4d5d8f;font-size:11px">version 13.0.0 · 8 nov. 2026</small></div></div>
 <div class="banner" id="nudge"></div>
 
 <!-- PHARMACIES -->
@@ -411,4 +473,29 @@ if("serviceWorker"in navigator){let had=!!navigator.serviceWorker.controller,rel
  navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(r=>{r.update();document.addEventListener("visibilitychange",()=>{if(!document.hidden)r.update();});}).catch(()=>{});}
 const start=(location.hash||"").slice(1);go(["ph","eau","eye","sos"].includes(start)?start:(["ph","eau","eye","sos"].includes(LS.get("tab","ph"))?LS.get("tab","ph"):"ph"));
 nudge();
-</script></body></html>
+</script>
+<script src="sante/credits.js"></script>
+<script src="sante/ads.js"></script>
+<script>
+/* ===== Habillage 13 : photos d'en-tête, icônes, cookies et pub ===== */
+(()=>{const SV={ph:'<path d="M10.5 20.5 3.5 13.5a5 5 0 0 1 7-7l7 7a5 5 0 0 1-7 7z"/><path d="m8.5 8.5 7 7"/>',eau:'<path d="M12 2.7s7 7.4 7 12.3a7 7 0 0 1-14 0c0-4.9 7-12.3 7-12.3z"/><path d="M9 15.5a3 3 0 0 0 3 3"/>',eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',sos:'<path d="M12 21s-8-4.5-8-11a5 5 0 0 1 8-4 5 5 0 0 1 8 4c0 6.5-8 11-8 11z"/><path d="M9 11h2l1-2 2 4 1-2h2"/>'};
+ const G={ph:"g-mint",eau:"g-sky",eye:"g-violet",sos:"g-coral"};
+ document.querySelectorAll("nav button[data-t]").forEach(b=>{const t=b.dataset.t,l=b.textContent.replace(/^\S+\s*/,"").trim()||b.lastChild.textContent;const lab=b.childNodes[b.childNodes.length-1].textContent;b.innerHTML=`<svg viewBox="0 0 24 24">${SV[t]}</svg>${lab}`;});
+ for(const t in SV){const sec=document.getElementById("t-"+t);if(!sec)continue;const h=sec.querySelector("header");if(!h)continue;h.classList.add("hero");const H=(typeof HERO!=="undefined"?HERO:{})[t];
+  const inner=h.innerHTML;h.innerHTML=`<div class="ph" style="background-image:url(${H?H.f:""})"></div>${H?`<div class="cr">📷 ${H.a} · ${H.l} · Wikimedia Commons</div>`:""}<div class="htile ${G[t]}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${SV[t]}</svg></div><div class="hx">${inner}</div>`;}
+ const TG=["g-teal","g-sky","g-violet","g-amber","g-mint","g-coral"];let k=0;
+ document.querySelectorAll(".card2 h3").forEach(h=>{const m=h.textContent.match(/^(\p{Extended_Pictographic}[️‍\p{Extended_Pictographic}]*|🇫🇷)\s*/u);if(!m)return;h.innerHTML=`<span class="tile ${TG[k++%TG.length]}">${m[1]}</span>`+h.innerHTML.replace(m[1],"").trim();});
+ const sp=document.getElementById("splash");if(sp&&!sp.querySelector(".sbg"))sp.insertAdjacentHTML("afterbegin",'<div class="sbg"></div>');
+ /* consentement cookies / publicité */
+ const C=(()=>{try{return localStorage.getItem("clbh-consent");}catch(e){return null;}})();
+ function ads(){const A=window.ADS||{};if(!A.client||C2()!=="oui")return;if(!document.getElementById("adsjs")){const s=document.createElement("script");s.id="adsjs";s.async=true;s.crossOrigin="anonymous";s.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client="+A.client;document.head.appendChild(s);}
+  ["t-ph","t-eau","t-eye"].forEach(id=>{const sec=document.getElementById(id);if(!sec||sec.querySelector(".adbox"))return;sec.insertAdjacentHTML("beforeend",`<div class="adbox"><ins class="adsbygoogle" style="display:block" data-ad-client="${A.client}" data-ad-slot="${A.slot||""}" data-ad-format="auto" data-full-width-responsive="true"></ins></div>`);try{(window.adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}});}
+ const C2=()=>{try{return localStorage.getItem("clbh-consent");}catch(e){return null;}};
+ function banner(){if(document.getElementById("ck"))return;document.body.insertAdjacentHTML("beforeend",`<div id="ck" role="dialog" aria-label="Cookies et publicité"><b>🍪 Cookies et publicité</b><p>CLB Health est gratuite. Pour la financer, elle peut afficher des publicités, qui utilisent des cookies pour mesurer et personnaliser les annonces. Tes données de santé ne quittent jamais ton téléphone. Les onglets Urgence restent sans publicité.</p><div class="row"><button class="no" id="ckN">Refuser</button><button class="yes" id="ckY">Accepter</button></div></div>`);
+  const set=v=>{try{localStorage.setItem("clbh-consent",v);}catch(e){}document.getElementById("ck").remove();ads();};document.getElementById("ckY").onclick=()=>set("oui");document.getElementById("ckN").onclick=()=>set("non");}
+ window.clbConsent=()=>{try{localStorage.removeItem("clbh-consent");}catch(e){}banner();};
+ document.querySelectorAll(".tab").forEach(sec=>{if(sec.id==="t-sos")sec.insertAdjacentHTML("beforeend",'<div class="priv">🔒 Données de santé stockées uniquement sur ce téléphone · <a href="#" onclick="clbConsent();return false">Gérer cookies et publicité</a></div>');});
+ if(!C)setTimeout(banner,1800);else ads();
+})();
+</script>
+</body></html>
