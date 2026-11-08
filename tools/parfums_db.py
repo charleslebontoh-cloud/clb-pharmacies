@@ -33,7 +33,7 @@ note_list = [n for n, _ in NO.most_common()]
 ai = {a: i for i, a in enumerate(acc_list)}; ni = {n: i for i, n in enumerate(note_list)}
 CONC = {"Eau de Toilette":"EDT","Eau de Parfum":"EDP","Extrait de Parfum":"Extrait","Eau de Cologne":"EDC","Eau de Parfum Intense":"EDP Intense","Parfum":"Parfum","Cologne":"Cologne","Perfume":"Parfum","Extrait":"Extrait","Eau de Toilette Intense":"EDT Intense","Eau Fraîche":"Eau Fraîche","Elixir":"Elixir"}
 def clean(name, brand, conc, year):
-    i = name.find(" " + brand + " ")
+    i = name.rfind(" " + brand + " ")
     if i > 0:
         tail = name[i + len(brand) + 2:]; name = name[:i].strip(" -")
         m = re.match(r"(\d{4})\s+(.*)", tail)

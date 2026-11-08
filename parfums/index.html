@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CLB Parfums</title>
+<meta name="theme-color" content="#FBF7F0"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="CLB Parfums">
+<link rel="apple-touch-icon" href="icon-180.png"><link rel="manifest" href="manifest.json">
+<style>
+:root{--bg:#FBF7F0;--card:#fff;--ink:#1E1915;--mu:#7A6F64;--line:rgba(30,25,21,.09);--gold:linear-gradient(135deg,#E3C27E,#B8893E 55%,#8C6428);--gold1:#B8893E;--plum:#3B1F33;--rose:#C77E7E;--sh:0 18px 36px -24px rgba(60,40,20,.55);--serif:"Didot","Bodoni 72","Playfair Display",Georgia,serif;--safe:env(safe-area-inset-bottom)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,system-ui,"Segoe UI",sans-serif}
+body{padding-bottom:calc(96px + var(--safe))}
+button,input,select,textarea{font:inherit;color:inherit}
+.ico{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none;vertical-align:-4px}
+h1,h2,h3{font-family:var(--serif);font-weight:600;letter-spacing:.01em;margin:0}
+.wrap{max-width:640px;margin:0 auto;padding:0 16px}
+header.top{position:sticky;top:0;z-index:20;background:rgba(251,247,240,.86);backdrop-filter:saturate(1.6) blur(14px);-webkit-backdrop-filter:saturate(1.6) blur(14px);padding:calc(env(safe-area-inset-top) + 10px) 16px 10px;border-bottom:1px solid var(--line)}
+header.top .row{max-width:640px;margin:0 auto;display:flex;align-items:center;gap:10px}
+header.top h1{font-size:24px;flex:1}
+header.top small{display:block;font:500 12px -apple-system,system-ui;color:var(--mu);letter-spacing:.12em;text-transform:uppercase}
+.wx{display:flex;align-items:center;gap:6px;padding:7px 11px;border-radius:999px;background:#fff;box-shadow:var(--sh);font-size:13px;font-weight:600;border:0}
+.tab{display:none;animation:in .35s ease}.tab.on{display:block}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.sec{margin:18px 0 10px;display:flex;align-items:baseline;justify-content:space-between}.sec h2{font-size:21px}.sec span{font-size:13px;color:var(--mu)}
+.card{background:var(--card);border-radius:22px;padding:16px;box-shadow:var(--sh);margin:12px 0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:14px;padding:12px 16px;font-weight:700;background:#F3EDE3;cursor:pointer;text-decoration:none;color:var(--ink)}
+.btn.gold{background:var(--gold);color:#fff;box-shadow:0 12px 24px -12px rgba(140,100,40,.9)}
+.btn.dark{background:var(--plum);color:#F6E7C8}
+.btn.full{width:100%}.btn.sm{padding:8px 11px;font-size:13px;border-radius:12px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 6px;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:8px 13px;font-size:13.5px;font-weight:600;display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.chip.on{background:var(--plum);color:#F6E7C8;border-color:var(--plum)}
+.tag{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;margin:0 4px 4px 0;background:#F3EDE3;color:#6B5A44}
+.note{font-size:13px;color:var(--mu)}
+input,select,textarea{width:100%;border:1.5px solid var(--line);border-radius:13px;padding:11px 12px;background:#fff;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--gold1)}
+label.l{display:block;font-size:12.5px;font-weight:700;color:var(--mu);margin:10px 0 4px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pc{background:#fff;border-radius:22px;overflow:hidden;box-shadow:var(--sh);cursor:pointer;position:relative;animation:in .4s ease both}
+.pc .im{aspect-ratio:4/5;background:#F3EDE3;position:relative;overflow:hidden}
+.pc .im img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}
+.pc:active .im img{transform:scale(1.04)}
+.pc .tx{padding:10px 12px 12px}.pc b{display:block;font-family:var(--serif);font-size:16.5px;line-height:1.2}.pc small{color:var(--mu);font-size:12px}
+.lvl{height:5px;border-radius:5px;background:#EFE7DA;margin-top:8px;overflow:hidden}.lvl i{display:block;height:100%;background:var(--gold);border-radius:5px}
+.lvl.low i{background:linear-gradient(90deg,#E58A6E,#C0504D)}
+.badge{position:absolute;top:10px;left:10px;font-size:11px;font-weight:800;color:#fff;background:rgba(192,80,77,.92);padding:3px 8px;border-radius:999px}
+.ph{width:100%;height:100%;display:grid;place-items:center}
+.ph svg{width:46%;height:46%}
+nav.bot{position:fixed;left:0;right:0;bottom:0;z-index:30;padding:8px 10px calc(8px + var(--safe));background:rgba(255,255,255,.9);backdrop-filter:saturate(1.6) blur(16px);-webkit-backdrop-filter:saturate(1.6) blur(16px);border-top:1px solid var(--line)}
+nav.bot .in{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);align-items:end}
+nav.bot button{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:700;color:#9A8F84;padding:4px 0}
+nav.bot button.on{color:var(--plum)}
+nav.bot button .ico{width:24px;height:24px}
+nav.bot .mid{transform:translateY(-14px)}
+nav.bot .mid span.o{width:64px;height:64px;border-radius:50%;background:var(--gold);display:grid;place-items:center;color:#fff;box-shadow:0 14px 26px -10px rgba(140,100,40,.9),0 0 0 5px var(--bg);animation:pulse 3s infinite}
+nav.bot .mid .ico{width:30px;height:30px;stroke:#fff}
+@keyframes pulse{0%,100%{box-shadow:0 14px 26px -10px rgba(140,100,40,.9),0 0 0 5px var(--bg)}50%{box-shadow:0 14px 30px -8px rgba(140,100,40,1),0 0 0 9px rgba(227,194,126,.25)}}
+.hero{border-radius:28px;padding:20px;color:#F6E7C8;background:radial-gradient(120% 90% at 100% 0,rgba(227,194,126,.35),transparent 60%),linear-gradient(150deg,#3B1F33,#1E1520);box-shadow:var(--sh);position:relative;overflow:hidden}
+.hero h2{font-size:26px;color:#fff}.hero p{margin:6px 0 0;opacity:.85;font-size:14px}
+.ctx{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.ctx div{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:10px;text-align:center;font-size:12px}
+.ctx b{display:block;font-size:17px;color:#fff;font-family:var(--serif)}
+.pick{display:flex;gap:14px;align-items:center}
+.pick .im{width:108px;height:136px;border-radius:18px;overflow:hidden;flex:none;background:#F3EDE3;box-shadow:var(--sh)}
+.pick .im img{width:100%;height:100%;object-fit:cover}
+.why{margin:10px 0 0;padding:0;list-style:none}.why li{font-size:13.5px;padding:3px 0 3px 22px;position:relative}.why li:before{content:"";position:absolute;left:4px;top:10px;width:8px;height:8px;border-radius:50%;background:var(--gold)}
+.score{font:700 12px -apple-system,system-ui;color:#fff;background:var(--gold);padding:3px 9px;border-radius:999px}
+.alt{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.alt .im{width:52px;height:64px;border-radius:12px;overflow:hidden;background:#F3EDE3;flex:none}.alt .im img{width:100%;height:100%;object-fit:cover}
+.cock{display:flex;align-items:center;gap:6px}.cock .im{width:70px;height:88px;border-radius:14px;overflow:hidden;background:#F3EDE3;box-shadow:var(--sh)}.cock .im img{width:100%;height:100%;object-fit:cover}.cock .plus{font:700 22px var(--serif);color:var(--gold1)}
+.sheet{position:fixed;inset:0;z-index:60;background:rgba(20,14,10,.5);display:none;align-items:flex-end;justify-content:center}
+.sheet.on{display:flex}
+.sheet .in{background:var(--bg);width:100%;max-width:640px;max-height:92vh;overflow:auto;border-radius:28px 28px 0 0;padding:16px 16px calc(24px + var(--safe));animation:up .35s cubic-bezier(.2,.8,.2,1)}
+@keyframes up{from{transform:translateY(40%)}to{transform:none}}
+.grab{width:42px;height:5px;border-radius:5px;background:#D9CFC2;margin:0 auto 12px}
+.addg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.addb{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:16px 14px;border-radius:20px;background:#fff;border:1.5px solid var(--line);cursor:pointer;box-shadow:var(--sh)}
+.addb .ico{width:28px;height:28px;color:var(--gold1)}.addb b{font-size:15px;margin-top:4px}.addb small{color:var(--mu);font-size:12px}
+.addb.pri{background:linear-gradient(150deg,#3B1F33,#1E1520);color:#F6E7C8;border:0}.addb.pri small{color:rgba(246,231,200,.75)}.addb.pri .ico{color:#E3C27E}
+.res{display:flex;gap:10px;align-items:center;padding:10px;border-radius:16px;background:#fff;margin-top:8px;border:1.5px solid var(--line);cursor:pointer;width:100%;text-align:left}
+.res:active{background:#FFF8EA}.res .im{width:44px;height:54px;border-radius:10px;overflow:hidden;background:#F3EDE3;flex:none}.res .im img{width:100%;height:100%;object-fit:cover}
+.res b{display:block;font-size:14.5px}.res small{color:var(--mu);font-size:12px}
+.prog{height:5px;border-radius:5px;background:#EFE7DA;overflow:hidden;margin-top:10px;opacity:0;transition:.3s}.prog i{display:block;height:100%;width:0;background:var(--gold);transition:width .3s}
+.det .big{border-radius:24px;overflow:hidden;aspect-ratio:1;background:#F3EDE3;position:relative;box-shadow:var(--sh)}
+.det .big img{width:100%;height:100%;object-fit:cover}
+.det .sw{position:absolute;bottom:10px;right:10px;display:flex;gap:6px}
+.det .sw button{border:0;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;background:rgba(255,255,255,.9)}
+.det .sw button.on{background:var(--plum);color:#F6E7C8}
+.pyr{display:grid;gap:8px;margin-top:8px}.pyr div{display:grid;grid-template-columns:70px 1fr;gap:8px;font-size:13.5px}.pyr span{color:var(--mu);font-weight:700;font-size:12px;padding-top:2px}
+.when{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.when span{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;padding:6px 10px;border-radius:12px;background:#F3EDE3}
+.when span.hi{background:#3B1F33;color:#F6E7C8}
+.stars{display:flex;gap:4px}.stars button{border:0;background:none;padding:2px;font-size:24px;color:#D9CFC2;line-height:1}.stars button.on{color:#C9A35C}
+.qty{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gauge{display:flex;align-items:center;gap:14px}
+.bottle{width:62px;height:88px;flex:none;position:relative}
+.bottle .g{position:absolute;inset:16px 6px 0;border-radius:12px 12px 14px 14px;border:2px solid #C9A35C;overflow:hidden;background:#FFFCF6}
+.bottle .g i{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(180deg,#E9CD91,#B8893E);transition:height .6s}
+.bottle .c{position:absolute;left:21px;right:21px;top:0;height:18px;border-radius:5px;background:#3B1F33}
+.srow{display:flex;gap:12px;align-items:center;padding:12px;background:#fff;border-radius:18px;box-shadow:var(--sh);margin-top:10px}
+.srow .im{width:54px;height:66px;border-radius:12px;overflow:hidden;background:#F3EDE3;flex:none}.srow .im img{width:100%;height:100%;object-fit:cover}
+.srow .bd{flex:1;min-width:0}.srow b{display:block;font-size:14.5px}
+.alert{border-left:4px solid #C0504D}
+.toast{position:fixed;left:50%;bottom:calc(110px + var(--safe));transform:translateX(-50%) translateY(20px);opacity:0;z-index:80;background:var(--plum);color:#F6E7C8;padding:11px 16px;border-radius:14px;font-size:14px;font-weight:600;transition:.35s;pointer-events:none;max-width:90vw;text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%)}
+.empty{text-align:center;padding:30px 16px;color:var(--mu)}
+.empty svg{width:70px;height:70px;stroke:#C9A35C}
+#splash{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;justify-content:flex-end;color:#fff;background:#1E1520 center/cover;cursor:pointer;transition:opacity .6s,transform .6s}
+#splash:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(30,21,32,.15) 0%,rgba(30,21,32,.35) 45%,rgba(30,21,32,.95) 100%)}
+#splash .c{position:relative;padding:0 26px calc(40px + var(--safe))}
+#splash h1{font-size:46px;line-height:1;color:#fff}#splash h1 em{font-style:normal;background:var(--gold);-webkit-background-clip:text;background-clip:text;color:transparent}
+#splash p{opacity:.85;margin:10px 0 0;font-size:15px}
+#splash .go{margin-top:22px;display:inline-flex;align-items:center;gap:10px;padding:14px 22px;border-radius:999px;background:var(--gold);color:#fff;font-weight:800;box-shadow:0 14px 30px -12px rgba(227,194,126,.8);animation:pulse 2.6s infinite}
+#splash .v{font-size:12px;opacity:.6;margin-top:16px}
+#splash .cr{position:absolute;top:calc(env(safe-area-inset-top) + 10px);right:12px;font-size:10px;opacity:.55;z-index:1}
+#splash .mist{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+#splash .mist i{position:absolute;bottom:-40px;width:8px;height:8px;border-radius:50%;background:rgba(246,231,200,.6);filter:blur(1px);animation:mist 7s linear infinite}
+@keyframes mist{0%{transform:translateY(0) scale(.6);opacity:0}15%{opacity:.9}100%{transform:translateY(-110vh) translateX(40px) scale(1.4);opacity:0}}
+#splash.out{opacity:0;transform:scale(1.04);pointer-events:none}
+.fadein{animation:in .5s ease both}
+.hl{background:#FFF6E2;border:1.5px solid #EBD39E;border-radius:16px;padding:12px;font-size:13.5px}
+.lnk{color:var(--gold1);font-weight:700;text-decoration:none}
+input[type=range]{accent-color:#B8893E}
+.seg{display:flex;background:#EFE7DA;border-radius:14px;padding:3px;margin:10px 0}.seg button{flex:1;border:0;background:none;border-radius:11px;padding:8px;font-weight:700;font-size:13px;color:var(--mu)}.seg button.on{background:#fff;color:var(--ink);box-shadow:0 4px 10px -6px rgba(0,0,0,.3)}
+</style></head><body>
+
+<div id="splash" style="background-image:url(photos/accueil.jpg)">
+ <div class="mist" id="mist"></div>
+ <a class="cr" id="cr" target="_blank" rel="noopener"></a>
+ <div class="c">
+  <div style="font-size:12px;letter-spacing:.3em;text-transform:uppercase;opacity:.8">Collection privée</div>
+  <h1>CLB <em>Parfums</em></h1>
+  <p>Ta collection, ton parfum du jour selon la météo, tes cocktails et tes découvertes.</p>
+  <div class="go"><svg class="ico" viewBox="0 0 24 24"><path d="M9 8h6v12a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1z"/><path d="M10.5 8V5.5h3V8M12 3v2.5M15.5 4.5 17 3.5M15.5 6.5H18"/></svg>Toucher pour entrer</div>
+  <div class="v">Version 1.0.0</div>
+ </div>
+</div>
+
+<header class="top"><div class="row"><div style="flex:1"><small id="hsub">Ma collection</small><h1 id="htitle">CLB Parfums</h1></div><button class="wx" id="wx" aria-label="Météo"><span id="wxt">…</span></button></div></header>
+
+<main class="wrap">
+ <!-- COLLECTION -->
+ <section class="tab on" id="t-col">
+  <div class="sec"><h2>Mes parfums</h2><span id="col-n"></span></div>
+  <div class="chips" id="col-f"></div>
+  <div class="grid" id="col-g"></div>
+  <button class="btn gold full" id="add1" style="margin-top:16px"><svg class="ico" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Ajouter un parfum</button>
+ </section>
+
+ <!-- STOCK -->
+ <section class="tab" id="t-stk">
+  <div class="sec"><h2>Mon stock</h2><span id="stk-sum"></span></div>
+  <div id="stk-al"></div>
+  <div id="stk-l"></div>
+  <div class="card"><h3 style="font-size:18px">Historique</h3><div id="stk-h" class="note" style="margin-top:6px"></div></div>
+ </section>
+
+ <!-- JE ME PARFUME -->
+ <section class="tab" id="t-now">
+  <div class="hero" style="margin-top:16px"><h2>Je me parfume</h2><p id="now-sub">Je choisis selon la météo, l'heure, l'occasion et ce que tu as porté récemment.</p>
+   <div class="ctx"><div><b id="c-t">–</b>Température</div><div><b id="c-h">–</b>Humidité</div><div><b id="c-m">–</b>Moment</div></div></div>
+  <div class="sec"><h2 style="font-size:18px">L'occasion</h2></div>
+  <div class="chips" id="occ"></div>
+  <div class="sec" style="margin-top:6px"><h2 style="font-size:18px">L'envie</h2></div>
+  <div class="chips" id="mood"></div>
+  <button class="btn gold full" id="now-go" style="margin-top:14px;padding:16px;font-size:16px"><svg class="ico" viewBox="0 0 24 24"><path d="M9 8h6v12a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1z"/><path d="M10.5 8V5.5h3V8M12 3v2.5M15.5 4.5 17 3.5M15.5 6.5H18"/></svg>Choisis mon parfum</button>
+  <div id="now-r"></div>
+ </section>
+
+ <!-- COCKTAILS -->
+ <section class="tab" id="t-ck">
+  <div class="sec"><h2>Mes cocktails</h2><span>superpositions</span></div>
+  <div class="hl">Le principe : le parfum le plus <b>chaud</b> (boisé, ambré, vanillé) en premier, le plus <b>frais</b> ou floral par-dessus. 2 pulvérisations du premier, 1 à 2 du second.</div>
+  <div class="seg" id="ck-seg"><button data-k="now" class="on">Pour maintenant</button><button data-k="all">Les meilleurs</button><button data-k="fav">Favoris</button></div>
+  <div id="ck-l"></div>
+ </section>
+
+ <!-- DECOUVRIR -->
+ <section class="tab" id="t-dec">
+  <div class="sec"><h2>À découvrir</h2><span>selon ton goût</span></div>
+  <div class="chips" id="dec-f"></div>
+  <div id="dec-prof" class="card" style="display:none"></div>
+  <div id="dec-l"></div>
+ </section>
+</main>
+
+<nav class="bot"><div class="in">
+ <button data-t="col" class="on"><svg class="ico" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg>Collection</button>
+ <button data-t="stk"><svg class="ico" viewBox="0 0 24 24"><path d="M8 7h8v13a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1z"/><path d="M10 7V4h4v3M8 14h8"/></svg>Stock</button>
+ <button data-t="now" class="mid"><span class="o"><svg class="ico" viewBox="0 0 24 24"><path d="M9 8h6v12a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1z"/><path d="M10.5 8V5.5h3V8M12 3v2.5M15.5 4.5 17 3.5M15.5 6.5H18"/></svg></span>Je me parfume</button>
+ <button data-t="ck"><svg class="ico" viewBox="0 0 24 24"><path d="M5 9h5v11H5zM14 6h5v14h-5z"/><path d="M6.5 9V6.5h2V9M15.5 6V3.5h2V6"/></svg>Cocktails</button>
+ <button data-t="dec"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>Découvrir</button>
+</div></nav>
+
+<!-- feuille d'ajout -->
+<div class="sheet" id="sh-add"><div class="in"><div class="grab"></div>
+ <h2 style="font-size:24px">Ajouter un parfum</h2><div class="note">Photographie le flacon ou la boîte : je lis le nom et je retrouve la fiche.</div>
+ <div class="addg">
+  <label class="addb pri"><svg class="ico" viewBox="0 0 24 24"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h2l1.6-2.2h5.8L16.5 6h2A2.5 2.5 0 0 1 21 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/><circle cx="12" cy="12.8" r="3.6"/></svg><b>Photographier</b><small>Flacon, boîte ou code-barres</small><input id="a-cam" type="file" accept="image/*" capture="environment" hidden></label>
+  <label class="addb"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="9.5" r="1.8"/><path d="m21 15.5-4.8-4.8L7 20"/></svg><b>Importer</b><small>Une photo de ta galerie</small><input id="a-pic" type="file" accept="image/*" hidden></label>
+ </div>
+ <div style="position:relative"><input id="a-q" placeholder="Ou tape le nom : Sauvage, Aventus, Khamrah…" autocomplete="off" enterkeyhint="search"></div>
+ <div class="prog" id="a-prog"><i></i></div>
+ <div class="note" id="a-st" style="margin-top:8px"></div>
+ <div id="a-ph" style="display:none;margin-top:10px"></div>
+ <div id="a-res"></div>
+ <button class="btn full" id="a-man" style="margin-top:12px">Il n'est pas dans la liste : saisir à la main</button>
+ <button class="btn full" data-close style="margin-top:8px;background:none;color:var(--mu)">Fermer</button>
+</div></div>
+
+<!-- fiche parfum -->
+<div class="sheet" id="sh-det"><div class="in det" id="det"></div></div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js" defer></script>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const norm=s=>(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+const VERSION="1.0.0";
+function toast(m){const t=$("toast");t.textContent=m;t.classList.add("on");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("on"),2600);}
+const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){toast("Mémoire du téléphone pleine");}}};
+/* ---------- IndexedDB pour les photos ---------- */
+const IDB={db:null,open(){return this.db?Promise.resolve(this.db):new Promise((ok,ko)=>{const r=indexedDB.open("clb-parfums",1);r.onupgradeneeded=()=>r.result.createObjectStore("img");r.onsuccess=()=>{this.db=r.result;ok(this.db);};r.onerror=()=>ko(r.error);});},
+ async put(k,v){const d=await this.open();return new Promise(ok=>{const t=d.transaction("img","readwrite");t.objectStore("img").put(v,k);t.oncomplete=()=>ok();});},
+ async get(k){const d=await this.open();return new Promise(ok=>{const q=d.transaction("img").objectStore("img").get(k);q.onsuccess=()=>ok(q.result);q.onerror=()=>ok(null);});},
+ async del(k){const d=await this.open();return new Promise(ok=>{const t=d.transaction("img","readwrite");t.objectStore("img").delete(k);t.oncomplete=()=>ok();});}};
+const IMGC={};async function imgOf(p){if(p.pic){if(IMGC[p.id])return IMGC[p.id];const v=await IDB.get("p-"+p.id);if(v){IMGC[p.id]=v;return v;}}return p.off||"";}
+/* ---------- état ---------- */
+let S=LS.get("parf",{list:[],hist:[],fav:[],wish:[]});["list","hist","fav","wish"].forEach(k=>S[k]=S[k]||[]);
+const save=()=>LS.set("parf",S);
+/* ---------- traductions ---------- */
+const ACC_FR={Spicy:"Épicé",Sweet:"Sucré",Floral:"Floral",Woody:"Boisé",Fresh:"Frais",Fruity:"Fruité",Green:"Vert",Citrus:"Hespéridé",Powdery:"Poudré",Oriental:"Oriental",Synthetic:"Musqué moderne",Creamy:"Crémeux",Resinous:"Résineux",Gourmand:"Gourmand",Smoky:"Fumé",Leathery:"Cuir",Aquatic:"Aquatique",Earthy:"Terreux",Animal:"Animal",Chypre:"Chypré","Fougère":"Fougère"};
+const NOTE_FR={"Bergamot":"bergamote","Lemon":"citron","Mandarin orange":"mandarine","Orange":"orange","Grapefruit":"pamplemousse","Lime":"citron vert","Neroli":"néroli","Petitgrain":"petit-grain","Citrus notes":"agrumes","Citrus fruits":"agrumes","Italian citrus fruits":"agrumes d'Italie","Lavender":"lavande","Mint":"menthe","Rosemary":"romarin","Sage":"sauge","Basil":"basilic","Thyme":"thym","Cardamom":"cardamome","Pink pepper":"poivre rose","Black pepper":"poivre noir","Pepper":"poivre","Sichuan pepper":"poivre de Sichuan","Cinnamon":"cannelle","Nutmeg":"muscade","Clove":"clou de girofle","Ginger":"gingembre","Saffron":"safran","Star anise":"anis étoilé","Cumin":"cumin","Coriander":"coriandre","Juniper berries":"baies de genièvre","Juniper":"genièvre","Elemi":"élémi","Geranium":"géranium","Rose":"rose","Jasmine":"jasmin","Iris":"iris","Violet":"violette","Violet leaf":"feuille de violette","Lily of the valley":"muguet","Tuberose":"tubéreuse","Orange blossom":"fleur d'oranger","Ylang-ylang":"ylang-ylang","Magnolia":"magnolia","Peony":"pivoine","Freesia":"freesia","Heliotrope":"héliotrope","Orchid":"orchidée","Gardenia":"gardénia","Mimosa":"mimosa","Lotus":"lotus","Apple":"pomme","Green apple":"pomme verte","Pear":"poire","Peach":"pêche","Pineapple":"ananas","Blackcurrant":"cassis","Black currant":"cassis","Raspberry":"framboise","Strawberry":"fraise","Plum":"prune","Cherry":"cerise","Fig":"figue","Coconut":"noix de coco","Melon":"melon","Dates":"dattes","Vanilla":"vanille","Tonka bean":"fève tonka","Amber":"ambre","Ambergris":"ambre gris","Ambroxan":"ambroxan","Amberwood":"bois ambré","Musk":"musc","White musk":"musc blanc","Patchouli":"patchouli","Vetiver":"vétiver","Cedarwood":"cèdre","Cedar":"cèdre","Atlas cedar":"cèdre de l'Atlas","Virginia cedar":"cèdre de Virginie","Sandalwood":"santal","Oud":"oud","Agarwood (Oud)":"oud","Agarwood":"oud","Guaiac wood":"gaïac","Birch":"bouleau","Oakmoss":"mousse de chêne","Moss":"mousse","Labdanum":"labdanum","Benzoin":"benjoin","Myrrh":"myrrhe","Frankincense":"encens","Incense":"encens","Olibanum":"oliban","Tobacco":"tabac","Leather":"cuir","Suede":"daim","Coffee":"café","Cocoa":"cacao","Chocolate":"chocolat","Caramel":"caramel","Praline":"praliné","Honey":"miel","Almond":"amande","Milk":"lait","Rum":"rhum","Cognac":"cognac","Whiskey":"whisky","Tea":"thé","Green tea":"thé vert","Black tea":"thé noir","Marine notes":"notes marines","Sea notes":"notes marines","Aquatic notes":"notes aquatiques","Watery notes":"notes aquatiques","Woody notes":"notes boisées","Spicy notes":"notes épicées","Green notes":"notes vertes","Fruity notes":"notes fruitées","Floral notes":"notes florales","Powdery notes":"notes poudrées","Sea salt":"sel marin","Salt":"sel","Cypress":"cyprès","Pine":"pin","Fir":"sapin","Bamboo":"bambou","Cashmeran":"cashmeran","Iso E Super":"Iso E Super","Akigalawood":"akigalawood","Dry wood":"bois sec","Artemisia":"armoise","Caraway":"carvi","Mahonial":"mahonial","Styrax":"styrax","Cistus":"ciste","Davana":"davana","Lemongrass":"citronnelle","Hedione":"hédione","Calone":"calone","Ozonic notes":"notes ozoniques","Violet leaf absolute":"absolu de feuille de violette","Hazelnut":"noisette","Pistachio":"pistache","Rhubarb":"rhubarbe","Aldehydes":"aldéhydes","Bitter orange":"orange amère","Blood orange":"orange sanguine","Yuzu":"yuzu","Tangerine":"tangerine","Mango":"mangue","Passion fruit":"fruit de la passion","Lychee":"litchi","Water lily":"nénuphar","Cyclamen":"cyclamen","Hyacinth":"jacinthe","Carnation":"œillet","Osmanthus":"osmanthus","Champaca":"champaca","Frangipani":"frangipanier","Sugar":"sucre","Cotton candy":"barbe à papa","Marshmallow":"guimauve","Cashmere wood":"bois de cachemire","Ebony":"ébène","Rosewood":"bois de rose","Teak":"teck","Mahogany":"acajou","Oud wood":"bois d'oud","Gaiac wood":"gaïac","Castoreum":"castoréum","Civet":"civette","Smoke":"fumée","Birch tar":"goudron de bouleau","Cade":"cade","Truffle":"truffe","Mushroom":"champignon","Earthy notes":"notes terreuses","Lilac":"lilas","Sandalwood (Mysore)":"santal de Mysore","Amberwood ":"bois ambré","Tonka":"tonka","Vanilla bean":"gousse de vanille","Bourbon vanilla":"vanille Bourbon","Calabrian bergamot":"bergamote de Calabre","Sicilian lemon":"citron de Sicile","Cardamom ":"cardamome","Mandarin":"mandarine","Bitter almond":"amande amère","Tobacco leaf":"feuille de tabac","Rum ":"rhum","Musk ":"musc","Clary sage":"sauge sclarée","Haitian vetiver":"vétiver d'Haïti","Indonesian patchouli":"patchouli d'Indonésie","Leather ":"cuir"};
+const accFR=a=>ACC_FR[a]||a;const noteFR=n=>NOTE_FR[n]||n.toLowerCase();
+/* ---------- base de données ---------- */
+let DB=null,DBP=null;
+function dbLoad(){if(DBP)return DBP;DBP=fetch("db.json").then(r=>r.json()).then(d=>{d.idx=d.p.map(p=>({n:norm(p[0]),b:norm(p[1])}));DB=d;return d;});return DBP;}
+function fromDB(i){const p=DB.p[i];return{dbi:i,nom:p[0],marque:p[1],annee:p[2]||"",conc:p[3]||"",note:p[4]||0,votes:p[5]||0,acc:p[6].map(a=>DB.accords[a]),tete:p[7].map(n=>DB.notes[n]),coeur:p[8].map(n=>DB.notes[n]),fond:p[9].map(n=>DB.notes[n]),url:p[10]?"https://www.parfumo.com/Perfumes/"+p[10]:""};}
+function dbSearch(q,lim=8){q=norm(q);if(q.length<2||!DB)return[];const W=q.split(" ");const out=[];
+ for(let i=0;i<DB.p.length;i++){const x=DB.idx[i],h=x.n+" "+x.b;if(!W.every(w=>h.includes(w)))continue;let s=Math.log10((DB.p[i][5]||0)+3);if(x.n===q)s+=5;else if(x.n.startsWith(q))s+=2.5;if(W.some(w=>x.b.includes(w)))s+=1;if(!DB.p[i][5])s+=x.b.match(/dior|chanel|creed|armani|lattafa|gaultier|hermes|versace|tom ford|guerlain|rabanne|saint laurent/)?2.2:0;out.push([s,i]);}
+ return out.sort((a,b)=>b[0]-a[0]).slice(0,lim).map(x=>x[1]);}
+/* reconnaissance à partir du texte lu sur la photo */
+const STOP=new Set("eau de parfum toilette edp edt ml vaporisateur natural spray pour homme femme for men women paris made in france intense the and le la les fl oz cologne extrait perfume vapo profumo".split(" "));
+function dbMatchText(txt){if(!DB)return[];const T=norm(txt).split(" ").filter(w=>w.length>=3&&!STOP.has(w));if(!T.length)return[];const TS=new Set(T);const out=[];
+ for(let i=0;i<DB.p.length;i++){const x=DB.idx[i];const nw=x.n.split(" ").filter(w=>w.length>=2&&!STOP.has(w));if(!nw.length)continue;let hit=0;for(const w of nw)if(TS.has(w)||(w.length>=5&&T.some(t=>t.length>=5&&(t.includes(w)||w.includes(t)))))hit++;if(!hit)continue;
+  const bw=x.b.split(" ").filter(w=>w.length>=3);const bh=bw.some(w=>TS.has(w))?1:0;const s=hit/nw.length*3+bh*2.5+Math.log10((DB.p[i][5]||0)+3)*.4;if(s>=2.6)out.push([s,i]);}
+ return out.sort((a,b)=>b[0]-a[0]).slice(0,8).map(x=>x[1]);}
+/* ---------- profil olfactif d'un parfum ---------- */
+const W5=[1,.8,.65,.5,.4];
+function prof(p){const a={};(p.acc||[]).forEach((x,i)=>a[x]=(a[x]||0)+(W5[i]||.3));const g=k=>a[k]||0;
+ const fresh=g("Fresh")+g("Citrus")+g("Aquatic")+g("Green")*.8+g("Fougère")*.5;
+ const warm=g("Sweet")*.8+g("Oriental")+g("Gourmand")+g("Resinous")+g("Smoky")+g("Leathery")+g("Animal")+g("Spicy")*.5+g("Creamy")*.5;
+ const woody=g("Woody")+g("Earthy")+g("Chypre")*.8;const floral=g("Floral")+g("Powdery")*.8+g("Fruity")*.6;
+ const c=norm(p.conc);const conc=/extrait|parfum$|^parfum|elixir|absolu/.test(c)&&!/eau de parfum|edp/.test(c)?1:/edp|eau de parfum|intense/.test(c)?.75:/edt|toilette/.test(c)?.5:/cologne|edc|fraiche/.test(c)?.25:.6;
+ const inten=Math.min(1.6,conc*.9+warm*.25+g("Smoky")*.2+g("Leathery")*.2);return{a,fresh,warm,woody,floral,inten,g};}
+const FAM=p=>{const P=prof(p);const m=[["fresh",P.fresh,"frais"],["warm",P.warm,"chaud et ambré"],["woody",P.woody,"boisé"],["floral",P.floral,"floral"]].sort((x,y)=>y[1]-x[1]);return m[0][2];};
+function whenTags(p){const P=prof(p),t=[];const hot=P.fresh-P.warm*.7;
+ if(hot>.6)t.push(["☀️","Grosse chaleur",1]);else if(hot>-.2)t.push(["⛅","Toute saison",1]);else t.push(["🌧️","Fraîcheur, saison des pluies, clim",1]);
+ if(P.warm+P.inten*.5>1.5)t.push(["🌙","Soirée",1]);if(P.fresh>.9||P.inten<.6)t.push(["🌅","Journée",0]);
+ if(P.inten<.9&&P.g("Animal")<.3&&P.g("Gourmand")<.8)t.push(["💼","Bureau",0]);if(P.warm>1.2||(P.g("Sweet")+P.g("Gourmand"))>1)t.push(["🌹","Rendez-vous",0]);if(P.fresh>1.2)t.push(["🏃","Sport, détente",0]);if(P.woody>1&&P.inten>=.6)t.push(["🎩","Cérémonie",0]);return t;}
+function descFR(p){const L=a=>a.slice(0,4).map(noteFR).join(", ");const parts=[];
+ const fam=(p.acc||[]).slice(0,3).map(a=>accFR(a).toLowerCase());parts.push(`${p.nom} de ${p.marque} est un parfum ${fam.join(", ").replace(/, ([^,]*)$/," et $1")}${p.conc?" ("+p.conc+(p.annee?", "+p.annee:"")+")":p.annee?" sorti en "+p.annee:""}.`);
+ if(p.tete&&p.tete.length)parts.push(`Il s'ouvre sur ${L(p.tete)}${p.coeur&&p.coeur.length?`, développe un cœur de ${L(p.coeur)}`:""}${p.fond&&p.fond.length?` et repose sur ${L(p.fond)}`:""}.`);
+ const P=prof(p);parts.push(P.fresh>P.warm+.4?"Sa fraîcheur le rend agréable par temps chaud et en journée.":P.warm>P.fresh+.4?"Chaud et enveloppant, il s'exprime mieux le soir ou quand il fait plus frais.":"Équilibré, il se porte dans beaucoup de situations.");
+ if(p.votes>20)parts.push(`Note de la communauté Parfumo : ${String(p.note).replace(".",",")}/10 (${p.votes.toLocaleString("fr-FR")} avis).`);return parts.join(" ");}
+/* ---------- contexte : météo, heure ---------- */
+let CTX={t:null,h:null,code:null,lieu:"",hr:new Date().getHours()};
+async function weather(){let la=5.36,lo=-4.01,lieu="Abidjan";try{const p=await new Promise((ok,ko)=>navigator.geolocation?navigator.geolocation.getCurrentPosition(ok,ko,{timeout:8000,maximumAge:600000}):ko());la=p.coords.latitude;lo=p.coords.longitude;lieu="";}catch(e){}
+ try{const j=await (await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${la}&longitude=${lo}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,is_day&timezone=auto`)).json();
+  const c=j.current;CTX={t:Math.round(c.apparent_temperature??c.temperature_2m),tr:Math.round(c.temperature_2m),h:c.relative_humidity_2m,code:c.weather_code,lieu,hr:new Date().getHours()};LS.set("wx",{...CTX,at:Date.now()});}
+ catch(e){const o=LS.get("wx",null);if(o)CTX={...o,hr:new Date().getHours()};}
+ wxRender();}
+const WXI=c=>c==null?"🌡️":c===0?"☀️":c<=2?"🌤️":c===3?"☁️":c<=48?"🌫️":c<=67?"🌧️":c<=82?"🌦️":"⛈️";
+function moment(h){return h<11?"Matin":h<14?"Midi":h<18?"Après-midi":h<22?"Soirée":"Nuit";}
+function wxRender(){$("wxt").textContent=CTX.t!=null?`${WXI(CTX.code)} ${CTX.tr??CTX.t}°`:"🌡️ –";$("c-t").textContent=CTX.t!=null?(CTX.tr??CTX.t)+"°C":"–";$("c-h").textContent=CTX.h!=null?CTX.h+" %":"–";$("c-m").textContent=moment(new Date().getHours());}
+/* ---------- algorithme « je me parfume » ---------- */
+const OCC=[["bureau","💼 Bureau"],["sortie","🎉 Sortie, soirée"],["rdv","🌹 Rendez-vous"],["detente","🏃 Détente, sport"],["ceremonie","🎩 Cérémonie, église"],["voyage","✈️ Voyage"]];
+const MOOD=[["","✨ Laisse-moi choisir"],["frais","🍋 Fraîcheur"],["seduction","🔥 Séduction"],["chic","🖤 Élégance"],["discret","🤍 Discrétion"],["audace","⚡ Audace"]];
+let occ=LS.get("occ",(new Date().getDay()%6===0)?"detente":"bureau"),mood="";
+function daysSince(id){const h=S.hist.filter(x=>x.ids.includes(id));if(!h.length)return 99;return Math.floor((Date.now()-new Date(h[h.length-1].d))/864e5);}
+function scoreP(p,ctx,o,m){const P=prof(p);let s=0;const why=[];const t=ctx.t??28,hum=ctx.h??75,hr=ctx.hr;
+ const heat=Math.max(0,Math.min(1,(t-18)/14));
+ s+=P.fresh*heat*2-P.warm*heat*1.4+P.warm*(1-heat)*1.4+P.woody*.3;
+ if(heat>.6&&P.fresh>1)why.push(`Frais, idéal pour ${t}°C ressentis`);if(heat<.4&&P.warm>1)why.push("Chaleureux, parfait quand il fait plus frais");
+ if(hum>78&&P.inten>1){s-=.8;}if(hum>78&&P.inten<.8&&P.fresh>.8)why.push("Léger : il ne sature pas dans l'humidité");
+ const night=hr>=18||hr<5,morn=hr>=5&&hr<11;
+ if(night){s+=P.warm*.7+P.inten*.6;if(P.warm>1)why.push("Assez profond pour le soir");}
+ if(morn){s+=P.fresh*.6-P.inten*.5;if(P.fresh>1)why.push("Lumineux pour bien démarrer la journée");}
+ const OW={bureau:()=>{const v=P.fresh*.5+P.woody*.6-Math.max(0,P.inten-.8)*1.4-P.g("Gourmand")*.6-P.g("Animal");if(v>.8)why.push("Élégant et discret au bureau");return v;},
+  sortie:()=>{const v=P.warm*.7+P.inten*.8+P.g("Sweet")*.3;if(v>1.4)why.push("Il a du sillage pour sortir");return v;},
+  rdv:()=>{const v=P.g("Sweet")*.6+P.g("Gourmand")*.6+P.g("Oriental")*.5+P.floral*.3+P.g("Creamy")*.4+P.g("Spicy")*.3;if(v>.9)why.push("Sensuel, pour un rendez-vous");return v;},
+  detente:()=>{const v=P.fresh*.9-P.inten*.6;if(v>.8)why.push("Décontracté et frais");return v;},
+  ceremonie:()=>{const v=P.woody*.6+P.g("Powdery")*.5+P.g("Resinous")*.4+P.inten*.3-P.g("Gourmand")*.4;if(v>.9)why.push("Raffiné pour une cérémonie");return v;},
+  voyage:()=>{const v=P.fresh*.6+(P.inten<1?.5:-.3);if(v>.8)why.push("Polyvalent et facile à porter en voyage");return v;}};
+ s+=(OW[o]||(()=>0))()*1.3;
+ const MW={frais:P.fresh*1.2,seduction:P.warm*.7+P.g("Sweet")*.5+P.inten*.4,chic:P.woody*.6+P.g("Powdery")*.6+P.g("Leathery")*.5+P.g("Chypre")*.6,discret:-P.inten*1.2+P.fresh*.3,audace:P.inten*.8+P.g("Smoky")*.6+P.g("Leathery")*.6+P.g("Animal")*.5};
+ if(m){s+=(MW[m]||0)*1.2;}
+ const ds=daysSince(p.id);if(ds===0){s-=2.5;why.push("Déjà porté aujourd'hui");}else if(ds===1)s-=1.4;else if(ds<=3)s-=.6;else if(ds>=10&&ds<99){s+=.4;why.push(`Pas porté depuis ${ds} jours`);}
+ if(p.stars)s+=(p.stars-3)*.35;if(p.ml!=null&&p.ml<=2){s-=1.5;why.push("Presque vide");}
+ return{s,why:[...new Set(why)].slice(0,3),P};}
+function pickNow(){const L=S.list.filter(p=>p.ml==null||p.ml>0.3);if(!L.length)return null;const r=L.map(p=>({p,...scoreP(p,CTX,occ,mood)})).sort((a,b)=>b.s-a.s);return r;}
+/* cocktails */
+function pairScore(a,b,ctx){const A=prof(a),B=prof(b);let s=0;const wl=A.warm+A.woody*.6,wl2=B.warm+B.woody*.6;const base=wl>=wl2?a:b,top=base===a?b:a,PB=base===a?A:B,PT=base===a?B:A;
+ s+=Math.min(PB.warm+PB.woody*.6,2)*Math.min(PT.fresh+PT.floral*.6,2)*.6;
+ const sh=Object.keys(PB.a).filter(k=>PT.a[k]);s+=sh.length*.35;
+ if(PB.g("Gourmand")>.5&&PT.g("Aquatic")>.5)s-=1.2;if(PB.inten>1.2&&PT.inten>1.2)s-=1;if(PB.g("Animal")>.5&&PT.g("Gourmand")>.5)s-=.6;
+ if(PB.g("Smoky")+PB.g("Woody")>1&&PT.g("Floral")>.5)s+=.6;if(PB.g("Sweet")+PB.g("Gourmand")>.8&&(PT.g("Woody")+PT.g("Smoky")+PT.g("Spicy"))>.8)s+=.5;if(PB.g("Woody")>.5&&PT.g("Citrus")>.5)s+=.6;
+ if(ctx){const heat=Math.max(0,Math.min(1,((ctx.t??28)-18)/14));s+=(PT.fresh*heat-PB.warm*heat*.6+PB.warm*(1-heat)*.5)*.6;const hr=ctx.hr;if(hr>=18||hr<5)s+=PB.warm*.3;}
+ const n=[...new Set([...(base.acc||[]).slice(0,2),...(top.acc||[]).slice(0,2)])].slice(0,3).map(accFR);
+ return{s,base,top,name:n.join(" · ")};}
+function cocktails(ctx){const L=S.list.filter(p=>p.ml==null||p.ml>0.3);const R=[];for(let i=0;i<L.length;i++)for(let j=i+1;j<L.length;j++){if(norm(L[i].nom)===norm(L[j].nom))continue;R.push(pairScore(L[i],L[j],ctx));}return R.sort((a,b)=>b.s-a.s);}
+/* ---------- rendu ---------- */
+const PH_COL={frais:["#D7F0EE","#4C9C97"],"chaud et ambré":["#F6E3C6","#B07A2E"],"boisé":["#E8DFD3","#7A5C3E"],"floral":["#F6DDE3","#B0607A"]};
+function phSVG(p){const c=PH_COL[FAM(p)]||["#F3EDE3","#B8893E"];return `<div class="ph" style="background:radial-gradient(80% 60% at 50% 40%,#fff,${c[0]})"><svg viewBox="0 0 64 80"><rect x="24" y="4" width="16" height="10" rx="2" fill="${c[1]}"/><rect x="28" y="14" width="8" height="5" fill="${c[1]}" opacity=".7"/><rect x="10" y="19" width="44" height="56" rx="12" fill="#fff" stroke="${c[1]}" stroke-width="2"/><rect x="15" y="40" width="34" height="31" rx="8" fill="${c[1]}" opacity=".35"/></svg></div>`;}
+function lvlPct(p){return p.ml!=null&&p.size?Math.max(0,Math.min(100,Math.round(p.ml/p.size*100))):null;}
+function low(p){const pc=lvlPct(p);const d=daysLeft(p);return pc!=null&&(pc<=15||(d!=null&&d<=21));}
+function useRate(p){const w=S.hist.filter(x=>x.ids.includes(p.id)&&Date.now()-new Date(x.d)<60*864e5).length;const since=Math.min(60,Math.max(14,(Date.now()-new Date(p.added||Date.now()))/864e5));return w? w/since : 1/Math.max(2,S.list.length);}
+function daysLeft(p){if(p.ml==null)return null;const per=(p.sprays||3)*0.1*(p.layerFactor||1);return Math.round(p.ml/(per*useRate(p)));}
+async function setImg(el,p){const u=await imgOf(p);if(u)el.innerHTML=`<img src="${esc(u)}" alt="" loading="lazy" onerror="this.remove()">`;}
+let colF="tous";
+function colRender(){const g=$("col-g");$("col-n").textContent=S.list.length?S.list.length+" flacon"+(S.list.length>1?"s":""):"";
+ const F=[["tous","Tous"],["frais","Frais"],["chaud et ambré","Chauds"],["boisé","Boisés"],["floral","Floraux"],["low","À racheter"]];
+ $("col-f").innerHTML=S.list.length?F.map(([k,l])=>`<button class="chip ${colF===k?"on":""}" data-f="${k}">${l}</button>`).join(""):"";
+ $("col-f").querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{colF=b.dataset.f;colRender();});
+ const L=S.list.filter(p=>colF==="tous"||(colF==="low"?low(p):FAM(p)===colF));
+ if(!S.list.length){g.style.display="block";g.innerHTML=`<div class="empty"><svg viewBox="0 0 24 24" class="ico"><path d="M9 8h6v12a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1z"/><path d="M10.5 8V5.5h3V8M12 3v2.5"/></svg><h3 style="font-size:20px;color:var(--ink);margin-top:8px">Ta collection est vide</h3><p>Photographie ton premier flacon : je trouve son nom, sa fiche et son image.</p></div>`;return;}
+ g.style.display="grid";
+ g.innerHTML=L.map((p,i)=>{const pc=lvlPct(p);return `<div class="pc" data-id="${p.id}" style="animation-delay:${i*40}ms"><div class="im" id="im-${p.id}">${phSVG(p)}${low(p)?`<span class="badge">À racheter</span>`:""}</div><div class="tx"><small>${esc(p.marque)}</small><b>${esc(p.nom)}</b><small>${esc([p.conc,(p.acc||[])[0]&&accFR(p.acc[0])].filter(Boolean).join(" · "))}</small>${pc!=null?`<div class="lvl ${low(p)?"low":""}"><i style="width:${pc}%"></i></div>`:""}</div></div>`;}).join("")||`<div class="note">Aucun parfum dans ce filtre.</div>`;
+ L.forEach(p=>{const el=$("im-"+p.id);imgOf(p).then(u=>{if(u){const b=el.querySelector(".badge");el.innerHTML=`<img src="${esc(u)}" alt="" loading="lazy">`+(b?b.outerHTML:"");}});});
+ g.querySelectorAll(".pc").forEach(c=>c.onclick=()=>openDet(c.dataset.id));}
+function stkRender(){const L=S.list;const al=L.filter(low);const tot=L.reduce((a,p)=>a+(p.ml||0),0);$("stk-sum").textContent=L.length?Math.round(tot)+" ml au total":"";
+ $("stk-al").innerHTML=al.length?`<div class="card alert"><h3 style="font-size:18px">🛒 À réapprovisionner</h3>${al.map(p=>`<div class="note" style="margin-top:6px"><b style="color:var(--ink)">${esc(p.nom)}</b> · ${lvlPct(p)} % · ${daysLeft(p)!=null?"≈ "+daysLeft(p)+" jours restants":""} · <a class="lnk" target="_blank" rel="noopener" href="${shopURL(p)}">Acheter</a></div>`).join("")}</div>`:"";
+ $("stk-l").innerHTML=L.length?L.map(p=>{const pc=lvlPct(p),d=daysLeft(p);return `<div class="srow ${low(p)?"alert":""}" data-id="${p.id}"><div class="im" id="si-${p.id}">${phSVG(p)}</div><div class="bd"><b>${esc(p.nom)}</b><div class="note">${p.ml!=null?`${Math.round(p.ml)} ml sur ${p.size} ml · ${pc} %`:"Quantité non renseignée"}${d!=null?` · ≈ ${d} j`:""}</div>${pc!=null?`<div class="lvl ${low(p)?"low":""}"><i style="width:${pc}%"></i></div>`:""}</div><button class="btn sm" data-q="${p.id}">Ajuster</button></div>`;}).join(""):`<div class="empty">Ajoute tes parfums pour suivre leur niveau.</div>`;
+ L.forEach(p=>{const el=$("si-"+p.id);if(el)setImg(el,p);});
+ $("stk-l").querySelectorAll("[data-q]").forEach(b=>b.onclick=e=>{e.stopPropagation();openDet(b.dataset.q,"qty");});
+ $("stk-l").querySelectorAll(".srow").forEach(r=>r.onclick=()=>openDet(r.dataset.id));
+ const H=S.hist.slice(-12).reverse();$("stk-h").innerHTML=H.length?H.map(h=>`${new Date(h.d).toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"})} · ${h.ids.map(id=>esc((S.list.find(p=>p.id===id)||{nom:"?"}).nom)).join(" + ")}`).join("<br>"):"Rien encore. Touche « Je le porte » quand tu te parfumes : je calcule ta consommation.";}
+function shopURL(p){return "https://www.google.com/search?tbm=shop&q="+encodeURIComponent(p.marque+" "+p.nom+" "+(p.conc||"")+" Abidjan");}
+function infoURL(p){return p.url||"https://www.google.com/search?q="+encodeURIComponent(p.marque+" "+p.nom+" "+(p.conc||"")+" parfum notes");}
+/* je me parfume */
+function nowChips(){$("occ").innerHTML=OCC.map(([k,l])=>`<button class="chip ${occ===k?"on":""}" data-o="${k}">${l}</button>`).join("");$("mood").innerHTML=MOOD.map(([k,l])=>`<button class="chip ${mood===k?"on":""}" data-m="${k}">${l}</button>`).join("");
+ $("occ").querySelectorAll("[data-o]").forEach(b=>b.onclick=()=>{occ=b.dataset.o;LS.set("occ",occ);nowChips();});$("mood").querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{mood=b.dataset.m;nowChips();});}
+function nowRun(){const box=$("now-r");CTX.hr=new Date().getHours();if(S.list.length<1){box.innerHTML=`<div class="card empty">Ajoute au moins un parfum à ta collection.</div>`;return;}
+ const R=pickNow();if(!R){box.innerHTML=`<div class="card empty">Tous tes flacons sont vides : pense à racheter.</div>`;return;}
+ const best=R[0],alts=R.slice(1,3),C=S.list.length>1?cocktails(CTX)[0]:null;
+ box.innerHTML=`<div class="card fadein" style="margin-top:16px"><div class="note" style="text-transform:uppercase;letter-spacing:.12em;font-weight:700">Aujourd'hui, mets</div>
+  <div class="pick" style="margin-top:8px"><div class="im" id="nw-im">${phSVG(best.p)}</div><div><small class="note">${esc(best.p.marque)}</small><h2 style="font-size:24px;line-height:1.15">${esc(best.p.nom)}</h2><div style="margin-top:6px">${(best.p.acc||[]).slice(0,3).map(a=>`<span class="tag">${accFR(a)}</span>`).join("")}</div></div></div>
+  <ul class="why">${(best.why.length?best.why:["Le meilleur équilibre pour ce moment"]).map(w=>`<li>${esc(w)}</li>`).join("")}</ul>
+  <div class="note" style="margin-top:8px">💨 ${best.P.inten>1.1?"2 pulvérisations suffisent (cou et poignets) : il est puissant.":best.P.inten<.6?"3 à 4 pulvérisations, aussi sur les vêtements pour qu'il tienne.":"3 pulvérisations : cou, poitrine, poignets."}${(CTX.t??28)>=30?" Par forte chaleur, vise plutôt les vêtements et la nuque.":""}</div>
+  <button class="btn gold full" id="wear1" style="margin-top:12px">✓ Je le porte</button>
+  ${alts.length?`<div class="note" style="margin:14px 0 2px;font-weight:700">Autres bons choix</div>`+alts.map(a=>`<div class="alt"><div class="im" id="al-${a.p.id}">${phSVG(a.p)}</div><div style="flex:1"><b>${esc(a.p.nom)}</b><div class="note">${esc(a.why[0]||accFR((a.p.acc||[])[0]||""))}</div></div><button class="btn sm" data-wear="${a.p.id}">Porter</button></div>`).join(""):""}</div>
+  ${C&&C.s>1.2?`<div class="card fadein"><div class="note" style="text-transform:uppercase;letter-spacing:.12em;font-weight:700">Ou ose le cocktail du moment</div>${ckHTML(C,"nck")}</div>`:""}`;
+ setImg($("nw-im"),best.p);alts.forEach(a=>setImg($("al-"+a.p.id),a.p));if(C)ckImgs(C,"nck");
+ $("wear1").onclick=()=>wear([best.p.id],{occ,mood});box.querySelectorAll("[data-wear]").forEach(b=>b.onclick=()=>wear([b.dataset.wear],{occ,mood}));box.querySelectorAll("[data-ckw]").forEach(b=>b.onclick=()=>wear(b.dataset.ckw.split(","),{occ,mood,ck:1}));
+ box.scrollIntoView({behavior:"smooth",block:"start"});}
+function wear(ids,ctx){S.hist.push({d:new Date().toISOString(),ids,ctx:{...ctx,t:CTX.t,h:CTX.h}});ids.forEach(id=>{const p=S.list.find(x=>x.id===id);if(p&&p.ml!=null){p.ml=Math.max(0,p.ml-(p.sprays||3)*0.1*(ids.length>1?.6:1));}});save();toast("✨ Bonne journée, tu sens bon !");colRender();stkRender();
+ const L=ids.map(id=>S.list.find(x=>x.id===id)).filter(p=>p&&low(p));if(L.length)setTimeout(()=>toast("🛒 "+L[0].nom+" arrive bientôt à sa fin"),2800);}
+/* cocktails */
+function ckHTML(c,k){const ky=[c.base.id,c.top.id].join(",");const fav=S.fav.includes(ky);return `<div class="cock" style="margin-top:10px"><div class="im" id="${k}-a">${phSVG(c.base)}</div><span class="plus">+</span><div class="im" id="${k}-b">${phSVG(c.top)}</div><div style="flex:1;padding-left:6px"><b style="font-family:var(--serif);font-size:16px">${esc(c.name)}</b><div class="note">${esc(c.base.nom)} + ${esc(c.top.nom)}</div></div></div>
+ <div class="note" style="margin-top:8px">1. <b>${esc(c.base.nom)}</b> en base : ${prof(c.base).inten>1.1?"1 à 2":"2"} pulvérisations (cou, poitrine).<br>2. Attends 30 secondes, puis <b>${esc(c.top.nom)}</b> par-dessus : ${prof(c.top).inten>1.1?"1":"1 à 2"} pulvérisation(s), sur les mêmes zones.</div>
+ <div style="display:flex;gap:8px;margin-top:10px"><button class="btn sm gold" data-ckw="${ky}">✓ Je porte ce cocktail</button><button class="btn sm" data-fav="${ky}">${fav?"★ Favori":"☆ Favori"}</button></div>`;}
+function ckImgs(c,k){setImg($(k+"-a"),c.base);setImg($(k+"-b"),c.top);}
+let ckMode="now";
+function ckRender(){const box=$("ck-l");$("ck-seg").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.k===ckMode));
+ if(S.list.length<2){box.innerHTML=`<div class="card empty">Ajoute au moins deux parfums : je te proposerai des superpositions.</div>`;return;}
+ let R=cocktails(ckMode==="now"?CTX:null);if(ckMode==="fav")R=R.filter(c=>S.fav.includes([c.base.id,c.top.id].join(",")));
+ R=R.filter(c=>c.s>0.4).slice(0,8);
+ box.innerHTML=R.length?R.map((c,i)=>`<div class="card fadein" style="animation-delay:${i*50}ms">${ckMode==="now"&&i===0?`<span class="tag" style="background:var(--plum);color:#F6E7C8">Idéal maintenant</span>`:""}${ckHTML(c,"ck"+i)}</div>`).join(""):`<div class="card empty">${ckMode==="fav"?"Aucun cocktail en favori pour l'instant.":"Tes parfums sont trop proches pour former un bon cocktail. Découvre un parfum complémentaire dans « Découvrir »."}</div>`;
+ R.forEach((c,i)=>ckImgs(c,"ck"+i));
+ box.querySelectorAll("[data-ckw]").forEach(b=>b.onclick=()=>wear(b.dataset.ckw.split(","),{ck:1}));
+ box.querySelectorAll("[data-fav]").forEach(b=>b.onclick=()=>{const k=b.dataset.fav;S.fav=S.fav.includes(k)?S.fav.filter(x=>x!==k):[...S.fav,k];save();ckRender();});}
+$("ck-seg").querySelectorAll("button").forEach(b=>b.onclick=()=>{ckMode=b.dataset.k;ckRender();});
+/* découvrir */
+let decF="gout";
+function tasteVec(){const v={},nv={};let n=0;S.list.forEach(p=>{const w=(p.stars||3)/3*(1+Math.min(5,S.hist.filter(h=>h.ids.includes(p.id)).length)*.15);(p.acc||[]).forEach((a,i)=>v[a]=(v[a]||0)+(W5[i]||.3)*w);[...(p.tete||[]),...(p.coeur||[]),...(p.fond||[])].forEach(x=>nv[x]=(nv[x]||0)+w);n+=w;});return{v,nv,n};}
+function cos(a,b){let s=0,na=0,nb=0;for(const k in a){na+=a[k]*a[k];if(b[k])s+=a[k]*b[k];}for(const k in b)nb+=b[k]*b[k];return na&&nb?s/Math.sqrt(na*nb):0;}
+async function decRender(){const box=$("dec-l");const F=[["gout","❤️ Mon goût"],["chaleur","☀️ Pour la chaleur"],["soir","🌙 Pour le soir"],["complement","🧩 Pour mes cocktails"],["recent","🆕 Récents"]];
+ $("dec-f").innerHTML=F.map(([k,l])=>`<button class="chip ${decF===k?"on":""}" data-d="${k}">${l}</button>`).join("");$("dec-f").querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>{decF=b.dataset.d;decRender();});
+ if(!S.list.length){box.innerHTML=`<div class="card empty">Ajoute quelques parfums que tu aimes : je saurai quoi te conseiller.</div>`;$("dec-prof").style.display="none";return;}
+ box.innerHTML=`<div class="note" style="padding:20px;text-align:center">Je compare avec plus de 24 000 parfums…</div>`;await dbLoad();
+ const T=tasteVec();const top=Object.entries(T.v).sort((a,b)=>b[1]-a[1]).slice(0,4).map(x=>accFR(x[0]).toLowerCase());
+ const pr=$("dec-prof");pr.style.display="block";pr.innerHTML=`<h3 style="font-size:17px">Ton profil olfactif</h3><div class="note" style="margin-top:4px">Tu aimes les parfums <b style="color:var(--ink)">${top.join(", ")}</b>.</div>`;
+ const own=new Set(S.list.map(p=>norm(p.marque+" "+p.nom)));const seen=new Set();const out=[];
+ const ckGap=(()=>{const a=S.list.map(prof);const fr=a.reduce((s,x)=>s+x.fresh,0)/a.length,wa=a.reduce((s,x)=>s+x.warm,0)/a.length;return fr>wa?"warm":"fresh";})();
+ for(let i=0;i<DB.p.length;i++){const r=DB.p[i];const key=norm(r[1]+" "+r[0]);if(own.has(key))continue;const v={};r[6].forEach((a,j)=>v[DB.accords[a]]=(W5[j]||.3));
+  let s=cos(T.v,v);const notes=[...r[7],...r[8],...r[9]].map(n=>DB.notes[n]);let nh=0;notes.forEach(n=>{if(T.nv[n])nh++;});s+=Math.min(.3,nh*.05);
+  const q=(r[4]?(r[4]-6.5)/10:0)+Math.min(.25,Math.log10((r[5]||0)+1)/14);s+=q;
+  const pp=prof({acc:r[6].map(a=>DB.accords[a]),conc:r[3]});
+  if(decF==="chaleur")s+=(pp.fresh-pp.warm)*.25;if(decF==="soir")s+=(pp.warm+pp.inten*.5-pp.fresh)*.2;if(decF==="recent"){if((r[2]||0)<2021)continue;}if(decF==="complement")s=s*.4+(ckGap==="warm"?pp.warm+pp.woody*.5:pp.fresh+pp.floral*.4)*.35+q;
+  if((r[5]||0)<40&&!(r[5]===0&&r[7].length))continue;out.push([s,i]);}
+ out.sort((a,b)=>b[0]-a[0]);const R=[];for(const [s,i] of out){const k=norm(DB.p[i][1]+" "+DB.p[i][0].split(" ").slice(0,2).join(" "));if(seen.has(k))continue;seen.add(k);R.push(i);if(R.length>=12)break;}
+ box.innerHTML=R.map((i,n)=>{const p=fromDB(i);return `<div class="srow fadein" style="animation-delay:${n*40}ms"><div class="im" id="di-${i}">${phSVG(p)}</div><div class="bd"><small class="note">${esc(p.marque)}${p.annee?" · "+p.annee:""}</small><b>${esc(p.nom)}</b><div>${p.acc.slice(0,3).map(a=>`<span class="tag">${accFR(a)}</span>`).join("")}</div><div class="note">${p.votes?`★ ${String(p.note).replace(".",",")}/10 · `:""}<a class="lnk" href="${esc(infoURL(p))}" target="_blank" rel="noopener">Fiche</a> · <a class="lnk" href="${shopURL(p)}" target="_blank" rel="noopener">Acheter</a></div></div><button class="btn sm" data-dv="${i}">Voir</button></div>`;}).join("");
+ box.querySelectorAll("[data-dv]").forEach(b=>b.onclick=()=>openPreview(+b.dataset.dv));
+ R.forEach(i=>offImg(fromDB(i)).then(u=>{const el=$("di-"+i);if(u&&el)el.innerHTML=`<img src="${esc(u)}" alt="" loading="lazy" onerror="this.remove()">`;}));}
+/* image officielle via Open Beauty Facts */
+const OFFC=LS.get("offc",{});
+async function offImg(p,code){const k=code||norm(p.marque+" "+p.nom);if(OFFC[k]!==undefined)return OFFC[k];let u="";
+ try{if(code){const j=await (await fetch(`https://world.openbeautyfacts.org/api/v2/product/${code}.json?fields=product_name,brands,image_front_url`)).json();u=(j.product&&j.product.image_front_url)||"";}
+  else{const j=await (await fetch(`https://world.openbeautyfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(p.marque+" "+p.nom)}&search_simple=1&json=1&page_size=8&fields=product_name,brands,image_front_url`)).json();
+   const nb=norm(p.marque).split(" ")[0],nn=norm(p.nom).split(" ").filter(w=>w.length>2);const h=(j.products||[]).find(x=>x.image_front_url&&norm(x.brands||"").includes(nb)&&nn.every(w=>norm(x.product_name||"").includes(w)));u=h?h.image_front_url:"";}}catch(e){return "";}
+ OFFC[k]=u;LS.set("offc",OFFC);return u;}
+async function wikiDesc(p){try{const q=`${p.nom} ${p.marque} parfum`;const j=await (await fetch(`https://fr.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(q)}&srlimit=3&format=json&origin=*`)).json();
+ const h=(j.query.search||[]).find(x=>norm(x.title).includes(norm(p.nom).split(" ")[0])&&/parfum|fragrance/i.test(x.snippet));if(!h)return "";const s=await (await fetch("https://fr.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(h.title))).json();return s.extract||"";}catch(e){return "";}}
+/* ---------- ajout ---------- */
+let addPhoto=null,addPhotoURL="";
+function openAdd(){$("sh-add").classList.add("on");$("a-res").innerHTML="";$("a-st").textContent="";$("a-q").value="";$("a-ph").style.display="none";addPhoto=null;dbLoad();}
+$("add1").onclick=openAdd;
+document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>b.closest(".sheet").classList.remove("on"));
+document.querySelectorAll(".sheet").forEach(s=>s.addEventListener("click",e=>{if(e.target===s)s.classList.remove("on");}));
+function prog(p){const e=$("a-prog");e.style.opacity=p?1:0;e.firstChild.style.width=p+"%";}
+function shrink(file,max=900){return new Promise(ok=>{const im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height));const c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);ok({url:c.toDataURL("image/jpeg",.84),canvas:c,full:im});};im.src=URL.createObjectURL(file);});}
+async function onPhoto(e){const f=e.target.files[0];e.target.value="";if(!f)return;const sh=await shrink(f);addPhoto=sh.url;
+ $("a-ph").style.display="flex";$("a-ph").innerHTML=`<div class="pick"><div class="im" style="width:80px;height:100px"><img src="${addPhoto}" alt=""></div><div class="note">Photo enregistrée. Je lis le flacon…</div></div>`;
+ $("a-res").innerHTML="";$("a-st").textContent="Chargement de la base des parfums…";prog(8);await dbLoad();
+ let code=null;try{if(window.ZXing){$("a-st").textContent="Recherche d'un code-barres…";const rd=new ZXing.BrowserMultiFormatReader();const r=await rd.decodeFromImageUrl(URL.createObjectURL(f));code=r&&r.getText();}}catch(err){}
+ if(code&&/^\d{8,14}$/.test(code)){$("a-st").textContent="Code-barres "+code+" : recherche du produit…";try{const j=await (await fetch(`https://world.openbeautyfacts.org/api/v2/product/${code}.json?fields=product_name,brands,image_front_url`)).json();
+   if(j.product&&j.product.product_name){const hits=dbMatchText((j.product.brands||"")+" "+j.product.product_name);if(j.product.image_front_url)OFFC["code"+code]=j.product.image_front_url;showRes(hits,`Code-barres reconnu : ${j.product.brands||""} ${j.product.product_name}`,j.product.image_front_url);prog(0);return;}}catch(err){}}
+ if(!window.Tesseract){$("a-st").textContent="Lecture indisponible (connexion ?). Tape le nom ci-dessus.";prog(0);return;}
+ $("a-st").textContent="Lecture du texte sur le flacon…";
+ try{let best=[],all="";const c=sh.canvas;const vs=[c,rot(c,90),rot(c,-90)];
+  for(let k=0;k<vs.length;k++){const r=await Tesseract.recognize(vs[k],"eng",{logger:m=>{if(m.status==="recognizing text")prog(10+80*(k+m.progress)/vs.length);}});all+=" "+r.data.text;best=dbMatchText(all);if(best.length&&k===0&&norm(r.data.text).length>12)break;}
+  prog(100);setTimeout(()=>prog(0),700);showRes(best,best.length?"Voici ce que j'ai reconnu, touche le bon parfum :":"Je n'ai pas réussi à lire le nom. Tape-le ci-dessus, ou photographie la boîte de face, bien éclairée.");}
+ catch(err){prog(0);$("a-st").textContent="Lecture impossible. Tape le nom ci-dessus.";}}
+function rot(c,deg){const o=document.createElement("canvas");o.width=c.height;o.height=c.width;const x=o.getContext("2d");x.translate(o.width/2,o.height/2);x.rotate(deg*Math.PI/180);x.drawImage(c,-c.width/2,-c.height/2);return o;}
+$("a-cam").onchange=onPhoto;$("a-pic").onchange=onPhoto;
+function showRes(L,msg,img){$("a-st").textContent=msg||"";$("a-res").innerHTML=L.map(i=>{const p=fromDB(i);return `<button class="res" data-i="${i}"><div class="im" id="ri-${i}">${phSVG(p)}</div><div style="flex:1;min-width:0"><b>${esc(p.nom)}</b><small>${esc(p.marque)}${p.conc?" · "+esc(p.conc):""}${p.annee?" · "+p.annee:""}</small><div>${p.acc.slice(0,3).map(a=>`<span class="tag">${accFR(a)}</span>`).join("")}</div></div></button>`;}).join("");
+ $("a-res").querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>addFromDB(+b.dataset.i,img));
+ L.slice(0,5).forEach(i=>offImg(fromDB(i)).then(u=>{const el=$("ri-"+i);if(u&&el)el.innerHTML=`<img src="${esc(u)}" alt="" onerror="this.remove()">`;}));}
+let qT;$("a-q").oninput=()=>{clearTimeout(qT);qT=setTimeout(async()=>{await dbLoad();const q=$("a-q").value;if(norm(q).length<2){$("a-res").innerHTML="";return;}showRes(dbSearch(q,10),"");},220);};
+async function addFromDB(i,img){const p=fromDB(i);const id="p"+Date.now().toString(36);const it={id,...p,size:100,ml:100,sprays:3,stars:0,added:new Date().toISOString(),pic:!!addPhoto,off:img||""};
+ if(addPhoto){await IDB.put("p-"+id,addPhoto);IMGC[id]=addPhoto;}
+ S.list.push(it);save();$("sh-add").classList.remove("on");colRender();stkRender();toast("✅ "+p.nom+" ajouté");openDet(id,"qty");
+ if(!img)offImg(p).then(u=>{if(u){it.off=u;save();colRender();if($("sh-det").classList.contains("on"))openDet(id,"keep");}});
+ wikiDesc(p).then(w=>{if(w){it.wiki=w;save();}});}
+$("a-man").onclick=()=>{const nom=prompt("Nom du parfum ?",$("a-q").value||"");if(!nom)return;const marque=prompt("Marque ?","")||"";
+ const ACCS=Object.keys(ACC_FR);const raw=prompt("Son caractère ? Choisis 1 à 3 mots parmi : "+ACCS.map(accFR).join(", "),"Boisé, Épicé")||"";
+ const acc=raw.split(/[,;]/).map(x=>norm(x)).map(x=>ACCS.find(a=>norm(accFR(a))===x||norm(a)===x)).filter(Boolean);
+ const id="p"+Date.now().toString(36);const it={id,nom,marque,conc:"",annee:"",acc:acc.length?acc:["Woody","Spicy"],tete:[],coeur:[],fond:[],url:"",size:100,ml:100,sprays:3,stars:0,added:new Date().toISOString(),pic:!!addPhoto,off:"",manual:1};
+ (async()=>{if(addPhoto){await IDB.put("p-"+id,addPhoto);IMGC[id]=addPhoto;}S.list.push(it);save();$("sh-add").classList.remove("on");colRender();stkRender();openDet(id,"qty");offImg(it).then(u=>{if(u){it.off=u;save();colRender();}});})();};
+/* ---------- fiche ---------- */
+async function openDet(id,focus){const p=S.list.find(x=>x.id===id);if(!p)return;const d=$("det");const pc=lvlPct(p),dl=daysLeft(p);const hasPic=p.pic,hasOff=!!p.off;const show=p.show||(hasOff&&!hasPic?"off":"pic");
+ const tags=whenTags(p);const wears=S.hist.filter(h=>h.ids.includes(p.id)).length;
+ d.innerHTML=`<div class="grab"></div><div class="big" id="dt-im">${phSVG(p)}${hasPic&&hasOff?`<div class="sw"><button data-sw="pic" class="${show==="pic"?"on":""}">Ma photo</button><button data-sw="off" class="${show==="off"?"on":""}">Photo officielle</button></div>`:""}</div>
+ <div style="margin-top:14px"><small class="note">${esc(p.marque)}${p.annee?" · "+p.annee:""}</small><h2 style="font-size:28px;line-height:1.1">${esc(p.nom)}</h2><div class="note">${esc(p.conc||"")}${wears?` · porté ${wears} fois`:""}</div>
+ <div class="stars" id="dt-st" style="margin-top:6px">${[1,2,3,4,5].map(n=>`<button data-s="${n}" class="${(p.stars||0)>=n?"on":""}" aria-label="${n} étoiles">★</button>`).join("")}</div>
+ <div style="margin-top:6px">${(p.acc||[]).map(a=>`<span class="tag">${accFR(a)}</span>`).join("")}</div></div>
+ <div class="card"><h3 style="font-size:18px">Quand le porter</h3><div class="when">${tags.map(t=>`<span class="${t[2]?"hi":""}">${t[0]} ${t[1]}</span>`).join("")}</div><div class="note" style="margin-top:8px">${esc(descFR(p))}</div>${p.wiki?`<div class="note" style="margin-top:8px">${esc(p.wiki.slice(0,420))}${p.wiki.length>420?"…":""} <i>(Wikipédia)</i></div>`:""}
+ ${(p.tete||[]).length+(p.coeur||[]).length+(p.fond||[]).length?`<div class="pyr"><div><span>Tête</span>${esc((p.tete||[]).map(noteFR).join(", ")||"–")}</div><div><span>Cœur</span>${esc((p.coeur||[]).map(noteFR).join(", ")||"–")}</div><div><span>Fond</span>${esc((p.fond||[]).map(noteFR).join(", ")||"–")}</div></div>`:""}
+ <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><a class="btn sm" href="${esc(infoURL(p))}" target="_blank" rel="noopener">${p.url?"Fiche Parfumo":"Fiche en ligne"}</a><a class="btn sm" href="${shopURL(p)}" target="_blank" rel="noopener">Acheter</a></div></div>
+ <div class="card" id="dt-q"><h3 style="font-size:18px">Quantité</h3><div class="gauge" style="margin-top:8px"><div class="bottle"><div class="c"></div><div class="g"><i style="height:${pc??0}%"></i></div></div><div><b style="font-family:var(--serif);font-size:22px">${p.ml!=null?Math.round(p.ml)+" ml":"–"}</b><div class="note">${pc!=null?pc+" % restant":""}${dl!=null?` · ≈ ${dl} jours au rythme actuel`:""}</div>${low(p)?`<div class="note" style="color:#C0504D;font-weight:700">🛒 Pense à le racheter</div>`:""}</div></div>
+  <div class="qty" style="margin-top:8px"><div><label class="l">Taille du flacon</label><select id="dt-size">${[15,30,50,60,75,80,90,100,110,125,150,200].map(v=>`<option value="${v}" ${p.size==v?"selected":""}>${v} ml</option>`).join("")}</select></div><div><label class="l">Pulvérisations par fois</label><select id="dt-spr">${[1,2,3,4,5,6,8].map(v=>`<option ${p.sprays==v?"selected":""}>${v}</option>`).join("")}</select></div></div>
+  <label class="l">Niveau actuel : <span id="dt-lv">${pc??100} %</span></label><input id="dt-lvl" type="range" min="0" max="100" step="5" value="${pc??100}" style="padding:0;border:0">
+  <div class="qty"><div><label class="l">Prix payé (FCFA)</label><input id="dt-prix" inputmode="numeric" value="${esc(p.prix||"")}" placeholder="facultatif"></div><div><label class="l">Acheté le</label><input id="dt-ach" type="date" value="${esc(p.achat||"")}"></div></div>
+  <button class="btn gold full" id="dt-save" style="margin-top:12px">Enregistrer</button></div>
+ <div style="display:flex;gap:8px"><button class="btn full" id="dt-wear">✓ Je le porte aujourd'hui</button></div>
+ <div style="display:flex;gap:8px;margin-top:8px"><label class="btn full" style="cursor:pointer">📷 Changer la photo<input id="dt-ph" type="file" accept="image/*" hidden></label><button class="btn full" id="dt-del" style="color:#C0504D">Supprimer</button></div>
+ <button class="btn full" data-close style="margin-top:8px;background:none;color:var(--mu)">Fermer</button>`;
+ $("sh-det").classList.add("on");
+ const imEl=$("dt-im");const u=show==="off"&&hasOff?p.off:await imgOf({...p,off:hasPic?"":p.off});if(u){const sw=imEl.querySelector(".sw");imEl.innerHTML=`<img src="${esc(u)}" alt="" onerror="this.remove()">`+(sw?sw.outerHTML:"");}
+ imEl.querySelectorAll("[data-sw]").forEach(b=>b.onclick=()=>{p.show=b.dataset.sw;save();openDet(id,"keep");colRender();});
+ d.querySelector("[data-close]").onclick=()=>$("sh-det").classList.remove("on");
+ $("dt-st").querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>{p.stars=+b.dataset.s;save();$("dt-st").querySelectorAll("[data-s]").forEach(x=>x.classList.toggle("on",+x.dataset.s<=p.stars));});
+ $("dt-lvl").oninput=()=>{$("dt-lv").textContent=$("dt-lvl").value+" %";d.querySelector(".bottle .g i").style.height=$("dt-lvl").value+"%";};
+ $("dt-save").onclick=()=>{p.size=+$("dt-size").value;p.sprays=+$("dt-spr").value;p.ml=p.size*(+$("dt-lvl").value)/100;p.prix=$("dt-prix").value.trim();p.achat=$("dt-ach").value;save();colRender();stkRender();toast("Enregistré");openDet(id,"keep");};
+ $("dt-wear").onclick=()=>{wear([p.id],{});openDet(id,"keep");};
+ $("dt-del").onclick=async()=>{if(!confirm("Supprimer "+p.nom+" de ta collection ?"))return;S.list=S.list.filter(x=>x.id!==id);S.hist=S.hist.map(h=>({...h,ids:h.ids.filter(x=>x!==id)})).filter(h=>h.ids.length);await IDB.del("p-"+id);delete IMGC[id];save();$("sh-det").classList.remove("on");colRender();stkRender();};
+ $("dt-ph").onchange=async e=>{const f=e.target.files[0];if(!f)return;const sh=await shrink(f);await IDB.put("p-"+id,sh.url);IMGC[id]=sh.url;p.pic=true;p.show="pic";save();colRender();openDet(id,"keep");};
+ if(focus==="qty")setTimeout(()=>$("dt-q").scrollIntoView({behavior:"smooth",block:"center"}),350);}
+/* aperçu d'un parfum à découvrir */
+function openPreview(i){const p=fromDB(i);const d=$("det");const tags=whenTags(p);
+ d.innerHTML=`<div class="grab"></div><div class="big" id="pv-im">${phSVG(p)}</div><div style="margin-top:14px"><small class="note">${esc(p.marque)}${p.annee?" · "+p.annee:""}</small><h2 style="font-size:28px;line-height:1.1">${esc(p.nom)}</h2><div class="note">${esc(p.conc||"")}${p.votes?` · ★ ${String(p.note).replace(".",",")}/10 (${p.votes} avis)`:""}</div><div style="margin-top:6px">${p.acc.map(a=>`<span class="tag">${accFR(a)}</span>`).join("")}</div></div>
+ <div class="card"><h3 style="font-size:18px">Pourquoi pour toi</h3><div class="when">${tags.map(t=>`<span class="${t[2]?"hi":""}">${t[0]} ${t[1]}</span>`).join("")}</div><div class="note" style="margin-top:8px">${esc(descFR(p))}</div>
+ <div class="pyr"><div><span>Tête</span>${esc(p.tete.map(noteFR).join(", ")||"–")}</div><div><span>Cœur</span>${esc(p.coeur.map(noteFR).join(", ")||"–")}</div><div><span>Fond</span>${esc(p.fond.map(noteFR).join(", ")||"–")}</div></div>
+ ${S.list.length?`<div class="hl" style="margin-top:10px">🍸 En cocktail, il irait bien avec <b>${esc(S.list.map(x=>({x,s:pairScore(x,{...p,id:"tmp"},CTX).s})).sort((a,b)=>b.s-a.s)[0].x.nom)}</b> de ta collection.</div>`:""}
+ <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><a class="btn sm" href="${esc(infoURL(p))}" target="_blank" rel="noopener">Fiche Parfumo</a><a class="btn sm gold" href="${shopURL(p)}" target="_blank" rel="noopener">Acheter</a><button class="btn sm" id="pv-add">Je l'ai déjà</button></div></div>
+ <button class="btn full" data-close style="margin-top:8px;background:none;color:var(--mu)">Fermer</button>`;
+ $("sh-det").classList.add("on");d.querySelector("[data-close]").onclick=()=>$("sh-det").classList.remove("on");
+ offImg(p).then(u=>{if(u)$("pv-im").innerHTML=`<img src="${esc(u)}" alt="" onerror="this.remove()">`;});
+ $("pv-add").onclick=()=>{addPhoto=null;$("sh-det").classList.remove("on");addFromDB(i,"");};}
+/* ---------- navigation ---------- */
+const TITLES={col:["Ma collection","CLB Parfums"],stk:["Niveaux et rachats","Mon stock"],now:["Mon parfum du jour","Je me parfume"],ck:["Superpositions","Cocktails"],dec:["Selon ton goût","Découvrir"]};
+function go(t){document.querySelectorAll(".tab").forEach(s=>s.classList.toggle("on",s.id==="t-"+t));document.querySelectorAll("nav.bot button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));$("hsub").textContent=TITLES[t][0];$("htitle").textContent=TITLES[t][1];window.scrollTo({top:0});
+ if(t==="col")colRender();if(t==="stk")stkRender();if(t==="now"){nowChips();wxRender();}if(t==="ck")ckRender();if(t==="dec")decRender();}
+document.querySelectorAll("nav.bot button").forEach(b=>b.onclick=()=>go(b.dataset.t));
+$("now-go").onclick=nowRun;$("wx").onclick=()=>{weather();toast("Météo mise à jour");};
+/* ---------- accueil ---------- */
+(function(){const m=$("mist");for(let i=0;i<22;i++){const e=document.createElement("i");e.style.left=(Math.random()*100)+"%";e.style.animationDelay=(Math.random()*7)+"s";e.style.width=e.style.height=(4+Math.random()*9)+"px";m.appendChild(e);}
+ fetch("photos/accueil.json").then(r=>r.json()).then(c=>{const a=$("cr");a.textContent="Photo : "+c.author+" · "+c.license;a.href=c.page;}).catch(()=>{});
+ $("splash").onclick=e=>{if(e.target.id==="cr")return;$("splash").classList.add("out");setTimeout(()=>$("splash").remove(),650);};})();
+colRender();weather();setInterval(()=>{CTX.hr=new Date().getHours();wxRender();},60000);
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body></html>
