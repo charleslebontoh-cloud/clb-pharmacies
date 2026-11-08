@@ -3,6 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       step: {default: "build"}
+      budget: {default: "1500"}
 permissions: {contents: write}
 jobs:
   r:
@@ -13,10 +14,10 @@ jobs:
       - run: sudo apt-get install -y poppler-utils >/dev/null
       - run: |
           mkdir -p reseaux/raw
-          if [ ! -s reseaux/raw/vitalis-full.txt ] || [ "${{ inputs.step }}" = "fetch" ]; then
-            curl -sSL -A "Mozilla/5.0" -o reseaux/raw/vitalis-full.pdf https://services.vitalis-ci.com/reseaudesoin/PRESENTATION.pdf && pdftotext -layout reseaux/raw/vitalis-full.pdf reseaux/raw/vitalis-full.txt
-          fi
-          if [ "${{ inputs.step }}" = "build" ]; then BUDGET=1500 python3 tools/reseaux.py reseaux/raw/vitalis-full.txt; fi
+          get(){ if [ ! -s reseaux/raw/$1.txt ] || [ "${{ inputs.step }}" = "fetch" ]; then curl -sSL -A "Mozilla/5.0" -o reseaux/raw/$1.pdf "$2" && pdftotext -layout reseaux/raw/$1.pdf reseaux/raw/$1.txt; wc -l reseaux/raw/$1.txt; fi; }
+          get vitalis-full https://services.vitalis-ci.com/reseaudesoin/PRESENTATION.pdf
+          get atlantique https://www.atlantique-assurances.net/wp-content/uploads/2024/07/RESEAU-DE-SOINS-AACI-ABIDJAN.pdf
+          if [ "${{ inputs.step }}" = "build" ]; then BUDGET=${{ inputs.budget || 1500 }} python3 tools/reseaux.py all; fi
       - if: always()
         run: |
           git config user.name clb-bot; git config user.email bot@users.noreply.github.com
