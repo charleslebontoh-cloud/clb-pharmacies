@@ -171,6 +171,14 @@ body{padding-bottom:calc(env(safe-area-inset-bottom) + 100px)!important}
 .pcross{flex:0 0 40px;width:40px;height:40px;border-radius:13px;display:grid;place-items:center;color:#fff;font-size:22px;font-weight:900;background:linear-gradient(135deg,#34D399,#059669);box-shadow:0 10px 18px -10px rgba(5,150,105,.9);margin-right:10px}
 .c .top{align-items:center}
 .pho{background:#F1EEFF!important;color:#6D28D9!important;border-color:rgba(109,40,217,.25)!important}
+nav{grid-template-columns:repeat(5,1fr)!important}nav button{font-size:10px!important}
+nav button[data-t="med"].on{background:var(--g-amber)}
+#t-med header.hero .ph{background:radial-gradient(60% 80% at 80% 20%,rgba(252,211,77,.55),transparent 60%),linear-gradient(135deg,#7C3AED,#0E7490)!important}
+.medc{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}.medc:last-child{border:0}.medc img{width:64px;height:64px;object-fit:cover;border-radius:14px;flex:0 0 64px}.medc small{color:var(--muted)}
+.chk{display:grid;gap:6px;margin:10px 0}.sx{display:flex;gap:8px;align-items:flex-start;padding:9px 10px;border-radius:12px;background:#F6FAFB;border:1px solid var(--line);font-size:13.5px;color:var(--ink)}
+.sx.o{background:#FFF7ED;border-color:#FED7AA}.sx.r{background:#FEF2F2;border-color:#FECACA}.sx input{margin-top:2px;accent-color:#0E7490}
+.adv{margin-top:12px;padding:14px;border-radius:16px;animation:cardIn .4s}.adv p{margin:6px 0 10px;font-size:14px}.adv.r{background:#FEF2F2;border:1.5px solid #F87171}.adv.o{background:#FFF7ED;border:1.5px solid #FB923C}.adv.g{background:#ECFDF5;border:1.5px solid #34D399}
+.adv .btn{text-decoration:none;display:inline-block}
 /* cookies & publicité */
 #ck{position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom) + 92px);z-index:60;background:#fff;border-radius:22px;padding:16px;box-shadow:0 24px 50px -16px rgba(14,60,80,.55);border:1px solid var(--line);animation:cardIn .5s cubic-bezier(.22,1,.36,1);color:var(--ink)}
 #ck b{font-size:16px}#ck p{margin:6px 0 12px;font-size:13.5px;color:var(--muted)}#ck .row{gap:8px}#ck button{flex:1;border-radius:14px;padding:12px;font-weight:800;border:0}
@@ -179,7 +187,7 @@ body{padding-bottom:calc(env(safe-area-inset-bottom) + 100px)!important}
 .adbox:before{content:"Publicité";position:absolute;top:4px;right:10px;font:700 9px -apple-system;color:#9AAAB3;letter-spacing:.08em;text-transform:uppercase}
 .priv{margin:4px 18px 20px;font-size:12px;color:var(--muted);text-align:center}.priv a{color:#0E7490;font-weight:700}
 </style></head><body>
-<div id="splash" role="button" tabindex="0" aria-label="Entrer dans CLB Health"><div><img src="icon-512.png?v=2" alt=""><b>CLB HEALTH</b><span class="tap" id="sp-tap">Touche pour entrer</span><div id="sp-err" style="min-height:1.3em;margin-top:10px;color:#ff8a8a;font-size:13px;font-weight:600"></div><a id="sp-sos" href="tel:185" onclick="event.stopPropagation()" style="display:inline-block;margin-top:18px;padding:8px 14px;border-radius:999px;border:1px solid rgba(255,90,120,.5);color:#ff9fb3;text-decoration:none;font:700 13px -apple-system">🆘 SAMU 185</a><small style="display:block;margin-top:24px;color:#4d5d8f;font-size:11px">version 13.1.0 · 8 nov. 2026</small></div></div>
+<div id="splash" role="button" tabindex="0" aria-label="Entrer dans CLB Health"><div><img src="icon-512.png?v=2" alt=""><b>CLB HEALTH</b><span class="tap" id="sp-tap">Touche pour entrer</span><div id="sp-err" style="min-height:1.3em;margin-top:10px;color:#ff8a8a;font-size:13px;font-weight:600"></div><a id="sp-sos" href="tel:185" onclick="event.stopPropagation()" style="display:inline-block;margin-top:18px;padding:8px 14px;border-radius:999px;border:1px solid rgba(255,90,120,.5);color:#ff9fb3;text-decoration:none;font:700 13px -apple-system">🆘 SAMU 185</a><small style="display:block;margin-top:24px;color:#4d5d8f;font-size:11px">version 13.2.0 · 8 nov. 2026</small></div></div>
 <div class="banner" id="nudge"></div>
 
 <!-- PHARMACIES -->
@@ -216,6 +224,47 @@ body{padding-bottom:calc(env(safe-area-inset-bottom) + 100px)!important}
 </div>
 </section>
 
+
+<!-- MÉDICAMENTS -->
+<section class="tab" id="t-med">
+<header><div class="brand">CLB Health</div><h1>Médicaments <span>& traitements</span></h1><div class="per">Photographie l'ordonnance ou la boîte : l'appli te rappelle chaque prise.</div></header>
+<div class="pad">
+ <div class="card2" id="m-next"></div>
+ <div class="card2"><h3>📸 Ajouter un médicament</h3>
+  <div class="row"><label class="btn gold" style="flex:1;text-align:center;cursor:pointer">📷 Prendre en photo<input id="m-cam" type="file" accept="image/*" capture="environment" hidden></label><label class="btn" style="flex:1;text-align:center;cursor:pointer">🖼️ Choisir une photo<input id="m-pic" type="file" accept="image/*" hidden></label></div>
+  <button class="btn full" id="m-manual">✍️ Saisir à la main</button>
+  <div id="m-form" style="display:none;margin-top:10px">
+   <img id="m-prev" alt="" style="display:none;width:100%;max-height:220px;object-fit:contain;border-radius:14px;background:#F1F5F7;margin-bottom:8px">
+   <div class="note" id="m-ocr"></div>
+   <details id="m-txtbox" style="display:none;margin:6px 0"><summary>Texte lu sur la photo</summary><textarea id="m-txt" style="margin-top:6px"></textarea><button class="btn full" id="m-reparse">🔁 Relire ce texte</button></details>
+   <div style="display:grid;gap:8px">
+    <input id="m-nom" placeholder="Nom du médicament (ex. Amoxicilline)">
+    <input id="m-dose" placeholder="Dose par prise (ex. 500 mg, 1 comprimé)">
+    <div class="row"><label for="m-n">Prises par jour</label><select id="m-n"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div>
+    <div class="row" id="m-times"></div>
+    <div class="row"><label for="m-days">Durée</label><select id="m-days"><option value="0">En continu</option><option>3</option><option>5</option><option selected>7</option><option>10</option><option>14</option><option>21</option><option>30</option></select><label for="m-start">jours, à partir du</label><input id="m-start" type="date"></div>
+    <select id="m-rep"><option value="">Moment par rapport aux repas : non précisé</option><option>Avant le repas</option><option>Pendant le repas</option><option>Après le repas</option><option>À jeun</option><option>Au coucher</option></select>
+    <textarea id="m-notes" placeholder="Consignes de la notice ou du médecin (optionnel)"></textarea>
+    <button class="btn gold" id="m-save">💾 Enregistrer et activer les rappels</button>
+    <button class="btn" id="m-cancel">Annuler</button>
+   </div>
+   <div class="note">Vérifie toujours les informations lues sur la photo : la lecture automatique peut se tromper, surtout sur une ordonnance manuscrite.</div>
+  </div>
+ </div>
+ <div class="card2"><h3>💊 Mes traitements</h3><div id="m-list"></div></div>
+ <div class="card2"><h3>🤒 Ce que je ressens</h3>
+  <div class="note" style="margin:0 0 8px">Après une prise, note tes effets indésirables : l'appli te dit quoi faire.</div>
+  <select id="s-med" class="vi" style="width:100%;padding:10px"></select>
+  <div class="chk" id="s-list"></div>
+  <div class="row"><label>Intensité</label><select id="s-int"><option value="1">Légère</option><option value="2">Gênante</option><option value="3">Forte</option></select></div>
+  <textarea id="s-txt" placeholder="Décris ce que tu ressens (optionnel)" style="margin-top:8px"></textarea>
+  <button class="btn gold full" id="s-go">🩺 Que dois-je faire ?</button>
+  <div id="s-adv"></div>
+  <div id="s-log"></div>
+ </div>
+ <div class="note" style="margin:10px 2px 20px">⚠️ CLB Health ne remplace pas un médecin ni un pharmacien. En cas de doute, appelle ton médecin ou une pharmacie de garde ; en cas d'urgence, le SAMU (185). Tes traitements et photos restent uniquement sur ce téléphone.</div>
+</div>
+</section>
 
 <!-- VISION -->
 <section class="tab" id="t-eye">
@@ -274,7 +323,7 @@ body{padding-bottom:calc(env(safe-area-inset-bottom) + 100px)!important}
 </section>
 
 <div id="e-over"><div style="font-size:50px">🌳</div><div style="font-size:22px;font-weight:800;margin:10px 0">Regarde au loin</div><div class="note" style="font-size:15px">Fixe un point à environ 6 mètres, cligne des yeux.</div><div class="big" id="e-sec">20</div><button class="btn" id="e-skip">Passer</button></div>
-<nav><button data-t="ph"><b>💊</b>Pharmacies</button><button data-t="eau"><b>💧</b>Eau</button><button data-t="eye"><b>👓</b>Vision</button><button data-t="sos"><b>🆘</b>Urgence</button></nav>
+<nav><button data-t="ph"><b>💊</b>Pharmacies</button><button data-t="eau"><b>💧</b>Eau</button><button data-t="med"><b>💊</b>Médocs</button><button data-t="eye"><b>👓</b>Vision</button><button data-t="sos"><b>🆘</b>Urgence</button></nav>
 <script>
 
 const $=id=>document.getElementById(id);
@@ -298,7 +347,7 @@ const fmt=x=>x.toLocaleString("fr-FR",{maximumFractionDigits:1});
 const fmtD=s=>{try{return new Date(s+"T12:00:00").toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});}catch(e){return s;}};
 const telHref=t=>{let d=t.replace(/\D/g,"");if(d.length===10)d="225"+d;return"tel:+"+d;};
 function card(p,km){const tels=p.t.split("/").map(x=>x.trim()).filter(Boolean),map="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(p.n+", "+p.c+", Côte d'Ivoire");
- return `<div class="c"><div class="top"><span class="pcross" aria-hidden="true">✚</span><div class="n" style="flex:1">${esc(p.n.replace(/^PHARMACIE /,"Pharmacie "))}</div>${km!=null?`<div class="d">~${fmt(km)} km</div>`:""}</div><div class="z">${esc(p.z)}</div><div class="a">${tels.map(t=>`<a class="call" href="${telHref(t)}">📞 ${esc(t)}</a>`).join("")}<a class="map" href="${map}" target="_blank" rel="noopener">🧭 Itinéraire</a><a class="map pho" href="${map}" target="_blank" rel="noopener" title="Photos de la façade et avis sur Google Maps">📷 Photos</a></div></div>`;}
+ return `<div class="c"><div class="top"><span class="pcross" aria-hidden="true">✚</span><div class="n" style="flex:1">${esc(p.n.replace(/^PHARMACIE /,"Pharmacie "))}</div>${km!=null?`<div class="d">~${fmt(km)} km</div>`:""}</div><div class="z">${esc(p.z)}</div><div class="a">${tels.map(t=>`<a class="call" href="${telHref(t)}">📞 ${esc(t)}</a>`).join("")}<a class="map" href="${map}" target="_blank" rel="noopener">🧭 Itinéraire</a></div></div>`;}
 function render(){const L=$("list");if(!data)return;const q=N($("q").value.trim());
  if(q){const it=data.liste.filter(p=>N(p.n+" "+p.z+" "+p.c).includes(q));L.innerHTML=it.length?it.map(p=>card(p,gps&&C[p.c]?dist(gps,C[p.c]):null)).join(""):'<div class="empty">Aucun résultat.</div>';return;}
  if(gps&&!cur){const byC={};data.liste.forEach(p=>{if(C[p.c])(byC[p.c]=byC[p.c]||[]).push(p);});
@@ -334,7 +383,7 @@ const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.
 let phLoaded=false;
 function go(t){TAB=t;document.querySelectorAll(".tab").forEach(s=>s.classList.toggle("on",s.id==="t-"+t));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));
  LS.set("tab",t);if(location.hash!=="#"+t)history.replaceState(null,"","#"+t);window.scrollTo(0,0);
- if(t==="ph"&&!phLoaded){phLoaded=true;if(!cur)locate();} if(t==="eau")wRender(); if(t==="eye"){vLoad();eTick();} if(t==="sos"){fRender();lockRender();}}
+ if(t==="ph"&&!phLoaded){phLoaded=true;if(!cur)locate();} if(t==="eau")wRender(); if(t==="med")mRender(); if(t==="eye"){vLoad();eTick();} if(t==="sos"){fRender();lockRender();}}
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.t));
 
 /* ---------- eau ---------- */
@@ -387,9 +436,110 @@ function nudge(){const n=$("nudge"),h=new Date().getHours(),l=lastDrink();
  const since=l?(Date.now()-l)/3600000:(h-W.from);
  if(since>=W.every){n.style.display="block";n.innerHTML=`💧 ${l?"Pas d’eau depuis "+Math.floor(since)+" h":"Pas encore bu aujourd’hui"} : <a href="#eau" style="color:var(--gold)">bois un verre</a>`;}else n.style.display="none";}
 $("nudge").onclick=()=>go("eau");
+function behind(){const h=new Date().getHours();if(h<W.from||h>=W.to)return;const t=tot(today()),gap=expectedNow()-t;if(t>=W.goal||gap<300)return;
+ const last=LS.get("lastBehind",0);if(Date.now()-last<60*60000)return;LS.set("lastBehind",Date.now());
+ const msg=`Tu as bu ${fr(t)} ml, il en faudrait ${fr(Math.round(expectedNow()/50)*50)} à cette heure. Bois un verre maintenant.`;
+ toast2(`💧 <b>En retard de ${fr(Math.round(gap/50)*50)} ml</b> · <a href="#eau" style="color:inherit">boire</a>`);if(navigator.vibrate)navigator.vibrate([150,80,150]);
+ if(("Notification"in window)&&Notification.permission==="granted")notify("💧 Tu es en retard sur ton eau",msg);}
+setInterval(behind,5*60000);setTimeout(behind,8000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)setTimeout(behind,1500);});
 setInterval(()=>{nudge();if(!W.notif||!("Notification"in window)||Notification.permission!=="granted")return;
  const d=new Date(),h=d.getHours(),k=today()+"-"+h;if(d.getMinutes()>10||!slots().includes(h)||LS.get("lastNotif","")===k||tot(today())>=W.goal)return;
  const l=lastDrink();if(l&&Date.now()-l<45*60000)return;LS.set("lastNotif",k);notify("💧 C’est l’heure de boire","Un verre de 250 ml. Total du jour : "+fr(tot(today()))+" / "+fr(W.goal)+" ml.");},60000);
+
+
+/* ---------- médicaments ---------- */
+let M=LS.get("meds",{list:[],taken:{},fx:[],notified:{}});
+const saveM=()=>LS.set("meds",M);
+const DEF={1:[8],2:[8,20],3:[8,13,20],4:[8,12,16,20],5:[7,11,15,19,23],6:[6,10,14,18,22,2]};
+let mEdit=null,mPhoto="";
+function timesUI(arr){$("m-times").innerHTML=arr.map((h,i)=>`<input type="time" class="m-t" value="${typeof h==="string"?h:p2(h)+":00"}" style="flex:1;min-width:92px">`).join("");}
+$("m-n").onchange=()=>timesUI(DEF[+$("m-n").value]);
+function openForm(med){$("m-form").style.display="block";mEdit=med?med.id:null;
+ $("m-nom").value=med?med.nom:"";$("m-dose").value=med?med.dose:"";$("m-n").value=med?med.times.length:2;timesUI(med?med.times:DEF[2]);
+ $("m-days").value=med?String(med.days):"7";$("m-start").value=med?med.start:today();$("m-rep").value=med?med.rep:"";$("m-notes").value=med?med.notes:"";
+ if(!med){$("m-prev").style.display="none";mPhoto="";$("m-ocr").textContent="";$("m-txtbox").style.display="none";}
+ $("m-form").scrollIntoView({behavior:"smooth",block:"start"});}
+$("m-manual").onclick=()=>openForm(null);$("m-cancel").onclick=()=>{$("m-form").style.display="none";};
+function shrink(file){return new Promise(res=>{const img=new Image();img.onload=()=>{const k=Math.min(1,900/Math.max(img.width,img.height)),c=document.createElement("canvas");c.width=img.width*k;c.height=img.height*k;c.getContext("2d").drawImage(img,0,0,c.width,c.height);res({url:c.toDataURL("image/jpeg",.72),canvas:c});};img.src=URL.createObjectURL(file);});}
+function loadTess(){return window.Tesseract?Promise.resolve():new Promise((ok,ko)=>{const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";s.onload=ok;s.onerror=ko;document.head.appendChild(s);});}
+async function onPhoto(e){const f=e.target.files&&e.target.files[0];e.target.value="";if(!f)return;openForm(null);
+ const{url,canvas}=await shrink(f);mPhoto=url;$("m-prev").src=url;$("m-prev").style.display="block";
+ $("m-ocr").textContent="🔍 Lecture de la photo… (la première fois, l'outil de lecture se télécharge : quelques secondes)";
+ try{await loadTess();const r=await Tesseract.recognize(canvas,"fra",{logger:m=>{if(m.status==="recognizing text")$("m-ocr").textContent="🔍 Lecture… "+Math.round(m.progress*100)+" %";}});
+  const t=(r.data.text||"").trim();$("m-txt").value=t;$("m-txtbox").style.display=t?"block":"none";parse(t);
+  $("m-ocr").textContent=t?"✅ Texte lu. Vérifie et complète les champs ci-dessous.":"Je n'ai pas réussi à lire le texte : complète les champs à la main.";}
+ catch(err){$("m-ocr").textContent="Lecture automatique indisponible (connexion ?). Complète les champs à la main.";}}
+$("m-cam").onchange=onPhoto;$("m-pic").onchange=onPhoto;$("m-reparse").onclick=()=>parse($("m-txt").value);
+function parse(t){const T=t.replace(/\s+/g," "),low=T.toLowerCase();
+ const dm=T.match(/([A-ZÉÈ][A-Za-zÀ-ÿ\-]{3,}(?:\s+[A-Za-zÀ-ÿ\-]{3,})?)\s*,?\s*(\d+(?:[.,]\d+)?\s?(?:mg|g|ml|µg|mcg|ui|%))/i);
+ if(dm){if(!$("m-nom").value)$("m-nom").value=dm[1].replace(/\b\w/g,c=>c.toUpperCase());if(!$("m-dose").value)$("m-dose").value=dm[2].replace(",",".");}
+ else{const w=T.match(/\b([A-Z][A-Z\-]{4,})\b/);if(w&&!$("m-nom").value)$("m-nom").value=w[1][0]+w[1].slice(1).toLowerCase();}
+ const nc=low.match(/(\d+)\s*(?:comprim[ée]s?|g[ée]lules?|sachets?|cuill[eè]res?|cp|gel)\b/);if(nc&&!/mg|ml/.test($("m-dose").value))$("m-dose").value=($("m-dose").value+" · "+nc[0]).replace(/^ · /,"");
+ let n=null;const f1=low.match(/(\d)\s*(?:fois|x)\s*(?:par|\/)\s*(?:jour|j\b)/);if(f1)n=+f1[1];
+ const f2=low.match(/toutes les\s*(\d{1,2})\s*h/);if(!n&&f2)n=Math.round(24/+f2[1]);
+ if(!n){const k=["matin","midi","soir","coucher"].filter(x=>low.includes(x)).length;if(k)n=k;}
+ if(n&&n>=1&&n<=6){$("m-n").value=n;timesUI(DEF[n]);}
+ const d=low.match(/pendant\s*(\d{1,2})\s*(jours|j\b|semaines?)/);if(d){let v=+d[1]*(/sem/.test(d[2])?7:1);const opts=[...$("m-days").options].map(o=>+o.value);if(!opts.includes(v))$("m-days").insertAdjacentHTML("beforeend",`<option>${v}</option>`);$("m-days").value=String(v);}
+ if(/avant (le |les )?repas/.test(low))$("m-rep").value="Avant le repas";else if(/(pendant|au cours) (du |des )?repas/.test(low))$("m-rep").value="Pendant le repas";else if(/apr[eè]s (le |les )?repas/.test(low))$("m-rep").value="Après le repas";else if(/[àa] jeun/.test(low))$("m-rep").value="À jeun";}
+$("m-save").onclick=()=>{const nom=$("m-nom").value.trim();if(!nom){alert("Indique au moins le nom du médicament.");return;}
+ const times=[...document.querySelectorAll(".m-t")].map(i=>i.value).filter(Boolean).sort();if(!times.length){alert("Indique au moins une heure de prise.");return;}
+ const med={id:mEdit||("m"+Date.now()),nom,dose:$("m-dose").value.trim(),times,days:+$("m-days").value,start:$("m-start").value||today(),rep:$("m-rep").value,notes:$("m-notes").value.trim(),photo:mPhoto||((M.list.find(x=>x.id===mEdit)||{}).photo||""),on:true};
+ const i=M.list.findIndex(x=>x.id===med.id);if(i>=0)M.list[i]=med;else M.list.push(med);
+ try{saveM();}catch(e){med.photo="";saveM();}
+ $("m-form").style.display="none";mRender();toast2("💊 "+nom+" enregistré. Rappels activés.");
+ if(("Notification"in window)&&Notification.permission==="default")Notification.requestPermission();};
+function toast2(t){const b=$("nudge");b.style.display="block";b.innerHTML=t;clearTimeout(b._t);b._t=setTimeout(()=>{b.style.display="none";nudge();},3500);}
+const dayN=(m,k)=>Math.floor((new Date(k)-new Date(m.start))/864e5);
+const activeOn=(m,k)=>m.on&&dayN(m,k)>=0&&(!m.days||dayN(m,k)<m.days);
+function doses(k){const out=[];M.list.forEach(m=>{if(!activeOn(m,k))return;m.times.forEach(t=>{const[h,mi]=t.split(":").map(Number),d=new Date(k+"T00:00");d.setHours(h,mi,0,0);out.push({m,t,at:d.getTime(),key:m.id+"|"+k+"|"+t});});});return out.sort((a,b)=>a.at-b.at);}
+function mRender(){const k=today(),D=doses(k),now=Date.now();
+ const nx=D.find(d=>!M.taken[d.key]&&d.at>now-60*60000)||null;
+ const late=D.filter(d=>!M.taken[d.key]&&d.at<now);
+ $("m-next").innerHTML=`<h3><span class="tile g-violet">⏰</span>Prises du jour</h3>`+(D.length?D.map(d=>{const tk=M.taken[d.key],lt=!tk&&d.at<now;return `<div class="fl" style="align-items:center"><span>${d.t} · <b style="color:var(--ink)">${esc(d.m.nom)}</b> ${esc(d.m.dose||"")}${d.m.rep?`<br><small>${esc(d.m.rep)}</small>`:""}</span>${tk?`<b style="color:var(--ok)">✅ ${new Date(tk).toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}</b>`:`<button class="btn ${lt?"gold":""}" data-take="${d.key}" style="padding:8px 12px">${lt?"⚠️ En retard · ":""}Pris</button>`}</div>`;}).join("")
+  +(nx?`<div class="pace" style="margin-top:10px">Prochaine prise : <b>${esc(nx.m.nom)}</b> à ${nx.t}${nx.at>now?` (dans ${Math.max(1,Math.round((nx.at-now)/60000))} min)`:""}</div>`:"")
+  +(late.length?`<div class="note" style="color:#B45309">Prise oubliée ? Prends-la dès que possible, sauf si la suivante est proche : dans ce cas, saute-la. Ne double jamais la dose. En cas de doute, demande à ton pharmacien.</div>`:"")
+  :`<div class="note">Aucune prise prévue aujourd'hui. Ajoute un médicament ci-dessous.</div>`)
+  +`<button class="btn full" id="m-ics">📅 Mettre toutes les prises dans mon agenda (rappels même téléphone verrouillé)</button>`;
+ $("m-next").querySelectorAll("[data-take]").forEach(b=>b.onclick=()=>{M.taken[b.dataset.take]=Date.now();saveM();mRender();if(navigator.vibrate)navigator.vibrate(30);});
+ $("m-ics").onclick=medIcs;
+ $("m-list").innerHTML=M.list.length?M.list.map(m=>{const dn=dayN(m,k)+1,tot=m.days,done=tot&&dn>tot,all=Object.keys(M.taken).filter(x=>x.startsWith(m.id+"|")).length;
+  let exp=0;for(let i=0;i<Math.min(Math.max(0,dn),tot||dn);i++)exp+=m.times.length;exp=Math.max(0,exp-m.times.filter(t=>new Date(k+"T"+t)>new Date()).length*(dn<=(tot||dn)?1:0));
+  return `<div class="medc">${m.photo?`<img src="${m.photo}" alt="">`:`<span class="tile g-violet" style="margin:0">💊</span>`}<div style="flex:1;min-width:0"><b>${esc(m.nom)}</b> <small>${esc(m.dose||"")}</small><div class="note" style="margin:2px 0">${m.times.join(" · ")}${m.rep?" · "+esc(m.rep):""}</div><div class="note" style="margin:0">${done?"✅ Traitement terminé":tot?`Jour ${Math.max(1,dn)} sur ${tot}`:"En continu"}${exp?` · prises suivies : ${Math.min(100,Math.round(all*100/exp))} %`:""}</div>${m.notes?`<div class="note" style="margin:2px 0">${esc(m.notes)}</div>`:""}
+   <div class="row" style="margin-top:6px"><button class="btn" data-ed="${m.id}" style="padding:7px 10px;font-size:13px">✏️ Modifier</button><button class="btn" data-off="${m.id}" style="padding:7px 10px;font-size:13px">${m.on?"⏸️ Mettre en pause":"▶️ Reprendre"}</button><button class="btn" data-del="${m.id}" style="padding:7px 10px;font-size:13px">🗑️</button></div></div></div>`;}).join(""):`<div class="note">Aucun traitement enregistré.</div>`;
+ $("m-list").querySelectorAll("[data-ed]").forEach(b=>b.onclick=()=>{const m=M.list.find(x=>x.id===b.dataset.ed);openForm(m);if(m.photo){$("m-prev").src=m.photo;$("m-prev").style.display="block";}});
+ $("m-list").querySelectorAll("[data-off]").forEach(b=>b.onclick=()=>{const m=M.list.find(x=>x.id===b.dataset.off);m.on=!m.on;saveM();mRender();});
+ $("m-list").querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{if(confirm("Supprimer ce traitement et son suivi ?")){M.list=M.list.filter(x=>x.id!==b.dataset.del);saveM();mRender();}});
+ $("s-med").innerHTML=`<option value="">Médicament concerné (optionnel)</option>`+M.list.map(m=>`<option>${esc(m.nom)}</option>`).join("");
+ fxLog();}
+function medIcs(){if(!M.list.length){alert("Ajoute d'abord un médicament.");return;}const st=new Date().toISOString().replace(/[-:]/g,"").slice(0,15)+"Z";let s="BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//CLB Health//Medicaments//FR\r\nCALSCALE:GREGORIAN\r\n";
+ M.list.filter(m=>m.on).forEach(m=>m.times.forEach(t=>{const d=(m.start>today()?m.start:today()).replace(/-/g,""),hm=t.replace(":","");const left=m.days?Math.max(1,m.days-Math.max(0,dayN(m,today()))):0;
+  s+=`BEGIN:VEVENT\r\nUID:clb-med-${m.id}-${hm}@clb\r\nDTSTAMP:${st}\r\nDTSTART:${d}T${hm}00\r\nDTEND:${d}T${hm}00\r\n${left?`RRULE:FREQ=DAILY;COUNT=${left}\r\n`:"RRULE:FREQ=DAILY\r\n"}SUMMARY:💊 ${m.nom} ${m.dose||""}\r\nDESCRIPTION:${(m.rep||"Prise de médicament")} — CLB Health\r\nBEGIN:VALARM\r\nACTION:DISPLAY\r\nDESCRIPTION:💊 ${m.nom}\r\nTRIGGER:PT0M\r\nEND:VALARM\r\nEND:VEVENT\r\n`;}));
+ s+="END:VCALENDAR\r\n";const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([s],{type:"text/calendar"}));a.download="rappels-medicaments-CLB.ics";document.body.appendChild(a);a.click();a.remove();}
+/* rappels de prise (appli ouverte ou en arrière-plan récent) */
+function medTick(){const k=today(),now=Date.now();doses(k).forEach(d=>{if(M.taken[d.key])return;const late=now-d.at;
+ if(late>=0&&late<3*3600000){const n=M.notified[d.key]||0;if(now-n>30*60000){M.notified[d.key]=now;saveM();
+  const txt=`${d.m.nom} ${d.m.dose||""}${d.m.rep?" · "+d.m.rep:""}`;if(("Notification"in window)&&Notification.permission==="granted")notify(late<10*60000?"💊 C'est l'heure de ton médicament":"⚠️ Prise de médicament en retard",txt);
+  toast2(`💊 ${late<10*60000?"C'est l'heure":"En retard"} : <b>${esc(txt)}</b> · <a href="#med" style="color:inherit">ouvrir</a>`);if(navigator.vibrate)navigator.vibrate([200,100,200]);if(TAB==="med")mRender();}}});
+ const keys=Object.keys(M.notified);if(keys.length>300){keys.slice(0,150).forEach(x=>delete M.notified[x]);saveM();}}
+setInterval(medTick,30000);setTimeout(medTick,3000);
+/* effets indésirables : conseils de prudence */
+const FX=[
+ ["gonfle","Gonflement du visage, des lèvres, de la langue ou de la gorge",3],["resp","Difficulté à respirer, sifflement",3],["thor","Douleur dans la poitrine",3],["malaise","Malaise, évanouissement",3],["peau3","Éruption étendue avec cloques ou atteinte de la bouche ou des yeux",3],["sang","Vomissement de sang, selles noires ou sang dans les selles",3],["conf","Confusion, convulsions",3],
+ ["rash","Plaques, boutons ou démangeaisons de la peau",2],["vom","Vomissements répétés",2],["diar","Diarrhée importante ou qui dure",2],["fiev","Fièvre",2],["palp","Palpitations, cœur qui bat vite",2],["jaune","Peau ou yeux jaunes, urines très foncées",2],["saign","Saignements ou bleus inhabituels",2],["vert","Vertiges importants",2],
+ ["naus","Nausées légères",1],["tete","Maux de tête",1],["som","Somnolence, fatigue",1],["bouche","Bouche sèche",1],["const","Constipation",1],["diar1","Diarrhée légère",1],["ventre","Maux de ventre légers",1]];
+const TIP={naus:"Prends le médicament au cours du repas si la notice le permet.",tete:"Bois de l'eau, repose-toi ; demande au pharmacien avant d'ajouter un antidouleur.",som:"Évite de conduire et l'alcool tant que ça dure.",bouche:"Bois régulièrement par petites gorgées.",const:"Bois davantage, mange des fibres (fruits, légumes), bouge.",diar1:"Hydrate-toi bien (eau, solution de réhydratation). Avec un antibiotique, signale-le au pharmacien.",ventre:"Prends le médicament au repas si la notice le permet."};
+$("s-list").innerHTML=FX.map(([k,l,g])=>`<label class="sx ${g===3?"r":g===2?"o":""}"><input type="checkbox" value="${k}"> ${l}</label>`).join("");
+$("s-go").onclick=()=>{const sel=[...document.querySelectorAll("#s-list input:checked")].map(i=>FX.find(f=>f[0]===i.value));const it=+$("s-int").value,med=$("s-med").value,txt=$("s-txt").value.trim();
+ if(!sel.length&&!txt){alert("Coche au moins un symptôme ou décris ce que tu ressens.");return;}
+ let lvl=Math.max(0,...sel.map(s=>s[2]));if(lvl===1&&it===3)lvl=2;if(!lvl)lvl=it===3?2:1;
+ const doc=(LS.get("fiche",{})||{}),dt=doc.medt||"";
+ const head=lvl===3?`<div class="adv r"><b>🚨 Urgence possible</b><p>Ces signes peuvent indiquer une réaction grave, par exemple allergique. <b>Appelle le SAMU (185) maintenant</b>, ou fais-toi conduire aux urgences. Ne reprends pas ce médicament avant l'avis d'un médecin, et montre-lui la boîte ou l'ordonnance.</p><div class="row"><a class="btn gold" href="tel:185">📞 SAMU 185</a><a class="btn" href="tel:180">🚒 Pompiers 180</a></div></div>`
+  :lvl===2?`<div class="adv o"><b>⚠️ À signaler aujourd'hui</b><p>Contacte ton médecin ou un pharmacien dans la journée et décris tes symptômes. N'arrête pas un traitement prescrit de toi-même sans leur avis. Si ça s'aggrave (difficulté à respirer, gonflement, malaise), appelle le 185.</p><div class="row">${dt?`<a class="btn gold" href="tel:${dt.replace(/[^\d+]/g,"")}">📞 Mon médecin</a>`:""}<button class="btn" onclick="go('ph')">💊 Pharmacie de garde</button></div></div>`
+  :`<div class="adv g"><b>🙂 Effet souvent bénin</b><p>Ces effets sont fréquents et passent souvent en quelques jours. Lis la rubrique « effets indésirables » de la notice. Parles-en à ton pharmacien s'ils durent plus de 2 à 3 jours ou deviennent gênants.</p>${sel.filter(s=>TIP[s[0]]).map(s=>`<div class="note">• ${TIP[s[0]]}</div>`).join("")}</div>`;
+ $("s-adv").innerHTML=head+`<div class="note">Ne double jamais une dose pour « compenser ». Ces conseils sont généraux et ne remplacent pas l'avis d'un professionnel de santé.</div>`;
+ M.fx.unshift({at:Date.now(),med,sym:sel.map(s=>s[1]),it,txt,lvl});M.fx=M.fx.slice(0,60);saveM();fxLog();
+ document.querySelectorAll("#s-list input").forEach(i=>i.checked=false);$("s-txt").value="";$("s-adv").scrollIntoView({behavior:"smooth",block:"center"});};
+function fxLog(){$("s-log").innerHTML=M.fx.length?`<div class="h" style="margin-top:12px">Mon journal</div>`+M.fx.slice(0,12).map(f=>`<div class="fl"><span>${new Date(f.at).toLocaleString("fr-FR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}${f.med?" · "+esc(f.med):""}</span><b style="font-weight:600;font-size:13px">${f.lvl===3?"🚨":f.lvl===2?"⚠️":"🙂"} ${esc([...f.sym,f.txt].filter(Boolean).join(", ").slice(0,90))}</b></div>`).join(""):"";}
 
 /* ---------- vision ---------- */
 let E=LS.get("eye",{on:false,next:0,count:0,day:""});
@@ -478,27 +628,16 @@ const start=(location.hash||"").slice(1);go(["ph","eau","eye","sos"].includes(st
 nudge();
 </script>
 <script src="sante/credits.js"></script>
-<script src="sante/ads.js"></script>
 <script>
 /* ===== Habillage 13 : photos d'en-tête, icônes, cookies et pub ===== */
-(()=>{const SV={ph:'<path d="M10.5 20.5 3.5 13.5a5 5 0 0 1 7-7l7 7a5 5 0 0 1-7 7z"/><path d="m8.5 8.5 7 7"/>',eau:'<path d="M12 2.7s7 7.4 7 12.3a7 7 0 0 1-14 0c0-4.9 7-12.3 7-12.3z"/><path d="M9 15.5a3 3 0 0 0 3 3"/>',eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',sos:'<path d="M12 21s-8-4.5-8-11a5 5 0 0 1 8-4 5 5 0 0 1 8 4c0 6.5-8 11-8 11z"/><path d="M9 11h2l1-2 2 4 1-2h2"/>'};
- const G={ph:"g-mint",eau:"g-sky",eye:"g-violet",sos:"g-coral"};
+(()=>{const SV={ph:'<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>',eau:'<path d="M12 2.7s7 7.4 7 12.3a7 7 0 0 1-14 0c0-4.9 7-12.3 7-12.3z"/><path d="M9 15.5a3 3 0 0 0 3 3"/>',eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',sos:'<path d="M12 21s-8-4.5-8-11a5 5 0 0 1 8-4 5 5 0 0 1 8 4c0 6.5-8 11-8 11z"/><path d="M9 11h2l1-2 2 4 1-2h2"/>',med:'<path d="M10.5 20.5 3.5 13.5a5 5 0 0 1 7-7l7 7a5 5 0 0 1-7 7z"/><path d="m8.5 8.5 7 7"/>'};
+ const G={ph:"g-mint",eau:"g-sky",eye:"g-violet",sos:"g-coral",med:"g-amber"};
  document.querySelectorAll("nav button[data-t]").forEach(b=>{const t=b.dataset.t,l=b.textContent.replace(/^\S+\s*/,"").trim()||b.lastChild.textContent;const lab=b.childNodes[b.childNodes.length-1].textContent;b.innerHTML=`<svg viewBox="0 0 24 24">${SV[t]}</svg>${lab}`;});
  for(const t in SV){const sec=document.getElementById("t-"+t);if(!sec)continue;const h=sec.querySelector("header");if(!h)continue;h.classList.add("hero");const H=(typeof HERO!=="undefined"?HERO:{})[t];
   const inner=h.innerHTML;h.innerHTML=`<div class="ph" style="background-image:url(${H?H.f:""})"></div>${H?`<div class="cr">📷 ${H.a} · ${H.l} · Wikimedia Commons</div>`:""}<div class="htile ${G[t]}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${SV[t]}</svg></div><div class="hx">${inner}</div>`;}
  const TG=["g-teal","g-sky","g-violet","g-amber","g-mint","g-coral"];let k=0;
  document.querySelectorAll(".card2 h3").forEach(h=>{const m=h.textContent.match(/^(\p{Extended_Pictographic}[️‍\p{Extended_Pictographic}]*|🇫🇷)\s*/u);if(!m)return;h.innerHTML=`<span class="tile ${TG[k++%TG.length]}">${m[1]}</span>`+h.innerHTML.replace(m[1],"").trim();});
  const sp=document.getElementById("splash");if(sp&&!sp.querySelector(".sbg"))sp.insertAdjacentHTML("afterbegin",'<div class="sbg"></div>');
- /* consentement cookies / publicité */
- const C=(()=>{try{return localStorage.getItem("clbh-consent");}catch(e){return null;}})();
- function ads(){const A=window.ADS||{};if(!A.client||C2()!=="oui")return;if(!document.getElementById("adsjs")){const s=document.createElement("script");s.id="adsjs";s.async=true;s.crossOrigin="anonymous";s.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client="+A.client;document.head.appendChild(s);}
-  ["t-ph","t-eau","t-eye"].forEach(id=>{const sec=document.getElementById(id);if(!sec||sec.querySelector(".adbox"))return;sec.insertAdjacentHTML("beforeend",`<div class="adbox"><ins class="adsbygoogle" style="display:block" data-ad-client="${A.client}" data-ad-slot="${A.slot||""}" data-ad-format="auto" data-full-width-responsive="true"></ins></div>`);try{(window.adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}});}
- const C2=()=>{try{return localStorage.getItem("clbh-consent");}catch(e){return null;}};
- function banner(){if(document.getElementById("ck"))return;document.body.insertAdjacentHTML("beforeend",`<div id="ck" role="dialog" aria-label="Cookies et publicité"><b>🍪 Cookies et publicité</b><p>CLB Health est gratuite. Pour la financer, elle peut afficher des publicités, qui utilisent des cookies pour mesurer et personnaliser les annonces. Tes données de santé ne quittent jamais ton téléphone. Les onglets Urgence restent sans publicité.</p><div class="row"><button class="no" id="ckN">Refuser</button><button class="yes" id="ckY">Accepter</button></div></div>`);
-  const set=v=>{try{localStorage.setItem("clbh-consent",v);}catch(e){}document.getElementById("ck").remove();ads();};document.getElementById("ckY").onclick=()=>set("oui");document.getElementById("ckN").onclick=()=>set("non");}
- window.clbConsent=()=>{try{localStorage.removeItem("clbh-consent");}catch(e){}banner();};
- document.querySelectorAll(".tab").forEach(sec=>{if(sec.id==="t-sos")sec.insertAdjacentHTML("beforeend",'<div class="priv">🔒 Données de santé stockées uniquement sur ce téléphone · <a href="#" onclick="clbConsent();return false">Gérer cookies et publicité</a></div>');});
- if(!C)setTimeout(banner,1800);else ads();
 })();
 </script>
 </body></html>
