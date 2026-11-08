@@ -7,11 +7,7 @@ jobs:
       - shell: bash
         run: |
           set +e
-          T="https://www.parfumo.com/s_perfumes_x.php?in=1&filter=zara+saffron"
-          E=$(python3 -c "import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1],safe=''))" "$T")
-          for P in "https://api.allorigins.win/raw?url=$E" "https://api.allorigins.win/get?url=$E" "https://thingproxy.freeboard.io/fetch/$T" "https://api.cors.lol/?url=$E" "https://everyorigin.jwvbremen.nl/get?url=$E" "https://whateverorigin.org/get?url=$E" "https://cors.isomorphic-git.org/$T" "https://proxy.cors.sh/$T" "https://api.codetabs.com/v1/proxy/?quest=$T" "https://cors-anywhere.com/$T" "https://r.jina.ai/$T"; do
-            S=$(date +%s.%N); curl -s -m 25 -D /tmp/h -o /tmp/b -H "Origin: https://charleslebontoh-cloud.github.io" "$P"; E2=$(date +%s.%N)
-            echo "== $P"; echo "  $(head -1 /tmp/h | tr -d '\r') | $(grep -i '^access-control-allow-origin' /tmp/h | tr -d '\r') | $(wc -c </tmp/b) bytes | $(python3 -c "print(round($E2-$S,1))")s | hits=$(grep -o 'saffron' /tmp/b | wc -l)"
-          done
-          grep -o 'href="https://www.parfumo.com/Perfumes/Zara/[^"]*"' /tmp/b | sort -u | head
-          curl -s -m 25 "https://api.allorigins.win/raw?url=$E" | grep -o 'href="https://www.parfumo.com/Perfumes/Zara/[^"]*"' | sort -u | head
+          curl -s -m 25 "https://r.jina.ai/https://www.parfumo.com/s_perfumes_x.php?in=1&filter=zara+saffron" | head -c 3500
+          echo; echo =====PAGE
+          curl -s -m 25 "https://r.jina.ai/https://www.parfumo.com/Perfumes/Paco_Rabanne/1_Million" | grep -iE "Image|notes|Top|Heart|Base|accord|Fresh|Spicy" | head -40 | cut -c1-250
+          echo =====HDR; curl -s -m 25 -H "X-Return-Format: html" "https://r.jina.ai/https://www.parfumo.com/s_perfumes_x.php?in=1&filter=zara+saffron" | grep -c 'class="col"'
