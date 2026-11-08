@@ -1,0 +1,24 @@
+name: Données foot CLB World
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: foot-data
+  cancel-in-progress: true
+jobs:
+  data:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Récupérer les données ESPN
+        run: python3 tools/foot_data.py
+      - name: Publier sur la branche foot-data (un seul commit, écrasé à chaque fois)
+        run: |
+          mkdir -p /tmp/out && cp foot.json /tmp/out/
+          cd /tmp/out && git init -q -b foot-data
+          git config user.name "clb-bot" && git config user.email "clb-bot@users.noreply.github.com"
+          git add foot.json && git commit -qm "données foot $(date -u +%FT%TZ)"
+          git push -qf "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" foot-data
