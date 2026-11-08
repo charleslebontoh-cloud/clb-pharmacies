@@ -181,6 +181,7 @@ nav button[data-t="med"].on{background:var(--g-amber)}
 .adv .btn{text-decoration:none;display:inline-block}
 #t-med input:not([type=checkbox]),#t-med select,#t-med textarea{background:#fff;color:var(--ink);border:1.5px solid rgba(15,42,58,.12);border-radius:14px;padding:11px;font:inherit;width:100%}
 #t-med .row input,#t-med .row select{width:auto;flex:1}
+@keyframes fill{0%{box-shadow:0 0 0 0 rgba(45,212,191,.8)}100%{box-shadow:0 0 0 10px rgba(45,212,191,0)}}.filled{border-color:#2DD4BF!important;background:#F0FDFA!important;animation:fill 1.2s 2}
 .thumbs{display:flex;gap:8px;overflow-x:auto;margin-bottom:8px}.thumbs div{position:relative;flex:0 0 96px}.thumbs img{width:96px;height:96px;object-fit:cover;border-radius:14px;display:block}.thumbs button{position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:12px}
 /* cookies & publicité */
 #ck{position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom) + 92px);z-index:60;background:#fff;border-radius:22px;padding:16px;box-shadow:0 24px 50px -16px rgba(14,60,80,.55);border:1px solid var(--line);animation:cardIn .5s cubic-bezier(.22,1,.36,1);color:var(--ink)}
@@ -190,7 +191,7 @@ nav button[data-t="med"].on{background:var(--g-amber)}
 .adbox:before{content:"Publicité";position:absolute;top:4px;right:10px;font:700 9px -apple-system;color:#9AAAB3;letter-spacing:.08em;text-transform:uppercase}
 .priv{margin:4px 18px 20px;font-size:12px;color:var(--muted);text-align:center}.priv a{color:#0E7490;font-weight:700}
 </style></head><body>
-<div id="splash" role="button" tabindex="0" aria-label="Entrer dans CLB Health"><div><img src="icon-512.png?v=2" alt=""><b>CLB HEALTH</b><span class="tap" id="sp-tap">Touche pour entrer</span><div id="sp-err" style="min-height:1.3em;margin-top:10px;color:#ff8a8a;font-size:13px;font-weight:600"></div><a id="sp-sos" href="tel:185" onclick="event.stopPropagation()" style="display:inline-block;margin-top:18px;padding:8px 14px;border-radius:999px;border:1px solid rgba(255,90,120,.5);color:#ff9fb3;text-decoration:none;font:700 13px -apple-system">🆘 SAMU 185</a><small style="display:block;margin-top:24px;color:#4d5d8f;font-size:11px">version 13.3.0 · 8 nov. 2026</small></div></div>
+<div id="splash" role="button" tabindex="0" aria-label="Entrer dans CLB Health"><div><img src="icon-512.png?v=2" alt=""><b>CLB HEALTH</b><span class="tap" id="sp-tap">Touche pour entrer</span><div id="sp-err" style="min-height:1.3em;margin-top:10px;color:#ff8a8a;font-size:13px;font-weight:600"></div><a id="sp-sos" href="tel:185" onclick="event.stopPropagation()" style="display:inline-block;margin-top:18px;padding:8px 14px;border-radius:999px;border:1px solid rgba(255,90,120,.5);color:#ff9fb3;text-decoration:none;font:700 13px -apple-system">🆘 SAMU 185</a><small style="display:block;margin-top:24px;color:#4d5d8f;font-size:11px">version 13.3.1 · 8 nov. 2026</small></div></div>
 <div class="banner" id="nudge"></div>
 
 <!-- PHARMACIES -->
@@ -237,7 +238,7 @@ nav button[data-t="med"].on{background:var(--g-amber)}
   <div class="row"><label class="btn gold" style="flex:1;text-align:center;cursor:pointer">📷 Prendre en photo<input id="m-cam" type="file" accept="image/*" capture="environment" hidden></label><label class="btn" style="flex:1;text-align:center;cursor:pointer">🖼️ Choisir une photo<input id="m-pic" type="file" accept="image/*" multiple hidden></label></div>
   <button class="btn full" id="m-manual">✍️ Saisir à la main</button>
   <div id="m-form" style="display:none;margin-top:10px">
-   <div id="m-thumbs" class="thumbs"></div><div class="row" id="m-more" style="display:none;margin-bottom:6px"><label class="btn" style="flex:1;text-align:center;cursor:pointer">➕ Photo de plus (notice, autre face…)<input id="m-cam2" type="file" accept="image/*" capture="environment" hidden></label><label class="btn" style="flex:1;text-align:center;cursor:pointer">🖼️ Ajouter des images<input id="m-pic2" type="file" accept="image/*" multiple hidden></label></div>
+   <div id="m-thumbs" class="thumbs"></div><button class="btn gold full" id="m-ana" style="display:none;margin:0 0 8px">🔍 Analyser les photos et remplir automatiquement</button><div id="m-sum"></div><div class="row" id="m-more" style="display:none;margin-bottom:6px"><label class="btn" style="flex:1;text-align:center;cursor:pointer">➕ Photo de plus (notice, autre face…)<input id="m-cam2" type="file" accept="image/*" capture="environment" hidden></label><label class="btn" style="flex:1;text-align:center;cursor:pointer">🖼️ Ajouter des images<input id="m-pic2" type="file" accept="image/*" multiple hidden></label></div>
    <div class="note" id="m-ocr"></div>
    <details id="m-txtbox" style="display:none;margin:6px 0"><summary>Texte lu sur la photo</summary><textarea id="m-txt" style="margin-top:6px"></textarea><button class="btn full" id="m-reparse">🔁 Relire ce texte</button></details>
    <div style="display:grid;gap:8px">
@@ -477,14 +478,27 @@ $("m-manual").onclick=()=>openForm(null);$("m-cancel").onclick=()=>{$("m-form").
 function shrink(file){return new Promise(res=>{const img=new Image();img.onload=()=>{const k=Math.min(1,900/Math.max(img.width,img.height)),c=document.createElement("canvas");c.width=img.width*k;c.height=img.height*k;c.getContext("2d").drawImage(img,0,0,c.width,c.height);res({url:c.toDataURL("image/jpeg",.72),canvas:c});};img.src=URL.createObjectURL(file);});}
 function loadTess(){return window.Tesseract?Promise.resolve():new Promise((ok,ko)=>{const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";s.onload=ok;s.onerror=ko;document.head.appendChild(s);});}
 function thumbs(){$("m-thumbs").innerHTML=mPhotos.map((u,i)=>`<div><img src="${u}" alt=""><button data-rm="${i}" aria-label="Retirer">✕</button></div>`).join("");$("m-thumbs").querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{mPhotos.splice(+b.dataset.rm,1);thumbs();});}
-async function onPhoto(e,more){const fs=[...(e.target.files||[])];e.target.value="";if(!fs.length)return;if(!more||$("m-form").style.display!=="block")openForm(null);
+let mCanv=[],mRead=[];
+async function onPhoto(e,more){const fs=[...(e.target.files||[])];e.target.value="";if(!fs.length)return;if(!more||$("m-form").style.display!=="block"){openForm(null);mCanv=[];mRead=[];}
  $("m-more").style.display="flex";stat("med-photo");
- try{await loadTess();}catch(err){$("m-ocr").textContent="Lecture automatique indisponible (connexion ?). Complète les champs à la main.";}
- for(const[k,f]of fs.entries()){const{url,canvas}=await shrink(f);mPhotos.push(url);thumbs();
-  if(!window.Tesseract)continue;$("m-ocr").textContent=`🔍 Lecture de l'image ${mPhotos.length}… (la 1re fois, l'outil se télécharge)`;
-  try{const r=await Tesseract.recognize(canvas,"fra",{logger:m=>{if(m.status==="recognizing text")$("m-ocr").textContent=`🔍 Lecture de l'image ${mPhotos.length}… ${Math.round(m.progress*100)} %`;}});mTexts.push((r.data.text||"").trim());}catch(err){}}
- const t=mTexts.filter(Boolean).join("\n\n");$("m-txt").value=t;$("m-txtbox").style.display=t?"block":"none";if(t)parse(t);
- $("m-ocr").textContent=t?`✅ ${mPhotos.length} image(s) lue(s). Vérifie et complète les champs.`:"Je n'ai pas réussi à lire le texte : complète les champs à la main.";lookup();}
+ for(const f of fs){const{url,canvas}=await shrink(f);mPhotos.push(url);mCanv.push(canvas);mRead.push(null);}
+ thumbs();$("m-ana").style.display="block";$("m-ocr").textContent=`📸 ${mPhotos.length} photo(s) prête(s). Ajoute la notice ou l'autre face si besoin, puis touche « Analyser ».`;
+ $("m-ana").scrollIntoView({behavior:"smooth",block:"center"});}
+async function analyze(){const b=$("m-ana");if(!mCanv.length){$("m-ocr").textContent="Ajoute d'abord une photo.";return;}
+ b.disabled=true;b.textContent="⏳ Analyse en cours…";$("m-sum").innerHTML="";stat("med-analyse");
+ try{$("m-ocr").textContent="⬇️ Préparation de l'outil de lecture (quelques secondes la première fois)…";await loadTess();}
+ catch(err){$("m-ocr").textContent="❌ Impossible de charger l'outil de lecture : vérifie ta connexion internet, puis réessaie.";b.disabled=false;b.textContent="🔍 Réessayer l'analyse";return;}
+ for(let k=0;k<mCanv.length;k++){if(mRead[k]!=null)continue;$("m-ocr").textContent=`🔍 Lecture de la photo ${k+1} sur ${mCanv.length}…`;
+  try{const r=await Tesseract.recognize(mCanv[k],"fra",{logger:m=>{if(m.status==="recognizing text")$("m-ocr").textContent=`🔍 Lecture de la photo ${k+1} sur ${mCanv.length}… ${Math.round(m.progress*100)} %`;}});mRead[k]=(r.data.text||"").trim();}catch(err){mRead[k]="";}}
+ const t=mRead.filter(Boolean).join("\n\n");$("m-txt").value=t;$("m-txtbox").style.display=t?"block":"none";
+ const before={nom:$("m-nom").value,dose:$("m-dose").value,n:$("m-n").value,days:$("m-days").value,rep:$("m-rep").value};
+ if(t)parse(t,true);$("m-ocr").textContent=t?"🌐 Recherche d'informations sur le médicament…":"";await lookup();
+ const got=[];if($("m-nom").value&&$("m-nom").value!==before.nom)got.push("nom");if($("m-dose").value&&$("m-dose").value!==before.dose)got.push("dose");if($("m-n").value!==before.n)got.push("prises par jour");if($("m-days").value!==before.days)got.push("durée");if($("m-rep").value!==before.rep)got.push("moment du repas");
+ if(!t)$("m-sum").innerHTML=`<div class="adv o"><b>Texte illisible</b><p>Je n'ai pas réussi à lire les photos (flou, reflet, écriture manuscrite). Reprends une photo bien à plat et éclairée, ou complète à la main.</p></div>`;
+ else $("m-sum").innerHTML=`<div class="adv ${got.length?"g":"o"}"><b>${got.length?"✅ Rempli automatiquement : "+got.join(", "):"⚠️ Texte lu, mais je n'ai pas reconnu les informations"}</b><p>${got.length?"Vérifie chaque champ (surligné) avant d'enregistrer.":"Ouvre « Texte lu sur la photo » pour voir ce que j'ai lu, et complète les champs à la main."}${!$("m-first").value?"":" Indique ensuite l'heure de ta 1re prise."}</p></div>`;
+ ["m-nom","m-dose","m-n","m-days","m-rep"].forEach(id=>{const el=$(id);el.classList.remove("filled");void el.offsetWidth;if(got.length)el.classList.add("filled");});
+ $("m-ocr").textContent="";b.disabled=false;b.textContent="🔁 Relancer l'analyse";$("m-sum").scrollIntoView({behavior:"smooth",block:"center"});}
+$("m-ana").onclick=analyze;
 /* infos générales sur le médicament (Wikipédia) */
 function infoHTML(x){return `<div class="adv g" style="margin-top:4px"><b>ℹ️ ${esc(x.t)}</b><p style="margin:6px 0 4px;font-size:13px">${esc(x.e)}</p><a href="${x.u}" target="_blank" rel="noopener" style="font-size:12px;color:#0E7490;font-weight:700">Lire la fiche complète</a><div class="note" style="margin:4px 0 0">Informations générales : la dose et la durée sont celles de ton ordonnance ou de la notice.</div></div>`;}
 let mInfo=null;
@@ -493,16 +507,19 @@ async function lookup(){const n=($("m-nom").value||"").trim().split(/[\s,]+/)[0]
   mInfo={t:j.title,e:j.extract.slice(0,420)+(j.extract.length>420?"…":""),u:(j.content_urls&&j.content_urls.mobile&&j.content_urls.mobile.page)||"https://fr.wikipedia.org/wiki/"+encodeURIComponent(n)};$("m-info").innerHTML=infoHTML(mInfo);}catch(e){mInfo=null;$("m-info").innerHTML="";}}
 $("m-nom").addEventListener("change",lookup);
 $("m-cam2").onchange=e=>onPhoto(e,true);$("m-pic2").onchange=e=>onPhoto(e,true);
-$("m-cam").onchange=e=>onPhoto(e);$("m-pic").onchange=e=>onPhoto(e);$("m-reparse").onclick=()=>parse($("m-txt").value);
-function parse(t){const T=t.replace(/\s+/g," "),low=T.toLowerCase();
+$("m-cam").onchange=e=>onPhoto(e);$("m-pic").onchange=e=>onPhoto(e);$("m-reparse").onclick=()=>{parse($("m-txt").value,true);lookup();};
+const DRUGS=["paracétamol","paracetamol","doliprane","efferalgan","dafalgan","amoxicilline","augmentin","ibuprofène","ibuprofene","advil","nurofen","métronidazole","metronidazole","flagyl","artéméther","artemether","luméfantrine","coartem","artésunate","artesunate","quinine","ciprofloxacine","azithromycine","cotrimoxazole","bactrim","ceftriaxone","céfixime","cefixime","oméprazole","omeprazole","ésoméprazole","metformine","glibenclamide","amlodipine","losartan","hydrochlorothiazide","diclofénac","diclofenac","voltarène","tramadol","prednisolone","prednisone","dexaméthasone","loratadine","cétirizine","cetirizine","salbutamol","ventoline","spasfon","phloroglucinol","smecta","diosmectite","dompéridone","motilium","métoclopramide","vitamine c","acide folique","fer","fumarate ferreux","albendazole","mébendazole","fluconazole","aciclovir","insuline","atorvastatine","clopidogrel","aspirine","acide acétylsalicylique","codéine","lopéramide","imodium"];
+function parse(t,force){const T=t.replace(/\s+/g," "),low=T.toLowerCase();
+ if(force){const hit=DRUGS.filter(d=>low.includes(d)).sort((a,b)=>low.indexOf(a)-low.indexOf(b))[0];if(hit){$("m-nom").value=hit.replace(/(^|\s)\S/g,c=>c.toUpperCase());}
+  const dm0=low.match(/(\d+(?:[.,]\d+)?)\s?(mg|g|ml|µg|mcg|ui)\b/);if(dm0)$("m-dose").value=dm0[1].replace(",",".")+" "+dm0[2];}
  const dm=T.match(/([A-ZÉÈ][A-Za-zÀ-ÿ\-]{3,}(?:\s+[A-Za-zÀ-ÿ\-]{3,})?)\s*,?\s*(\d+(?:[.,]\d+)?\s?(?:mg|g|ml|µg|mcg|ui|%))/i);
- if(dm){if(!$("m-nom").value)$("m-nom").value=dm[1].replace(/\b\w/g,c=>c.toUpperCase());if(!$("m-dose").value)$("m-dose").value=dm[2].replace(",",".");}
- else{const w=T.match(/\b([A-Z][A-Z\-]{4,})\b/);if(w&&!$("m-nom").value)$("m-nom").value=w[1][0]+w[1].slice(1).toLowerCase();}
+ if(dm&&!force){if(!$("m-nom").value)$("m-nom").value=dm[1].replace(/\b\w/g,c=>c.toUpperCase());if(!$("m-dose").value)$("m-dose").value=dm[2].replace(",",".");}
+ else if(!$("m-nom").value){const w=T.match(/\b([A-Z][A-Z\-]{4,})\b/);if(w)$("m-nom").value=w[1][0]+w[1].slice(1).toLowerCase();}
  const nc=low.match(/(\d+)\s*(?:comprim[ée]s?|g[ée]lules?|sachets?|cuill[eè]res?|cp|gel)\b/);if(nc&&!/mg|ml/.test($("m-dose").value))$("m-dose").value=($("m-dose").value+" · "+nc[0]).replace(/^ · /,"");
  let n=null;const f1=low.match(/(\d)\s*(?:fois|x)\s*(?:par|\/)\s*(?:jour|j\b)/);if(f1)n=+f1[1];
  const f2=low.match(/toutes les\s*(\d{1,2})\s*h/);if(!n&&f2)n=Math.round(24/+f2[1]);
  if(!n){const k=["matin","midi","soir","coucher"].filter(x=>low.includes(x)).length;if(k)n=k;}
- if(n&&n>=1&&n<=6){$("m-n").value=n;timesUI(DEF[n]);}
+ if(n&&n>=1&&n<=6){$("m-n").value=n;fromFirst();}
  const d=low.match(/pendant\s*(\d{1,2})\s*(jours|j\b|semaines?)/);if(d){let v=+d[1]*(/sem/.test(d[2])?7:1);const opts=[...$("m-days").options].map(o=>+o.value);if(!opts.includes(v))$("m-days").insertAdjacentHTML("beforeend",`<option>${v}</option>`);$("m-days").value=String(v);}
  if(/avant (le |les )?repas/.test(low))$("m-rep").value="Avant le repas";else if(/(pendant|au cours) (du |des )?repas/.test(low))$("m-rep").value="Pendant le repas";else if(/apr[eè]s (le |les )?repas/.test(low))$("m-rep").value="Après le repas";else if(/[àa] jeun/.test(low))$("m-rep").value="À jeun";}
 $("m-save").onclick=()=>{const nom=$("m-nom").value.trim();if(!nom){alert("Indique au moins le nom du médicament.");return;}
