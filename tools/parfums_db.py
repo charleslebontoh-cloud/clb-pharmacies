@@ -1,5 +1,6 @@
 """Construit parfums/db.json depuis le jeu de données Parfumo (TidyTuesday 2024-12-10)."""
 import csv, json, sys, re, collections
+import os; os.makedirs("parfums", exist_ok=True)
 src = sys.argv[1]
 rows = list(csv.DictReader(open(src, encoding="utf-8")))
 def f(x):
