@@ -171,7 +171,11 @@ body{padding-bottom:calc(env(safe-area-inset-bottom) + 100px)!important}
 .pcross{flex:0 0 40px;width:40px;height:40px;border-radius:13px;display:grid;place-items:center;color:#fff;font-size:22px;font-weight:900;background:linear-gradient(135deg,#34D399,#059669);box-shadow:0 10px 18px -10px rgba(5,150,105,.9);margin-right:10px}
 .c .top{align-items:center}
 .pho{background:#F1EEFF!important;color:#6D28D9!important;border-color:rgba(109,40,217,.25)!important}
-nav{grid-template-columns:repeat(5,1fr)!important}nav button{font-size:10px!important}
+nav{grid-template-columns:repeat(6,1fr)!important}nav button{font-size:9.5px!important;padding-left:0!important;padding-right:0!important}nav button svg{width:22px!important;height:22px!important}
+#t-moi header.hero .ph{background:radial-gradient(60% 80% at 80% 20%,rgba(110,231,183,.6),transparent 60%),linear-gradient(135deg,#0E7490,#2563EB)!important}
+.kp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.kp div{border-radius:16px;padding:10px 6px;text-align:center;color:#fff;background:var(--g-teal)}.kp div:nth-child(2){background:var(--g-sky)}.kp div:nth-child(3){background:var(--g-violet)}.kp b{display:block;font-size:20px}.kp small{font-size:11px;font-weight:600;opacity:.9}
+.tipl{padding:9px 0;border-bottom:1px dashed var(--line);font-size:14px}.tipl:last-child{border:0}
+#t-moi input:not([type=checkbox]),#t-moi select{background:#fff;color:var(--ink);border:1.5px solid rgba(15,42,58,.12);border-radius:14px;padding:11px;font:inherit;width:100%}#t-moi .row input,#t-moi .row select{width:auto;flex:1;min-width:0}
 nav button[data-t="med"].on{background:var(--g-amber)}
 #t-med header.hero .ph{background:radial-gradient(60% 80% at 80% 20%,rgba(252,211,77,.55),transparent 60%),linear-gradient(135deg,#7C3AED,#0E7490)!important}
 .medc{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}.medc:last-child{border:0}.medc img{width:64px;height:64px;object-fit:cover;border-radius:14px;flex:0 0 64px}.medc small{color:var(--muted)}
@@ -191,7 +195,7 @@ nav button[data-t="med"].on{background:var(--g-amber)}
 .adbox:before{content:"Publicité";position:absolute;top:4px;right:10px;font:700 9px -apple-system;color:#9AAAB3;letter-spacing:.08em;text-transform:uppercase}
 .priv{margin:4px 18px 20px;font-size:12px;color:var(--muted);text-align:center}.priv a{color:#0E7490;font-weight:700}
 </style></head><body>
-<div id="splash" role="button" tabindex="0" aria-label="Entrer dans CLB Health"><div><img src="icon-512.png?v=2" alt=""><b>CLB HEALTH</b><span class="tap" id="sp-tap">Touche pour entrer</span><div id="sp-err" style="min-height:1.3em;margin-top:10px;color:#ff8a8a;font-size:13px;font-weight:600"></div><a id="sp-sos" href="tel:185" onclick="event.stopPropagation()" style="display:inline-block;margin-top:18px;padding:8px 14px;border-radius:999px;border:1px solid rgba(255,90,120,.5);color:#ff9fb3;text-decoration:none;font:700 13px -apple-system">🆘 SAMU 185</a><small style="display:block;margin-top:24px;color:#4d5d8f;font-size:11px">version 13.3.1 · 8 nov. 2026</small></div></div>
+<div id="splash" role="button" tabindex="0" aria-label="Entrer dans CLB Health"><div><img src="icon-512.png?v=2" alt=""><b>CLB HEALTH</b><span class="tap" id="sp-tap">Touche pour entrer</span><div id="sp-err" style="min-height:1.3em;margin-top:10px;color:#ff8a8a;font-size:13px;font-weight:600"></div><a id="sp-sos" href="tel:185" onclick="event.stopPropagation()" style="display:inline-block;margin-top:18px;padding:8px 14px;border-radius:999px;border:1px solid rgba(255,90,120,.5);color:#ff9fb3;text-decoration:none;font:700 13px -apple-system">🆘 SAMU 185</a><small style="display:block;margin-top:24px;color:#4d5d8f;font-size:11px">version 13.4.0 · 8 nov. 2026</small></div></div>
 <div class="banner" id="nudge"></div>
 
 <!-- PHARMACIES -->
@@ -273,6 +277,33 @@ nav button[data-t="med"].on{background:var(--g-amber)}
 </section>
 
 <!-- (partage ajouté dans Urgence) -->
+<!-- MON PROFIL SANTÉ -->
+<section class="tab" id="t-moi">
+<header><div class="brand">CLB Health</div><h1>Mon profil <span>santé</span></h1><div class="per">Renseigne-le une fois : l'appli adapte ses conseils (eau, sport, alimentation, médicaments).</div></header>
+<div class="pad">
+ <div class="card2" id="p-bilan"></div>
+ <div class="card2"><h3>👤 Mes informations</h3>
+  <div style="display:grid;gap:8px">
+   <div class="row"><input id="p-prenom" placeholder="Prénom" style="flex:2"><select id="p-sexe" style="flex:1"><option value="">Sexe</option><option value="h">Homme</option><option value="f">Femme</option></select></div>
+   <div class="row"><input id="p-age" type="number" inputmode="numeric" placeholder="Âge" min="1" max="120"><input id="p-poids" type="number" inputmode="decimal" placeholder="Poids (kg)" min="20" max="300"><input id="p-taille" type="number" inputmode="numeric" placeholder="Taille (cm)" min="100" max="230"></div>
+   <select id="p-act"><option value="sed">Activité : plutôt sédentaire (bureau, peu de marche)</option><option value="mod">Activité : modérée (marche, sport 1 à 2 fois par semaine)</option><option value="act">Activité : active (sport 3 fois par semaine ou plus)</option></select>
+   <select id="p-obj"><option value="forme">Objectif : rester en forme</option><option value="perte">Objectif : perdre du poids</option><option value="muscle">Objectif : prendre du muscle</option><option value="tension">Objectif : mieux gérer ma santé (tension, sucre…)</option></select>
+   <div class="h" style="margin-top:4px">Problèmes de santé connus</div>
+   <div class="chk" id="p-cond"></div>
+   <div class="h">Allergies aux médicaments</div>
+   <div class="chk" id="p-all"></div>
+   <input id="p-allx" placeholder="Autres allergies (aliments, médicaments…)">
+   <div class="row"><select id="p-tabac"><option value="non">Tabac : non</option><option value="oui">Tabac : oui</option></select><select id="p-alcool"><option value="non">Alcool : rarement ou jamais</option><option value="reg">Alcool : régulièrement</option></select></div>
+   <button class="btn gold" id="p-save">💾 Enregistrer mon profil</button>
+   <div class="note">Ces informations restent uniquement sur ton téléphone. Elles ne remplacent pas un avis médical.</div>
+  </div></div>
+ <div class="card2" id="p-sport"></div>
+ <div class="card2" id="p-food"></div>
+ <div class="card2" id="p-meds"></div>
+ <div class="card2" id="p-tip"></div>
+</div>
+</section>
+
 <!-- VISION -->
 <section class="tab" id="t-eye">
 <header><div class="brand">CLB Health</div><h1>Vision <span>& écrans</span></h1><div class="per">Pauses pour les yeux au bureau et tes mesures de lunettes sous la main.</div></header>
@@ -334,7 +365,7 @@ nav button[data-t="med"].on{background:var(--g-amber)}
 </section>
 
 <div id="e-over"><div style="font-size:50px">🌳</div><div style="font-size:22px;font-weight:800;margin:10px 0">Regarde au loin</div><div class="note" style="font-size:15px">Fixe un point à environ 6 mètres, cligne des yeux.</div><div class="big" id="e-sec">20</div><button class="btn" id="e-skip">Passer</button></div>
-<nav><button data-t="ph"><b>💊</b>Pharmacies</button><button data-t="eau"><b>💧</b>Eau</button><button data-t="med"><b>💊</b>Médocs</button><button data-t="eye"><b>👓</b>Vision</button><button data-t="sos"><b>🆘</b>Urgence</button></nav>
+<nav><button data-t="ph"><b>💊</b>Pharmacies</button><button data-t="eau"><b>💧</b>Eau</button><button data-t="med"><b>💊</b>Médocs</button><button data-t="moi"><b>👤</b>Moi</button><button data-t="eye"><b>👓</b>Vision</button><button data-t="sos"><b>🆘</b>Urgence</button></nav>
 <script>
 
 const $=id=>document.getElementById(id);
@@ -394,7 +425,7 @@ const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.
 let phLoaded=false;
 function go(t){TAB=t;document.querySelectorAll(".tab").forEach(s=>s.classList.toggle("on",s.id==="t-"+t));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));
  LS.set("tab",t);if(location.hash!=="#"+t)history.replaceState(null,"","#"+t);window.scrollTo(0,0);
- if(t==="ph"&&!phLoaded){phLoaded=true;if(!cur)locate();} if(t==="eau")wRender(); if(t==="med")mRender(); stat("onglet-"+t); if(t==="eye"){vLoad();eTick();} if(t==="sos"){fRender();lockRender();}}
+ if(t==="ph"&&!phLoaded){phLoaded=true;if(!cur)locate();} if(t==="eau")wRender(); if(t==="med")mRender(); if(t==="moi")pRender(); stat("onglet-"+t); if(t==="eye"){vLoad();eTick();} if(t==="sos"){fRender();lockRender();}}
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.t));
 
 /* ---------- eau ---------- */
@@ -529,6 +560,7 @@ $("m-save").onclick=()=>{const nom=$("m-nom").value.trim();if(!nom){alert("Indiq
  if($("m-took").checked&&med.first){const d=new Date(med.first),k=dkey(d),t=p2(d.getHours())+":"+p2(d.getMinutes());if(!med.times.includes(t)){med.times.push(t);med.times.sort();}M.taken[med.id+"|"+k+"|"+t]=d.getTime();}
  try{saveM();}catch(e){med.photos=med.photos.slice(0,1);try{saveM();}catch(e2){med.photos=[];med.photo="";saveM();}}stat("med-ajout");
  $("m-form").style.display="none";mRender();toast2("💊 "+nom+" enregistré. Rappels activés.");
+ {const wr=medWarnings().filter(x=>x[0]==="r"||x[2].includes("maximum"));if(wr.length)setTimeout(()=>alert(wr.map(x=>x[1]+"\n"+x[2]).join("\n\n")),400);}
  if(("Notification"in window)&&Notification.permission==="default")Notification.requestPermission();};
 function toast2(t){const b=$("nudge");b.style.display="block";b.innerHTML=t;clearTimeout(b._t);b._t=setTimeout(()=>{b.style.display="none";nudge();},3500);}
 const dayN=(m,k)=>Math.floor((new Date(k)-new Date(m.start))/864e5);
@@ -582,6 +614,76 @@ $("s-go").onclick=()=>{const sel=[...document.querySelectorAll("#s-list input:ch
  stat("effets");M.fx.unshift({at:Date.now(),med,sym:sel.map(s=>s[1]),it,txt,lvl});M.fx=M.fx.slice(0,60);saveM();fxLog();
  document.querySelectorAll("#s-list input").forEach(i=>i.checked=false);$("s-txt").value="";$("s-adv").scrollIntoView({behavior:"smooth",block:"center"});};
 function fxLog(){$("s-log").innerHTML=M.fx.length?`<div class="h" style="margin-top:12px">Mon journal</div>`+M.fx.slice(0,12).map(f=>`<div class="fl"><span>${new Date(f.at).toLocaleString("fr-FR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}${f.med?" · "+esc(f.med):""}</span><b style="font-weight:600;font-size:13px">${f.lvl===3?"🚨":f.lvl===2?"⚠️":"🙂"} ${esc([...f.sym,f.txt].filter(Boolean).join(", ").slice(0,90))}</b></div>`).join(""):"";}
+
+
+/* ---------- profil santé ---------- */
+const COND=[["hta","Hypertension"],["diab","Diabète"],["asthme","Asthme"],["coeur","Maladie du cœur"],["rein","Maladie des reins"],["foie","Maladie du foie"],["ulcere","Ulcère ou gastrite"],["drepano","Drépanocytose"],["enceinte","Grossesse ou allaitement"]];
+const ALL=[["peni","Pénicillines (amoxicilline, Augmentin…)"],["ains","Aspirine ou anti-inflammatoires (ibuprofène, diclofénac…)"],["sulfa","Sulfamides (cotrimoxazole, Bactrim…)"],["para","Paracétamol"]];
+let P=LS.get("profil",{cond:[],all:[]});
+$("p-cond").innerHTML=COND.map(([k,l])=>`<label class="sx"><input type="checkbox" value="${k}"><span>${l}</span></label>`).join("");
+$("p-all").innerHTML=ALL.map(([k,l])=>`<label class="sx"><input type="checkbox" value="${k}"><span>${l}</span></label>`).join("");
+function pFill(){["prenom","sexe","age","poids","taille","act","obj","allx","tabac","alcool"].forEach(k=>{if(P[k]!=null&&$("p-"+k))$("p-"+k).value=P[k];});
+ document.querySelectorAll("#p-cond input").forEach(i=>i.checked=(P.cond||[]).includes(i.value));document.querySelectorAll("#p-all input").forEach(i=>i.checked=(P.all||[]).includes(i.value));}
+$("p-save").onclick=()=>{["prenom","sexe","age","poids","taille","act","obj","allx","tabac","alcool"].forEach(k=>P[k]=$("p-"+k).value.trim());
+ P.cond=[...document.querySelectorAll("#p-cond input:checked")].map(i=>i.value);P.all=[...document.querySelectorAll("#p-all input:checked")].map(i=>i.value);
+ LS.set("profil",P);stat("profil");pRender();$("p-bilan").scrollIntoView({behavior:"smooth",block:"start"});toast2("✅ Profil enregistré : conseils mis à jour.");};
+const has=k=>(P.cond||[]).includes(k),alg=k=>(P.all||[]).includes(k);
+function waterAdvice(){const base=P.sexe==="f"?1600:2000,sport=P.act==="act"?500:P.act==="mod"?250:0,w=+P.poids||0;
+ let v=base+sport+250;/* chaleur d'Abidjan */ v=Math.round(v/250)*250;return{v,txt:`Repère EFSA ${P.sexe==="f"?"femme":"homme"} : environ ${fr(base)} ml de boissons par jour, + ${fr(sport)} ml pour ton activité, + 250 ml pour la chaleur.`,lim:has("rein")||has("coeur")};}
+function pRender(){const w=+P.poids,h=+P.taille/100,imc=w&&h?w/(h*h):0,a=+P.age;
+ const cat=!imc?null:imc<18.5?["Maigreur","o"]:imc<25?["Poids normal","g"]:imc<30?["Surpoids","o"]:["Obésité","r"];
+ const W2=waterAdvice();
+ $("p-bilan").innerHTML=`<h3><span class="tile g-teal">📋</span>Mon bilan${P.prenom?" · "+esc(P.prenom):""}</h3>`+(imc?`<div class="kp"><div><b>${imc.toFixed(1).replace(".",",")}</b><small>IMC</small></div><div><b>${w} kg</b><small>poids</small></div><div><b>${(W2.v/1000).toLocaleString("fr-FR")} L</b><small>eau conseillée</small></div></div>
+  <div class="adv ${cat[1]}" style="margin-top:10px"><b>${cat[0]}</b><p>Selon la classification de l'OMS : maigreur sous 18,5 ; normal de 18,5 à 24,9 ; surpoids de 25 à 29,9 ; obésité à partir de 30. L'IMC est un repère : il ne tient pas compte des muscles.</p></div>
+  <div class="note">${W2.txt}${W2.lim?" ⚠️ Avec une maladie des reins ou du cœur, ton médecin peut limiter les boissons : suis son avis.":""}</div>${W2.lim?"":`<button class="btn full" id="p-wapp">💧 Utiliser ${fr(W2.v)} ml comme objectif d'eau</button>`}`
+  :`<div class="note">Remplis ton âge, ton poids et ta taille ci-dessous pour obtenir ton bilan.</div>`);
+ const wb=$("p-wapp");if(wb)wb.onclick=()=>{W.goal=W2.v;save();$("w-target").value=[...$("w-target").options].some(o=>+o.value===W2.v)?W2.v:$("w-target").value;toast2("💧 Objectif d'eau : "+fr(W2.v)+" ml");};
+ /* sport */
+ const sp=[];sp.push(`<b>Repère OMS (adulte)</b> : 150 à 300 min d'activité modérée par semaine (marche rapide, vélo, natation) ou 75 à 150 min d'activité soutenue, + renforcement musculaire 2 jours par semaine.`);
+ if(P.act==="sed")sp.push("Commence par 30 min de marche rapide, 5 jours par semaine, et lève-toi toutes les 1 h 30 au bureau.");
+ if(P.obj==="perte"||(imc>=25))sp.push("Pour perdre du poids : privilégie la régularité (marche rapide, natation, vélo) et vise plutôt 300 min par semaine, avec 2 séances de renforcement.");
+ if(P.obj==="muscle")sp.push("Pour le muscle : 2 à 4 séances de renforcement par semaine (pompes, squats, gainage, haltères), avec des jours de repos entre les mêmes muscles.");
+ if(a>=65)sp.push("Après 65 ans : ajoute des exercices d'équilibre 3 fois par semaine pour prévenir les chutes.");
+ if(has("hta")||has("coeur"))sp.push("⚠️ Hypertension ou maladie du cœur : demande l'avis de ton médecin avant un effort intense ; préfère une reprise progressive.");
+ if(has("diab"))sp.push("⚠️ Diabète : contrôle ta glycémie avant et après l'effort et garde une collation sucrée sur toi.");
+ if(has("asthme"))sp.push("⚠️ Asthme : échauffe-toi longuement et garde ton inhalateur à portée de main.");
+ if(has("drepano"))sp.push("⚠️ Drépanocytose : effort modéré, bois beaucoup, évite la chaleur extrême et l'épuisement.");
+ if(has("enceinte"))sp.push("Grossesse : une activité modérée régulière est recommandée (environ 150 min par semaine), sauf contre-indication de ton médecin.");
+ $("p-sport").innerHTML=`<h3><span class="tile g-mint">🏃</span>Conseils sport</h3>`+sp.map(x=>`<div class="tipl">${x}</div>`).join("");
+ /* alimentation */
+ const fd=["Mange des fruits et des légumes à chaque repas (au moins 5 portions par jour).","Bois surtout de l'eau ; limite les sodas et jus sucrés.","Préfère le poisson braisé ou grillé, les légumineuses (haricots, lentilles) et les céréales complètes ; limite la friture."];
+ if(has("hta"))fd.push("⚠️ Hypertension : réduis le sel (cubes d'assaisonnement, charcuterie, plats salés) et l'alcool.");
+ if(has("diab"))fd.push("⚠️ Diabète : limite les sucres rapides (sucreries, sodas, pain blanc) ; répartis les féculents (attiéké, riz, igname) sur la journée, en portions modérées.");
+ if(P.obj==="perte"||imc>=25)fd.push("Pour perdre du poids : assiette moitié légumes, un quart protéines, un quart féculents ; évite le grignotage et l'alcool.");
+ if(P.obj==="muscle")fd.push("Pour le muscle : une source de protéines à chaque repas (poisson, œufs, poulet, légumineuses).");
+ if(has("ulcere"))fd.push("Ulcère ou gastrite : évite l'alcool et les repas très épicés s'ils aggravent tes douleurs ; mange à heures régulières.");
+ if(has("rein"))fd.push("⚠️ Maladie des reins : sel, protéines et boissons peuvent devoir être adaptés : suis le régime de ton médecin.");
+ if(has("enceinte"))fd.push("Grossesse : viandes, poissons et œufs bien cuits ; lave bien fruits et légumes ; pas d'alcool.");
+ if(P.alcool==="reg")fd.push("Alcool : l'idéal est de réduire ; au moins 2 jours par semaine sans alcool.");
+ if(P.tabac==="oui")fd.push("Tabac : arrêter est le geste santé le plus efficace ; demande à ton médecin ou à ton pharmacien les aides disponibles.");
+ $("p-food").innerHTML=`<h3><span class="tile g-amber">🥗</span>Conseils alimentation</h3>`+fd.map(x=>`<div class="tipl">${x}</div>`).join("");
+ /* médicaments */
+ const md=medWarnings();
+ $("p-meds").innerHTML=`<h3><span class="tile g-violet">💊</span>Médicaments et précautions</h3>`+(md.length?md.map(x=>`<div class="adv ${x[0]}" style="margin-top:8px"><b>${x[1]}</b><p>${x[2]}</p></div>`).join(""):`<div class="note">Aucune alerte pour tes traitements actuels avec ton profil.</div>`)
+  +`<div class="tipl"><b>Paracétamol (adulte de 50 kg ou plus)</b> : 500 mg à 1 g par prise, au moins 4 h entre deux prises, 3 g par jour au maximum sans avis médical${has("foie")||P.alcool==="reg"?" ; <b>avec une maladie du foie ou une consommation régulière d'alcool : 2 g par jour au maximum</b>":""}${w&&w<50?" ; <b>moins de 50 kg : demande la dose à ton pharmacien</b>":""}. Attention aux médicaments qui en contiennent déjà (Doliprane, Efferalgan, médicaments contre le rhume…).</div>
+  <div class="tipl">Pour tout autre médicament, la dose à suivre est celle de ton ordonnance ou de la notice.</div>`;
+ /* info du jour */
+ const TIPS=["Lave-toi les mains au savon 30 secondes : c'est l'un des gestes les plus efficaces contre les infections.","Dors 7 à 9 heures par nuit : le manque de sommeil augmente le stress, la fatigue et le grignotage.","Paludisme : dors sous une moustiquaire imprégnée et consulte vite en cas de fièvre ; un test rapide confirme le diagnostic.","Fais contrôler ta tension au moins une fois par an, même si tu te sens bien : l'hypertension ne donne souvent aucun signe.","N'arrête pas un antibiotique dès que tu vas mieux : suis toute la durée prescrite.","Ne garde pas de restes de médicaments « au cas où » : rapporte-les en pharmacie.","Protège-toi du soleil aux heures chaudes et bois avant d'avoir soif.","Un dépistage du diabète (glycémie) est utile à partir de 40 ans ou en cas de surpoids."];
+ $("p-tip").innerHTML=`<h3><span class="tile g-sky">💡</span>Info santé du jour</h3><div class="tipl">${TIPS[Math.floor(Date.now()/864e5)%TIPS.length]}</div>`;}
+function medWarnings(){const out=[],L=(M.list||[]).filter(m=>m.on).map(m=>m.nom.toLowerCase());const any=re=>L.find(n=>re.test(n));
+ let x;
+ if(alg("peni")&&(x=any(/amoxi|augmentin|p[ée]nicill|ampicill|cloxa/)))out.push(["r",`🚨 Allergie aux pénicillines et « ${x} »`,"Ce médicament fait partie de la famille des pénicillines. Ne le prends pas et appelle ton médecin ou ton pharmacien tout de suite."]);
+ if(alg("sulfa")&&(x=any(/cotrimox|bactrim|sulfam/)))out.push(["r",`🚨 Allergie aux sulfamides et « ${x} »`,"Ne le prends pas sans l'avis de ton médecin."]);
+ if(alg("para")&&(x=any(/parac[ée]tamol|doliprane|efferalgan|dafalgan/)))out.push(["r",`🚨 Allergie au paracétamol et « ${x} »`,"Ne le prends pas et demande un autre traitement à ton médecin."]);
+ const ains=any(/ibupro|advil|nurofen|diclof|volt|aspirin|ac[ée]tylsalicyl|k[ée]toprof|napro/);
+ if(ains){if(alg("ains"))out.push(["r",`🚨 Allergie aux anti-inflammatoires et « ${ains} »`,"Ne le prends pas et appelle ton médecin ou ton pharmacien."]);
+  const why=[has("ulcere")&&"ulcère ou gastrite",has("rein")&&"maladie des reins",has("hta")&&"hypertension",has("coeur")&&"maladie du cœur",has("asthme")&&"asthme",has("enceinte")&&"grossesse"].filter(Boolean);
+  if(why.length)out.push(["o",`⚠️ « ${ains} » et ${why.join(", ")}`,"Les anti-inflammatoires peuvent être déconseillés dans ta situation. Vérifie avec ton médecin ou ton pharmacien avant de le prendre."]);}
+ M.list.filter(m=>m.on&&/parac[ée]tamol|doliprane|efferalgan|dafalgan/i.test(m.nom)).forEach(m=>{const mg=(()=>{const d=(m.dose||"").toLowerCase().match(/(\d+(?:[.,]\d+)?)\s*(mg|g)\b/);return d?parseFloat(d[1].replace(",","."))*(d[2]==="g"?1000:1):0;})();
+  const max=has("foie")||P.alcool==="reg"?2000:3000;if(mg&&mg*m.times.length>max)out.push(["o",`⚠️ ${m.nom} : ${mg*m.times.length/1000} g par jour`,`C'est plus que le maximum de ${max/1000} g par jour sans avis médical. Si ce n'est pas ton médecin qui l'a prescrit ainsi, réduis le nombre de prises et demande conseil.`]);});
+ if(has("enceinte")&&L.length)out.push(["o","⚠️ Grossesse ou allaitement","Vérifie avec ton médecin ou ton pharmacien que chacun de tes médicaments est compatible."]);
+ return out;}
+pFill();
 
 /* ---------- statistiques anonymes (compteurs globaux, sans identifiant ni donnée de santé) ---------- */
 var STNS="clb-health-cl8x";function STOK(){return LS.get("stats",true);}
@@ -684,8 +786,8 @@ nudge();
 <script src="sante/credits.js"></script>
 <script>
 /* ===== Habillage 13 : photos d'en-tête, icônes, cookies et pub ===== */
-(()=>{const SV={ph:'<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>',eau:'<path d="M12 2.7s7 7.4 7 12.3a7 7 0 0 1-14 0c0-4.9 7-12.3 7-12.3z"/><path d="M9 15.5a3 3 0 0 0 3 3"/>',eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',sos:'<path d="M12 21s-8-4.5-8-11a5 5 0 0 1 8-4 5 5 0 0 1 8 4c0 6.5-8 11-8 11z"/><path d="M9 11h2l1-2 2 4 1-2h2"/>',med:'<path d="M10.5 20.5 3.5 13.5a5 5 0 0 1 7-7l7 7a5 5 0 0 1-7 7z"/><path d="m8.5 8.5 7 7"/>'};
- const G={ph:"g-mint",eau:"g-sky",eye:"g-violet",sos:"g-coral",med:"g-amber"};
+(()=>{const SV={ph:'<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>',eau:'<path d="M12 2.7s7 7.4 7 12.3a7 7 0 0 1-14 0c0-4.9 7-12.3 7-12.3z"/><path d="M9 15.5a3 3 0 0 0 3 3"/>',eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',sos:'<path d="M12 21s-8-4.5-8-11a5 5 0 0 1 8-4 5 5 0 0 1 8 4c0 6.5-8 11-8 11z"/><path d="M9 11h2l1-2 2 4 1-2h2"/>',med:'<path d="M10.5 20.5 3.5 13.5a5 5 0 0 1 7-7l7 7a5 5 0 0 1-7 7z"/><path d="m8.5 8.5 7 7"/>',moi:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>'};
+ const G={ph:"g-mint",eau:"g-sky",eye:"g-violet",sos:"g-coral",med:"g-amber",moi:"g-teal"};
  document.querySelectorAll("nav button[data-t]").forEach(b=>{const t=b.dataset.t,l=b.textContent.replace(/^\S+\s*/,"").trim()||b.lastChild.textContent;const lab=b.childNodes[b.childNodes.length-1].textContent;b.innerHTML=`<svg viewBox="0 0 24 24">${SV[t]}</svg>${lab}`;});
  for(const t in SV){const sec=document.getElementById("t-"+t);if(!sec)continue;const h=sec.querySelector("header");if(!h)continue;h.classList.add("hero");const H=(typeof HERO!=="undefined"?HERO:{})[t];
   const inner=h.innerHTML;h.innerHTML=`<div class="ph" style="background-image:url(${H?H.f:""})"></div>${H?`<div class="cr">📷 ${H.a} · ${H.l} · Wikimedia Commons</div>`:""}<div class="htile ${G[t]}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${SV[t]}</svg></div><div class="hx">${inner}</div>`;}
