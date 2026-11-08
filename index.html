@@ -187,6 +187,33 @@ nav button[data-t="med"].on{background:var(--g-amber)}
 #t-med .row input,#t-med .row select{width:auto;flex:1}
 @keyframes fill{0%{box-shadow:0 0 0 0 rgba(45,212,191,.8)}100%{box-shadow:0 0 0 10px rgba(45,212,191,0)}}.filled{border-color:#2DD4BF!important;background:#F0FDFA!important;animation:fill 1.2s 2}
 .thumbs{display:flex;gap:8px;overflow-x:auto;margin-bottom:8px}.thumbs div{position:relative;flex:0 0 96px}.thumbs img{width:96px;height:96px;object-fit:cover;border-radius:14px;display:block}.thumbs button{position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:12px}
+#splash{background:#0B1F3A!important;overflow:hidden}#splash:after{display:none}
+#splash .mesh{position:absolute;inset:-20%;filter:blur(40px)}#splash .mesh i{position:absolute;width:60%;height:60%;border-radius:50%;opacity:.85;animation:drift 12s ease-in-out infinite alternate}
+#splash .mesh i:nth-child(1){background:#14B8A6;left:-5%;top:0}#splash .mesh i:nth-child(2){background:#6366F1;right:-10%;top:10%;animation-duration:15s}#splash .mesh i:nth-child(3){background:#F43F5E;left:20%;bottom:-10%;animation-duration:18s;opacity:.55}
+@keyframes drift{to{transform:translate(12%,10%) scale(1.15)}}
+#splash .spc{position:relative;z-index:2;text-align:center;padding:0 24px;color:#fff}
+#splash .ecg{width:260px;height:52px;margin:0 auto 6px}#splash .ecg path{fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:420;stroke-dashoffset:420;animation:ecg 2.4s ease-in-out infinite;filter:drop-shadow(0 0 6px rgba(255,255,255,.8))}
+@keyframes ecg{60%{stroke-dashoffset:0}100%{stroke-dashoffset:-420}}
+#splash .floaty{position:absolute;inset:-40vh -10vw;pointer-events:none}#splash .floaty span{position:absolute;font-size:26px;opacity:.5;animation:up 9s linear infinite}
+#splash .floaty span:nth-child(1){left:10%;animation-delay:0s}#splash .floaty span:nth-child(2){left:30%;animation-delay:1.5s}#splash .floaty span:nth-child(3){left:55%;animation-delay:3s}#splash .floaty span:nth-child(4){left:75%;animation-delay:4.5s}#splash .floaty span:nth-child(5){left:88%;animation-delay:6s}#splash .floaty span:nth-child(6){left:45%;animation-delay:7.5s}
+@keyframes up{from{transform:translateY(110vh) rotate(0)}to{transform:translateY(-20vh) rotate(25deg)}}
+#splash img{width:118px!important;height:118px!important;border-radius:30px!important;box-shadow:0 20px 40px -12px rgba(0,0,0,.6),0 0 0 6px rgba(255,255,255,.12)!important}
+#splash b{color:#fff!important;font-size:22px!important;letter-spacing:.18em}#splash .slog{margin-top:4px;color:#D7F5F0;font-weight:600}
+#splash .news{margin:18px auto 0;max-width:330px;text-align:left;background:rgba(255,255,255,.14);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:12px 14px;animation:cardIn .8s .4s both}
+#splash .vtag{display:inline-block;font:800 11px -apple-system;letter-spacing:.06em;text-transform:uppercase;background:#fff;color:#0E7490;border-radius:999px;padding:4px 10px;margin-bottom:6px}
+#splash .news ul{margin:0;padding-left:2px;list-style:none;font-size:13.5px;line-height:1.7}
+#splash .tap{margin-top:18px!important;color:#fff!important;border:1px solid rgba(255,255,255,.6)!important;background:rgba(255,255,255,.15)!important}
+#sp-sos{display:inline-block;margin-top:10px;padding:8px 14px;border-radius:999px;background:rgba(244,63,94,.85);color:#fff;text-decoration:none;font:700 13px -apple-system}
+#splash .vsm{display:block;margin-top:14px;color:rgba(255,255,255,.65);font-size:11px}
+.dg{display:flex;gap:14px;align-items:center}.gauge{position:relative;width:104px;height:104px;flex:0 0 104px}.gauge svg{width:104px;height:104px}.gauge b{position:absolute;inset:0;display:grid;place-items:center;font-size:30px;font-weight:900;padding-bottom:8px}.gauge small{position:absolute;left:0;right:0;bottom:24px;text-align:center;color:var(--muted);font-size:11px}
+.xcard{margin-top:8px;padding:12px;border-radius:18px;background:linear-gradient(135deg,#F5F3FF,#ECFEFF);border:1px solid #DDD6FE}.xh{display:flex;gap:10px;align-items:center}.xh b{display:block}.xh small{color:var(--muted)}
+.xs{margin-top:8px;font-size:13.5px}.xs p{margin:4px 0}.src{display:inline-block;font:800 10.5px -apple-system;letter-spacing:.05em;text-transform:uppercase;color:#6D28D9;background:#EDE9FE;border-radius:6px;padding:2px 7px}
+.inscard{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:14px;border-radius:18px;color:#fff;background:linear-gradient(135deg,#0E7490,#6366F1)}.inscard small{display:block;opacity:.8;font-size:11px}.inscard b{font-size:14px}.inscard a{grid-column:1/-1}
+.cardscan{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}.cardscan img{width:100%;border-radius:12px;margin-top:6px;display:block;transition:filter .3s}
+.blur{filter:blur(10px)}.dthumb{width:64px;height:64px;flex:0 0 64px;border-radius:12px;overflow:hidden;background:#EEF3F5}.dthumb img{width:100%;height:100%;object-fit:cover}
+.viewer{position:fixed;inset:0;z-index:90;background:rgba(5,20,30,.92);display:grid;place-items:center;padding:20px}.viewer img{max-width:100%;max-height:80vh;border-radius:12px}
+#t-eye input:not([type=checkbox]):not([type=file]),#t-eye select{background:#fff;color:var(--ink);border:1.5px solid rgba(15,42,58,.12);border-radius:14px;padding:11px;font:inherit;width:100%}#t-eye .row input,#t-eye .row select,#t-eye td input{width:auto;flex:1;min-width:0}
+.sharec{background:linear-gradient(135deg,#ECFEFF,#F5F3FF)!important}
 /* cookies & publicité */
 #ck{position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom) + 92px);z-index:60;background:#fff;border-radius:22px;padding:16px;box-shadow:0 24px 50px -16px rgba(14,60,80,.55);border:1px solid var(--line);animation:cardIn .5s cubic-bezier(.22,1,.36,1);color:var(--ink)}
 #ck b{font-size:16px}#ck p{margin:6px 0 12px;font-size:13.5px;color:var(--muted)}#ck .row{gap:8px}#ck button{flex:1;border-radius:14px;padding:12px;font-weight:800;border:0}
@@ -195,7 +222,12 @@ nav button[data-t="med"].on{background:var(--g-amber)}
 .adbox:before{content:"Publicité";position:absolute;top:4px;right:10px;font:700 9px -apple-system;color:#9AAAB3;letter-spacing:.08em;text-transform:uppercase}
 .priv{margin:4px 18px 20px;font-size:12px;color:var(--muted);text-align:center}.priv a{color:#0E7490;font-weight:700}
 </style></head><body>
-<div id="splash" role="button" tabindex="0" aria-label="Entrer dans CLB Health"><div><img src="icon-512.png?v=2" alt=""><b>CLB HEALTH</b><span class="tap" id="sp-tap">Touche pour entrer</span><div id="sp-err" style="min-height:1.3em;margin-top:10px;color:#ff8a8a;font-size:13px;font-weight:600"></div><a id="sp-sos" href="tel:185" onclick="event.stopPropagation()" style="display:inline-block;margin-top:18px;padding:8px 14px;border-radius:999px;border:1px solid rgba(255,90,120,.5);color:#ff9fb3;text-decoration:none;font:700 13px -apple-system">🆘 SAMU 185</a><small style="display:block;margin-top:24px;color:#4d5d8f;font-size:11px">version 13.4.0 · 8 nov. 2026</small></div></div>
+<div id="splash" role="button" tabindex="0" aria-label="Entrer dans CLB Health"><div class="mesh"><i></i><i></i><i></i></div>
+<div class="spc"><div class="ecg"><svg viewBox="0 0 300 60" preserveAspectRatio="none"><path d="M0 30 H80 L95 30 L105 8 L118 52 L130 18 L140 30 H190 L200 30 L208 22 L216 30 H300"/></svg></div>
+<div class="floaty"><span>💧</span><span>💊</span><span>❤️</span><span>🏃</span><span>🥗</span><span>🩺</span></div>
+<img src="icon-512.png?v=2" alt=""><b>CLB HEALTH</b><div class="slog">Ton assistant santé personnel</div>
+<div class="news"><div class="vtag">Version 13.5.0 · nouveautés</div><ul><li>🩺 Diagnostic santé et priorités personnalisées</li><li>🔬 Fiche médicament multi-sources (FDA, NLM, VIDAL)</li><li>🔐 Portefeuille : cliniques, assurance, documents</li></ul></div>
+<span class="tap" id="sp-tap">Touche pour entrer</span><div id="sp-err" style="min-height:1.3em;margin-top:8px;color:#FFD1DA;font-size:13px;font-weight:600"></div><a id="sp-sos" href="tel:185" onclick="event.stopPropagation()">🆘 SAMU 185</a><small class="vsm">version 13.5.0 · 8 nov. 2026</small></div></div>
 <div class="banner" id="nudge"></div>
 
 <!-- PHARMACIES -->
@@ -214,7 +246,7 @@ nav button[data-t="med"].on{background:var(--g-amber)}
 <div class="pad">
  <div class="ring" id="w-ring"><div class="wave"><i id="wv1"></i><i id="wv2"></i></div><svg width="210" height="210" viewBox="0 0 210 210"><circle cx="105" cy="105" r="92" fill="none" stroke="#1d2d63" stroke-width="16"/><circle id="w-arc" cx="105" cy="105" r="92" fill="none" stroke="#1b9cf0" stroke-width="16" stroke-linecap="round" stroke-dasharray="578" stroke-dashoffset="578" style="transition:stroke-dashoffset .6s"/></svg>
   <div class="in"><div class="big" id="w-tot">0 ml</div><div class="sm" id="w-goal">sur 2 000 ml</div></div></div>
- <div class="pace" id="w-pace"></div>
+ <div class="pace" id="w-pace"></div><div class="note" id="w-prof" style="text-align:center"></div>
  <div class="drinks"><button data-ml="250"><span>🥛</span>Verre<br>250 ml</button><button data-ml="500"><span>🧴</span>Bouteille<br>50 cl</button><button data-ml="1500"><span>💧</span>Grande<br>1,5 L</button></div>
  <div class="row"><button class="btn" id="w-undo" style="flex:1">↩︎ Annuler le dernier</button><button class="btn" id="w-custom" style="flex:1">＋ Autre quantité</button></div>
  <div class="log" id="w-log"></div>
@@ -237,6 +269,7 @@ nav button[data-t="med"].on{background:var(--g-amber)}
 <section class="tab" id="t-med">
 <header><div class="brand">CLB Health</div><h1>Médicaments <span>& traitements</span></h1><div class="per">Photographie l'ordonnance ou la boîte : l'appli te rappelle chaque prise.</div></header>
 <div class="pad">
+ <div class="card2" id="m-prof" style="display:none"></div>
  <div class="card2" id="m-next"></div>
  <div class="card2"><h3>📸 Ajouter un médicament</h3>
   <div class="row"><label class="btn gold" style="flex:1;text-align:center;cursor:pointer">📷 Prendre en photo<input id="m-cam" type="file" accept="image/*" capture="environment" hidden></label><label class="btn" style="flex:1;text-align:center;cursor:pointer">🖼️ Choisir une photo<input id="m-pic" type="file" accept="image/*" multiple hidden></label></div>
@@ -281,6 +314,7 @@ nav button[data-t="med"].on{background:var(--g-amber)}
 <section class="tab" id="t-moi">
 <header><div class="brand">CLB Health</div><h1>Mon profil <span>santé</span></h1><div class="per">Renseigne-le une fois : l'appli adapte ses conseils (eau, sport, alimentation, médicaments).</div></header>
 <div class="pad">
+ <div class="card2" id="p-diag"></div>
  <div class="card2" id="p-bilan"></div>
  <div class="card2"><h3>👤 Mes informations</h3>
   <div style="display:grid;gap:8px">
@@ -306,8 +340,28 @@ nav button[data-t="med"].on{background:var(--g-amber)}
 
 <!-- VISION -->
 <section class="tab" id="t-eye">
-<header><div class="brand">CLB Health</div><h1>Vision <span>& écrans</span></h1><div class="per">Pauses pour les yeux au bureau et tes mesures de lunettes sous la main.</div></header>
+<header><div class="brand">CLB Health</div><h1>Portefeuille <span>& plus</span></h1><div class="per">Cliniques, assurance, documents, vision… et partage de l'appli.</div></header>
 <div class="pad">
+ <div class="card2"><h3>🔐 Mon portefeuille santé</h3><div class="note" style="margin:0">Tout est gardé uniquement sur ce téléphone. Les images sont floutées : touche-les pour les afficher. Active le verrouillage Face ID (onglet Urgence) pour protéger l'accès.</div></div>
+ <div class="card2"><h3>🏥 Mes cliniques et médecins</h3><div id="cl-list"></div>
+  <details style="margin-top:8px"><summary>➕ Ajouter un lieu de soins</summary><div style="display:grid;gap:8px;margin-top:8px">
+   <input id="cl-nom" placeholder="Nom (ex. Clinique Farah, Dr Koné…)"><select id="cl-type"><option>Clinique</option><option>Hôpital</option><option>Cabinet</option><option>Laboratoire</option><option>Pharmacie</option><option>Dentiste</option><option>Autre</option></select>
+   <input id="cl-tel" placeholder="Téléphone" inputmode="tel"><input id="cl-adr" placeholder="Adresse ou quartier"><input id="cl-note" placeholder="Note (spécialité, horaires, médecin…)">
+   <button class="btn gold" id="cl-add">💾 Ajouter</button></div></details></div>
+ <div class="card2"><h3>🛡️ Mon assurance santé</h3><div id="as-sum"></div>
+  <details style="margin-top:8px"><summary>✏️ Renseigner mon assurance</summary><div style="display:grid;gap:8px;margin-top:8px">
+   <input id="as-nom" placeholder="Assureur ou mutuelle"><input id="as-num" placeholder="N° d'adhérent / de police"><input id="as-benef" placeholder="Bénéficiaires couverts (optionnel)">
+   <input id="as-taux" placeholder="Taux de prise en charge (ex. 80 %)"><input id="as-tel" placeholder="Téléphone d'assistance" inputmode="tel">
+   <div class="row"><label for="as-exp">Valable jusqu'au</label><input id="as-exp" type="date"></div>
+   <button class="btn gold" id="as-save">💾 Enregistrer</button></div></details>
+  <div class="h" style="margin-top:10px">Ma carte d'assurance</div>
+  <div class="cardscan"><div><label class="btn" style="cursor:pointer;display:block;text-align:center">📷 Recto<input id="as-recto" type="file" accept="image/*" capture="environment" hidden></label><div id="as-recto-img"></div></div>
+  <div><label class="btn" style="cursor:pointer;display:block;text-align:center">📷 Verso<input id="as-verso" type="file" accept="image/*" capture="environment" hidden></label><div id="as-verso-img"></div></div></div></div>
+ <div class="card2"><h3>📁 Mes documents médicaux</h3>
+  <div class="row"><input id="dc-titre" placeholder="Titre (ex. Analyse de sang)" style="flex:2"><select id="dc-type" style="flex:1"><option>Ordonnance</option><option>Analyse</option><option>Imagerie</option><option>Compte rendu</option><option>Vaccination</option><option>Facture</option><option>Autre</option></select></div>
+  <label class="btn gold full" style="cursor:pointer;display:block;text-align:center;margin-top:8px">📷 Scanner ou ajouter un document<input id="dc-file" type="file" accept="image/*" multiple hidden></label>
+  <div id="dc-list" style="margin-top:8px"></div></div>
+
  <div class="card2"><h3>👀 Règle 20-20-20</h3>
   <div class="note" style="margin:0 0 10px">Toutes les 20 minutes d’écran, regarde un point à environ 6 mètres pendant 20 secondes. Recommandé par l’American Academy of Ophthalmology contre la fatigue visuelle.</div>
   <div class="ring" style="width:170px;height:170px"><svg width="170" height="170" viewBox="0 0 170 170"><circle cx="85" cy="85" r="74" fill="none" stroke="#1d2d63" stroke-width="12"/><circle id="e-arc" cx="85" cy="85" r="74" fill="none" stroke="#edbb00" stroke-width="12" stroke-linecap="round" stroke-dasharray="465" stroke-dashoffset="465"/></svg><div class="in"><div class="big" id="e-time" style="font-size:32px">20:00</div><div class="sm" id="e-st">à l’arrêt</div></div></div>
@@ -329,6 +383,10 @@ nav button[data-t="med"].on{background:var(--g-amber)}
   <div class="row"><label>Date</label><input id="v-next" type="date"></div>
   <button class="btn full" id="v-ics">📅 Ajouter le rappel à mon agenda</button>
   <div class="note" id="v-left"></div></div>
+ <div class="card2 sharec"><h3>📲 Partager CLB Health</h3><div class="note" style="margin:0 0 10px">Envoie l'appli à tes proches : ils l'installent depuis Safari (Partager › Sur l'écran d'accueil). Chacun garde ses données sur son propre téléphone.</div>
+  <div class="row"><button class="btn gold" id="sh-go" style="flex:1">📤 Partager</button><a class="btn" id="sh-wa" style="flex:1;text-align:center;text-decoration:none" target="_blank" rel="noopener">WhatsApp</a></div>
+  <div class="row" style="margin-top:8px"><a class="btn" id="sh-sms" style="flex:1;text-align:center;text-decoration:none">SMS</a><button class="btn" id="sh-cp" style="flex:1">📋 Copier le lien</button></div></div>
+ <div class="card2"><h3>📊 Statistiques anonymes</h3><div class="note" style="margin:0 0 8px">Pour améliorer l'appli, elle compte de façon anonyme les ouvertures et l'usage des sections (aucun nom, aucune donnée de santé, aucun identifiant).</div><label class="sx" style="margin:0"><input type="checkbox" id="st-ok"><span>Participer aux statistiques anonymes</span></label></div>
 </div>
 </section>
 <!-- URGENCES -->
@@ -336,10 +394,6 @@ nav button[data-t="med"].on{background:var(--g-amber)}
 <header><div class="brand">CLB Health</div><h1>Urgence <span>& fiche santé</span></h1><div class="per">Un toucher pour appeler. Appels gratuits.</div></header>
 <div class="pad urg">
  <div class="card2" style="border-left:4px solid #edbb00"><h3>🔒 Verrouillage Face ID</h3><div id="lk-box"></div><div class="note" id="lk-msg">Protège ta fiche santé et tes données : l’appli demande Face ID à l’ouverture. Les numéros d’urgence restent accessibles sans déverrouiller.</div></div>
- <div class="card2"><h3>📲 Partager CLB Health</h3><div class="note" style="margin:0 0 10px">Envoie l'appli à tes proches : ils l'installent depuis Safari (Partager › Sur l'écran d'accueil). Chacun garde ses données sur son propre téléphone.</div>
-  <div class="row"><button class="btn gold" id="sh-go" style="flex:1">📤 Partager</button><a class="btn" id="sh-wa" style="flex:1;text-align:center;text-decoration:none" target="_blank" rel="noopener">WhatsApp</a></div>
-  <div class="row" style="margin-top:8px"><a class="btn" id="sh-sms" style="flex:1;text-align:center;text-decoration:none">SMS</a><button class="btn" id="sh-cp" style="flex:1">📋 Copier le lien</button></div></div>
- <div class="card2"><h3>📊 Statistiques anonymes</h3><div class="note" style="margin:0 0 8px">Pour améliorer l'appli, elle compte de façon anonyme les ouvertures et l'usage des sections (aucun nom, aucune donnée de santé, aucun identifiant).</div><label class="sx" style="margin:0"><input type="checkbox" id="st-ok"><span>Participer aux statistiques anonymes</span></label></div>
  <div class="card2" style="border-left:4px solid #34c77b"><h3>🩺 Ma fiche santé</h3>
   <div id="f-view"></div>
   <details style="margin-top:8px"><summary style="color:var(--gold);font-weight:700">Modifier ma fiche</summary>
@@ -365,7 +419,7 @@ nav button[data-t="med"].on{background:var(--g-amber)}
 </section>
 
 <div id="e-over"><div style="font-size:50px">🌳</div><div style="font-size:22px;font-weight:800;margin:10px 0">Regarde au loin</div><div class="note" style="font-size:15px">Fixe un point à environ 6 mètres, cligne des yeux.</div><div class="big" id="e-sec">20</div><button class="btn" id="e-skip">Passer</button></div>
-<nav><button data-t="ph"><b>💊</b>Pharmacies</button><button data-t="eau"><b>💧</b>Eau</button><button data-t="med"><b>💊</b>Médocs</button><button data-t="moi"><b>👤</b>Moi</button><button data-t="eye"><b>👓</b>Vision</button><button data-t="sos"><b>🆘</b>Urgence</button></nav>
+<nav><button data-t="moi"><b>👤</b>Moi</button><button data-t="eau"><b>💧</b>Eau</button><button data-t="med"><b>💊</b>Médocs</button><button data-t="ph"><b>✚</b>Pharma</button><button data-t="sos"><b>🆘</b>Urgence</button><button data-t="eye"><b>☰</b>Plus</button></nav>
 <script>
 
 const $=id=>document.getElementById(id);
@@ -425,7 +479,7 @@ const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.
 let phLoaded=false;
 function go(t){TAB=t;document.querySelectorAll(".tab").forEach(s=>s.classList.toggle("on",s.id==="t-"+t));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));
  LS.set("tab",t);if(location.hash!=="#"+t)history.replaceState(null,"","#"+t);window.scrollTo(0,0);
- if(t==="ph"&&!phLoaded){phLoaded=true;if(!cur)locate();} if(t==="eau")wRender(); if(t==="med")mRender(); if(t==="moi")pRender(); stat("onglet-"+t); if(t==="eye"){vLoad();eTick();} if(t==="sos"){fRender();lockRender();}}
+ if(t==="ph"&&!phLoaded){phLoaded=true;if(!cur)locate();} if(t==="eau")wRender(); if(t==="med")mRender(); if(t==="moi")pRender(); stat("onglet-"+t); if(t==="eye"){vLoad();eTick();wlRender();} if(t==="sos"){fRender();lockRender();}}
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.t));
 
 /* ---------- eau ---------- */
@@ -449,7 +503,7 @@ function wRender(){const k=today(),t=tot(k),p=Math.min(1,t/W.goal);
  let h="";for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const kk=dkey(d),v=tot(kk);h+=`<div><small>${v?(v/1000).toLocaleString("fr-FR",{maximumFractionDigits:1})+" L":""}</small><i class="${v>=W.goal?"ok":""}" style="height:${Math.min(100,v/W.goal*100)*0.75}%"></i><small>${d.toLocaleDateString("fr-FR",{weekday:"short"}).slice(0,3)}</small></div>`;}
  $("w-week").innerHTML=h;
  $("w-notif").textContent=W.notif&&("Notification"in window)&&Notification.permission==="granted"?"🔕 Désactiver les notifications de l’appli":"🔔 Activer les notifications de l’appli";
- gcal();nudge();}
+ gcal();nudge();try{if(P&&P.sexe){const a=waterAdvice();$("w-prof").innerHTML=a.v!==W.goal?`Selon ton profil : ${fr(a.v)} ml conseillés. <a href="#" onclick="W.goal=${a.v};save();wRender();return false">Appliquer</a>`:"🎯 Objectif adapté à ton profil.";}}catch(e){}}
 document.querySelectorAll("[data-ml]").forEach(b=>b.onclick=()=>add(+b.dataset.ml));
 $("w-undo").onclick=()=>{const a=W.log[today()];if(a&&a.length){a.pop();save();wRender();}};
 $("w-custom").onclick=()=>{const v=prompt("Quantité bue (en ml) :","330");const n=parseInt(v,10);if(n>0&&n<5000)add(n);};
@@ -531,11 +585,64 @@ async function analyze(){const b=$("m-ana");if(!mCanv.length){$("m-ocr").textCon
  $("m-ocr").textContent="";b.disabled=false;b.textContent="🔁 Relancer l'analyse";$("m-sum").scrollIntoView({behavior:"smooth",block:"center"});}
 $("m-ana").onclick=analyze;
 /* infos générales sur le médicament (Wikipédia) */
-function infoHTML(x){return `<div class="adv g" style="margin-top:4px"><b>ℹ️ ${esc(x.t)}</b><p style="margin:6px 0 4px;font-size:13px">${esc(x.e)}</p><a href="${x.u}" target="_blank" rel="noopener" style="font-size:12px;color:#0E7490;font-weight:700">Lire la fiche complète</a><div class="note" style="margin:4px 0 0">Informations générales : la dose et la durée sont celles de ton ordonnance ou de la notice.</div></div>`;}
+
+/* ---------- fiche médicament multi-sources (Wikipédia FR, notice FDA, MedlinePlus/NLM, liens Vidal & ANSM) ---------- */
+const FR2EN={"paracétamol":"acetaminophen","paracetamol":"acetaminophen","doliprane":"acetaminophen","efferalgan":"acetaminophen","dafalgan":"acetaminophen","amoxicilline":"amoxicillin","augmentin":"amoxicillin and clavulanate potassium","ibuprofène":"ibuprofen","ibuprofene":"ibuprofen","advil":"ibuprofen","nurofen":"ibuprofen","métronidazole":"metronidazole","metronidazole":"metronidazole","flagyl":"metronidazole","artéméther":"artemether and lumefantrine","artemether":"artemether and lumefantrine","coartem":"artemether and lumefantrine","luméfantrine":"artemether and lumefantrine","ciprofloxacine":"ciprofloxacin","azithromycine":"azithromycin","cotrimoxazole":"sulfamethoxazole and trimethoprim","bactrim":"sulfamethoxazole and trimethoprim","ceftriaxone":"ceftriaxone","céfixime":"cefixime","cefixime":"cefixime","oméprazole":"omeprazole","omeprazole":"omeprazole","ésoméprazole":"esomeprazole","metformine":"metformin","glibenclamide":"glyburide","amlodipine":"amlodipine","losartan":"losartan","hydrochlorothiazide":"hydrochlorothiazide","diclofénac":"diclofenac","diclofenac":"diclofenac","voltarène":"diclofenac","tramadol":"tramadol","prednisolone":"prednisolone","prednisone":"prednisone","dexaméthasone":"dexamethasone","loratadine":"loratadine","cétirizine":"cetirizine","cetirizine":"cetirizine","salbutamol":"albuterol","ventoline":"albuterol","dompéridone":"domperidone","métoclopramide":"metoclopramide","albendazole":"albendazole","mébendazole":"mebendazole","fluconazole":"fluconazole","aciclovir":"acyclovir","atorvastatine":"atorvastatin","clopidogrel":"clopidogrel","aspirine":"aspirin","lopéramide":"loperamide","imodium":"loperamide","codéine":"codeine","quinine":"quinine","artésunate":"artesunate","acide folique":"folic acid","insuline":"insulin"};
+function enName(n){const k=n.toLowerCase().trim();if(FR2EN[k])return FR2EN[k];const f=Object.keys(FR2EN).find(x=>k.startsWith(x));if(f)return FR2EN[f];
+ return k.normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/ine$/,"in").replace(/ide$/,"ide");}
+const cut=(t,n=380)=>{t=(Array.isArray(t)?t.join(" "):(t||"")).replace(/\s+/g," ").replace(/^\d+(\.\d+)?\s+[A-Z &]+\s+/,"").trim();return t.length>n?t.slice(0,n)+"…":t;};
+function infoHTML(x){if(!x)return"";const fda=x.fda||{};
+ const sec=[["Indications","ind"],["Contre-indications","ci"],["Mises en garde","warn"],["Effets indésirables","ae"],["Interactions","inter"],["Grossesse","preg"]].filter(([,k])=>fda[k]);
+ const q=(x.q||x.t||"").toLowerCase(),warn=(typeof medWarnings==="function"?medWarnings(q):[]).filter(w=>w[1].toLowerCase().includes(q.slice(0,6)));
+ return `<div class="xcard"><div class="xh"><span class="tile g-violet" style="margin:0">🔬</span><div><b>${esc(x.t)}</b><small>Fiche multi-sources</small></div></div>`
+  +warn.map(w=>`<div class="adv ${w[0]}" style="margin-top:8px"><b>${w[1]}</b><p>${w[2]}</p></div>`).join("")
+  +(x.e?`<div class="xs"><span class="src">Wikipédia</span><p>${esc(x.e)}</p></div>`:"")
+  +(x.mp?`<div class="xs"><span class="src">MedlinePlus · Bibliothèque nationale de médecine (États-Unis)</span><p>${esc(x.mp.t)}${x.mp.s?" : "+esc(x.mp.s):""}</p></div>`:"")
+  +(sec.length?`<details class="xs"><summary><span class="src">Notice officielle FDA (en anglais)</span></summary>${sec.map(([l,k])=>`<p><b>${l} :</b> ${esc(fda[k])}</p>`).join("")}</details>`:"")
+  +`<div class="row" style="margin-top:8px">${x.mp&&x.mp.u?`<a class="btn" href="${x.mp.u}" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;font-size:13px">MedlinePlus</a>`:""}<a class="btn" href="https://www.vidal.fr/recherche.html?query=${encodeURIComponent(x.q||x.t)}" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;font-size:13px">VIDAL</a><a class="btn" href="https://base-donnees-publique.medicaments.gouv.fr/" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;font-size:13px">Base ANSM</a>${x.u?`<a class="btn" href="${x.u}" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;font-size:13px">Wikipédia</a>`:""}</div>
+  <div class="note">Informations de référence générales. La dose et la durée à suivre sont celles de ton ordonnance ; en cas de doute, demande à ton pharmacien.</div></div>`;}
 let mInfo=null;
-async function lookup(){const n=($("m-nom").value||"").trim().split(/[\s,]+/)[0];if(n.length<4)return;
- try{const r=await fetch("https://fr.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(n));if(!r.ok)throw 0;const j=await r.json();if(j.type==="disambiguation"||!j.extract)throw 0;
-  mInfo={t:j.title,e:j.extract.slice(0,420)+(j.extract.length>420?"…":""),u:(j.content_urls&&j.content_urls.mobile&&j.content_urls.mobile.page)||"https://fr.wikipedia.org/wiki/"+encodeURIComponent(n)};$("m-info").innerHTML=infoHTML(mInfo);}catch(e){mInfo=null;$("m-info").innerHTML="";}}
+async function lookup(){const raw=($("m-nom").value||"").trim();const n=raw.split(/[\s,]+/)[0];if(n.length<4)return;
+ $("m-info").innerHTML=`<div class="note">🔬 Recherche dans les bases médicales (Wikipédia, FDA, MedlinePlus)…</div>`;
+ const en=enName(raw.toLowerCase().includes("acide")?raw:n);
+ const J2=u=>fetch(u).then(r=>r.ok?r.json():null).catch(()=>null);
+ const [wk,fd,rx]=await Promise.all([J2("https://fr.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(n)),
+  J2(`https://api.fda.gov/drug/label.json?search=openfda.generic_name:%22${encodeURIComponent(en)}%22&limit=1`).then(j=>j||J2(`https://api.fda.gov/drug/label.json?search=openfda.brand_name:%22${encodeURIComponent(en)}%22&limit=1`)),
+  J2("https://rxnav.nlm.nih.gov/REST/rxcui.json?name="+encodeURIComponent(en))]);
+ const x={q:n,t:(wk&&wk.title)||raw,e:wk&&wk.type!=="disambiguation"&&wk.extract?cut(wk.extract,420):"",u:wk&&wk.content_urls&&wk.content_urls.mobile?wk.content_urls.mobile.page:""};
+ const L=fd&&fd.results&&fd.results[0];if(L)x.fda={ind:cut(L.indications_and_usage),ci:cut(L.contraindications),warn:cut(L.warnings_and_cautions||L.warnings||L.boxed_warning),ae:cut(L.adverse_reactions),inter:cut(L.drug_interactions),preg:cut(L.pregnancy||L["pregnancy_or_breast_feeding"])};
+ const id=rx&&rx.idGroup&&rx.idGroup.rxnormId&&rx.idGroup.rxnormId[0];
+ if(id){const mp=await J2(`https://connect.medlineplus.gov/service?mainSearchCriteria.v.cs=2.16.840.1.113883.6.88&mainSearchCriteria.v.c=${id}&knowledgeResponseType=application/json`);
+  const e=mp&&mp.feed&&mp.feed.entry&&mp.feed.entry[0];if(e)x.mp={t:(e.title&&e.title._value)||"",s:cut(((e.summary&&e.summary._value)||"").replace(/<[^>]+>/g," "),300),u:e.link&&e.link[0]&&e.link[0].href};}
+ if(!x.e&&!x.fda&&!x.mp){$("m-info").innerHTML=`<div class="note">Aucune fiche trouvée automatiquement. <a href="https://www.vidal.fr/recherche.html?query=${encodeURIComponent(n)}" target="_blank" rel="noopener">Chercher sur VIDAL</a></div>`;mInfo=null;return;}
+ mInfo=x;$("m-info").innerHTML=infoHTML(x);}
+
+/* ---------- diagnostic santé (profil + suivi) ---------- */
+function diag(){const w=+P.poids,h=+P.taille/100,imc=w&&h?w/(h*h):0,a=+P.age,it=[],pr=[];let sc=100;
+ if(imc){if(imc<18.5){sc-=10;pr.push(["o","Poids insuffisant (IMC "+imc.toFixed(1).replace(".",",")+")","Parles-en à un médecin ; vise des repas réguliers et riches.","moi"]);}
+  else if(imc>=30){sc-=20;pr.push(["r","Obésité (IMC "+imc.toFixed(1).replace(".",",")+")","Objectif : perdre 5 à 10 % de ton poids améliore nettement tension, sucre et articulations. Fais-toi accompagner par un médecin.","moi"]);}
+  else if(imc>=25){sc-=10;pr.push(["o","Surpoids (IMC "+imc.toFixed(1).replace(".",",")+")","Marche rapide 30 min par jour et assiette moitié légumes : un bon début.","moi"]);}else it.push("Poids dans la zone normale.");}
+ if(P.tabac==="oui"){sc-=15;pr.push(["r","Tabac","C'est le premier facteur de risque évitable : demande de l'aide à ton médecin ou pharmacien pour arrêter.","moi"]);}
+ if(P.alcool==="reg"){sc-=10;pr.push(["o","Alcool régulier","Réduis et garde au moins 2 jours par semaine sans alcool.","moi"]);}
+ if(P.act==="sed"){sc-=10;pr.push(["o","Sédentarité","Commence par 30 min de marche rapide, 5 jours par semaine.","moi"]);}else if(P.act==="act")sc+=5;
+ (P.cond||[]).forEach(c=>{sc-=5;});
+ if(has("hta"))pr.push(["o","Hypertension","Mesure ta tension régulièrement, réduis le sel et prends ton traitement chaque jour.","med"]);
+ if(has("diab"))pr.push(["o","Diabète","Surveille ta glycémie, limite les sucres rapides et bouge chaque jour.","med"]);
+ const t7=[...Array(7).keys()].map(i=>{const d=new Date();d.setDate(d.getDate()-i-1);return tot(dkey(d));}),logged=t7.filter(v=>v>0).length,avg=logged?t7.reduce((s,v)=>s+v,0)/logged:0;
+ if(logged>=3){if(avg<W.goal*.7){sc-=10;pr.push(["o","Hydratation insuffisante","Moyenne de "+fr(Math.round(avg/50)*50)+" ml par jour pour un objectif de "+fr(W.goal)+" ml. Active les rappels dans l'onglet Eau.","eau"]);}else it.push("Bonne hydratation ces derniers jours.");}
+ const exp=[],k0=today();M.list.forEach(m=>{for(let i=1;i<=7;i++){const d=new Date();d.setDate(d.getDate()-i);const k=dkey(d);if(activeOn(m,k))m.times.forEach(t=>exp.push(m.id+"|"+k+"|"+t));}});
+ if(exp.length>=3){const ok=exp.filter(x=>M.taken[x]).length/exp.length;if(ok<.8){sc-=10;pr.push(["o","Prises de médicaments oubliées","Seulement "+Math.round(ok*100)+" % des prises cochées sur 7 jours. Ajoute les prises à ton agenda pour ne plus oublier.","med"]);}else it.push("Traitements bien suivis ("+Math.round(ok*100)+" %).");}
+ const fx=(M.fx||[]).filter(f=>Date.now()-f.at<7*864e5&&f.lvl>=2);if(fx.length){sc-=5;pr.push([fx.some(f=>f.lvl===3)?"r":"o","Effets indésirables signalés cette semaine","Parles-en à ton médecin ou à ton pharmacien.","med"]);}
+ if(a>=40)it.push("À ton âge : contrôle annuel de la tension, de la glycémie et du cholestérol.");
+ const mw=medWarnings().filter(x=>x[0]==="r");mw.forEach(x=>pr.unshift(["r",x[1].replace(/^🚨\s*/,""),x[2],"med"]));
+ sc=Math.max(0,Math.min(100,Math.round(sc)));return{sc,it,pr,imc};}
+function diagHTML(){if(!P.age&&!P.poids)return`<h3><span class="tile g-teal">🩺</span>Mon diagnostic santé</h3><div class="note">Remplis ton profil ci-dessous : l'appli établit ton diagnostic et adapte tous ses conseils.</div>`;
+ const d=diag(),col=d.sc>=80?"#059669":d.sc>=60?"#F59E0B":"#E11D48",C=2*Math.PI*44;
+ return `<h3><span class="tile g-teal">🩺</span>Mon diagnostic santé${P.prenom?" · "+esc(P.prenom):""}</h3>
+ <div class="dg"><div class="gauge"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" stroke="#E2F0F2" stroke-width="10" fill="none"/><circle cx="50" cy="50" r="44" stroke="${col}" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-d.sc/100)}" transform="rotate(-90 50 50)" style="transition:stroke-dashoffset 1.2s"/></svg><b style="color:${col}">${d.sc}</b><small>/100</small></div>
+ <div style="flex:1"><b style="font-size:16px">${d.sc>=80?"Très bonne forme":d.sc>=60?"Quelques points à surveiller":"Plusieurs priorités santé"}</b><div class="note" style="margin:4px 0 0">${d.it.slice(0,2).join(" ")||"Score calculé à partir de ton profil, de ton hydratation et du suivi de tes traitements."}</div></div></div>
+ ${d.pr.length?`<div class="h" style="margin-top:10px">Mes priorités</div>`+d.pr.slice(0,4).map(p=>`<div class="adv ${p[0]}" style="margin-top:8px;cursor:pointer" onclick="go('${p[3]}')"><b>${p[1]}</b><p>${p[2]}</p></div>`).join(""):`<div class="adv g" style="margin-top:10px"><b>✅ Aucune priorité urgente</b><p>Continue comme ça : bouge, bois, dors bien.</p></div>`}`;}
+
 $("m-nom").addEventListener("change",lookup);
 $("m-cam2").onchange=e=>onPhoto(e,true);$("m-pic2").onchange=e=>onPhoto(e,true);
 $("m-cam").onchange=e=>onPhoto(e);$("m-pic").onchange=e=>onPhoto(e);$("m-reparse").onclick=()=>{parse($("m-txt").value,true);lookup();};
@@ -566,7 +673,7 @@ function toast2(t){const b=$("nudge");b.style.display="block";b.innerHTML=t;clea
 const dayN=(m,k)=>Math.floor((new Date(k)-new Date(m.start))/864e5);
 const activeOn=(m,k)=>m.on&&dayN(m,k)>=0&&(!m.days||dayN(m,k)<m.days);
 function doses(k){const out=[];M.list.forEach(m=>{if(!activeOn(m,k))return;m.times.forEach(t=>{const[h,mi]=t.split(":").map(Number),d=new Date(k+"T00:00");d.setHours(h,mi,0,0);out.push({m,t,at:d.getTime(),key:m.id+"|"+k+"|"+t});});});return out.sort((a,b)=>a.at-b.at);}
-function mRender(){const k=today(),D=doses(k),now=Date.now();
+function mRender(){const k=today(),D=doses(k),now=Date.now();{const mw=(typeof medWarnings==="function"&&P)?medWarnings():[];const el=$("m-prof");if(mw.length){el.style.display="block";el.innerHTML=`<h3><span class="tile g-coral">⚕️</span>Selon ton profil</h3>`+mw.map(w=>`<div class="adv ${w[0]}" style="margin-top:8px"><b>${w[1]}</b><p>${w[2]}</p></div>`).join("");}else el.style.display="none";}
  const nx=D.find(d=>!M.taken[d.key]&&d.at>now-60*60000)||null;
  const late=D.filter(d=>!M.taken[d.key]&&d.at<now);
  $("m-next").innerHTML=`<h3><span class="tile g-violet">⏰</span>Prises du jour</h3>`+(D.length?D.map(d=>{const tk=M.taken[d.key],lt=!tk&&d.at<now;return `<div class="fl" style="align-items:center"><span>${d.t} · <b style="color:var(--ink)">${esc(d.m.nom)}</b> ${esc(d.m.dose||"")}${d.m.rep?`<br><small>${esc(d.m.rep)}</small>`:""}</span>${tk?`<b style="color:var(--ok)">✅ ${new Date(tk).toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}</b>`:`<button class="btn ${lt?"gold":""}" data-take="${d.key}" style="padding:8px 12px">${lt?"⚠️ En retard · ":""}Pris</button>`}</div>`;}).join("")
@@ -630,7 +737,7 @@ $("p-save").onclick=()=>{["prenom","sexe","age","poids","taille","act","obj","al
 const has=k=>(P.cond||[]).includes(k),alg=k=>(P.all||[]).includes(k);
 function waterAdvice(){const base=P.sexe==="f"?1600:2000,sport=P.act==="act"?500:P.act==="mod"?250:0,w=+P.poids||0;
  let v=base+sport+250;/* chaleur d'Abidjan */ v=Math.round(v/250)*250;return{v,txt:`Repère EFSA ${P.sexe==="f"?"femme":"homme"} : environ ${fr(base)} ml de boissons par jour, + ${fr(sport)} ml pour ton activité, + 250 ml pour la chaleur.`,lim:has("rein")||has("coeur")};}
-function pRender(){const w=+P.poids,h=+P.taille/100,imc=w&&h?w/(h*h):0,a=+P.age;
+function pRender(){$("p-diag").innerHTML=diagHTML();const w=+P.poids,h=+P.taille/100,imc=w&&h?w/(h*h):0,a=+P.age;
  const cat=!imc?null:imc<18.5?["Maigreur","o"]:imc<25?["Poids normal","g"]:imc<30?["Surpoids","o"]:["Obésité","r"];
  const W2=waterAdvice();
  $("p-bilan").innerHTML=`<h3><span class="tile g-teal">📋</span>Mon bilan${P.prenom?" · "+esc(P.prenom):""}</h3>`+(imc?`<div class="kp"><div><b>${imc.toFixed(1).replace(".",",")}</b><small>IMC</small></div><div><b>${w} kg</b><small>poids</small></div><div><b>${(W2.v/1000).toLocaleString("fr-FR")} L</b><small>eau conseillée</small></div></div>
@@ -649,7 +756,7 @@ function pRender(){const w=+P.poids,h=+P.taille/100,imc=w&&h?w/(h*h):0,a=+P.age;
  if(has("asthme"))sp.push("⚠️ Asthme : échauffe-toi longuement et garde ton inhalateur à portée de main.");
  if(has("drepano"))sp.push("⚠️ Drépanocytose : effort modéré, bois beaucoup, évite la chaleur extrême et l'épuisement.");
  if(has("enceinte"))sp.push("Grossesse : une activité modérée régulière est recommandée (environ 150 min par semaine), sauf contre-indication de ton médecin.");
- $("p-sport").innerHTML=`<h3><span class="tile g-mint">🏃</span>Conseils sport</h3>`+sp.map(x=>`<div class="tipl">${x}</div>`).join("");
+ $("p-sport").innerHTML=`<h3><span class="tile g-mint">🏃</span>Conseils sport selon ton diagnostic</h3>`+sp.map(x=>`<div class="tipl">${x}</div>`).join("");
  /* alimentation */
  const fd=["Mange des fruits et des légumes à chaque repas (au moins 5 portions par jour).","Bois surtout de l'eau ; limite les sodas et jus sucrés.","Préfère le poisson braisé ou grillé, les légumineuses (haricots, lentilles) et les céréales complètes ; limite la friture."];
  if(has("hta"))fd.push("⚠️ Hypertension : réduis le sel (cubes d'assaisonnement, charcuterie, plats salés) et l'alcool.");
@@ -661,7 +768,7 @@ function pRender(){const w=+P.poids,h=+P.taille/100,imc=w&&h?w/(h*h):0,a=+P.age;
  if(has("enceinte"))fd.push("Grossesse : viandes, poissons et œufs bien cuits ; lave bien fruits et légumes ; pas d'alcool.");
  if(P.alcool==="reg")fd.push("Alcool : l'idéal est de réduire ; au moins 2 jours par semaine sans alcool.");
  if(P.tabac==="oui")fd.push("Tabac : arrêter est le geste santé le plus efficace ; demande à ton médecin ou à ton pharmacien les aides disponibles.");
- $("p-food").innerHTML=`<h3><span class="tile g-amber">🥗</span>Conseils alimentation</h3>`+fd.map(x=>`<div class="tipl">${x}</div>`).join("");
+ $("p-food").innerHTML=`<h3><span class="tile g-amber">🥗</span>Alimentation selon ton diagnostic</h3>`+fd.map(x=>`<div class="tipl">${x}</div>`).join("");
  /* médicaments */
  const md=medWarnings();
  $("p-meds").innerHTML=`<h3><span class="tile g-violet">💊</span>Médicaments et précautions</h3>`+(md.length?md.map(x=>`<div class="adv ${x[0]}" style="margin-top:8px"><b>${x[1]}</b><p>${x[2]}</p></div>`).join(""):`<div class="note">Aucune alerte pour tes traitements actuels avec ton profil.</div>`)
@@ -670,7 +777,7 @@ function pRender(){const w=+P.poids,h=+P.taille/100,imc=w&&h?w/(h*h):0,a=+P.age;
  /* info du jour */
  const TIPS=["Lave-toi les mains au savon 30 secondes : c'est l'un des gestes les plus efficaces contre les infections.","Dors 7 à 9 heures par nuit : le manque de sommeil augmente le stress, la fatigue et le grignotage.","Paludisme : dors sous une moustiquaire imprégnée et consulte vite en cas de fièvre ; un test rapide confirme le diagnostic.","Fais contrôler ta tension au moins une fois par an, même si tu te sens bien : l'hypertension ne donne souvent aucun signe.","N'arrête pas un antibiotique dès que tu vas mieux : suis toute la durée prescrite.","Ne garde pas de restes de médicaments « au cas où » : rapporte-les en pharmacie.","Protège-toi du soleil aux heures chaudes et bois avant d'avoir soif.","Un dépistage du diabète (glycémie) est utile à partir de 40 ans ou en cas de surpoids."];
  $("p-tip").innerHTML=`<h3><span class="tile g-sky">💡</span>Info santé du jour</h3><div class="tipl">${TIPS[Math.floor(Date.now()/864e5)%TIPS.length]}</div>`;}
-function medWarnings(){const out=[],L=(M.list||[]).filter(m=>m.on).map(m=>m.nom.toLowerCase());const any=re=>L.find(n=>re.test(n));
+function medWarnings(extra){const out=[],L=(M.list||[]).filter(m=>m.on).map(m=>m.nom.toLowerCase());if(extra&&!L.includes(extra))L.push(extra);const any=re=>L.find(n=>re.test(n));
  let x;
  if(alg("peni")&&(x=any(/amoxi|augmentin|p[ée]nicill|ampicill|cloxa/)))out.push(["r",`🚨 Allergie aux pénicillines et « ${x} »`,"Ce médicament fait partie de la famille des pénicillines. Ne le prends pas et appelle ton médecin ou ton pharmacien tout de suite."]);
  if(alg("sulfa")&&(x=any(/cotrimox|bactrim|sulfam/)))out.push(["r",`🚨 Allergie aux sulfamides et « ${x} »`,"Ne le prends pas sans l'avis de ton médecin."]);
@@ -684,6 +791,32 @@ function medWarnings(){const out=[],L=(M.list||[]).filter(m=>m.on).map(m=>m.nom.
  if(has("enceinte")&&L.length)out.push(["o","⚠️ Grossesse ou allaitement","Vérifie avec ton médecin ou ton pharmacien que chacun de tes médicaments est compatible."]);
  return out;}
 pFill();
+
+
+/* ---------- portefeuille santé : stockage des images dans IndexedDB (sur le téléphone uniquement) ---------- */
+const IDB={db:null,open(){return this.db?Promise.resolve(this.db):new Promise((ok,ko)=>{const r=indexedDB.open("clbh-wallet",1);r.onupgradeneeded=()=>r.result.createObjectStore("img");r.onsuccess=()=>{this.db=r.result;ok(this.db);};r.onerror=()=>ko(r.error);});},
+ async put(k,v){const d=await this.open();return new Promise((ok,ko)=>{const t=d.transaction("img","readwrite");t.objectStore("img").put(v,k);t.oncomplete=ok;t.onerror=()=>ko(t.error);});},
+ async get(k){const d=await this.open();return new Promise(ok=>{const r=d.transaction("img").objectStore("img").get(k);r.onsuccess=()=>ok(r.result||null);r.onerror=()=>ok(null);});},
+ async del(k){const d=await this.open();return new Promise(ok=>{const t=d.transaction("img","readwrite");t.objectStore("img").delete(k);t.oncomplete=ok;t.onerror=ok;});}};
+let WL=LS.get("wallet",{cli:[],ass:{},docs:[]});const saveWL=()=>LS.set("wallet",WL);
+function wlRender(){
+ $("cl-list").innerHTML=WL.cli.length?WL.cli.map((c,i)=>`<div class="medc"><span class="tile ${c.type==="Laboratoire"?"g-violet":c.type==="Pharmacie"?"g-mint":"g-sky"}" style="margin:0">${c.type==="Laboratoire"?"🧪":c.type==="Pharmacie"?"💊":c.type==="Cabinet"?"🩺":"🏥"}</span><div style="flex:1;min-width:0"><b>${esc(c.nom)}</b> <small>${esc(c.type)}</small>${c.adr?`<div class="note" style="margin:2px 0">${esc(c.adr)}</div>`:""}${c.note?`<div class="note" style="margin:2px 0">${esc(c.note)}</div>`:""}
+  <div class="row" style="margin-top:6px">${c.tel?`<a class="btn gold" href="tel:${c.tel.replace(/[^\d+]/g,"")}" style="padding:7px 10px;font-size:13px;text-decoration:none">📞 Appeler</a>`:""}<a class="btn" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.nom+" "+(c.adr||"")+" Côte d'Ivoire")}" target="_blank" rel="noopener" style="padding:7px 10px;font-size:13px;text-decoration:none">🧭 Itinéraire</a><button class="btn" data-cdel="${i}" style="padding:7px 10px;font-size:13px">🗑️</button></div></div></div>`).join(""):`<div class="note">Ajoute les cliniques, médecins et laboratoires où tu vas le plus souvent.</div>`;
+ $("cl-list").querySelectorAll("[data-cdel]").forEach(b=>b.onclick=()=>{if(confirm("Supprimer ?")){WL.cli.splice(+b.dataset.cdel,1);saveWL();wlRender();}});
+ const A=WL.ass||{};["nom","num","taux","tel","exp","benef"].forEach(k=>{if($("as-"+k))$("as-"+k).value=A[k]||"";});
+ $("as-sum").innerHTML=A.nom?`<div class="inscard"><div><small>Assureur</small><b>${esc(A.nom)}</b></div><div><small>N° adhérent</small><b>${esc(A.num||"—")}</b></div>${A.taux?`<div><small>Prise en charge</small><b>${esc(A.taux)}</b></div>`:""}${A.exp?`<div><small>Valable jusqu'au</small><b>${new Date(A.exp).toLocaleDateString("fr-FR")}</b></div>`:""}${A.tel?`<a class="btn gold" href="tel:${A.tel.replace(/[^\d+]/g,"")}" style="text-decoration:none;margin-top:6px">📞 Assistance</a>`:""}</div>`:"";
+ ["recto","verso"].forEach(async s=>{const u=await IDB.get("ass-"+s).catch(()=>null);$("as-"+s+"-img").innerHTML=u?`<img src="${u}" class="blur" alt="Carte ${s}" onclick="this.classList.toggle('blur')"><button class="btn" data-adel="${s}" style="padding:6px 10px;font-size:12px;margin-top:6px">🗑️ Retirer</button>`:`<div class="note" style="margin:0">Pas encore scannée</div>`;
+  const b=$("as-"+s+"-img").querySelector("[data-adel]");if(b)b.onclick=async()=>{await IDB.del("ass-"+s);wlRender();};});
+ $("dc-list").innerHTML=WL.docs.length?WL.docs.map((d,i)=>`<div class="medc"><div class="dthumb" id="dt-${d.id}"></div><div style="flex:1;min-width:0"><b>${esc(d.titre)}</b> <small>${esc(d.type)}</small><div class="note" style="margin:2px 0">${new Date(d.date).toLocaleDateString("fr-FR")}</div><button class="btn" data-ddel="${i}" style="padding:6px 10px;font-size:12px">🗑️ Supprimer</button></div></div>`).join(""):`<div class="note">Ordonnances, résultats d'analyses, comptes rendus, carnet de vaccination…</div>`;
+ WL.docs.forEach(async d=>{const u=await IDB.get("doc-"+d.id).catch(()=>null);const el=$("dt-"+d.id);if(el&&u)el.innerHTML=`<img src="${u}" class="blur" alt="" onclick="openDoc('${d.id}')">`;});
+ $("dc-list").querySelectorAll("[data-ddel]").forEach(b=>b.onclick=async()=>{if(!confirm("Supprimer ce document ?"))return;const d=WL.docs.splice(+b.dataset.ddel,1)[0];await IDB.del("doc-"+d.id);saveWL();wlRender();});}
+async function openDoc(id){const u=await IDB.get("doc-"+id);if(!u)return;const o=document.createElement("div");o.className="viewer";o.innerHTML=`<img src="${u}" alt=""><button class="btn">Fermer</button>`;o.onclick=()=>o.remove();document.body.appendChild(o);}
+$("cl-add").onclick=()=>{const nom=$("cl-nom").value.trim();if(!nom){alert("Indique le nom.");return;}WL.cli.push({nom,type:$("cl-type").value,tel:$("cl-tel").value.trim(),adr:$("cl-adr").value.trim(),note:$("cl-note").value.trim()});saveWL();["cl-nom","cl-tel","cl-adr","cl-note"].forEach(i=>$(i).value="");wlRender();stat("wallet-clinique");};
+$("as-save").onclick=()=>{WL.ass={};["nom","num","taux","tel","exp","benef"].forEach(k=>WL.ass[k]=$("as-"+k).value.trim());saveWL();wlRender();toast2("🛡️ Assurance enregistrée");};
+["recto","verso"].forEach(s=>{$("as-"+s).onchange=async e=>{const f=e.target.files&&e.target.files[0];e.target.value="";if(!f)return;const{url}=await shrinkTo(f,1400,.82);try{await IDB.put("ass-"+s,url);}catch(err){alert("Stockage impossible sur ce téléphone.");}wlRender();stat("wallet-carte");};});
+$("dc-file").onchange=async e=>{const fs=[...(e.target.files||[])];e.target.value="";for(const f of fs){const{url}=await shrinkTo(f,1600,.8);const id="d"+Date.now()+Math.random().toString(36).slice(2,5);try{await IDB.put("doc-"+id,url);WL.docs.unshift({id,titre:$("dc-titre").value.trim()||"Document",type:$("dc-type").value,date:Date.now()});}catch(err){alert("Stockage impossible.");}}
+ $("dc-titre").value="";saveWL();wlRender();stat("wallet-doc");};
+function shrinkTo(file,max,q){return new Promise(res=>{const img=new Image();img.onload=()=>{const k=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement("canvas");c.width=img.width*k;c.height=img.height*k;c.getContext("2d").drawImage(img,0,0,c.width,c.height);res({url:c.toDataURL("image/jpeg",q)});};img.src=URL.createObjectURL(file);});}
 
 /* ---------- statistiques anonymes (compteurs globaux, sans identifiant ni donnée de santé) ---------- */
 var STNS="clb-health-cl8x";function STOK(){return LS.get("stats",true);}
@@ -780,20 +913,19 @@ const _eb=eBreak;eBreak=function(){_eb();$("e-over").classList.add("show");hapti
 if("serviceWorker"in navigator){let had=!!navigator.serviceWorker.controller,reloaded=false;
  navigator.serviceWorker.addEventListener("controllerchange",()=>{if(had&&!reloaded){reloaded=true;location.reload();}had=true;});
  navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(r=>{r.update();document.addEventListener("visibilitychange",()=>{if(!document.hidden)r.update();});}).catch(()=>{});}
-const start=(location.hash||"").slice(1);go(["ph","eau","eye","sos"].includes(start)?start:(["ph","eau","eye","sos"].includes(LS.get("tab","ph"))?LS.get("tab","ph"):"ph"));
+const start=(location.hash||"").slice(1),TABS=["moi","ph","eau","med","eye","sos"];go(TABS.includes(start)?start:(!LS.get("profil",{}).age?"moi":(TABS.includes(LS.get("tab","moi"))?LS.get("tab","moi"):"moi")));
 nudge();
 </script>
 <script src="sante/credits.js"></script>
 <script>
 /* ===== Habillage 13 : photos d'en-tête, icônes, cookies et pub ===== */
-(()=>{const SV={ph:'<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>',eau:'<path d="M12 2.7s7 7.4 7 12.3a7 7 0 0 1-14 0c0-4.9 7-12.3 7-12.3z"/><path d="M9 15.5a3 3 0 0 0 3 3"/>',eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',sos:'<path d="M12 21s-8-4.5-8-11a5 5 0 0 1 8-4 5 5 0 0 1 8 4c0 6.5-8 11-8 11z"/><path d="M9 11h2l1-2 2 4 1-2h2"/>',med:'<path d="M10.5 20.5 3.5 13.5a5 5 0 0 1 7-7l7 7a5 5 0 0 1-7 7z"/><path d="m8.5 8.5 7 7"/>',moi:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>'};
+(()=>{const SV={ph:'<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>',eau:'<path d="M12 2.7s7 7.4 7 12.3a7 7 0 0 1-14 0c0-4.9 7-12.3 7-12.3z"/><path d="M9 15.5a3 3 0 0 0 3 3"/>',eye:'<rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18M16 15h2"/><path d="M7 6V4h10v2"/>',sos:'<path d="M12 21s-8-4.5-8-11a5 5 0 0 1 8-4 5 5 0 0 1 8 4c0 6.5-8 11-8 11z"/><path d="M9 11h2l1-2 2 4 1-2h2"/>',med:'<path d="M10.5 20.5 3.5 13.5a5 5 0 0 1 7-7l7 7a5 5 0 0 1-7 7z"/><path d="m8.5 8.5 7 7"/>',moi:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>'};
  const G={ph:"g-mint",eau:"g-sky",eye:"g-violet",sos:"g-coral",med:"g-amber",moi:"g-teal"};
  document.querySelectorAll("nav button[data-t]").forEach(b=>{const t=b.dataset.t,l=b.textContent.replace(/^\S+\s*/,"").trim()||b.lastChild.textContent;const lab=b.childNodes[b.childNodes.length-1].textContent;b.innerHTML=`<svg viewBox="0 0 24 24">${SV[t]}</svg>${lab}`;});
  for(const t in SV){const sec=document.getElementById("t-"+t);if(!sec)continue;const h=sec.querySelector("header");if(!h)continue;h.classList.add("hero");const H=(typeof HERO!=="undefined"?HERO:{})[t];
   const inner=h.innerHTML;h.innerHTML=`<div class="ph" style="background-image:url(${H?H.f:""})"></div>${H?`<div class="cr">📷 ${H.a} · ${H.l} · Wikimedia Commons</div>`:""}<div class="htile ${G[t]}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${SV[t]}</svg></div><div class="hx">${inner}</div>`;}
  const TG=["g-teal","g-sky","g-violet","g-amber","g-mint","g-coral"];let k=0;
  document.querySelectorAll(".card2 h3").forEach(h=>{const m=h.textContent.match(/^(\p{Extended_Pictographic}[️‍\p{Extended_Pictographic}]*|🇫🇷)\s*/u);if(!m)return;h.innerHTML=`<span class="tile ${TG[k++%TG.length]}">${m[1]}</span>`+h.innerHTML.replace(m[1],"").trim();});
- const sp=document.getElementById("splash");if(sp&&!sp.querySelector(".sbg"))sp.insertAdjacentHTML("afterbegin",'<div class="sbg"></div>');
 })();
 </script>
 </body></html>

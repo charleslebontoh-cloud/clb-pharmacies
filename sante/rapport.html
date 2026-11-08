@@ -17,6 +17,6 @@ const p=n=>String(n).padStart(2,"0"),dk=d=>d.getFullYear()+"-"+p(d.getMonth()+1)
  const v=await Promise.all(K.map(([k])=>G(k)));document.getElementById("kpi").innerHTML=K.map(([k,l],i)=>`<div class="k"><b>${v[i].toLocaleString("fr-FR")}</b><small>${l}</small></div>`).join("");
  const D=[...Array(14).keys()].map(i=>{const d=new Date();d.setDate(d.getDate()-13+i);return d;});const dv=await Promise.all(D.map(d=>G("actifs-"+dk(d))));const mx=Math.max(1,...dv);
  document.getElementById("days").innerHTML=D.map((d,i)=>`<div class="b"><span>${d.toLocaleDateString("fr-FR",{weekday:"short",day:"numeric"})}</span><i style="width:${dv[i]*100/mx}%"></i><span>${dv[i]}</span></div>`).join("");
- const T=[["ph","Pharmacies"],["eau","Eau"],["med","Médocs"],["eye","Vision"],["sos","Urgence"]];const tv=await Promise.all(T.map(([t])=>G("onglet-"+t)));const tm=Math.max(1,...tv);
+ const T=[["moi","Moi"],["eau","Eau"],["med","Médocs"],["ph","Pharmacies"],["sos","Urgence"],["eye","Plus"]];const tv=await Promise.all(T.map(([t])=>G("onglet-"+t)));const tm=Math.max(1,...tv);
  document.getElementById("tabs").innerHTML=T.map(([t,l],i)=>`<div class="b"><span>${l}</span><i style="width:${tv[i]*100/tm}%"></i><span>${tv[i]}</span></div>`).join("");})();
 </script></body></html>
