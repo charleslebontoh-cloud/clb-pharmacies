@@ -1,0 +1,10 @@
+name: Sonde API
+on:
+  workflow_dispatch:
+jobs:
+  p:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          for u in "https://api.fda.gov/drug/label.json?search=openfda.generic_name:%22amoxicillin%22&limit=1" "https://rxnav.nlm.nih.gov/REST/rxcui.json?name=amoxicillin" "https://connect.medlineplus.gov/service?mainSearchCriteria.v.cs=2.16.840.1.113883.6.88&mainSearchCriteria.v.c=723&knowledgeResponseType=application/json" "https://www.vidal.fr/recherche.html?query=amoxicilline" "https://wsearch.nlm.nih.gov/ws/query?db=healthTopics&term=hypertension"; do
+            echo "== $u"; curl -s -m 20 -D - -H "Origin: https://charleslebontoh-cloud.github.io" "$u" -o /tmp/b | grep -i "^HTTP\|access-control-allow-origin\|^location"; head -c 400 /tmp/b | tr '\n' ' '; echo; done
