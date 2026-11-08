@@ -2,20 +2,23 @@ name: reseaux
 on:
   workflow_dispatch:
     inputs:
-      step: {default: "fetch"}
+      step: {default: "build"}
 permissions: {contents: write}
 jobs:
   r:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - run: sudo apt-get install -y poppler-utils >/dev/null
       - run: |
           mkdir -p reseaux/raw
-          curl -sSL -A "Mozilla/5.0" -o reseaux/raw/vitalis.pdf https://vitalis-ci.com/reseau-de-soins.pdf || true
-          curl -sSL -A "Mozilla/5.0" -o reseaux/raw/vitalis-full.pdf https://services.vitalis-ci.com/reseaudesoin/PRESENTATION.pdf || true
-          for f in reseaux/raw/*.pdf; do file $f; pdftotext -layout $f ${f%.pdf}.txt || true; wc -l ${f%.pdf}.txt; done
-          if [ "${{ inputs.step }}" = "build" ]; then python3 tools/reseaux.py; fi
-      - run: |
+          if [ ! -s reseaux/raw/vitalis-full.txt ] || [ "${{ inputs.step }}" = "fetch" ]; then
+            curl -sSL -A "Mozilla/5.0" -o reseaux/raw/vitalis-full.pdf https://services.vitalis-ci.com/reseaudesoin/PRESENTATION.pdf && pdftotext -layout reseaux/raw/vitalis-full.pdf reseaux/raw/vitalis-full.txt
+          fi
+          if [ "${{ inputs.step }}" = "build" ]; then BUDGET=1500 python3 tools/reseaux.py reseaux/raw/vitalis-full.txt; fi
+      - if: always()
+        run: |
           git config user.name clb-bot; git config user.email bot@users.noreply.github.com
-          git add reseaux; git commit -m "reseaux: ${{ inputs.step }}" || exit 0; git push
+          git add reseaux; git commit -m "reseaux: ${{ inputs.step }}" || exit 0
+          for i in 1 2 3; do git pull --rebase -X theirs origin main && git push && break; sleep 5; done

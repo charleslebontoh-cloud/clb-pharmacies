@@ -55,12 +55,13 @@ def photon(q, extra=""):
     u="https://photon.komoot.io/api/?q="+urllib.parse.quote(q)+"&limit=5&lang=fr&bbox=-8.7,4.2,-2.4,10.8"+extra
     for k in range(3):
         try:
-            with urllib.request.urlopen(urllib.request.Request(u,headers=UA),timeout=20) as r: return json.load(r).get("features",[])
-        except Exception: time.sleep(2+k*3)
+            with urllib.request.urlopen(urllib.request.Request(u,headers=UA),timeout=10) as r: return json.load(r).get("features",[])
+        except Exception: time.sleep(1+k*2)
     return []
 def toks(s): return set(w for w in re.findall(r"[A-Z0-9]{3,}", norm(s)) if w not in {"PHARMACIE","CLINIQUE","MEDICALE","CENTRE","MEDICAL","CABINET","DENTAIRE","HOPITAL","GENERAL","POLYCLINIQUE","OPTIQUE","LABORATOIRE","DES","DES","LES","SAINTE","SAINT"})
 def km(a,b,c,d):
     import math; r=math.pi/180; x=math.sin((c-a)*r/2)**2+math.cos(a*r)*math.cos(c*r)*math.sin((d-b)*r/2)**2; return 12742*math.asin(math.sqrt(x))
+DEADLINE=time.time()+float(os.environ.get("BUDGET","1500"))
 def geocode(items, cache):
     centers={}
     def center(place):
@@ -70,18 +71,20 @@ def geocode(items, cache):
         cache[k]=[f[0]["geometry"]["coordinates"][1],f[0]["geometry"]["coordinates"][0]] if f else None; return cache[k]
     for i,e in enumerate(items):
         key=e["cat"]+"|"+e["nom"]+"|"+e["lieu"]
-        if key in cache: e.update(cache[key]); continue
+        if key in cache and (cache[key].get("prec")!="ville" or time.time()>DEADLINE): e.update(cache[key]); continue
         ref = (center(e["zone"]+" "+(e["commune"] or "")+" Abidjan") if e["ville"].upper()=="ABIDJAN" and e["zone"] else None) or (center(e["commune"]+" Abidjan") if e["commune"] else None) or center(e["ville"] or "Abidjan")
         res=None; T=toks(e["nom"])
         tags="&osm_tag=amenity&osm_tag=healthcare&osm_tag=shop"
-        for f in photon(e["nom"]+" "+(e["ville"] or ""), tags)+photon(e["nom"]):
-            p=f["properties"]; lat,lon=f["geometry"]["coordinates"][1],f["geometry"]["coordinates"][0]
-            if p.get("countrycode")!="CI": continue
-            if T and not (T & toks(p.get("name",""))): continue
-            if ref and km(ref[0],ref[1],lat,lon)>25: continue
-            res={"lat":round(lat,6),"lon":round(lon,6),"prec":"exacte"}; break
-        time.sleep(.5)
-        if not res and e["adr"]:
+        if time.time()>DEADLINE: res=None
+        else:
+         for f in photon(e["nom"]+" "+(e["ville"] or ""), tags):
+              p=f["properties"]; lat,lon=f["geometry"]["coordinates"][1],f["geometry"]["coordinates"][0]
+              if p.get("countrycode")!="CI": continue
+              if T and not (T & toks(p.get("name",""))): continue
+              if ref and km(ref[0],ref[1],lat,lon)>25: continue
+              res={"lat":round(lat,6),"lon":round(lon,6),"prec":"exacte"}; break
+        if time.time()<DEADLINE: time.sleep(.5)
+        if not res and e["adr"] and time.time()<DEADLINE:
             f=photon(e["adr"]+" "+(e["commune"] or e["ville"] or "")); time.sleep(.4)
             f=[x for x in f if not ref or km(ref[0],ref[1],x["geometry"]["coordinates"][1],x["geometry"]["coordinates"][0])<15]
             if f: res={"lat":round(f[0]["geometry"]["coordinates"][1],6),"lon":round(f[0]["geometry"]["coordinates"][0],6),"prec":"quartier"}
