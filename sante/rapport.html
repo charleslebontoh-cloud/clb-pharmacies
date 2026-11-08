@@ -1,0 +1,22 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>CLB Health · Rapport d'utilisation</title>
+<style>body{margin:0;font:15px/1.5 -apple-system,system-ui,sans-serif;background:linear-gradient(180deg,#F4FBFA,#EEF4FB);color:#0F2A3A;padding:20px 16px 40px}h1{font-size:26px;margin:0 0 4px}.sub{color:#5F7684;margin:0 0 18px;font-size:14px}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:10px}.k{background:#fff;border-radius:20px;padding:14px;box-shadow:0 14px 30px -22px rgba(14,60,80,.6)}.k b{display:block;font-size:28px}.k small{color:#5F7684;font-weight:600}
+h2{font-size:17px;margin:22px 0 10px}.bars{background:#fff;border-radius:20px;padding:14px;box-shadow:0 14px 30px -22px rgba(14,60,80,.6)}.b{display:grid;grid-template-columns:80px 1fr 40px;gap:8px;align-items:center;margin:6px 0;font-size:13px}.b i{display:block;height:12px;border-radius:6px;background:linear-gradient(90deg,#2DD4BF,#0E7490)}.b span:last-child{text-align:right;font-weight:700}
+.note{color:#5F7684;font-size:12px;margin-top:16px}</style></head><body>
+<h1>📊 Rapport d'utilisation</h1><p class="sub">CLB Health · compteurs anonymes (aucune donnée personnelle ni de santé) · <span id="maj"></span></p>
+<div class="g" id="kpi"></div>
+<h2>Utilisateurs actifs · 14 derniers jours</h2><div class="bars" id="days"></div>
+<h2>Sections les plus utilisées</h2><div class="bars" id="tabs"></div>
+<p class="note">Comptage anonyme et approximatif : un appareil compte une fois par jour, sans nom ni identifiant. Les utilisateurs qui refusent les statistiques ne sont pas comptés.</p>
+<script>
+const NS="clb-health-cl8x",G=k=>fetch(`https://abacus.jasoncameron.dev/get/${NS}/${k}`).then(r=>r.ok?r.json():{value:0}).then(j=>j.value||0).catch(()=>0);
+const p=n=>String(n).padStart(2,"0"),dk=d=>d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate());
+(async()=>{document.getElementById("maj").textContent=new Date().toLocaleString("fr-FR");
+ const K=[["appareils","📱 Appareils équipés"],["ouvertures","🚪 Ouvertures"],["actifs-total","👥 Jours-utilisateurs"],["partage","📤 Partages"],["med-ajout","💊 Traitements ajoutés"],["med-pris","✅ Prises cochées"],["eau-ajout","💧 Boissons notées"],["effets","🤒 Effets analysés"]];
+ const v=await Promise.all(K.map(([k])=>G(k)));document.getElementById("kpi").innerHTML=K.map(([k,l],i)=>`<div class="k"><b>${v[i].toLocaleString("fr-FR")}</b><small>${l}</small></div>`).join("");
+ const D=[...Array(14).keys()].map(i=>{const d=new Date();d.setDate(d.getDate()-13+i);return d;});const dv=await Promise.all(D.map(d=>G("actifs-"+dk(d))));const mx=Math.max(1,...dv);
+ document.getElementById("days").innerHTML=D.map((d,i)=>`<div class="b"><span>${d.toLocaleDateString("fr-FR",{weekday:"short",day:"numeric"})}</span><i style="width:${dv[i]*100/mx}%"></i><span>${dv[i]}</span></div>`).join("");
+ const T=[["ph","Pharmacies"],["eau","Eau"],["med","Médocs"],["eye","Vision"],["sos","Urgence"]];const tv=await Promise.all(T.map(([t])=>G("onglet-"+t)));const tm=Math.max(1,...tv);
+ document.getElementById("tabs").innerHTML=T.map(([t,l],i)=>`<div class="b"><span>${l}</span><i style="width:${tv[i]*100/tm}%"></i><span>${tv[i]}</span></div>`).join("");})();
+</script></body></html>

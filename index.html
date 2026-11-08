@@ -179,6 +179,9 @@ nav button[data-t="med"].on{background:var(--g-amber)}
 .sx.o{background:#FFF7ED;border-color:#FED7AA}.sx.r{background:#FEF2F2;border-color:#FECACA}.sx input{margin-top:2px;accent-color:#0E7490}
 .adv{margin-top:12px;padding:14px;border-radius:16px;animation:cardIn .4s}.adv p{margin:6px 0 10px;font-size:14px}.adv.r{background:#FEF2F2;border:1.5px solid #F87171}.adv.o{background:#FFF7ED;border:1.5px solid #FB923C}.adv.g{background:#ECFDF5;border:1.5px solid #34D399}
 .adv .btn{text-decoration:none;display:inline-block}
+#t-med input:not([type=checkbox]),#t-med select,#t-med textarea{background:#fff;color:var(--ink);border:1.5px solid rgba(15,42,58,.12);border-radius:14px;padding:11px;font:inherit;width:100%}
+#t-med .row input,#t-med .row select{width:auto;flex:1}
+.thumbs{display:flex;gap:8px;overflow-x:auto;margin-bottom:8px}.thumbs div{position:relative;flex:0 0 96px}.thumbs img{width:96px;height:96px;object-fit:cover;border-radius:14px;display:block}.thumbs button{position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:12px}
 /* cookies & publicité */
 #ck{position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom) + 92px);z-index:60;background:#fff;border-radius:22px;padding:16px;box-shadow:0 24px 50px -16px rgba(14,60,80,.55);border:1px solid var(--line);animation:cardIn .5s cubic-bezier(.22,1,.36,1);color:var(--ink)}
 #ck b{font-size:16px}#ck p{margin:6px 0 12px;font-size:13.5px;color:var(--muted)}#ck .row{gap:8px}#ck button{flex:1;border-radius:14px;padding:12px;font-weight:800;border:0}
@@ -187,7 +190,7 @@ nav button[data-t="med"].on{background:var(--g-amber)}
 .adbox:before{content:"Publicité";position:absolute;top:4px;right:10px;font:700 9px -apple-system;color:#9AAAB3;letter-spacing:.08em;text-transform:uppercase}
 .priv{margin:4px 18px 20px;font-size:12px;color:var(--muted);text-align:center}.priv a{color:#0E7490;font-weight:700}
 </style></head><body>
-<div id="splash" role="button" tabindex="0" aria-label="Entrer dans CLB Health"><div><img src="icon-512.png?v=2" alt=""><b>CLB HEALTH</b><span class="tap" id="sp-tap">Touche pour entrer</span><div id="sp-err" style="min-height:1.3em;margin-top:10px;color:#ff8a8a;font-size:13px;font-weight:600"></div><a id="sp-sos" href="tel:185" onclick="event.stopPropagation()" style="display:inline-block;margin-top:18px;padding:8px 14px;border-radius:999px;border:1px solid rgba(255,90,120,.5);color:#ff9fb3;text-decoration:none;font:700 13px -apple-system">🆘 SAMU 185</a><small style="display:block;margin-top:24px;color:#4d5d8f;font-size:11px">version 13.2.0 · 8 nov. 2026</small></div></div>
+<div id="splash" role="button" tabindex="0" aria-label="Entrer dans CLB Health"><div><img src="icon-512.png?v=2" alt=""><b>CLB HEALTH</b><span class="tap" id="sp-tap">Touche pour entrer</span><div id="sp-err" style="min-height:1.3em;margin-top:10px;color:#ff8a8a;font-size:13px;font-weight:600"></div><a id="sp-sos" href="tel:185" onclick="event.stopPropagation()" style="display:inline-block;margin-top:18px;padding:8px 14px;border-radius:999px;border:1px solid rgba(255,90,120,.5);color:#ff9fb3;text-decoration:none;font:700 13px -apple-system">🆘 SAMU 185</a><small style="display:block;margin-top:24px;color:#4d5d8f;font-size:11px">version 13.3.0 · 8 nov. 2026</small></div></div>
 <div class="banner" id="nudge"></div>
 
 <!-- PHARMACIES -->
@@ -231,17 +234,19 @@ nav button[data-t="med"].on{background:var(--g-amber)}
 <div class="pad">
  <div class="card2" id="m-next"></div>
  <div class="card2"><h3>📸 Ajouter un médicament</h3>
-  <div class="row"><label class="btn gold" style="flex:1;text-align:center;cursor:pointer">📷 Prendre en photo<input id="m-cam" type="file" accept="image/*" capture="environment" hidden></label><label class="btn" style="flex:1;text-align:center;cursor:pointer">🖼️ Choisir une photo<input id="m-pic" type="file" accept="image/*" hidden></label></div>
+  <div class="row"><label class="btn gold" style="flex:1;text-align:center;cursor:pointer">📷 Prendre en photo<input id="m-cam" type="file" accept="image/*" capture="environment" hidden></label><label class="btn" style="flex:1;text-align:center;cursor:pointer">🖼️ Choisir une photo<input id="m-pic" type="file" accept="image/*" multiple hidden></label></div>
   <button class="btn full" id="m-manual">✍️ Saisir à la main</button>
   <div id="m-form" style="display:none;margin-top:10px">
-   <img id="m-prev" alt="" style="display:none;width:100%;max-height:220px;object-fit:contain;border-radius:14px;background:#F1F5F7;margin-bottom:8px">
+   <div id="m-thumbs" class="thumbs"></div><div class="row" id="m-more" style="display:none;margin-bottom:6px"><label class="btn" style="flex:1;text-align:center;cursor:pointer">➕ Photo de plus (notice, autre face…)<input id="m-cam2" type="file" accept="image/*" capture="environment" hidden></label><label class="btn" style="flex:1;text-align:center;cursor:pointer">🖼️ Ajouter des images<input id="m-pic2" type="file" accept="image/*" multiple hidden></label></div>
    <div class="note" id="m-ocr"></div>
    <details id="m-txtbox" style="display:none;margin:6px 0"><summary>Texte lu sur la photo</summary><textarea id="m-txt" style="margin-top:6px"></textarea><button class="btn full" id="m-reparse">🔁 Relire ce texte</button></details>
    <div style="display:grid;gap:8px">
     <input id="m-nom" placeholder="Nom du médicament (ex. Amoxicilline)">
     <input id="m-dose" placeholder="Dose par prise (ex. 500 mg, 1 comprimé)">
     <div class="row"><label for="m-n">Prises par jour</label><select id="m-n"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div>
-    <div class="row" id="m-times"></div>
+    <div class="row"><label for="m-first">1<sup>re</sup> prise</label><input id="m-first" type="datetime-local" style="flex:2"></div><label class="sx" style="margin:0"><input type="checkbox" id="m-took"><span>Je viens de prendre la 1<sup>re</sup> prise : l'appli cale les suivantes dessus</span></label>
+    <div class="row" id="m-times"></div><div class="note" style="margin:0">Heures calculées à partir de ta 1<sup>re</sup> prise, modifiables.</div>
+    <div id="m-info"></div>
     <div class="row"><label for="m-days">Durée</label><select id="m-days"><option value="0">En continu</option><option>3</option><option>5</option><option selected>7</option><option>10</option><option>14</option><option>21</option><option>30</option></select><label for="m-start">jours, à partir du</label><input id="m-start" type="date"></div>
     <select id="m-rep"><option value="">Moment par rapport aux repas : non précisé</option><option>Avant le repas</option><option>Pendant le repas</option><option>Après le repas</option><option>À jeun</option><option>Au coucher</option></select>
     <textarea id="m-notes" placeholder="Consignes de la notice ou du médecin (optionnel)"></textarea>
@@ -266,6 +271,7 @@ nav button[data-t="med"].on{background:var(--g-amber)}
 </div>
 </section>
 
+<!-- (partage ajouté dans Urgence) -->
 <!-- VISION -->
 <section class="tab" id="t-eye">
 <header><div class="brand">CLB Health</div><h1>Vision <span>& écrans</span></h1><div class="per">Pauses pour les yeux au bureau et tes mesures de lunettes sous la main.</div></header>
@@ -298,6 +304,10 @@ nav button[data-t="med"].on{background:var(--g-amber)}
 <header><div class="brand">CLB Health</div><h1>Urgence <span>& fiche santé</span></h1><div class="per">Un toucher pour appeler. Appels gratuits.</div></header>
 <div class="pad urg">
  <div class="card2" style="border-left:4px solid #edbb00"><h3>🔒 Verrouillage Face ID</h3><div id="lk-box"></div><div class="note" id="lk-msg">Protège ta fiche santé et tes données : l’appli demande Face ID à l’ouverture. Les numéros d’urgence restent accessibles sans déverrouiller.</div></div>
+ <div class="card2"><h3>📲 Partager CLB Health</h3><div class="note" style="margin:0 0 10px">Envoie l'appli à tes proches : ils l'installent depuis Safari (Partager › Sur l'écran d'accueil). Chacun garde ses données sur son propre téléphone.</div>
+  <div class="row"><button class="btn gold" id="sh-go" style="flex:1">📤 Partager</button><a class="btn" id="sh-wa" style="flex:1;text-align:center;text-decoration:none" target="_blank" rel="noopener">WhatsApp</a></div>
+  <div class="row" style="margin-top:8px"><a class="btn" id="sh-sms" style="flex:1;text-align:center;text-decoration:none">SMS</a><button class="btn" id="sh-cp" style="flex:1">📋 Copier le lien</button></div></div>
+ <div class="card2"><h3>📊 Statistiques anonymes</h3><div class="note" style="margin:0 0 8px">Pour améliorer l'appli, elle compte de façon anonyme les ouvertures et l'usage des sections (aucun nom, aucune donnée de santé, aucun identifiant).</div><label class="sx" style="margin:0"><input type="checkbox" id="st-ok"><span>Participer aux statistiques anonymes</span></label></div>
  <div class="card2" style="border-left:4px solid #34c77b"><h3>🩺 Ma fiche santé</h3>
   <div id="f-view"></div>
   <details style="margin-top:8px"><summary style="color:var(--gold);font-weight:700">Modifier ma fiche</summary>
@@ -383,7 +393,7 @@ const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.
 let phLoaded=false;
 function go(t){TAB=t;document.querySelectorAll(".tab").forEach(s=>s.classList.toggle("on",s.id==="t-"+t));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));
  LS.set("tab",t);if(location.hash!=="#"+t)history.replaceState(null,"","#"+t);window.scrollTo(0,0);
- if(t==="ph"&&!phLoaded){phLoaded=true;if(!cur)locate();} if(t==="eau")wRender(); if(t==="med")mRender(); if(t==="eye"){vLoad();eTick();} if(t==="sos"){fRender();lockRender();}}
+ if(t==="ph"&&!phLoaded){phLoaded=true;if(!cur)locate();} if(t==="eau")wRender(); if(t==="med")mRender(); stat("onglet-"+t); if(t==="eye"){vLoad();eTick();} if(t==="sos"){fRender();lockRender();}}
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.t));
 
 /* ---------- eau ---------- */
@@ -393,7 +403,7 @@ const today=()=>dkey(Date.now());
 const tot=k=>(W.log[k]||[]).reduce((s,e)=>s+e[1],0);
 const fr=n=>n.toLocaleString("fr-FR");
 function save(){LS.set("water",W);}
-function add(ml){const k=today();(W.log[k]=W.log[k]||[]).push([Date.now(),ml]);
+function add(ml){stat("eau-ajout");const k=today();(W.log[k]=W.log[k]||[]).push([Date.now(),ml]);
  const keys=Object.keys(W.log).sort();while(keys.length>40)delete W.log[keys.shift()];
  save();wRender();if(navigator.vibrate)navigator.vibrate(30);}
 function expectedNow(){const h=new Date().getHours()+new Date().getMinutes()/60;if(h<=W.from)return 0;if(h>=W.to)return W.goal;return W.goal*(h-W.from)/(W.to-W.from);}
@@ -453,23 +463,37 @@ const saveM=()=>LS.set("meds",M);
 const DEF={1:[8],2:[8,20],3:[8,13,20],4:[8,12,16,20],5:[7,11,15,19,23],6:[6,10,14,18,22,2]};
 let mEdit=null,mPhoto="";
 function timesUI(arr){$("m-times").innerHTML=arr.map((h,i)=>`<input type="time" class="m-t" value="${typeof h==="string"?h:p2(h)+":00"}" style="flex:1;min-width:92px">`).join("");}
-$("m-n").onchange=()=>timesUI(DEF[+$("m-n").value]);
-function openForm(med){$("m-form").style.display="block";mEdit=med?med.id:null;
+const localDT=d=>d.getFullYear()+"-"+p2(d.getMonth()+1)+"-"+p2(d.getDate())+"T"+p2(d.getHours())+":"+p2(d.getMinutes());
+function fromFirst(){const v=$("m-first").value;if(!v){timesUI(DEF[+$("m-n").value]);return;}const d=new Date(v),n=+$("m-n").value,step=24/n,arr=[];
+ for(let k=0;k<n;k++){const t=new Date(d.getTime()+k*step*3600000);arr.push(p2(t.getHours())+":"+p2(t.getMinutes()));}timesUI(arr.sort());$("m-start").value=v.slice(0,10);}
+$("m-n").onchange=fromFirst;$("m-first").onchange=fromFirst;
+let mPhotos=[],mTexts=[];
+function openForm(med){$("m-form").style.display="block";mEdit=med?med.id:null;$("m-took").checked=false;$("m-info").innerHTML=med&&med.info?infoHTML(med.info):"";$("m-first").value=med&&med.first?med.first:(med?"":localDT(new Date()));
  $("m-nom").value=med?med.nom:"";$("m-dose").value=med?med.dose:"";$("m-n").value=med?med.times.length:2;timesUI(med?med.times:DEF[2]);
  $("m-days").value=med?String(med.days):"7";$("m-start").value=med?med.start:today();$("m-rep").value=med?med.rep:"";$("m-notes").value=med?med.notes:"";
- if(!med){$("m-prev").style.display="none";mPhoto="";$("m-ocr").textContent="";$("m-txtbox").style.display="none";}
+ if(!med){mPhotos=[];mTexts=[];thumbs();$("m-more").style.display="none";mPhoto="";$("m-ocr").textContent="";$("m-txtbox").style.display="none";fromFirst();}else{mPhotos=med.photos||(med.photo?[med.photo]:[]);thumbs();}
  $("m-form").scrollIntoView({behavior:"smooth",block:"start"});}
 $("m-manual").onclick=()=>openForm(null);$("m-cancel").onclick=()=>{$("m-form").style.display="none";};
 function shrink(file){return new Promise(res=>{const img=new Image();img.onload=()=>{const k=Math.min(1,900/Math.max(img.width,img.height)),c=document.createElement("canvas");c.width=img.width*k;c.height=img.height*k;c.getContext("2d").drawImage(img,0,0,c.width,c.height);res({url:c.toDataURL("image/jpeg",.72),canvas:c});};img.src=URL.createObjectURL(file);});}
 function loadTess(){return window.Tesseract?Promise.resolve():new Promise((ok,ko)=>{const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";s.onload=ok;s.onerror=ko;document.head.appendChild(s);});}
-async function onPhoto(e){const f=e.target.files&&e.target.files[0];e.target.value="";if(!f)return;openForm(null);
- const{url,canvas}=await shrink(f);mPhoto=url;$("m-prev").src=url;$("m-prev").style.display="block";
- $("m-ocr").textContent="🔍 Lecture de la photo… (la première fois, l'outil de lecture se télécharge : quelques secondes)";
- try{await loadTess();const r=await Tesseract.recognize(canvas,"fra",{logger:m=>{if(m.status==="recognizing text")$("m-ocr").textContent="🔍 Lecture… "+Math.round(m.progress*100)+" %";}});
-  const t=(r.data.text||"").trim();$("m-txt").value=t;$("m-txtbox").style.display=t?"block":"none";parse(t);
-  $("m-ocr").textContent=t?"✅ Texte lu. Vérifie et complète les champs ci-dessous.":"Je n'ai pas réussi à lire le texte : complète les champs à la main.";}
- catch(err){$("m-ocr").textContent="Lecture automatique indisponible (connexion ?). Complète les champs à la main.";}}
-$("m-cam").onchange=onPhoto;$("m-pic").onchange=onPhoto;$("m-reparse").onclick=()=>parse($("m-txt").value);
+function thumbs(){$("m-thumbs").innerHTML=mPhotos.map((u,i)=>`<div><img src="${u}" alt=""><button data-rm="${i}" aria-label="Retirer">✕</button></div>`).join("");$("m-thumbs").querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{mPhotos.splice(+b.dataset.rm,1);thumbs();});}
+async function onPhoto(e,more){const fs=[...(e.target.files||[])];e.target.value="";if(!fs.length)return;if(!more||$("m-form").style.display!=="block")openForm(null);
+ $("m-more").style.display="flex";stat("med-photo");
+ try{await loadTess();}catch(err){$("m-ocr").textContent="Lecture automatique indisponible (connexion ?). Complète les champs à la main.";}
+ for(const[k,f]of fs.entries()){const{url,canvas}=await shrink(f);mPhotos.push(url);thumbs();
+  if(!window.Tesseract)continue;$("m-ocr").textContent=`🔍 Lecture de l'image ${mPhotos.length}… (la 1re fois, l'outil se télécharge)`;
+  try{const r=await Tesseract.recognize(canvas,"fra",{logger:m=>{if(m.status==="recognizing text")$("m-ocr").textContent=`🔍 Lecture de l'image ${mPhotos.length}… ${Math.round(m.progress*100)} %`;}});mTexts.push((r.data.text||"").trim());}catch(err){}}
+ const t=mTexts.filter(Boolean).join("\n\n");$("m-txt").value=t;$("m-txtbox").style.display=t?"block":"none";if(t)parse(t);
+ $("m-ocr").textContent=t?`✅ ${mPhotos.length} image(s) lue(s). Vérifie et complète les champs.`:"Je n'ai pas réussi à lire le texte : complète les champs à la main.";lookup();}
+/* infos générales sur le médicament (Wikipédia) */
+function infoHTML(x){return `<div class="adv g" style="margin-top:4px"><b>ℹ️ ${esc(x.t)}</b><p style="margin:6px 0 4px;font-size:13px">${esc(x.e)}</p><a href="${x.u}" target="_blank" rel="noopener" style="font-size:12px;color:#0E7490;font-weight:700">Lire la fiche complète</a><div class="note" style="margin:4px 0 0">Informations générales : la dose et la durée sont celles de ton ordonnance ou de la notice.</div></div>`;}
+let mInfo=null;
+async function lookup(){const n=($("m-nom").value||"").trim().split(/[\s,]+/)[0];if(n.length<4)return;
+ try{const r=await fetch("https://fr.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(n));if(!r.ok)throw 0;const j=await r.json();if(j.type==="disambiguation"||!j.extract)throw 0;
+  mInfo={t:j.title,e:j.extract.slice(0,420)+(j.extract.length>420?"…":""),u:(j.content_urls&&j.content_urls.mobile&&j.content_urls.mobile.page)||"https://fr.wikipedia.org/wiki/"+encodeURIComponent(n)};$("m-info").innerHTML=infoHTML(mInfo);}catch(e){mInfo=null;$("m-info").innerHTML="";}}
+$("m-nom").addEventListener("change",lookup);
+$("m-cam2").onchange=e=>onPhoto(e,true);$("m-pic2").onchange=e=>onPhoto(e,true);
+$("m-cam").onchange=e=>onPhoto(e);$("m-pic").onchange=e=>onPhoto(e);$("m-reparse").onclick=()=>parse($("m-txt").value);
 function parse(t){const T=t.replace(/\s+/g," "),low=T.toLowerCase();
  const dm=T.match(/([A-ZÉÈ][A-Za-zÀ-ÿ\-]{3,}(?:\s+[A-Za-zÀ-ÿ\-]{3,})?)\s*,?\s*(\d+(?:[.,]\d+)?\s?(?:mg|g|ml|µg|mcg|ui|%))/i);
  if(dm){if(!$("m-nom").value)$("m-nom").value=dm[1].replace(/\b\w/g,c=>c.toUpperCase());if(!$("m-dose").value)$("m-dose").value=dm[2].replace(",",".");}
@@ -483,9 +507,10 @@ function parse(t){const T=t.replace(/\s+/g," "),low=T.toLowerCase();
  if(/avant (le |les )?repas/.test(low))$("m-rep").value="Avant le repas";else if(/(pendant|au cours) (du |des )?repas/.test(low))$("m-rep").value="Pendant le repas";else if(/apr[eè]s (le |les )?repas/.test(low))$("m-rep").value="Après le repas";else if(/[àa] jeun/.test(low))$("m-rep").value="À jeun";}
 $("m-save").onclick=()=>{const nom=$("m-nom").value.trim();if(!nom){alert("Indique au moins le nom du médicament.");return;}
  const times=[...document.querySelectorAll(".m-t")].map(i=>i.value).filter(Boolean).sort();if(!times.length){alert("Indique au moins une heure de prise.");return;}
- const med={id:mEdit||("m"+Date.now()),nom,dose:$("m-dose").value.trim(),times,days:+$("m-days").value,start:$("m-start").value||today(),rep:$("m-rep").value,notes:$("m-notes").value.trim(),photo:mPhoto||((M.list.find(x=>x.id===mEdit)||{}).photo||""),on:true};
+ const med={id:mEdit||("m"+Date.now()),nom,dose:$("m-dose").value.trim(),times,days:+$("m-days").value,start:$("m-start").value||today(),rep:$("m-rep").value,notes:$("m-notes").value.trim(),photos:mPhotos.slice(0,3),photo:mPhotos[0]||"",first:$("m-first").value,info:mInfo||((M.list.find(x=>x.id===mEdit)||{}).info||null),on:true};
  const i=M.list.findIndex(x=>x.id===med.id);if(i>=0)M.list[i]=med;else M.list.push(med);
- try{saveM();}catch(e){med.photo="";saveM();}
+ if($("m-took").checked&&med.first){const d=new Date(med.first),k=dkey(d),t=p2(d.getHours())+":"+p2(d.getMinutes());if(!med.times.includes(t)){med.times.push(t);med.times.sort();}M.taken[med.id+"|"+k+"|"+t]=d.getTime();}
+ try{saveM();}catch(e){med.photos=med.photos.slice(0,1);try{saveM();}catch(e2){med.photos=[];med.photo="";saveM();}}stat("med-ajout");
  $("m-form").style.display="none";mRender();toast2("💊 "+nom+" enregistré. Rappels activés.");
  if(("Notification"in window)&&Notification.permission==="default")Notification.requestPermission();};
 function toast2(t){const b=$("nudge");b.style.display="block";b.innerHTML=t;clearTimeout(b._t);b._t=setTimeout(()=>{b.style.display="none";nudge();},3500);}
@@ -500,7 +525,7 @@ function mRender(){const k=today(),D=doses(k),now=Date.now();
   +(late.length?`<div class="note" style="color:#B45309">Prise oubliée ? Prends-la dès que possible, sauf si la suivante est proche : dans ce cas, saute-la. Ne double jamais la dose. En cas de doute, demande à ton pharmacien.</div>`:"")
   :`<div class="note">Aucune prise prévue aujourd'hui. Ajoute un médicament ci-dessous.</div>`)
   +`<button class="btn full" id="m-ics">📅 Mettre toutes les prises dans mon agenda (rappels même téléphone verrouillé)</button>`;
- $("m-next").querySelectorAll("[data-take]").forEach(b=>b.onclick=()=>{M.taken[b.dataset.take]=Date.now();saveM();mRender();if(navigator.vibrate)navigator.vibrate(30);});
+ $("m-next").querySelectorAll("[data-take]").forEach(b=>b.onclick=()=>{M.taken[b.dataset.take]=Date.now();saveM();stat("med-pris");mRender();if(navigator.vibrate)navigator.vibrate(30);});
  $("m-ics").onclick=medIcs;
  $("m-list").innerHTML=M.list.length?M.list.map(m=>{const dn=dayN(m,k)+1,tot=m.days,done=tot&&dn>tot,all=Object.keys(M.taken).filter(x=>x.startsWith(m.id+"|")).length;
   let exp=0;for(let i=0;i<Math.min(Math.max(0,dn),tot||dn);i++)exp+=m.times.length;exp=Math.max(0,exp-m.times.filter(t=>new Date(k+"T"+t)>new Date()).length*(dn<=(tot||dn)?1:0));
@@ -537,9 +562,21 @@ $("s-go").onclick=()=>{const sel=[...document.querySelectorAll("#s-list input:ch
   :lvl===2?`<div class="adv o"><b>⚠️ À signaler aujourd'hui</b><p>Contacte ton médecin ou un pharmacien dans la journée et décris tes symptômes. N'arrête pas un traitement prescrit de toi-même sans leur avis. Si ça s'aggrave (difficulté à respirer, gonflement, malaise), appelle le 185.</p><div class="row">${dt?`<a class="btn gold" href="tel:${dt.replace(/[^\d+]/g,"")}">📞 Mon médecin</a>`:""}<button class="btn" onclick="go('ph')">💊 Pharmacie de garde</button></div></div>`
   :`<div class="adv g"><b>🙂 Effet souvent bénin</b><p>Ces effets sont fréquents et passent souvent en quelques jours. Lis la rubrique « effets indésirables » de la notice. Parles-en à ton pharmacien s'ils durent plus de 2 à 3 jours ou deviennent gênants.</p>${sel.filter(s=>TIP[s[0]]).map(s=>`<div class="note">• ${TIP[s[0]]}</div>`).join("")}</div>`;
  $("s-adv").innerHTML=head+`<div class="note">Ne double jamais une dose pour « compenser ». Ces conseils sont généraux et ne remplacent pas l'avis d'un professionnel de santé.</div>`;
- M.fx.unshift({at:Date.now(),med,sym:sel.map(s=>s[1]),it,txt,lvl});M.fx=M.fx.slice(0,60);saveM();fxLog();
+ stat("effets");M.fx.unshift({at:Date.now(),med,sym:sel.map(s=>s[1]),it,txt,lvl});M.fx=M.fx.slice(0,60);saveM();fxLog();
  document.querySelectorAll("#s-list input").forEach(i=>i.checked=false);$("s-txt").value="";$("s-adv").scrollIntoView({behavior:"smooth",block:"center"});};
 function fxLog(){$("s-log").innerHTML=M.fx.length?`<div class="h" style="margin-top:12px">Mon journal</div>`+M.fx.slice(0,12).map(f=>`<div class="fl"><span>${new Date(f.at).toLocaleString("fr-FR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}${f.med?" · "+esc(f.med):""}</span><b style="font-weight:600;font-size:13px">${f.lvl===3?"🚨":f.lvl===2?"⚠️":"🙂"} ${esc([...f.sym,f.txt].filter(Boolean).join(", ").slice(0,90))}</b></div>`).join(""):"";}
+
+/* ---------- statistiques anonymes (compteurs globaux, sans identifiant ni donnée de santé) ---------- */
+var STNS="clb-health-cl8x";function STOK(){return LS.get("stats",true);}
+function stat(k){if(!STOK())return;try{fetch(`https://abacus.jasoncameron.dev/hit/${STNS}/${k}`,{mode:"cors",keepalive:true}).catch(()=>{});}catch(e){}}
+(()=>{const d=today();if(!LS.get("dev",false)){LS.set("dev",true);stat("appareils");}if(LS.get("dayHit","")!==d){LS.set("dayHit",d);stat("actifs-"+d);stat("actifs-total");}stat("ouvertures");})();
+$("st-ok").checked=STOK();$("st-ok").onchange=()=>LS.set("stats",$("st-ok").checked);
+/* ---------- partage ---------- */
+const APPURL="https://charleslebontoh-cloud.github.io/clb-pharmacies/",SHTXT="CLB Health : pharmacies de garde autour de toi, rappels d'eau et de médicaments, numéros d'urgence. Gratuit, tes données restent sur ton téléphone.";
+$("sh-go").onclick=async()=>{stat("partage");if(navigator.share){try{await navigator.share({title:"CLB Health",text:SHTXT,url:APPURL});}catch(e){}}else{try{await navigator.clipboard.writeText(SHTXT+" "+APPURL);toast2("📋 Lien copié");}catch(e){}}};
+$("sh-wa").href="https://wa.me/?text="+encodeURIComponent(SHTXT+"\n"+APPURL);$("sh-wa").onclick=()=>stat("partage");
+$("sh-sms").href="sms:&body="+encodeURIComponent(SHTXT+" "+APPURL);$("sh-sms").onclick=()=>stat("partage");
+$("sh-cp").onclick=async()=>{stat("partage");try{await navigator.clipboard.writeText(APPURL);toast2("📋 Lien copié");}catch(e){prompt("Copie ce lien :",APPURL);}};
 
 /* ---------- vision ---------- */
 let E=LS.get("eye",{on:false,next:0,count:0,day:""});
