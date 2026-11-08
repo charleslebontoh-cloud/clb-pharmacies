@@ -129,8 +129,26 @@ body.quiz nav{transform:translateY(160%)}
 .kr:first-child .k{background:#F3E2B0}
 .k.w{max-width:66px;flex:1.5;background:rgba(251,246,234,.75);font-size:16px}.k.ok{background:var(--gold);color:var(--ink);font-weight:800}
 .k.p{transform:scale(1.18) translateY(-4px);background:#fff}
+.duel{display:flex;flex-direction:column;align-items:center;gap:2px;background:linear-gradient(135deg,#D9653B,#b8432a);color:#fff;font-size:18px}
+.duel span{font-size:26px}.duel small{font:600 12px var(--sans);opacity:.9}
+.gin{width:100%;border:1px solid rgba(201,162,39,.5);background:rgba(255,255,255,.08);color:#fff;border-radius:14px;padding:14px;font:700 18px var(--sans);outline:none;text-align:center;margin-top:10px}
+.code{font:800 64px/1 var(--serif);letter-spacing:.18em;text-align:center;color:var(--gold2);margin:8px 0;text-shadow:0 0 30px rgba(231,201,100,.35)}
+.players{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.pl{border-radius:16px;padding:12px;text-align:center;background:rgba(255,255,255,.06);border:1px solid rgba(201,162,39,.35);animation:rise .5s var(--spring) both}
+.pl .av{width:46px;height:46px;border-radius:50%;margin:0 auto 6px;display:grid;place-items:center;font:800 20px var(--serif);color:#fff}
+.pl b{display:block}.pl small{color:#B9CBC2}.pl.me{border-color:var(--gold2);box-shadow:0 0 0 2px rgba(231,201,100,.25)}
+.pl.ans{animation:pop .4s var(--spring)}.pl .st{font-size:12px;color:var(--gold2)}
+.timer{height:8px;border-radius:8px;background:rgba(255,255,255,.12);overflow:hidden;margin-top:12px}.timer i{display:block;height:100%;background:linear-gradient(90deg,#5fd39c,var(--gold2),#ff8a83);transition:width .1s linear}
+.board{margin-top:14px}.brow{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.06);margin-top:8px;animation:rise .5s var(--ease) both}
+.brow .rk{font:800 20px var(--serif);color:var(--gold2);width:26px}.brow .nm{flex:1;font-weight:700}.brow .pt{font:800 18px var(--serif)}.brow .dl{font-size:12px;color:#5fd39c;margin-left:6px}
+.podium{display:flex;justify-content:center;align-items:flex-end;gap:10px;margin-top:20px;height:200px}
+.pod{width:30%;border-radius:14px 14px 0 0;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;padding-top:10px;color:var(--ink);font-weight:800;animation:grow 1s var(--spring) both;transform-origin:bottom}
+@keyframes grow{from{transform:scaleY(0)}}
+.pod.p1{height:100%;background:linear-gradient(180deg,#F3DB86,#C9A227);animation-delay:.6s}.pod.p2{height:72%;background:linear-gradient(180deg,#e8e8e8,#a9b0b4);animation-delay:.3s}.pod.p3{height:52%;background:linear-gradient(180deg,#e7b48a,#b5703d)}
+.pod .m{font-size:30px}.crown{font-size:44px;text-align:center;animation:card 1s 1.2s var(--spring) both}
+.gmsg{color:#B9CBC2;text-align:center;font-size:13px;margin-top:10px;min-height:1.2em}
 </style></head><body>
-<div id="splash" role="button" tabindex="0"><div><img src="icon-512.png" alt=""><div class="t">CLB <em>Lexicon</em></div><div class="q">« Le mot juste, au bon moment. »</div><span class="tap">Ouvrir le lexique</span><small style="display:block;margin-top:26px;color:#6f8b7f;font-size:11px">version 2 · 8 nov. 2026</small></div></div>
+<div id="splash" role="button" tabindex="0"><div><img src="icon-512.png" alt=""><div class="t">CLB <em>Lexicon</em></div><div class="q">« Le mot juste, au bon moment. »</div><span class="tap">Ouvrir le lexique</span><small style="display:block;margin-top:26px;color:#6f8b7f;font-size:11px">version 3 · 8 nov. 2026</small></div></div>
 <div class="wrap">
 
 <section class="view" id="v-home">
@@ -143,6 +161,7 @@ body.quiz nav{transform:translateY(160%)}
   <button class="mode" data-start="def" style="animation-delay:.1s"><i>🧠</i><b>Définitions</b><small>Trouve le mot juste</small></button>
   <button class="mode" data-start="paro" style="animation-delay:.15s"><i>⚖️</i><b>Mots confondus</b><small>Conjoncture ou conjecture ?</small></button>
  </div>
+ <button class="cta duel" data-go="game"><span>🎮</span> Duel entre amis<small>Jusqu'à 4 joueurs, chacun sur son téléphone</small></button>
 </section>
 
 <section class="view" id="v-dico">
@@ -165,6 +184,11 @@ body.quiz nav{transform:translateY(160%)}
 <section class="view" id="v-mine">
  <div class="eyebrow">Mes mots</div><h1>Ma <em>collection</em></h1><div class="sub" id="m-sub"></div>
  <div id="m-area"></div>
+</section>
+
+<section class="view" id="v-game">
+ <div class="eyebrow">Duel du Lexique</div><h1>Jouer <em>entre amis</em></h1><div class="sub">2 à 4 joueurs, chacun sur son téléphone. 10 questions, le plus juste et le plus rapide gagne.</div>
+ <div id="g-area"></div>
 </section>
 
 <section class="view" id="v-quiz">
@@ -215,7 +239,7 @@ let UT=null;function say(t,rate=.92){if(!SY)return;if(SY.speaking||SY.pending)SY
 /* ---------- navigation ---------- */
 function go(v){if(v!=="quiz")stopQ=true;document.querySelectorAll(".view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));document.body.classList.toggle("quiz",v==="quiz"||v==="res");
  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.go===v));pill();window.scrollTo({top:0,behavior:"smooth"});SFX.page();
- ({home,dico,ortho,mine})[v]&&({home,dico,ortho,mine})[v]();}
+ ({home,dico,ortho,mine,game})[v]&&({home,dico,ortho,mine,game})[v]();}
 let stopQ=false;
 function pill(){const b=document.querySelector("nav button.on"),p=$("pill");if(!b){return;}p.style.left=b.offsetLeft+"px";p.style.width=b.offsetWidth+"px";}
 addEventListener("resize",pill);
@@ -305,9 +329,87 @@ function drawFC(){const w=FC.L[FC.i],x=byW[w];$("m-area").innerHTML=`<div class=
  const mv=good=>{const c=S.cards["w:"+w]||{b:0};c.b=good?Math.min(5,c.b+1):0;S.cards["w:"+w]=c;if(good){S.xp+=5;SFX.ok();}else SFX.ko();tick();save();FC.i=(FC.i+1)%FC.L.length;drawFC();};
  $("fc-ok").onclick=()=>mv(true);$("fc-ko").onclick=()=>mv(false);}
 
+/* ---------- Duel du Lexique (multijoueur temps réel via MQTT public) ---------- */
+const BROKERS=["wss://broker.hivemq.com:8884/mqtt","wss://broker.emqx.io:8084/mqtt"];
+const COLORS=["#D9653B","#2E9E6A","#4D7FD8","#8E5BD6"];
+const QTIME=15000;
+let G=null;
+const MYID=Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4);
+function loadMqtt(){return new Promise((res,rej)=>{if(window.mqtt)return res(window.mqtt);const s=document.createElement("script");s.src="https://unpkg.com/mqtt@5/dist/mqtt.min.js";s.onload=()=>res(window.mqtt);s.onerror=()=>rej(new Error("lib"));document.head.appendChild(s);});}
+async function connect(room){const lib=await loadMqtt();let lastErr;
+ for(const url of BROKERS){try{const c=await new Promise((res,rej)=>{const cl=lib.connect(url,{clientId:"clblex_"+MYID+"_"+Math.random().toString(16).slice(2,6),clean:true,connectTimeout:8000,reconnectPeriod:2000});
+   const t=setTimeout(()=>{cl.end(true);rej(new Error("timeout"));},9000);cl.once("connect",()=>{clearTimeout(t);res(cl);});cl.once("error",e=>{clearTimeout(t);cl.end(true);rej(e);});});
+  c.subscribe("clblex/v1/"+room);return c;}catch(e){lastErr=e;}}throw lastErr||new Error("conn");}
+function send(o){if(!G||!G.c)return;o.from=MYID;G.c.publish("clblex/v1/"+G.room,JSON.stringify(o),{qos:1});}
+function newCode(){const A="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";return Array.from({length:4},()=>A[Math.floor(Math.random()*A.length)]).join("");}
+function avatar(p,i){return `<div class="av" style="background:${COLORS[i%4]}">${esc((p.name||"?")[0].toUpperCase())}</div>`;}
+function game(){if(G&&G.c){renderG();return;}const name=LS.get("lexname","");const qs=new URLSearchParams(location.search).get("room")||"";
+ $("g-area").innerHTML=`<div class="paper"><h3>Ton pseudo</h3><input class="gin" id="g-name" maxlength="14" placeholder="Ex. Charles" value="${esc(name)}" style="color:var(--ink);background:#fff"></div>
+ <button class="cta" id="g-host">👑 Créer une partie</button>
+ <div class="paper"><h3>Rejoindre une partie</h3><input class="gin" id="g-code" maxlength="4" placeholder="CODE" value="${esc(qs)}" style="text-transform:uppercase;letter-spacing:.3em;color:var(--ink);background:#fff"><button class="cta" id="g-join" style="background:linear-gradient(135deg,#17604a,#0E3B2E);color:#fff">🚪 Rejoindre</button></div><div class="gmsg" id="g-msg"></div>`;
+ $("g-host").onclick=()=>enter(newCode(),true);$("g-join").onclick=()=>{const c=$("g-code").value.trim().toUpperCase();if(c.length!==4){$("g-msg").textContent="Le code fait 4 caractères.";return;}enter(c,false);};}
+async function enter(room,host){const name=$("g-name").value.trim();if(!name){$("g-msg").textContent="Choisis un pseudo d'abord.";$("g-name").focus();return;}LS.set("lexname",name);SFX.tap();
+ $("g-msg").textContent="Connexion au salon…";
+ try{const c=await connect(room);G={c,room,host,name,players:{},order:[],state:"lobby",qs:[],qi:-1,ans:{},scores:{}};G.players[MYID]={name,host};G.order=[MYID];
+  c.on("message",(t,m)=>{let o;try{o=JSON.parse(m.toString());}catch(e){return;}onMsg(o);});
+  if(!host)send({t:"hello",name});else{G.hostId=MYID;broadcastLobby();}
+  if(!host)G.helloTimer=setInterval(()=>{if(G&&G.state==="lobby"&&!G.joined)send({t:"hello",name});},2500);
+  renderG();}
+ catch(e){$("g-msg").textContent="Impossible de se connecter au serveur de jeu. Vérifie ta connexion internet et réessaie.";}}
+function broadcastLobby(){send({t:"lobby",players:G.order.map(id=>({id,name:G.players[id].name})),host:G.hostId});}
+function onMsg(o){if(!G)return;
+ if(o.t==="hello"&&G.host){if(G.state!=="lobby"&&!G.players[o.from]){send({t:"full",to:o.from,why:"La partie a déjà commencé."});return;}
+  if(!G.players[o.from]){if(G.order.length>=4){send({t:"full",to:o.from,why:"Le salon est complet (4 joueurs)."});return;}G.players[o.from]={name:o.name};G.order.push(o.from);SFX.tap();}broadcastLobby();renderG();return;}
+ if(o.t==="full"&&o.to===MYID){leave();$("g-msg")&&($("g-msg").textContent=o.why);return;}
+ if(o.t==="lobby"&&!G.host){if(!o.players.find(p=>p.id===MYID))return;G.joined=true;G.hostId=o.host;G.players={};G.order=o.players.map(p=>{G.players[p.id]={name:p.name};return p.id;});renderG();return;}
+ if(o.t==="start"&&!G.host){G.qs=o.qs;G.scores={};G.order.forEach(id=>G.scores[id]=0);G.state="play";return;}
+ if(o.t==="q"){askQ(o.i);return;}
+ if(o.t==="ans"&&G.host){if(G.ans[o.from]||o.i!==G.qi)return;G.ans[o.from]={c:o.c,ms:o.ms};markAnswered(o.from);if(Object.keys(G.ans).length>=G.order.length)setTimeout(reveal,400);return;}
+ if(o.t==="ansmark"&&!G.host){markAnswered(o.who);return;}
+ if(o.t==="reveal"&&!G.host){showReveal(o);return;}
+ if(o.t==="end"&&!G.host){showEnd(o.scores);return;}
+ if(o.t==="bye"){if(G.players[o.from]&&o.from!==MYID){delete G.players[o.from];G.order=G.order.filter(x=>x!==o.from);if(G.host)broadcastLobby();renderG();}return;}}
+function leave(){if(G&&G.c){try{send({t:"bye"});G.c.end(true);}catch(e){}}if(G&&G.helloTimer)clearInterval(G.helloTimer);clearInterval(G&&G.tm);G=null;}
+function renderG(){if(!G)return game();if(G.state!=="lobby")return;const url=location.origin+location.pathname+"?room="+G.room;
+ $("g-area").innerHTML=`<div class="paper" style="text-align:center"><h3>Code du salon</h3><div class="code">${G.room}</div><div class="nat">Tes amis ouvrent CLB Lexicon › Duel › Rejoindre, et tapent ce code.</div>
+ <div class="row c"><button class="ib" id="g-share">📤 Inviter</button></div></div>
+ <div class="players">${G.order.map((id,i)=>`<div class="pl ${id===MYID?"me":""}">${avatar(G.players[id],i)}<b>${esc(G.players[id].name)}</b><small>${id===G.hostId?"👑 Hôte":"Prêt"}</small></div>`).join("")}${Array.from({length:4-G.order.length},()=>'<div class="pl" style="opacity:.35"><div class="av" style="background:#334">?</div><b>En attente…</b></div>').join("")}</div>
+ ${G.host?`<button class="cta" id="g-go" ${G.order.length<2?"disabled style='opacity:.5'":""}>🚀 Lancer la partie (${G.order.length}/4)</button>`:'<div class="gmsg">'+(G.joined?"En attente du lancement par l’hôte…":"Connexion au salon…")+'</div>'}
+ <button class="cta" id="g-quit" style="background:transparent;color:#B9CBC2;border:1px solid rgba(255,255,255,.2);box-shadow:none">Quitter le salon</button>`;
+ $("g-share").onclick=async()=>{const txt=`Viens jouer au Duel du Lexique ! Code : ${G.room}`;try{if(navigator.share)await navigator.share({title:"CLB Lexicon",text:txt,url});else{await navigator.clipboard.writeText(txt+" "+url);$("g-share").textContent="✅ Lien copié";}}catch(e){}};
+ $("g-quit").onclick=()=>{leave();game();};if($("g-go"))$("g-go").onclick=()=>{if(G.order.length<2)return;hostStart();};}
+function mkQs(){const pool=[...build("def"),...build("sens"),...build("syn"),...build("paro"),...build("graphie")];return shuffle(pool).slice(0,10).map(q=>({p:q.p,o:q.o,a:q.o.indexOf(q.a),x:q.x||"",serif:q.serif||0}));}
+function hostStart(){G.qs=mkQs();G.scores={};G.order.forEach(id=>G.scores[id]=0);G.state="play";send({t:"start",qs:G.qs});SFX.win();setTimeout(()=>hostNext(),1200);}
+function hostNext(){G.qi++;if(G.qi>=G.qs.length){send({t:"end",scores:G.scores,names:G.players});showEnd(G.scores);return;}G.ans={};send({t:"q",i:G.qi});askQ(G.qi);clearTimeout(G.rt);G.rt=setTimeout(reveal,QTIME+800);}
+function askQ(i){if(!G)return;G.state="play";G.qi=i;G.picked=null;G.t0=performance.now();const q=G.qs[i];if(!q)return;go("game");document.body.classList.add("quiz");
+ $("g-area").innerHTML=`<div class="eyebrow qkind">Question ${i+1} / ${G.qs.length}</div><div class="timer"><i id="g-tm" style="width:100%"></i></div>
+ <div class="qcard"><div class="qface in">${q.p}</div></div><div class="opts">${q.o.map((o,k)=>`<button class="opt ${q.serif?"serif":""}" data-gk="${k}">${esc(o)}</button>`).join("")}</div>
+ <div class="players" style="grid-template-columns:repeat(4,1fr)">${G.order.map((id,k)=>`<div class="pl ${id===MYID?"me":""}" id="gp-${id}" style="padding:8px">${avatar(G.players[id],k)}<small>${esc(G.players[id].name)}</small><div class="st" id="gs-${id}">…</div></div>`).join("")}</div>`;
+ clearInterval(G.tm);G.tm=setInterval(()=>{const left=Math.max(0,1-(performance.now()-G.t0)/QTIME);const b=$("g-tm");if(b)b.style.width=left*100+"%";if(left<=0){clearInterval(G.tm);document.querySelectorAll("[data-gk]").forEach(b=>b.disabled=true);}},100);
+ document.querySelectorAll("[data-gk]").forEach(b=>b.onclick=()=>{if(G.picked!=null)return;const ms=Math.round(performance.now()-G.t0);if(ms>QTIME)return;G.picked=+b.dataset.gk;b.style.borderColor="var(--gold2)";b.style.background="rgba(231,201,100,.25)";
+  document.querySelectorAll("[data-gk]").forEach(x=>x.disabled=true);SFX.tap();if(G.host){G.ans[MYID]={c:G.picked,ms};markAnswered(MYID);if(Object.keys(G.ans).length>=G.order.length)setTimeout(reveal,400);}else send({t:"ans",i,c:G.picked,ms});});}
+function markAnswered(id){const s=$("gs-"+id);if(s){s.textContent="✔ répondu";const p=$("gp-"+id);p&&p.classList.add("ans");}if(G.host)send({t:"ansmark",who:id});}
+function reveal(){if(!G||!G.host||G.revealed===G.qi)return;G.revealed=G.qi;clearTimeout(G.rt);const q=G.qs[G.qi],gain={};
+ G.order.forEach(id=>{const a=G.ans[id];let pts=0;if(a&&a.c===q.a)pts=500+Math.round(500*Math.max(0,1-a.ms/QTIME));gain[id]=pts;G.scores[id]=(G.scores[id]||0)+pts;});
+ const o={t:"reveal",i:G.qi,a:q.a,gain,scores:G.scores,picks:Object.fromEntries(Object.entries(G.ans).map(([k,v])=>[k,v.c]))};send(o);showReveal(o);setTimeout(hostNext,3800);}
+function showReveal(o){if(!G)return;clearInterval(G.tm);const q=G.qs[o.i];G.scores=o.scores;
+ document.querySelectorAll("[data-gk]").forEach(b=>{b.disabled=true;const k=+b.dataset.gk;if(k===o.a)b.classList.add("good");else if(k===G.picked)b.classList.add("bad");});
+ const mine=o.gain[MYID]||0;if(mine>0){SFX.ok();const b=document.querySelector(`[data-gk="${o.a}"]`);if(b){const r=b.getBoundingClientRect();sparkle(r.left+r.width/2,r.top+r.height/2);}}else SFX.ko();
+ const rank=G.order.slice().sort((a,b)=>(o.scores[b]||0)-(o.scores[a]||0));
+ const el=document.createElement("div");el.className="board";el.innerHTML=`<div class="fb ${mine?"ok":"ko"}" style="display:block"><b>${mine?"✅ +"+mine+" points":"❌ Raté"}</b>${esc(q.x)}</div>`+rank.map((id,k)=>`<div class="brow" style="animation-delay:${k*.06}s"><span class="rk">${k+1}</span>${avatar(G.players[id],G.order.indexOf(id)).replace('class="av"','class="av" style="width:30px;height:30px;font-size:14px;margin:0;background:'+COLORS[G.order.indexOf(id)%4]+'"')}<span class="nm">${esc(G.players[id].name)}</span><span class="pt">${o.scores[id]||0}</span>${o.gain[id]?`<span class="dl">+${o.gain[id]}</span>`:""}</div>`).join("");
+ $("g-area").appendChild(el);setTimeout(()=>el.scrollIntoView({behavior:"smooth",block:"nearest"}),150);}
+function showEnd(scores){if(!G)return;G.state="end";clearInterval(G.tm);go("game");document.body.classList.add("quiz");const rank=G.order.slice().sort((a,b)=>(scores[b]||0)-(scores[a]||0));const w=rank[0];
+ const pod=[rank[1],rank[0],rank[2]].map((id,k)=>id?`<div class="pod p${[2,1,3][k]}"><div class="m">${["🥈","🥇","🥉"][k]}</div>${esc(G.players[id].name)}<small>${scores[id]||0} pts</small></div>`:'<div style="width:30%"></div>').join("");
+ $("g-area").innerHTML=`<div class="crown">👑</div><h1 style="text-align:center;margin-top:0">${w===MYID?"Tu as <em>gagné</em> !":esc(G.players[w].name)+" <em>gagne</em> !"}</h1><div class="podium">${pod}</div>
+ <div class="board">${rank.map((id,k)=>`<div class="brow"><span class="rk">${k+1}</span><span class="nm">${esc(G.players[id].name)}${id===MYID?" (toi)":""}</span><span class="pt">${scores[id]||0}</span></div>`).join("")}</div>
+ ${G.host?'<button class="cta" id="g-again">🔁 Revanche</button>':'<div class="gmsg">L’hôte peut lancer une revanche.</div>'}<button class="cta" id="g-out" style="background:transparent;color:#B9CBC2;border:1px solid rgba(255,255,255,.2);box-shadow:none">Quitter</button>`;
+ if(w===MYID){SFX.win();for(let i=0;i<3;i++)setTimeout(()=>sparkle(innerWidth/2+(Math.random()*200-100),200+Math.random()*100),i*300);}else SFX.ok();
+ S.xp+=Math.round((scores[MYID]||0)/50);tick();save();
+ if($("g-again"))$("g-again").onclick=()=>{G.qi=-1;G.revealed=null;hostStart();};$("g-out").onclick=()=>{leave();go("home");};}
+addEventListener("pagehide",()=>{if(G)try{send({t:"bye"});}catch(e){}});
 /* ---------- démarrage ---------- */
 (()=>{const s=$("splash");let d=false;const enter=()=>{if(d)return;d=true;try{if(SY){const u=new SpeechSynthesisUtterance(" ");u.volume=0;SY.speak(u);}}catch(e){}SFX.win();s.classList.add("out");setTimeout(()=>s.remove(),800);setTimeout(pill,80);};s.addEventListener("click",enter);s.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" ")enter();});})();
-go("home");setTimeout(pill,120);
+go(new URLSearchParams(location.search).get("room")?"game":"home");setTimeout(pill,120);
 if("serviceWorker"in navigator){let had=!!navigator.serviceWorker.controller,re=false;navigator.serviceWorker.addEventListener("controllerchange",()=>{if(had&&!re){re=true;location.reload();}had=true;});
  navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(r=>{r.update();document.addEventListener("visibilitychange",()=>{if(!document.hidden)r.update();});}).catch(()=>{});}
 </script></body></html>
