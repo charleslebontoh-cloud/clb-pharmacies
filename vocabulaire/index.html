@@ -147,8 +147,9 @@ body.quiz nav{transform:translateY(160%)}
 .pod.p1{height:100%;background:linear-gradient(180deg,#F3DB86,#C9A227);animation-delay:.6s}.pod.p2{height:72%;background:linear-gradient(180deg,#e8e8e8,#a9b0b4);animation-delay:.3s}.pod.p3{height:52%;background:linear-gradient(180deg,#e7b48a,#b5703d)}
 .pod .m{font-size:30px}.crown{font-size:44px;text-align:center;animation:card 1s 1.2s var(--spring) both}
 .gmsg{color:#B9CBC2;text-align:center;font-size:13px;margin-top:10px;min-height:1.2em}
+.invite{background:transparent;color:var(--gold2);border:1px solid rgba(201,162,39,.6);box-shadow:none;font-size:15px}
 </style></head><body>
-<div id="splash" role="button" tabindex="0"><div><img src="icon-512.png" alt=""><div class="t">CLB <em>Lexicon</em></div><div class="q">« Le mot juste, au bon moment. »</div><span class="tap">Ouvrir le lexique</span><small style="display:block;margin-top:26px;color:#6f8b7f;font-size:11px">version 3 · 8 nov. 2026</small></div></div>
+<div id="splash" role="button" tabindex="0"><div><img src="icon-512.png" alt=""><div class="t">CLB <em>Lexicon</em></div><div class="q">« Le mot juste, au bon moment. »</div><span class="tap">Ouvrir le lexique</span><small style="display:block;margin-top:26px;color:#6f8b7f;font-size:11px">version 4 · 8 nov. 2026</small></div></div>
 <div class="wrap">
 
 <section class="view" id="v-home">
@@ -161,6 +162,7 @@ body.quiz nav{transform:translateY(160%)}
   <button class="mode" data-start="def" style="animation-delay:.1s"><i>🧠</i><b>Définitions</b><small>Trouve le mot juste</small></button>
   <button class="mode" data-start="paro" style="animation-delay:.15s"><i>⚖️</i><b>Mots confondus</b><small>Conjoncture ou conjecture ?</small></button>
  </div>
+ <button class="cta invite" data-go="invite">📲 Inviter des amis à installer l’appli</button>
  <button class="cta duel" data-go="game"><span>🎮</span> Duel entre amis<small>Jusqu'à 4 joueurs, chacun sur son téléphone</small></button>
 </section>
 
@@ -184,6 +186,17 @@ body.quiz nav{transform:translateY(160%)}
 <section class="view" id="v-mine">
  <div class="eyebrow">Mes mots</div><h1>Ma <em>collection</em></h1><div class="sub" id="m-sub"></div>
  <div id="m-area"></div>
+</section>
+
+<section class="view" id="v-invite">
+ <div class="eyebrow">Inviter</div><h1>Partage <em>CLB Lexicon</em></h1><div class="sub">Envoie le lien à tes amis pour qu'ils installent l'appli et jouent en duel avec toi.</div>
+ <div class="paper" style="text-align:center"><h3>Lien d'installation</h3><div style="font:700 15px var(--sans);word-break:break-all;color:var(--bg)" id="iv-url"></div>
+  <div class="row c"><button class="ib" id="iv-share">📤 Partager</button><a class="ib" id="iv-wa" target="_blank" rel="noopener" style="text-decoration:none">💬 WhatsApp</a><a class="ib" id="iv-sms" style="text-decoration:none">✉️ SMS</a><button class="ib" id="iv-copy">📋 Copier</button></div>
+  <div class="nat" id="iv-msg" style="margin-top:8px"></div></div>
+ <div class="paper"><h3>Ce qu'ils doivent faire</h3>
+  <div class="def" style="margin:0">1. Ouvrir le lien.<br>2. <b>iPhone :</b> dans <b>Safari</b>, bouton Partager › « Sur l'écran d'accueil ».<br><b>Android :</b> dans Chrome, menu ⋮ › « Installer l'application ».<br>3. Ouvrir l'appli › 🎮 Duel entre amis › entrer le code que tu leur donnes.</div>
+  <div class="nat" style="margin-top:8px">Depuis WhatsApp sur iPhone, le lien peut s'ouvrir dans un navigateur intégré : toucher « Ouvrir dans Safari ».</div></div>
+ <button class="cta duel" data-go="game"><span>🎮</span> Créer une partie<small>Puis envoie-leur le code du salon</small></button>
 </section>
 
 <section class="view" id="v-game">
@@ -226,7 +239,7 @@ const byW=Object.fromEntries(W.map(x=>[x.w,x]));
 let AC=null;function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}if(AC&&AC.state==="suspended")AC.resume();return AC;}
 function mar(f,t0=0,d=.5,v=.16){const c=ac();if(!c||!S.snd)return;const t=c.currentTime+t0;[1,4.01,10.1].forEach((m,i)=>{const o=c.createOscillator(),g=c.createGain();o.type="sine";o.frequency.value=f*m;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v/(i*2.5+1),t+.005);g.gain.exponentialRampToValueAtTime(.0001,t+d/(i+1));o.connect(g).connect(c.destination);o.start(t);o.stop(t+d);});}
 function page(){const c=ac();if(!c||!S.snd)return;const b=c.createBuffer(1,c.sampleRate*.18,c.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2)*.35;const s=c.createBufferSource(),f=c.createBiquadFilter();f.type="highpass";f.frequency.value=1800;s.buffer=b;s.connect(f).connect(c.destination);s.start();}
-const SFX={tap:()=>mar(880,0,.25,.07),ok:()=>{mar(659,0);mar(988,.1,.6)},ko:()=>{mar(220,0,.4,.14);mar(207,.12,.5,.1)},win:()=>[523,659,784,1047,1319].forEach((f,i)=>mar(f,i*.1,.8,.13)),page};
+const SFX={tap:()=>{},ok:()=>{mar(659,0);mar(988,.1,.6)},ko:()=>{mar(220,0,.4,.14);mar(207,.12,.5,.1)},win:()=>[523,659,784,1047,1319].forEach((f,i)=>mar(f,i*.1,.8,.13)),page:()=>{}};
 $("q-snd").onclick=()=>{S.snd=!S.snd;save();$("q-snd").textContent=S.snd?"🔊":"🔇";};
 function sparkle(x,y){for(let i=0;i<14;i++){const s=document.createElement("i");s.className="sparkle";const a=Math.random()*6.28,r=40+Math.random()*60;s.style.cssText=`left:${x}px;top:${y}px;--dx:${Math.cos(a)*r}px;--dy:${Math.sin(a)*r}px`;document.body.appendChild(s);setTimeout(()=>s.remove(),850);}}
 
@@ -239,7 +252,7 @@ let UT=null;function say(t,rate=.92){if(!SY)return;if(SY.speaking||SY.pending)SY
 /* ---------- navigation ---------- */
 function go(v){if(v!=="quiz")stopQ=true;document.querySelectorAll(".view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));document.body.classList.toggle("quiz",v==="quiz"||v==="res");
  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.go===v));pill();window.scrollTo({top:0,behavior:"smooth"});SFX.page();
- ({home,dico,ortho,mine,game})[v]&&({home,dico,ortho,mine,game})[v]();}
+ ({home,dico,ortho,mine,game,invite})[v]&&({home,dico,ortho,mine,game,invite})[v]();}
 let stopQ=false;
 function pill(){const b=document.querySelector("nav button.on"),p=$("pill");if(!b){return;}p.style.left=b.offsetLeft+"px";p.style.width=b.offsetWidth+"px";}
 addEventListener("resize",pill);
@@ -280,7 +293,7 @@ function upd(){const t=$("q-txt");if(t)t.textContent=TYPED;}
 function press(k){const inp=$("q-in");if(!inp||inp.dataset.done)return;
  if(k==="⌫")TYPED=TYPED.slice(0,-1);else if(k==="⇧"){SHIFT=!SHIFT;document.querySelectorAll(".k").forEach(b=>{const v=b.dataset.k;if(v.length===1&&v.toLowerCase()!==v.toUpperCase())b.textContent=SHIFT?v.toUpperCase():v;});return;}
  else if(k==="espace")TYPED+=" ";else if(k==="OK"){check(TYPED);return;}else{TYPED+=SHIFT?k.toUpperCase():k;if(SHIFT){SHIFT=false;document.querySelectorAll(".k").forEach(b=>{const v=b.dataset.k;if(v.length===1)b.textContent=v;});}}
- upd();mar(1200,0,.08,.03);}
+ upd();}
 $("q-ans").addEventListener("pointerdown",e=>{const b=e.target.closest(".k");if(!b)return;e.preventDefault();b.classList.add("p");setTimeout(()=>b.classList.remove("p"),120);press(b.dataset.k);});
 document.addEventListener("keydown",e=>{if(!$("q-in")||!document.getElementById("v-quiz").classList.contains("on"))return;if(e.metaKey||e.ctrlKey)return;
  if(e.key==="Enter"){e.preventDefault();if($("q-in").dataset.done)$("q-next").click();else check(TYPED);}else if(e.key==="Backspace"){e.preventDefault();press("⌫");}else if(e.key.length===1){e.preventDefault();TYPED+=e.key;upd();}});
@@ -329,6 +342,12 @@ function drawFC(){const w=FC.L[FC.i],x=byW[w];$("m-area").innerHTML=`<div class=
  const mv=good=>{const c=S.cards["w:"+w]||{b:0};c.b=good?Math.min(5,c.b+1):0;S.cards["w:"+w]=c;if(good){S.xp+=5;SFX.ok();}else SFX.ko();tick();save();FC.i=(FC.i+1)%FC.L.length;drawFC();};
  $("fc-ok").onclick=()=>mv(true);$("fc-ko").onclick=()=>mv(false);}
 
+/* ---------- inviter ---------- */
+const APPURL=location.origin+location.pathname.replace(/index\.html$/,"");
+const INVITE=`Salut ! Installe CLB Lexicon pour qu'on fasse un Duel de vocabulaire ensemble 🎮\n\n1. Ouvre ce lien : ${APPURL}\n2. iPhone : dans Safari › Partager › « Sur l'écran d'accueil ». Android : Chrome › ⋮ › « Installer l'application ».\n3. Ouvre l'appli › 🎮 Duel entre amis › entre le code que je t'enverrai.\n\nGratuit, sans inscription.`;
+function invite(){$("iv-url").textContent=APPURL;$("iv-wa").href="https://wa.me/?text="+encodeURIComponent(INVITE);$("iv-sms").href="sms:&body="+encodeURIComponent(INVITE);$("iv-msg").textContent="";
+ $("iv-share").onclick=async()=>{try{if(navigator.share)await navigator.share({title:"CLB Lexicon",text:INVITE});else{await navigator.clipboard.writeText(INVITE);$("iv-msg").textContent="✅ Message copié, colle-le où tu veux.";}}catch(e){}};
+ $("iv-copy").onclick=async()=>{try{await navigator.clipboard.writeText(INVITE);$("iv-msg").textContent="✅ Message copié, colle-le dans WhatsApp ou par SMS.";}catch(e){prompt("Copie ce message :",INVITE);}};}
 /* ---------- Duel du Lexique (multijoueur temps réel via MQTT public) ---------- */
 const BROKERS=["wss://broker.hivemq.com:8884/mqtt","wss://broker.emqx.io:8084/mqtt"];
 const COLORS=["#D9653B","#2E9E6A","#4D7FD8","#8E5BD6"];
@@ -346,7 +365,7 @@ function avatar(p,i){return `<div class="av" style="background:${COLORS[i%4]}">$
 function game(){if(G&&G.c){renderG();return;}const name=LS.get("lexname","");const qs=new URLSearchParams(location.search).get("room")||"";
  $("g-area").innerHTML=`<div class="paper"><h3>Ton pseudo</h3><input class="gin" id="g-name" maxlength="14" placeholder="Ex. Charles" value="${esc(name)}" style="color:var(--ink);background:#fff"></div>
  <button class="cta" id="g-host">👑 Créer une partie</button>
- <div class="paper"><h3>Rejoindre une partie</h3><input class="gin" id="g-code" maxlength="4" placeholder="CODE" value="${esc(qs)}" style="text-transform:uppercase;letter-spacing:.3em;color:var(--ink);background:#fff"><button class="cta" id="g-join" style="background:linear-gradient(135deg,#17604a,#0E3B2E);color:#fff">🚪 Rejoindre</button></div><div class="gmsg" id="g-msg"></div>`;
+ <div class="paper"><h3>Rejoindre une partie</h3><input class="gin" id="g-code" maxlength="4" placeholder="CODE" value="${esc(qs)}" style="text-transform:uppercase;letter-spacing:.3em;color:var(--ink);background:#fff"><button class="cta" id="g-join" style="background:linear-gradient(135deg,#17604a,#0E3B2E);color:#fff">🚪 Rejoindre</button></div><button class="cta invite" data-go="invite">📲 Inviter des amis à installer l’appli</button><div class="gmsg" id="g-msg"></div>`;
  $("g-host").onclick=()=>enter(newCode(),true);$("g-join").onclick=()=>{const c=$("g-code").value.trim().toUpperCase();if(c.length!==4){$("g-msg").textContent="Le code fait 4 caractères.";return;}enter(c,false);};}
 async function enter(room,host){const name=$("g-name").value.trim();if(!name){$("g-msg").textContent="Choisis un pseudo d'abord.";$("g-name").focus();return;}LS.set("lexname",name);SFX.tap();
  $("g-msg").textContent="Connexion au salon…";
