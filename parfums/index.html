@@ -120,6 +120,15 @@ nav.bot .mid .ico{width:30px;height:30px;stroke:#fff}
 .hl{background:#FFF6E2;border:1.5px solid #EBD39E;border-radius:16px;padding:12px;font-size:13.5px}
 .lnk{color:var(--gold1);font-weight:700;text-decoration:none}
 input[type=range]{accent-color:#B8893E}
+.srch{display:flex;align-items:center;gap:8px;margin-top:12px;padding:6px 6px 6px 12px;border-radius:16px;background:#fff;border:1.5px solid var(--line);box-shadow:var(--sh)}.srch .ico{color:var(--gold1)}.srch input{border:0;padding:8px 2px;flex:1;min-width:0}.srch input:focus{border:0}
+.steps3{display:flex;gap:6px;margin-top:12px}.steps3 span{flex:1;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#A99D90;padding:7px 8px;border-radius:12px;background:#F3EDE3;transition:.3s}.steps3 i{font-style:normal;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:#D9CFC2;color:#fff;font-size:11px}.steps3 span.on{color:var(--plum);background:#F6E7C8}.steps3 span.on i{background:var(--gold)}
+details.more{margin-top:16px}details.more summary{font-size:13px;font-weight:700;color:var(--mu);cursor:pointer;list-style:none}details.more summary::before{content:"＋ "}
+.res .im{width:58px;height:58px;background:#fff}.res .im img{object-fit:contain}
+.big.white{background:#fff}.big.white img{object-fit:contain}
+.step{display:flex;align-items:center;gap:0;border:1.5px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}.step button{border:0;background:#F3EDE3;width:44px;height:44px;font-size:20px;font-weight:700}.step b{flex:1;text-align:center;font-family:var(--serif);font-size:20px}
+.cnt{position:absolute;top:10px;right:10px;font-size:11.5px;font-weight:800;color:#F6E7C8;background:rgba(59,31,51,.9);padding:3px 8px;border-radius:999px}
+.pc .im img.off,.srow .im img.off,.alt .im img.off,.pick .im img.off,.cock .im img.off{object-fit:contain;background:#fff}
+.skel{background:linear-gradient(90deg,#F3EDE3,#FBF7F0,#F3EDE3);background-size:200% 100%;animation:sk 1.2s infinite}@keyframes sk{to{background-position:-200% 0}}
 .seg{display:flex;background:#EFE7DA;border-radius:14px;padding:3px;margin:10px 0}.seg button{flex:1;border:0;background:none;border-radius:11px;padding:8px;font-weight:700;font-size:13px;color:var(--mu)}.seg button.on{background:#fff;color:var(--ink);box-shadow:0 4px 10px -6px rgba(0,0,0,.3)}
 </style></head><body>
 
@@ -131,7 +140,7 @@ input[type=range]{accent-color:#B8893E}
   <h1>CLB <em>Parfums</em></h1>
   <p>Ta collection, ton parfum du jour selon la météo, tes cocktails et tes découvertes.</p>
   <div class="go"><svg class="ico" viewBox="0 0 24 24"><path d="M9 8h6v12a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1z"/><path d="M10.5 8V5.5h3V8M12 3v2.5M15.5 4.5 17 3.5M15.5 6.5H18"/></svg>Toucher pour entrer</div>
-  <div class="v">Version 1.0.0</div>
+  <div class="v">Version 1.1.0</div>
  </div>
 </div>
 
@@ -193,17 +202,16 @@ input[type=range]{accent-color:#B8893E}
 
 <!-- feuille d'ajout -->
 <div class="sheet" id="sh-add"><div class="in"><div class="grab"></div>
- <h2 style="font-size:24px">Ajouter un parfum</h2><div class="note">Photographie le flacon ou la boîte : je lis le nom et je retrouve la fiche.</div>
- <div class="addg">
-  <label class="addb pri"><svg class="ico" viewBox="0 0 24 24"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h2l1.6-2.2h5.8L16.5 6h2A2.5 2.5 0 0 1 21 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/><circle cx="12" cy="12.8" r="3.6"/></svg><b>Photographier</b><small>Flacon, boîte ou code-barres</small><input id="a-cam" type="file" accept="image/*" capture="environment" hidden></label>
-  <label class="addb"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="9.5" r="1.8"/><path d="m21 15.5-4.8-4.8L7 20"/></svg><b>Importer</b><small>Une photo de ta galerie</small><input id="a-pic" type="file" accept="image/*" hidden></label>
- </div>
- <div style="position:relative"><input id="a-q" placeholder="Ou tape le nom : Sauvage, Aventus, Khamrah…" autocomplete="off" enterkeyhint="search"></div>
+ <h2 style="font-size:24px">Ajouter un parfum</h2><div class="note">Écris son nom : je cherche sur internet sa photo officielle et sa fiche. Tu valides, et je l'enregistre dans ton stock.</div>
+ <div class="steps3"><span class="on" id="s1"><i>1</i>Nom</span><span id="s2"><i>2</i>Choix</span><span id="s3"><i>3</i>Validation</span></div>
+ <div class="srch"><svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg><input id="a-q" placeholder="Ex. Sauvage Dior, Khamrah, Aventus…" autocomplete="off" enterkeyhint="search"><button class="btn gold sm" id="a-go">Chercher</button></div>
  <div class="prog" id="a-prog"><i></i></div>
  <div class="note" id="a-st" style="margin-top:8px"></div>
  <div id="a-ph" style="display:none;margin-top:10px"></div>
  <div id="a-res"></div>
- <button class="btn full" id="a-man" style="margin-top:12px">Il n'est pas dans la liste : saisir à la main</button>
+ <details class="more"><summary>Autres façons d'ajouter</summary>
+  <div class="addg"><label class="addb"><svg class="ico" viewBox="0 0 24 24"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h2l1.6-2.2h5.8L16.5 6h2A2.5 2.5 0 0 1 21 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/><circle cx="12" cy="12.8" r="3.6"/></svg><b>Lire l'étiquette</b><small>Photo de la boîte, de face</small><input id="a-cam" type="file" accept="image/*" capture="environment" hidden></label><label class="addb"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="9.5" r="1.8"/><path d="m21 15.5-4.8-4.8L7 20"/></svg><b>Depuis la galerie</b><small>Photo de l'étiquette</small><input id="a-pic" type="file" accept="image/*" hidden></label></div>
+  <button class="btn full" id="a-man">Saisir à la main</button></details>
  <button class="btn full" data-close style="margin-top:8px;background:none;color:var(--mu)">Fermer</button>
 </div></div>
 
@@ -219,7 +227,7 @@ input[type=range]{accent-color:#B8893E}
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const norm=s=>(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
-const VERSION="1.0.0";
+const VERSION="1.1.0";
 function toast(m){const t=$("toast");t.textContent=m;t.classList.add("on");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("on"),2600);}
 const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){toast("Mémoire du téléphone pleine");}}};
 /* ---------- IndexedDB pour les photos ---------- */
@@ -227,7 +235,7 @@ const IDB={db:null,open(){return this.db?Promise.resolve(this.db):new Promise((o
  async put(k,v){const d=await this.open();return new Promise(ok=>{const t=d.transaction("img","readwrite");t.objectStore("img").put(v,k);t.oncomplete=()=>ok();});},
  async get(k){const d=await this.open();return new Promise(ok=>{const q=d.transaction("img").objectStore("img").get(k);q.onsuccess=()=>ok(q.result);q.onerror=()=>ok(null);});},
  async del(k){const d=await this.open();return new Promise(ok=>{const t=d.transaction("img","readwrite");t.objectStore("img").delete(k);t.oncomplete=()=>ok();});}};
-const IMGC={};async function imgOf(p){if(p.pic){if(IMGC[p.id])return IMGC[p.id];const v=await IDB.get("p-"+p.id);if(v){IMGC[p.id]=v;return v;}}return p.off||"";}
+const IMGC={};async function imgOf(p){if(p.off&&p.show!=="pic")return p.off;if(p.pic){if(IMGC[p.id])return IMGC[p.id];const v=await IDB.get("p-"+p.id);if(v){IMGC[p.id]=v;return v;}}return p.off||"";}
 /* ---------- état ---------- */
 let S=LS.get("parf",{list:[],hist:[],fav:[],wish:[]});["list","hist","fav","wish"].forEach(k=>S[k]=S[k]||[]);
 const save=()=>LS.set("parf",S);
@@ -315,11 +323,12 @@ function cocktails(ctx){const L=S.list.filter(p=>p.ml==null||p.ml>0.3);const R=[
 /* ---------- rendu ---------- */
 const PH_COL={frais:["#D7F0EE","#4C9C97"],"chaud et ambré":["#F6E3C6","#B07A2E"],"boisé":["#E8DFD3","#7A5C3E"],"floral":["#F6DDE3","#B0607A"]};
 function phSVG(p){const c=PH_COL[FAM(p)]||["#F3EDE3","#B8893E"];return `<div class="ph" style="background:radial-gradient(80% 60% at 50% 40%,#fff,${c[0]})"><svg viewBox="0 0 64 80"><rect x="24" y="4" width="16" height="10" rx="2" fill="${c[1]}"/><rect x="28" y="14" width="8" height="5" fill="${c[1]}" opacity=".7"/><rect x="10" y="19" width="44" height="56" rx="12" fill="#fff" stroke="${c[1]}" stroke-width="2"/><rect x="15" y="40" width="34" height="31" rx="8" fill="${c[1]}" opacity=".35"/></svg></div>`;}
+function totalMl(p){return p.ml==null?null:((p.n||1)-1)*(p.size||100)+p.ml;}
 function lvlPct(p){return p.ml!=null&&p.size?Math.max(0,Math.min(100,Math.round(p.ml/p.size*100))):null;}
-function low(p){const pc=lvlPct(p);const d=daysLeft(p);return pc!=null&&(pc<=15||(d!=null&&d<=21));}
+function low(p){const pc=lvlPct(p);const d=daysLeft(p);return (p.n||1)<=1&&pc!=null&&(pc<=15||(d!=null&&d<=21));}
 function useRate(p){const w=S.hist.filter(x=>x.ids.includes(p.id)&&Date.now()-new Date(x.d)<60*864e5).length;const since=Math.min(60,Math.max(14,(Date.now()-new Date(p.added||Date.now()))/864e5));return w? w/since : 1/Math.max(2,S.list.length);}
-function daysLeft(p){if(p.ml==null)return null;const per=(p.sprays||3)*0.1*(p.layerFactor||1);return Math.round(p.ml/(per*useRate(p)));}
-async function setImg(el,p){const u=await imgOf(p);if(u)el.innerHTML=`<img src="${esc(u)}" alt="" loading="lazy" onerror="this.remove()">`;}
+function daysLeft(p){if(p.ml==null)return null;const per=(p.sprays||3)*0.1;return Math.round(totalMl(p)/(per*useRate(p)));}
+async function setImg(el,p){const u=await imgOf(p);if(u)el.innerHTML=`<img src="${esc(u)}" class="${u.startsWith("data:")?"":"off"}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`;}
 let colF="tous";
 function colRender(){const g=$("col-g");$("col-n").textContent=S.list.length?S.list.length+" flacon"+(S.list.length>1?"s":""):"";
  const F=[["tous","Tous"],["frais","Frais"],["chaud et ambré","Chauds"],["boisé","Boisés"],["floral","Floraux"],["low","À racheter"]];
@@ -328,12 +337,12 @@ function colRender(){const g=$("col-g");$("col-n").textContent=S.list.length?S.l
  const L=S.list.filter(p=>colF==="tous"||(colF==="low"?low(p):FAM(p)===colF));
  if(!S.list.length){g.style.display="block";g.innerHTML=`<div class="empty"><svg viewBox="0 0 24 24" class="ico"><path d="M9 8h6v12a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1z"/><path d="M10.5 8V5.5h3V8M12 3v2.5"/></svg><h3 style="font-size:20px;color:var(--ink);margin-top:8px">Ta collection est vide</h3><p>Photographie ton premier flacon : je trouve son nom, sa fiche et son image.</p></div>`;return;}
  g.style.display="grid";
- g.innerHTML=L.map((p,i)=>{const pc=lvlPct(p);return `<div class="pc" data-id="${p.id}" style="animation-delay:${i*40}ms"><div class="im" id="im-${p.id}">${phSVG(p)}${low(p)?`<span class="badge">À racheter</span>`:""}</div><div class="tx"><small>${esc(p.marque)}</small><b>${esc(p.nom)}</b><small>${esc([p.conc,(p.acc||[])[0]&&accFR(p.acc[0])].filter(Boolean).join(" · "))}</small>${pc!=null?`<div class="lvl ${low(p)?"low":""}"><i style="width:${pc}%"></i></div>`:""}</div></div>`;}).join("")||`<div class="note">Aucun parfum dans ce filtre.</div>`;
- L.forEach(p=>{const el=$("im-"+p.id);imgOf(p).then(u=>{if(u){const b=el.querySelector(".badge");el.innerHTML=`<img src="${esc(u)}" alt="" loading="lazy">`+(b?b.outerHTML:"");}});});
+ g.innerHTML=L.map((p,i)=>{const pc=lvlPct(p);return `<div class="pc" data-id="${p.id}" style="animation-delay:${i*40}ms"><div class="im" id="im-${p.id}">${phSVG(p)}${low(p)?`<span class="badge">À racheter</span>`:""}${(p.n||1)>1?`<span class="cnt">×${p.n}</span>`:""}</div><div class="tx"><small>${esc(p.marque)}</small><b>${esc(p.nom)}</b><small>${esc([p.conc,(p.acc||[])[0]&&accFR(p.acc[0])].filter(Boolean).join(" · "))}</small>${pc!=null?`<div class="lvl ${low(p)?"low":""}"><i style="width:${pc}%"></i></div>`:""}</div></div>`;}).join("")||`<div class="note">Aucun parfum dans ce filtre.</div>`;
+ L.forEach(p=>{const el=$("im-"+p.id);imgOf(p).then(u=>{if(u){const b=el.querySelector(".badge");el.innerHTML=`<img src="${esc(u)}" class="${u.startsWith("data:")?"":"off"}" alt="" loading="lazy" referrerpolicy="no-referrer">`+(b?b.outerHTML:"")+((p.n||1)>1?`<span class="cnt">×${p.n}</span>`:"");}});});
  g.querySelectorAll(".pc").forEach(c=>c.onclick=()=>openDet(c.dataset.id));}
-function stkRender(){const L=S.list;const al=L.filter(low);const tot=L.reduce((a,p)=>a+(p.ml||0),0);$("stk-sum").textContent=L.length?Math.round(tot)+" ml au total":"";
- $("stk-al").innerHTML=al.length?`<div class="card alert"><h3 style="font-size:18px">🛒 À réapprovisionner</h3>${al.map(p=>`<div class="note" style="margin-top:6px"><b style="color:var(--ink)">${esc(p.nom)}</b> · ${lvlPct(p)} % · ${daysLeft(p)!=null?"≈ "+daysLeft(p)+" jours restants":""} · <a class="lnk" target="_blank" rel="noopener" href="${shopURL(p)}">Acheter</a></div>`).join("")}</div>`:"";
- $("stk-l").innerHTML=L.length?L.map(p=>{const pc=lvlPct(p),d=daysLeft(p);return `<div class="srow ${low(p)?"alert":""}" data-id="${p.id}"><div class="im" id="si-${p.id}">${phSVG(p)}</div><div class="bd"><b>${esc(p.nom)}</b><div class="note">${p.ml!=null?`${Math.round(p.ml)} ml sur ${p.size} ml · ${pc} %`:"Quantité non renseignée"}${d!=null?` · ≈ ${d} j`:""}</div>${pc!=null?`<div class="lvl ${low(p)?"low":""}"><i style="width:${pc}%"></i></div>`:""}</div><button class="btn sm" data-q="${p.id}">Ajuster</button></div>`;}).join(""):`<div class="empty">Ajoute tes parfums pour suivre leur niveau.</div>`;
+function stkRender(){const L=S.list;const al=L.filter(low);const tot=L.reduce((a,p)=>a+(p.n||1),0);$("stk-sum").textContent=L.length?tot+" flacon"+(tot>1?"s":"")+" · "+L.length+" parfum"+(L.length>1?"s":""):"";
+ $("stk-al").innerHTML=al.length?`<div class="card alert"><h3 style="font-size:18px">🛒 À réapprovisionner</h3>${al.map(p=>`<div class="note" style="margin-top:6px"><b style="color:var(--ink)">${esc(p.nom)}</b> · dernier flacon à ${lvlPct(p)} % · ${daysLeft(p)!=null?"≈ "+daysLeft(p)+" jours restants":""} · <a class="lnk" target="_blank" rel="noopener" href="${shopURL(p)}">Acheter</a></div>`).join("")}</div>`:"";
+ $("stk-l").innerHTML=L.length?L.map(p=>{const pc=lvlPct(p),d=daysLeft(p);return `<div class="srow ${low(p)?"alert":""}" data-id="${p.id}"><div class="im" id="si-${p.id}">${phSVG(p)}</div><div class="bd"><b>${esc(p.nom)}</b><div class="note"><strong style="color:var(--ink)">${p.n||1} flacon${(p.n||1)>1?"s":""}</strong> · ${p.ml!=null?`flacon en cours ${pc} %`:"niveau non renseigné"}${d!=null?` · ≈ ${d} j de réserve`:""}</div>${pc!=null?`<div class="lvl ${low(p)?"low":""}"><i style="width:${pc}%"></i></div>`:""}</div><button class="btn sm" data-q="${p.id}">Ajuster</button></div>`;}).join(""):`<div class="empty">Ajoute tes parfums pour suivre leur niveau.</div>`;
  L.forEach(p=>{const el=$("si-"+p.id);if(el)setImg(el,p);});
  $("stk-l").querySelectorAll("[data-q]").forEach(b=>b.onclick=e=>{e.stopPropagation();openDet(b.dataset.q,"qty");});
  $("stk-l").querySelectorAll(".srow").forEach(r=>r.onclick=()=>openDet(r.dataset.id));
@@ -356,7 +365,7 @@ function nowRun(){const box=$("now-r");CTX.hr=new Date().getHours();if(S.list.le
  setImg($("nw-im"),best.p);alts.forEach(a=>setImg($("al-"+a.p.id),a.p));if(C)ckImgs(C,"nck");
  $("wear1").onclick=()=>wear([best.p.id],{occ,mood});box.querySelectorAll("[data-wear]").forEach(b=>b.onclick=()=>wear([b.dataset.wear],{occ,mood}));box.querySelectorAll("[data-ckw]").forEach(b=>b.onclick=()=>wear(b.dataset.ckw.split(","),{occ,mood,ck:1}));
  box.scrollIntoView({behavior:"smooth",block:"start"});}
-function wear(ids,ctx){S.hist.push({d:new Date().toISOString(),ids,ctx:{...ctx,t:CTX.t,h:CTX.h}});ids.forEach(id=>{const p=S.list.find(x=>x.id===id);if(p&&p.ml!=null){p.ml=Math.max(0,p.ml-(p.sprays||3)*0.1*(ids.length>1?.6:1));}});save();toast("✨ Bonne journée, tu sens bon !");colRender();stkRender();
+function wear(ids,ctx){S.hist.push({d:new Date().toISOString(),ids,ctx:{...ctx,t:CTX.t,h:CTX.h}});ids.forEach(id=>{const p=S.list.find(x=>x.id===id);if(p&&p.ml!=null){p.ml-= (p.sprays||3)*0.1*(ids.length>1?.6:1);if(p.ml<=0&&(p.n||1)>1){p.n--;p.ml+=p.size||100;toast("Nouveau flacon de "+p.nom+" entamé");}p.ml=Math.max(0,p.ml);}});save();toast("✨ Bonne journée, tu sens bon !");colRender();stkRender();
  const L=ids.map(id=>S.list.find(x=>x.id===id)).filter(p=>p&&low(p));if(L.length)setTimeout(()=>toast("🛒 "+L[0].nom+" arrive bientôt à sa fin"),2800);}
 /* cocktails */
 function ckHTML(c,k){const ky=[c.base.id,c.top.id].join(",");const fav=S.fav.includes(ky);return `<div class="cock" style="margin-top:10px"><div class="im" id="${k}-a">${phSVG(c.base)}</div><span class="plus">+</span><div class="im" id="${k}-b">${phSVG(c.top)}</div><div style="flex:1;padding-left:6px"><b style="font-family:var(--serif);font-size:16px">${esc(c.name)}</b><div class="note">${esc(c.base.nom)} + ${esc(c.top.nom)}</div></div></div>
@@ -394,7 +403,7 @@ async function decRender(){const box=$("dec-l");const F=[["gout","❤️ Mon go�
  out.sort((a,b)=>b[0]-a[0]);const R=[];for(const [s,i] of out){const k=norm(DB.p[i][1]+" "+DB.p[i][0].split(" ").slice(0,2).join(" "));if(seen.has(k))continue;seen.add(k);R.push(i);if(R.length>=12)break;}
  box.innerHTML=R.map((i,n)=>{const p=fromDB(i);return `<div class="srow fadein" style="animation-delay:${n*40}ms"><div class="im" id="di-${i}">${phSVG(p)}</div><div class="bd"><small class="note">${esc(p.marque)}${p.annee?" · "+p.annee:""}</small><b>${esc(p.nom)}</b><div>${p.acc.slice(0,3).map(a=>`<span class="tag">${accFR(a)}</span>`).join("")}</div><div class="note">${p.votes?`★ ${String(p.note).replace(".",",")}/10 · `:""}<a class="lnk" href="${esc(infoURL(p))}" target="_blank" rel="noopener">Fiche</a> · <a class="lnk" href="${shopURL(p)}" target="_blank" rel="noopener">Acheter</a></div></div><button class="btn sm" data-dv="${i}">Voir</button></div>`;}).join("");
  box.querySelectorAll("[data-dv]").forEach(b=>b.onclick=()=>openPreview(+b.dataset.dv));
- R.forEach(i=>offImg(fromDB(i)).then(u=>{const el=$("di-"+i);if(u&&el)el.innerHTML=`<img src="${esc(u)}" alt="" loading="lazy" onerror="this.remove()">`;}));}
+ R.forEach(i=>{const p=fromDB(i);queue(()=>pfImg(p.url)).then(u=>{const el=$("di-"+i);if(u&&el)el.innerHTML=`<img src="${esc(u)}" class="off" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`;});});}
 /* image officielle via Open Beauty Facts */
 const OFFC=LS.get("offc",{});
 async function offImg(p,code){const k=code||norm(p.marque+" "+p.nom);if(OFFC[k]!==undefined)return OFFC[k];let u="";
@@ -404,9 +413,65 @@ async function offImg(p,code){const k=code||norm(p.marque+" "+p.nom);if(OFFC[k]!
  OFFC[k]=u;LS.set("offc",OFFC);return u;}
 async function wikiDesc(p){try{const q=`${p.nom} ${p.marque} parfum`;const j=await (await fetch(`https://fr.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(q)}&srlimit=3&format=json&origin=*`)).json();
  const h=(j.query.search||[]).find(x=>norm(x.title).includes(norm(p.nom).split(" ")[0])&&/parfum|fragrance/i.test(x.snippet));if(!h)return "";const s=await (await fetch("https://fr.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(h.title))).json();return s.extract||"";}catch(e){return "";}}
+
+/* ---------- recherche en ligne (Parfumo via passerelle) ---------- */
+const AO=u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u);
+async function proxGet(u,tries=3){for(let k=0;k<tries;k++){const ac=new AbortController();const t=setTimeout(()=>ac.abort(),16000);try{const r=await fetch(AO(u)+(k?"&_="+Date.now():""),{signal:ac.signal});clearTimeout(t);if(r.ok){const x=await r.text();if(x.length>3000)return x;}}catch(e){clearTimeout(t);}await new Promise(r=>setTimeout(r,700));}throw new Error("proxy");}
+const BIG=src=>src?src.replace(/\?.*$/,"")+"?width=600&aspect_ratio=1:1":"";
+const CONCM={"Eau de Toilette":"EDT","Eau de Parfum":"EDP","Extrait de Parfum":"Extrait","Eau de Cologne":"EDC","Parfum":"Parfum","Eau de Parfum Intense":"EDP Intense","Elixir":"Elixir","Cologne":"Cologne","Eau Fraîche":"Eau Fraîche","Extrait":"Extrait"};
+async function pfSearch(q){const h=await proxGet("https://www.parfumo.com/s_perfumes_x.php?in=1&filter="+encodeURIComponent(q).replace(/%20/g,"+"));const d=new DOMParser().parseFromString(h,"text/html");
+ return [...d.querySelectorAll(".pgrid .col")].map(c=>{const a=c.querySelector(".name > a"),img=c.querySelector(".image img"),br=c.querySelector(".brand a"),yr=c.querySelector(".release_year"),lab=a&&a.querySelector(".label_a"),av=c.querySelector(".av");
+  const conc=lab?lab.textContent.trim():"";const nom=a?a.textContent.replace(conc,"").replace(/\s+/g," ").trim():"";const tv=av&&av.querySelector(".tv");
+  return{nom,conc:CONCM[conc]||conc,marque:br?br.textContent.trim():"",annee:yr?yr.textContent.replace(/\D/g,""):"",url:a?a.getAttribute("href"):"",img:img?BIG(img.getAttribute("src")):"",note:av?parseFloat(av.firstChild.textContent)||0:0,votes:tv?parseInt(tv.textContent.replace(/\D/g,""))||0:0};}).filter(x=>x.url&&x.nom);}
+async function pfPage(url){const h=await proxGet(url);const d=new DOMParser().parseFromString(h,"text/html");const og=d.querySelector('meta[property="og:image"]');
+ const acc=[...d.querySelectorAll(".s-circle-container .text-xs")].map(x=>x.textContent.trim()).filter(x=>ACC_FR[x]).slice(0,5);
+ const P={tete:[],coeur:[],fond:[]};let cur=null,all=[];d.querySelectorAll(".notes_list").forEach(nl=>{nl.querySelectorAll("*").forEach(el=>{const tx=(el.childElementCount===0?el.textContent:"").trim();if(/^(top|head) notes?/i.test(tx))cur="tete";else if(/^(heart|middle) notes?/i.test(tx))cur="coeur";else if(/^base notes?/i.test(tx))cur="fond";if(el.tagName==="IMG"&&el.alt){(cur?P[cur]:all).push(el.alt);}});});
+ if(!P.tete.length&&!P.coeur.length&&!P.fond.length&&all.length){P.coeur=all;}
+ return{img:og?BIG(og.content.replace("/perfume_social/","/perfumes/")):"",acc,...P};}
+const PIMG=LS.get("pimg",{});
+async function pfImg(url){if(!url)return "";if(PIMG[url])return PIMG[url];try{const r=await pfPage(url);if(r.img){PIMG[url]=r.img;LS.set("pimg",PIMG);}return r.img;}catch(e){return "";}}
+let qQ=Promise.resolve();const queue=fn=>{const p=qQ.then(fn,fn);qQ=p.catch(()=>{});return p;};
+function dbBySlug(url){if(!DB||!url)return -1;const sl=url.replace(/^https?:\/\/www\.parfumo\.com\/Perfumes\//,"").toLowerCase();if(!DB.slug){DB.slug={};DB.p.forEach((p,i)=>{if(p[10])DB.slug[p[10].toLowerCase()]=i;});}return DB.slug[sl]??-1;}
+function stepOn(n){["s1","s2","s3"].forEach((x,i)=>$(x).classList.toggle("on",i<n));}
+let RES=[];
+async function onlineSearch(q){q=(q||"").trim();if(norm(q).length<2)return;stepOn(1);$("a-res").innerHTML=[1,2,3].map(()=>`<div class="res skel" style="height:78px;border:0"></div>`).join("");$("a-st").textContent="🔎 Je cherche « "+q+" » sur internet…";prog(30);dbLoad();
+ try{RES=await pfSearch(q);prog(100);setTimeout(()=>prog(0),500);
+  if(!RES.length){$("a-st").textContent="Aucun parfum trouvé en ligne. Vérifie l'orthographe ou ajoute la marque.";$("a-res").innerHTML="";return;}
+  stepOn(2);$("a-st").textContent=RES.length+" résultat(s). Touche le bon parfum :";
+  $("a-res").innerHTML=RES.slice(0,12).map((c,i)=>`<button class="res" data-c="${i}"><div class="im">${c.img?`<img src="${esc(c.img)}" alt="" referrerpolicy="no-referrer" loading="lazy">`:""}</div><div style="flex:1;min-width:0"><b>${esc(c.nom)}</b><small>${esc(c.marque)}${c.conc?" · "+esc(c.conc):""}${c.annee?" · "+c.annee:""}</small>${c.votes?`<small style="display:block">★ ${String(c.note).replace(".",",")}/10 · ${c.votes.toLocaleString("fr-FR")} avis</small>`:""}</div></button>`).join("");
+  $("a-res").querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>openCand(RES[+b.dataset.c]));}
+ catch(e){prog(0);await dbLoad();const L=dbSearch(q,10);$("a-st").textContent="La recherche en ligne ne répond pas (connexion ou service saturé). Voici ma base locale ; réessaie dans un instant pour la photo officielle.";
+  RES=L.map(i=>{const p=fromDB(i);return{...p,img:"",dbi:i};});stepOn(2);
+  $("a-res").innerHTML=RES.map((c,i)=>`<button class="res" data-c="${i}"><div class="im">${phSVG(c)}</div><div style="flex:1;min-width:0"><b>${esc(c.nom)}</b><small>${esc(c.marque)}${c.conc?" · "+esc(c.conc):""}${c.annee?" · "+c.annee:""}</small></div></button>`).join("")+`<button class="btn full" id="a-retry" style="margin-top:10px">↻ Réessayer en ligne</button>`;
+  $("a-res").querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>openCand(RES[+b.dataset.c]));$("a-retry").onclick=()=>onlineSearch(q);}}
+$("a-go").onclick=()=>onlineSearch($("a-q").value);$("a-q").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("a-q").blur();onlineSearch($("a-q").value);}});
+/* étape 3 : validation */
+async function openCand(c){stepOn(3);await dbLoad();let p;const i=c.dbi!=null?c.dbi:dbBySlug(c.url);
+ if(i>=0){const b=fromDB(i);p={...b,nom:c.nom||b.nom,conc:c.conc||b.conc,annee:c.annee||b.annee,note:c.note||b.note,votes:c.votes||b.votes,url:c.url||b.url};}else p={nom:c.nom,marque:c.marque,conc:c.conc,annee:c.annee,note:c.note,votes:c.votes,acc:[],tete:[],coeur:[],fond:[],url:c.url};
+ p.off=c.img||"";const d=$("det");const draw=()=>{const tags=p.acc.length?whenTags(p):[];
+ d.innerHTML=`<div class="grab"></div><div class="note" style="text-align:center;font-weight:700;letter-spacing:.1em;text-transform:uppercase">Étape 3 · Vérifie et valide</div>
+ <div class="big white" id="cd-im" style="margin-top:8px">${p.off?`<img src="${esc(p.off)}" alt="" referrerpolicy="no-referrer">`:`<div class="skel" style="width:100%;height:100%"></div>`}</div>
+ <div style="margin-top:14px"><small class="note">${esc(p.marque)}${p.annee?" · "+p.annee:""}</small><h2 style="font-size:28px;line-height:1.1">${esc(p.nom)}</h2><div class="note">${esc(p.conc||"")}${p.votes?` · ★ ${String(p.note).replace(".",",")}/10 (${p.votes.toLocaleString("fr-FR")} avis)`:""}</div><div style="margin-top:6px">${p.acc.map(a=>`<span class="tag">${accFR(a)}</span>`).join("")}</div></div>
+ ${p.acc.length?`<div class="card"><h3 style="font-size:18px">Quand le porter</h3><div class="when">${tags.map(t=>`<span class="${t[2]?"hi":""}">${t[0]} ${t[1]}</span>`).join("")}</div><div class="note" style="margin-top:8px">${esc(descFR(p))}</div>${(p.tete.length+p.coeur.length+p.fond.length)?`<div class="pyr"><div><span>Tête</span>${esc(p.tete.map(noteFR).join(", ")||"–")}</div><div><span>Cœur</span>${esc(p.coeur.map(noteFR).join(", ")||"–")}</div><div><span>Fond</span>${esc(p.fond.map(noteFR).join(", ")||"–")}</div></div>`:""}</div>`:`<div class="card note" id="cd-load">Je récupère la fiche olfactive…</div>`}
+ <div class="card"><h3 style="font-size:18px">Mon stock</h3><div class="qty" style="margin-top:6px"><div><label class="l">Nombre de flacons</label><div class="step"><button id="cd-m">−</button><b id="cd-n">1</b><button id="cd-p">+</button></div></div><div><label class="l">Taille d'un flacon</label><select id="cd-size">${[15,30,50,60,75,80,90,100,110,125,150,200].map(v=>`<option value="${v}" ${v===100?"selected":""}>${v} ml</option>`).join("")}</select></div></div>
+ <label class="l">Flacon en cours : <span id="cd-lv">100 %</span></label><input id="cd-lvl" type="range" min="5" max="100" step="5" value="100" style="padding:0;border:0"></div>
+ <button class="btn gold full" id="cd-ok" style="padding:15px;font-size:16px">✓ Valider et enregistrer</button>
+ <button class="btn full" id="cd-no" style="margin-top:8px">Ce n'est pas le bon</button>`;
+ let n=1;$("cd-m").onclick=()=>{n=Math.max(1,n-1);$("cd-n").textContent=n;};$("cd-p").onclick=()=>{n=Math.min(20,n+1);$("cd-n").textContent=n;};
+ $("cd-lvl").oninput=()=>$("cd-lv").textContent=$("cd-lvl").value+" %";
+ $("cd-no").onclick=()=>{$("sh-det").classList.remove("on");stepOn(2);};
+ $("cd-ok").onclick=()=>saveCand(p,n,+$("cd-size").value,+$("cd-lvl").value);};
+ draw();$("sh-det").classList.add("on");
+ if((!p.acc.length||!p.off)&&p.url){try{const r=await pfPage(p.url);if(!p.off&&r.img)p.off=r.img;if(!p.acc.length){p.acc=r.acc;p.tete=r.tete;p.coeur=r.coeur;p.fond=r.fond;}if(r.img){PIMG[p.url]=r.img;LS.set("pimg",PIMG);}if($("sh-det").classList.contains("on")&&$("cd-ok"))draw();}catch(e){const l=$("cd-load");if(l)l.textContent="Fiche olfactive indisponible pour l'instant : je la compléterai plus tard.";}}}
+async function saveCand(p,n,size,lvl){const ex=S.list.find(x=>(p.url&&x.url===p.url)||(norm(x.nom)===norm(p.nom)&&norm(x.marque)===norm(p.marque)&&norm(x.conc||"")===norm(p.conc||"")));
+ if(ex){if(confirm(`${p.nom} est déjà dans ta collection (${ex.n||1} flacon(s)). Ajouter ${n} flacon(s) au stock ?`)){ex.n=(ex.n||1)+n;if(!ex.off&&p.off)ex.off=p.off;save();toast("📦 Stock mis à jour : "+ex.n+" flacons");}}
+ else{const id="p"+Date.now().toString(36);const it={id,...p,n,size,ml:size*lvl/100,sprays:3,stars:0,added:new Date().toISOString(),pic:!!addPhoto};if(addPhoto&&!p.off){await IDB.put("p-"+id,addPhoto);IMGC[id]=addPhoto;}S.list.push(it);save();toast("✅ "+p.nom+" enregistré ("+n+" flacon"+(n>1?"s":"")+")");}
+ $("sh-det").classList.remove("on");$("sh-add").classList.remove("on");colRender();stkRender();}
+/* complète la photo officielle des parfums déjà enregistrés */
+async function fixImages(){for(const p of S.list){if(p.off)continue;let u="";if(p.url)u=await queue(()=>pfImg(p.url));if(!u){try{const r=await queue(()=>pfSearch(p.marque+" "+p.nom));const h=r.find(x=>norm(x.nom)===norm(p.nom)&&(!p.marque||norm(x.marque).includes(norm(p.marque).split(" ")[0]))&&(!p.conc||!x.conc||norm(x.conc)===norm(p.conc)));if(h){u=h.img;if(!p.url)p.url=h.url;}}catch(e){}}if(u){p.off=u;save();colRender();}}}
 /* ---------- ajout ---------- */
 let addPhoto=null,addPhotoURL="";
-function openAdd(){$("sh-add").classList.add("on");$("a-res").innerHTML="";$("a-st").textContent="";$("a-q").value="";$("a-ph").style.display="none";addPhoto=null;dbLoad();}
+function openAdd(){$("sh-add").classList.add("on");$("a-res").innerHTML="";$("a-st").textContent="";$("a-q").value="";$("a-ph").style.display="none";addPhoto=null;stepOn(1);dbLoad();setTimeout(()=>$("a-q").focus(),350);}
 $("add1").onclick=openAdd;
 document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>b.closest(".sheet").classList.remove("on"));
 document.querySelectorAll(".sheet").forEach(s=>s.addEventListener("click",e=>{if(e.target===s)s.classList.remove("on");}));
@@ -417,19 +482,18 @@ async function onPhoto(e){const f=e.target.files[0];e.target.value="";if(!f)retu
  $("a-res").innerHTML="";$("a-st").textContent="Chargement de la base des parfums…";prog(8);await dbLoad();
  let code=null;try{if(window.ZXing){$("a-st").textContent="Recherche d'un code-barres…";const rd=new ZXing.BrowserMultiFormatReader();const r=await rd.decodeFromImageUrl(URL.createObjectURL(f));code=r&&r.getText();}}catch(err){}
  if(code&&/^\d{8,14}$/.test(code)){$("a-st").textContent="Code-barres "+code+" : recherche du produit…";try{const j=await (await fetch(`https://world.openbeautyfacts.org/api/v2/product/${code}.json?fields=product_name,brands,image_front_url`)).json();
-   if(j.product&&j.product.product_name){const hits=dbMatchText((j.product.brands||"")+" "+j.product.product_name);if(j.product.image_front_url)OFFC["code"+code]=j.product.image_front_url;showRes(hits,`Code-barres reconnu : ${j.product.brands||""} ${j.product.product_name}`,j.product.image_front_url);prog(0);return;}}catch(err){}}
+   if(j.product&&j.product.product_name){$("a-q").value=((j.product.brands||"")+" "+j.product.product_name).trim();prog(0);onlineSearch($("a-q").value);return;}}catch(err){}}
  if(!window.Tesseract){$("a-st").textContent="Lecture indisponible (connexion ?). Tape le nom ci-dessus.";prog(0);return;}
  $("a-st").textContent="Lecture du texte sur le flacon…";
  try{let best=[],all="";const c=sh.canvas;const vs=[c,rot(c,90),rot(c,-90)];
   for(let k=0;k<vs.length;k++){const r=await Tesseract.recognize(vs[k],"eng",{logger:m=>{if(m.status==="recognizing text")prog(10+80*(k+m.progress)/vs.length);}});all+=" "+r.data.text;best=dbMatchText(all);if(best.length&&k===0&&norm(r.data.text).length>12)break;}
-  prog(100);setTimeout(()=>prog(0),700);showRes(best,best.length?"Voici ce que j'ai reconnu, touche le bon parfum :":"Je n'ai pas réussi à lire le nom. Tape-le ci-dessus, ou photographie la boîte de face, bien éclairée.");}
+  prog(100);setTimeout(()=>prog(0),700);if(best.length){const g=fromDB(best[0]);$("a-q").value=g.marque+" "+g.nom;onlineSearch($("a-q").value);}else{$("a-st").textContent="Je n'ai pas réussi à lire le nom sur la photo. Écris-le ci-dessus.";}}
  catch(err){prog(0);$("a-st").textContent="Lecture impossible. Tape le nom ci-dessus.";}}
 function rot(c,deg){const o=document.createElement("canvas");o.width=c.height;o.height=c.width;const x=o.getContext("2d");x.translate(o.width/2,o.height/2);x.rotate(deg*Math.PI/180);x.drawImage(c,-c.width/2,-c.height/2);return o;}
 $("a-cam").onchange=onPhoto;$("a-pic").onchange=onPhoto;
 function showRes(L,msg,img){$("a-st").textContent=msg||"";$("a-res").innerHTML=L.map(i=>{const p=fromDB(i);return `<button class="res" data-i="${i}"><div class="im" id="ri-${i}">${phSVG(p)}</div><div style="flex:1;min-width:0"><b>${esc(p.nom)}</b><small>${esc(p.marque)}${p.conc?" · "+esc(p.conc):""}${p.annee?" · "+p.annee:""}</small><div>${p.acc.slice(0,3).map(a=>`<span class="tag">${accFR(a)}</span>`).join("")}</div></div></button>`;}).join("");
  $("a-res").querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>addFromDB(+b.dataset.i,img));
  L.slice(0,5).forEach(i=>offImg(fromDB(i)).then(u=>{const el=$("ri-"+i);if(u&&el)el.innerHTML=`<img src="${esc(u)}" alt="" onerror="this.remove()">`;}));}
-let qT;$("a-q").oninput=()=>{clearTimeout(qT);qT=setTimeout(async()=>{await dbLoad();const q=$("a-q").value;if(norm(q).length<2){$("a-res").innerHTML="";return;}showRes(dbSearch(q,10),"");},220);};
 async function addFromDB(i,img){const p=fromDB(i);const id="p"+Date.now().toString(36);const it={id,...p,size:100,ml:100,sprays:3,stars:0,added:new Date().toISOString(),pic:!!addPhoto,off:img||""};
  if(addPhoto){await IDB.put("p-"+id,addPhoto);IMGC[id]=addPhoto;}
  S.list.push(it);save();$("sh-add").classList.remove("on");colRender();stkRender();toast("✅ "+p.nom+" ajouté");openDet(id,"qty");
@@ -441,30 +505,31 @@ $("a-man").onclick=()=>{const nom=prompt("Nom du parfum ?",$("a-q").value||"");i
  const id="p"+Date.now().toString(36);const it={id,nom,marque,conc:"",annee:"",acc:acc.length?acc:["Woody","Spicy"],tete:[],coeur:[],fond:[],url:"",size:100,ml:100,sprays:3,stars:0,added:new Date().toISOString(),pic:!!addPhoto,off:"",manual:1};
  (async()=>{if(addPhoto){await IDB.put("p-"+id,addPhoto);IMGC[id]=addPhoto;}S.list.push(it);save();$("sh-add").classList.remove("on");colRender();stkRender();openDet(id,"qty");offImg(it).then(u=>{if(u){it.off=u;save();colRender();}});})();};
 /* ---------- fiche ---------- */
-async function openDet(id,focus){const p=S.list.find(x=>x.id===id);if(!p)return;const d=$("det");const pc=lvlPct(p),dl=daysLeft(p);const hasPic=p.pic,hasOff=!!p.off;const show=p.show||(hasOff&&!hasPic?"off":"pic");
+async function openDet(id,focus){const p=S.list.find(x=>x.id===id);if(!p)return;const d=$("det");const pc=lvlPct(p),dl=daysLeft(p);const hasPic=p.pic,hasOff=!!p.off;const show=p.show||(hasOff?"off":"pic");
  const tags=whenTags(p);const wears=S.hist.filter(h=>h.ids.includes(p.id)).length;
- d.innerHTML=`<div class="grab"></div><div class="big" id="dt-im">${phSVG(p)}${hasPic&&hasOff?`<div class="sw"><button data-sw="pic" class="${show==="pic"?"on":""}">Ma photo</button><button data-sw="off" class="${show==="off"?"on":""}">Photo officielle</button></div>`:""}</div>
+ d.innerHTML=`<div class="grab"></div><div class="big" id="dt-im">${phSVG(p)}${hasPic&&hasOff?`<div class="sw"><button data-sw="off" class="${show==="off"?"on":""}">Photo officielle</button><button data-sw="pic" class="${show==="pic"?"on":""}">Ma photo</button></div>`:""}</div>
  <div style="margin-top:14px"><small class="note">${esc(p.marque)}${p.annee?" · "+p.annee:""}</small><h2 style="font-size:28px;line-height:1.1">${esc(p.nom)}</h2><div class="note">${esc(p.conc||"")}${wears?` · porté ${wears} fois`:""}</div>
  <div class="stars" id="dt-st" style="margin-top:6px">${[1,2,3,4,5].map(n=>`<button data-s="${n}" class="${(p.stars||0)>=n?"on":""}" aria-label="${n} étoiles">★</button>`).join("")}</div>
  <div style="margin-top:6px">${(p.acc||[]).map(a=>`<span class="tag">${accFR(a)}</span>`).join("")}</div></div>
  <div class="card"><h3 style="font-size:18px">Quand le porter</h3><div class="when">${tags.map(t=>`<span class="${t[2]?"hi":""}">${t[0]} ${t[1]}</span>`).join("")}</div><div class="note" style="margin-top:8px">${esc(descFR(p))}</div>${p.wiki?`<div class="note" style="margin-top:8px">${esc(p.wiki.slice(0,420))}${p.wiki.length>420?"…":""} <i>(Wikipédia)</i></div>`:""}
  ${(p.tete||[]).length+(p.coeur||[]).length+(p.fond||[]).length?`<div class="pyr"><div><span>Tête</span>${esc((p.tete||[]).map(noteFR).join(", ")||"–")}</div><div><span>Cœur</span>${esc((p.coeur||[]).map(noteFR).join(", ")||"–")}</div><div><span>Fond</span>${esc((p.fond||[]).map(noteFR).join(", ")||"–")}</div></div>`:""}
  <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><a class="btn sm" href="${esc(infoURL(p))}" target="_blank" rel="noopener">${p.url?"Fiche Parfumo":"Fiche en ligne"}</a><a class="btn sm" href="${shopURL(p)}" target="_blank" rel="noopener">Acheter</a></div></div>
- <div class="card" id="dt-q"><h3 style="font-size:18px">Quantité</h3><div class="gauge" style="margin-top:8px"><div class="bottle"><div class="c"></div><div class="g"><i style="height:${pc??0}%"></i></div></div><div><b style="font-family:var(--serif);font-size:22px">${p.ml!=null?Math.round(p.ml)+" ml":"–"}</b><div class="note">${pc!=null?pc+" % restant":""}${dl!=null?` · ≈ ${dl} jours au rythme actuel`:""}</div>${low(p)?`<div class="note" style="color:#C0504D;font-weight:700">🛒 Pense à le racheter</div>`:""}</div></div>
-  <div class="qty" style="margin-top:8px"><div><label class="l">Taille du flacon</label><select id="dt-size">${[15,30,50,60,75,80,90,100,110,125,150,200].map(v=>`<option value="${v}" ${p.size==v?"selected":""}>${v} ml</option>`).join("")}</select></div><div><label class="l">Pulvérisations par fois</label><select id="dt-spr">${[1,2,3,4,5,6,8].map(v=>`<option ${p.sprays==v?"selected":""}>${v}</option>`).join("")}</select></div></div>
-  <label class="l">Niveau actuel : <span id="dt-lv">${pc??100} %</span></label><input id="dt-lvl" type="range" min="0" max="100" step="5" value="${pc??100}" style="padding:0;border:0">
+ <div class="card" id="dt-q"><h3 style="font-size:18px">Quantité</h3><div class="gauge" style="margin-top:8px"><div class="bottle"><div class="c"></div><div class="g"><i style="height:${pc??0}%"></i></div></div><div><b style="font-family:var(--serif);font-size:22px">${p.n||1} flacon${(p.n||1)>1?"s":""}</b><div class="note">${pc!=null?"Flacon en cours : "+pc+" %":""}${dl!=null?` · ≈ ${dl} jours de réserve au rythme actuel`:""}</div>${low(p)?`<div class="note" style="color:#C0504D;font-weight:700">🛒 Pense à le racheter</div>`:""}</div></div>
+  <label class="l">Nombre de flacons (avec celui en cours)</label><div class="step"><button id="dt-m">−</button><b id="dt-n">${p.n||1}</b><button id="dt-p">+</button></div><div class="qty" style="margin-top:8px"><div><label class="l">Taille d'un flacon</label><select id="dt-size">${[15,30,50,60,75,80,90,100,110,125,150,200].map(v=>`<option value="${v}" ${p.size==v?"selected":""}>${v} ml</option>`).join("")}</select></div><div><label class="l">Pulvérisations par fois</label><select id="dt-spr">${[1,2,3,4,5,6,8].map(v=>`<option ${p.sprays==v?"selected":""}>${v}</option>`).join("")}</select></div></div>
+  <label class="l">Flacon en cours : <span id="dt-lv">${pc??100} %</span></label><input id="dt-lvl" type="range" min="0" max="100" step="5" value="${pc??100}" style="padding:0;border:0">
   <div class="qty"><div><label class="l">Prix payé (FCFA)</label><input id="dt-prix" inputmode="numeric" value="${esc(p.prix||"")}" placeholder="facultatif"></div><div><label class="l">Acheté le</label><input id="dt-ach" type="date" value="${esc(p.achat||"")}"></div></div>
   <button class="btn gold full" id="dt-save" style="margin-top:12px">Enregistrer</button></div>
  <div style="display:flex;gap:8px"><button class="btn full" id="dt-wear">✓ Je le porte aujourd'hui</button></div>
  <div style="display:flex;gap:8px;margin-top:8px"><label class="btn full" style="cursor:pointer">📷 Changer la photo<input id="dt-ph" type="file" accept="image/*" hidden></label><button class="btn full" id="dt-del" style="color:#C0504D">Supprimer</button></div>
  <button class="btn full" data-close style="margin-top:8px;background:none;color:var(--mu)">Fermer</button>`;
  $("sh-det").classList.add("on");
- const imEl=$("dt-im");const u=show==="off"&&hasOff?p.off:await imgOf({...p,off:hasPic?"":p.off});if(u){const sw=imEl.querySelector(".sw");imEl.innerHTML=`<img src="${esc(u)}" alt="" onerror="this.remove()">`+(sw?sw.outerHTML:"");}
+ const imEl=$("dt-im");const u=show==="off"&&hasOff?p.off:await imgOf({...p,show:"pic"});if(u){const sw=imEl.querySelector(".sw");imEl.classList.toggle("white",!u.startsWith("data:"));imEl.innerHTML=`<img src="${esc(u)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`+(sw?sw.outerHTML:"");}
  imEl.querySelectorAll("[data-sw]").forEach(b=>b.onclick=()=>{p.show=b.dataset.sw;save();openDet(id,"keep");colRender();});
  d.querySelector("[data-close]").onclick=()=>$("sh-det").classList.remove("on");
  $("dt-st").querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>{p.stars=+b.dataset.s;save();$("dt-st").querySelectorAll("[data-s]").forEach(x=>x.classList.toggle("on",+x.dataset.s<=p.stars));});
  $("dt-lvl").oninput=()=>{$("dt-lv").textContent=$("dt-lvl").value+" %";d.querySelector(".bottle .g i").style.height=$("dt-lvl").value+"%";};
- $("dt-save").onclick=()=>{p.size=+$("dt-size").value;p.sprays=+$("dt-spr").value;p.ml=p.size*(+$("dt-lvl").value)/100;p.prix=$("dt-prix").value.trim();p.achat=$("dt-ach").value;save();colRender();stkRender();toast("Enregistré");openDet(id,"keep");};
+ let dn=p.n||1;$("dt-m").onclick=()=>{dn=Math.max(1,dn-1);$("dt-n").textContent=dn;};$("dt-p").onclick=()=>{dn=Math.min(30,dn+1);$("dt-n").textContent=dn;};
+ $("dt-save").onclick=()=>{p.n=dn;p.size=+$("dt-size").value;p.sprays=+$("dt-spr").value;p.ml=p.size*(+$("dt-lvl").value)/100;p.prix=$("dt-prix").value.trim();p.achat=$("dt-ach").value;save();colRender();stkRender();toast("Enregistré");openDet(id,"keep");};
  $("dt-wear").onclick=()=>{wear([p.id],{});openDet(id,"keep");};
  $("dt-del").onclick=async()=>{if(!confirm("Supprimer "+p.nom+" de ta collection ?"))return;S.list=S.list.filter(x=>x.id!==id);S.hist=S.hist.map(h=>({...h,ids:h.ids.filter(x=>x!==id)})).filter(h=>h.ids.length);await IDB.del("p-"+id);delete IMGC[id];save();$("sh-det").classList.remove("on");colRender();stkRender();};
  $("dt-ph").onchange=async e=>{const f=e.target.files[0];if(!f)return;const sh=await shrink(f);await IDB.put("p-"+id,sh.url);IMGC[id]=sh.url;p.pic=true;p.show="pic";save();colRender();openDet(id,"keep");};
@@ -478,8 +543,8 @@ function openPreview(i){const p=fromDB(i);const d=$("det");const tags=whenTags(p
  <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><a class="btn sm" href="${esc(infoURL(p))}" target="_blank" rel="noopener">Fiche Parfumo</a><a class="btn sm gold" href="${shopURL(p)}" target="_blank" rel="noopener">Acheter</a><button class="btn sm" id="pv-add">Je l'ai déjà</button></div></div>
  <button class="btn full" data-close style="margin-top:8px;background:none;color:var(--mu)">Fermer</button>`;
  $("sh-det").classList.add("on");d.querySelector("[data-close]").onclick=()=>$("sh-det").classList.remove("on");
- offImg(p).then(u=>{if(u)$("pv-im").innerHTML=`<img src="${esc(u)}" alt="" onerror="this.remove()">`;});
- $("pv-add").onclick=()=>{addPhoto=null;$("sh-det").classList.remove("on");addFromDB(i,"");};}
+ $("pv-im").classList.add("white");pfImg(p.url).then(u=>{if(u)$("pv-im").innerHTML=`<img src="${esc(u)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`;});
+ $("pv-add").onclick=()=>{addPhoto=null;openCand({...p,dbi:i,img:PIMG[p.url]||""});};}
 /* ---------- navigation ---------- */
 const TITLES={col:["Ma collection","CLB Parfums"],stk:["Niveaux et rachats","Mon stock"],now:["Mon parfum du jour","Je me parfume"],ck:["Superpositions","Cocktails"],dec:["Selon ton goût","Découvrir"]};
 function go(t){document.querySelectorAll(".tab").forEach(s=>s.classList.toggle("on",s.id==="t-"+t));document.querySelectorAll("nav.bot button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));$("hsub").textContent=TITLES[t][0];$("htitle").textContent=TITLES[t][1];window.scrollTo({top:0});
@@ -490,7 +555,7 @@ $("now-go").onclick=nowRun;$("wx").onclick=()=>{weather();toast("Météo mise à
 (function(){const m=$("mist");for(let i=0;i<22;i++){const e=document.createElement("i");e.style.left=(Math.random()*100)+"%";e.style.animationDelay=(Math.random()*7)+"s";e.style.width=e.style.height=(4+Math.random()*9)+"px";m.appendChild(e);}
  fetch("photos/accueil.json").then(r=>r.json()).then(c=>{const a=$("cr");a.textContent="Photo : "+c.author+" · "+c.license;a.href=c.page;}).catch(()=>{});
  $("splash").onclick=e=>{if(e.target.id==="cr")return;$("splash").classList.add("out");setTimeout(()=>$("splash").remove(),650);};})();
-colRender();weather();setInterval(()=>{CTX.hr=new Date().getHours();wxRender();},60000);
+S.list.forEach(p=>{if(p.n==null)p.n=1;if(p.show==="pic"&&p.off)delete p.show;});save();colRender();weather();setTimeout(()=>{dbLoad().then(fixImages);},1500);setInterval(()=>{CTX.hr=new Date().getHours();wxRender();},60000);
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script>
 </body></html>
