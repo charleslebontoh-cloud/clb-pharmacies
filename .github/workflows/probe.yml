@@ -1,0 +1,11 @@
+name: probe
+on: workflow_dispatch
+jobs:
+  p:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          for q in "Clinique Farah" "PISAM" "Polyclinique Internationale Sainte Anne" "CHU Cocody" "Clinique Avicennes"; do
+            echo "=== $q"; curl -s -D - -H "Origin: https://charleslebontoh-cloud.github.io" "https://photon.komoot.io/api/?q=$(python3 -c "import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1]))" "$q")&lat=5.35&lon=-4.0&limit=5&lang=fr" -o /tmp/r.json | grep -i "access-control\|HTTP/"; python3 -c "import json;d=json.load(open('/tmp/r.json'));[print(f['properties'].get('name'),'|',f['properties'].get('osm_key'),f['properties'].get('osm_value'),'|',f['properties'].get('city'),f['properties'].get('country'),f['geometry']['coordinates']) for f in d['features']]"
+          done
+          echo "=== nominatim"; curl -s -D - -o /dev/null -H "Origin: https://x.github.io" "https://nominatim.openstreetmap.org/search?q=PISAM&format=json&countrycodes=ci" | grep -i "access-control\|HTTP/"
