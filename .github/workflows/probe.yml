@@ -4,7 +4,9 @@ jobs:
   p:
     runs-on: ubuntu-latest
     steps:
-      - run: |
+      - shell: bash
+        run: |
+          set +e
           AO(){ curl -s -m 25 "https://api.allorigins.win/raw?url=$(python3 -c "import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1],safe=''))" "$1")"; }
           AO "https://www.parfumo.com/Perfumes/Paco_Rabanne/1_Million" > /tmp/b
           echo "== imgs"; grep -o 'https://media.parfumo.com/perfumes/[^" ]*' /tmp/b | sort -u | head -8
