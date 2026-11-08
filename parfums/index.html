@@ -31,7 +31,7 @@ header.top small{display:block;font:500 12px -apple-system,system-ui;color:var(-
 .chip.on{background:var(--plum);color:#F6E7C8;border-color:var(--plum)}
 .tag{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;margin:0 4px 4px 0;background:#F3EDE3;color:#6B5A44}
 .note{font-size:13px;color:var(--mu)}
-input,select,textarea{width:100%;border:1.5px solid var(--line);border-radius:13px;padding:11px 12px;background:#fff;outline:none}
+input,select,textarea{font-size:16px!important;width:100%;border:1.5px solid var(--line);border-radius:13px;padding:11px 12px;background:#fff;outline:none}
 input:focus,select:focus,textarea:focus{border-color:var(--gold1)}
 label.l{display:block;font-size:12.5px;font-weight:700;color:var(--mu);margin:10px 0 4px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -140,7 +140,7 @@ details.more{margin-top:16px}details.more summary{font-size:13px;font-weight:700
   <h1>CLB <em>Parfums</em></h1>
   <p>Ta collection, ton parfum du jour selon la météo, tes cocktails et tes découvertes.</p>
   <div class="go"><svg class="ico" viewBox="0 0 24 24"><path d="M9 8h6v12a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1z"/><path d="M10.5 8V5.5h3V8M12 3v2.5M15.5 4.5 17 3.5M15.5 6.5H18"/></svg>Toucher pour entrer</div>
-  <div class="v">Version 1.1.0</div>
+  <div class="v">Version 1.1.1</div>
  </div>
 </div>
 
@@ -227,7 +227,7 @@ details.more{margin-top:16px}details.more summary{font-size:13px;font-weight:700
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const norm=s=>(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
-const VERSION="1.1.0";
+const VERSION="1.1.1";
 function toast(m){const t=$("toast");t.textContent=m;t.classList.add("on");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("on"),2600);}
 const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){toast("Mémoire du téléphone pleine");}}};
 /* ---------- IndexedDB pour les photos ---------- */
@@ -415,15 +415,24 @@ async function wikiDesc(p){try{const q=`${p.nom} ${p.marque} parfum`;const j=awa
  const h=(j.query.search||[]).find(x=>norm(x.title).includes(norm(p.nom).split(" ")[0])&&/parfum|fragrance/i.test(x.snippet));if(!h)return "";const s=await (await fetch("https://fr.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(h.title))).json();return s.extract||"";}catch(e){return "";}}
 
 /* ---------- recherche en ligne (Parfumo via passerelle) ---------- */
-const AO=u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u);
-async function proxGet(u,tries=3){for(let k=0;k<tries;k++){const ac=new AbortController();const t=setTimeout(()=>ac.abort(),16000);try{const r=await fetch(AO(u)+(k?"&_="+Date.now():""),{signal:ac.signal});clearTimeout(t);if(r.ok){const x=await r.text();if(x.length>3000)return x;}}catch(e){clearTimeout(t);}await new Promise(r=>setTimeout(r,700));}throw new Error("proxy");}
+/* plusieurs relais : le premier qui répond gagne */
+function tmo(ms){const ac=new AbortController();setTimeout(()=>ac.abort(),ms);return ac.signal;}
+async function viaAOget(u){const r=await fetch("https://api.allorigins.win/get?url="+encodeURIComponent(u),{signal:tmo(18000)});if(!r.ok)throw 0;const j=await r.json();if(!j.contents||j.contents.length<3000)throw 0;return{t:"html",x:j.contents};}
+async function viaAOraw(u){const r=await fetch("https://api.allorigins.win/raw?url="+encodeURIComponent(u),{signal:tmo(18000)});if(!r.ok)throw 0;const x=await r.text();if(x.length<3000)throw 0;return{t:"html",x};}
+async function viaJina(u){const r=await fetch("https://r.jina.ai/"+u,{signal:tmo(20000)});if(!r.ok)throw 0;const x=await r.text();if(x.length<1500)throw 0;return{t:"md",x};}
+async function proxGet(u){try{return await Promise.any([viaAOget(u),viaJina(u)]);}catch(e){return await viaAOraw(u);}}
 const BIG=src=>src?src.replace(/\?.*$/,"")+"?width=600&aspect_ratio=1:1":"";
 const CONCM={"Eau de Toilette":"EDT","Eau de Parfum":"EDP","Extrait de Parfum":"Extrait","Eau de Cologne":"EDC","Parfum":"Parfum","Eau de Parfum Intense":"EDP Intense","Elixir":"Elixir","Cologne":"Cologne","Eau Fraîche":"Eau Fraîche","Extrait":"Extrait"};
-async function pfSearch(q){const h=await proxGet("https://www.parfumo.com/s_perfumes_x.php?in=1&filter="+encodeURIComponent(q).replace(/%20/g,"+"));const d=new DOMParser().parseFromString(h,"text/html");
+function splitName(full){const m=full.match(/^(.*?)\s*\(([^)]+)\)\s*$/);return m?{nom:m[1].trim(),conc:CONCM[m[2].trim()]||m[2].trim()}:{nom:full.trim(),conc:""};}
+async function pfSearch(q){const R0=await proxGet("https://www.parfumo.com/s_perfumes_x.php?in=1&filter="+encodeURIComponent(q).replace(/%20/g,"+"));
+ if(R0.t==="md"){const out=[],seen=new Set();const re=/\[!\[Image \d+: ([^\]]+?) by ([^\]]+?)\]\((https:\/\/media\.parfumo\.com\/perfumes\/[^)\s]+)\)\]\((https:\/\/www\.parfumo\.com\/Perfumes\/[^)\s]+)\)/g;let m;while((m=re.exec(R0.x))){if(seen.has(m[4]))continue;seen.add(m[4]);const n=splitName(m[1]);const after=R0.x.slice(m.index,m.index+900);const yr=(after.match(/Release_Years\/(\d{4})/)||[])[1]||"";out.push({nom:n.nom,conc:n.conc,marque:m[2].trim(),annee:yr,url:m[4],img:BIG(m[3]),note:0,votes:0});}return out;}
+ const d=new DOMParser().parseFromString(R0.x,"text/html");
  return [...d.querySelectorAll(".pgrid .col")].map(c=>{const a=c.querySelector(".name > a"),img=c.querySelector(".image img"),br=c.querySelector(".brand a"),yr=c.querySelector(".release_year"),lab=a&&a.querySelector(".label_a"),av=c.querySelector(".av");
   const conc=lab?lab.textContent.trim():"";const nom=a?a.textContent.replace(conc,"").replace(/\s+/g," ").trim():"";const tv=av&&av.querySelector(".tv");
   return{nom,conc:CONCM[conc]||conc,marque:br?br.textContent.trim():"",annee:yr?yr.textContent.replace(/\D/g,""):"",url:a?a.getAttribute("href"):"",img:img?BIG(img.getAttribute("src")):"",note:av?parseFloat(av.firstChild.textContent)||0:0,votes:tv?parseInt(tv.textContent.replace(/\D/g,""))||0:0};}).filter(x=>x.url&&x.nom);}
-async function pfPage(url){const h=await proxGet(url);const d=new DOMParser().parseFromString(h,"text/html");const og=d.querySelector('meta[property="og:image"]');
+async function pfPage(url){const R0=await proxGet(url);
+ if(R0.t==="md"){const im=(R0.x.match(/https:\/\/media\.parfumo\.com\/perfumes\/[^)\s"]+/)||[])[0]||"";const acc=Object.keys(ACC_FR).filter(a=>new RegExp("\\n"+a+"\\s*\\n").test(R0.x)).slice(0,5);return{img:BIG(im),acc,tete:[],coeur:[],fond:[]};}
+ const h=R0.x;const d=new DOMParser().parseFromString(h,"text/html");const og=d.querySelector('meta[property="og:image"]');
  const acc=[...d.querySelectorAll(".s-circle-container .text-xs")].map(x=>x.textContent.trim()).filter(x=>ACC_FR[x]).slice(0,5);
  const P={tete:[],coeur:[],fond:[]};let cur=null,all=[];d.querySelectorAll(".notes_list").forEach(nl=>{nl.querySelectorAll("*").forEach(el=>{const tx=(el.childElementCount===0?el.textContent:"").trim();if(/^(top|head) notes?/i.test(tx))cur="tete";else if(/^(heart|middle) notes?/i.test(tx))cur="coeur";else if(/^base notes?/i.test(tx))cur="fond";if(el.tagName==="IMG"&&el.alt){(cur?P[cur]:all).push(el.alt);}});});
  if(!P.tete.length&&!P.coeur.length&&!P.fond.length&&all.length){P.coeur=all;}
@@ -434,9 +443,12 @@ let qQ=Promise.resolve();const queue=fn=>{const p=qQ.then(fn,fn);qQ=p.catch(()=>
 function dbBySlug(url){if(!DB||!url)return -1;const sl=url.replace(/^https?:\/\/www\.parfumo\.com\/Perfumes\//,"").toLowerCase();if(!DB.slug){DB.slug={};DB.p.forEach((p,i)=>{if(p[10])DB.slug[p[10].toLowerCase()]=i;});}return DB.slug[sl]??-1;}
 function stepOn(n){["s1","s2","s3"].forEach((x,i)=>$(x).classList.toggle("on",i<n));}
 let RES=[];
+const FR2EN={safran:"saffron",fleur:"flower",fleurs:"flowers",bois:"wood",vanille:"vanilla",ambre:"amber",cuir:"leather",tabac:"tobacco",rose:"rose",oranger:"orange",musc:"musk",noir:"black",or:"gold",bleu:"blue",rouge:"red",blanc:"white",nuit:"night",homme:"homme",eau:"eau",cafe:"coffee",miel:"honey",santal:"sandalwood",encens:"incense",figue:"fig",the:"tea",poivre:"pepper"};
+function qVariants(q){const w=norm(q).split(" ").filter(Boolean);const tr=w.filter(x=>!["et","de","du","la","le","des","pour","l","d"].includes(x)).map(x=>FR2EN[x]||x);const v=[q,tr.join(" "),tr.slice(0,2).join(" "),tr[0]+" "+(tr.slice(1).sort((a,b)=>b.length-a.length)[0]||"")];return [...new Set(v.map(x=>x.trim()).filter(x=>x.length>1))];}
+async function pfSearchSmart(q){let last=[];for(const v of qVariants(q)){const r=await pfSearch(v);if(r.length)return r;last=r;}return last;}
 async function onlineSearch(q){q=(q||"").trim();if(norm(q).length<2)return;stepOn(1);$("a-res").innerHTML=[1,2,3].map(()=>`<div class="res skel" style="height:78px;border:0"></div>`).join("");$("a-st").textContent="🔎 Je cherche « "+q+" » sur internet…";prog(30);dbLoad();
- try{RES=await pfSearch(q);prog(100);setTimeout(()=>prog(0),500);
-  if(!RES.length){$("a-st").textContent="Aucun parfum trouvé en ligne. Vérifie l'orthographe ou ajoute la marque.";$("a-res").innerHTML="";return;}
+ try{RES=await pfSearchSmart(q);prog(100);setTimeout(()=>prog(0),500);
+  if(!RES.length){$("a-st").textContent="Aucun parfum trouvé en ligne. Essaie avec moins de mots, par exemple la marque et le mot principal (« Zara saffron »).";$("a-res").innerHTML="";return;}
   stepOn(2);$("a-st").textContent=RES.length+" résultat(s). Touche le bon parfum :";
   $("a-res").innerHTML=RES.slice(0,12).map((c,i)=>`<button class="res" data-c="${i}"><div class="im">${c.img?`<img src="${esc(c.img)}" alt="" referrerpolicy="no-referrer" loading="lazy">`:""}</div><div style="flex:1;min-width:0"><b>${esc(c.nom)}</b><small>${esc(c.marque)}${c.conc?" · "+esc(c.conc):""}${c.annee?" · "+c.annee:""}</small>${c.votes?`<small style="display:block">★ ${String(c.note).replace(".",",")}/10 · ${c.votes.toLocaleString("fr-FR")} avis</small>`:""}</div></button>`).join("");
   $("a-res").querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>openCand(RES[+b.dataset.c]));}
