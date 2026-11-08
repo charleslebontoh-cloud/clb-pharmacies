@@ -1,6 +1,13 @@
 name: Photos d'accueil CLB World
 on:
   workflow_dispatch:
+    inputs:
+      queries:
+        description: "Recherches séparées par |"
+        default: "aerial beach incategory:Quality_images|aerial lagoon island"
+      out:
+        description: "Dossier de sortie"
+        default: "monde/photos/candidats"
 permissions:
   contents: write
 jobs:
@@ -9,6 +16,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: python3 tools/fetch_photos.py
+        env:
+          QUERIES: ${{ inputs.queries }}
+          OUT: ${{ inputs.out }}
       - run: |
           git config user.name "clb-bot" && git config user.email "clb-bot@users.noreply.github.com"
-          git add monde/photos && git commit -qm "Photos candidates pour l'accueil (Wikimedia Commons)" && git pull -q --rebase && git push -q
+          git add -A && git commit -qm "Photos candidates pour l'accueil (Wikimedia Commons)" && git pull -q --rebase && git push -q
