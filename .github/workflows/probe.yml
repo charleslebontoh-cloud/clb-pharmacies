@@ -7,11 +7,16 @@ jobs:
       - shell: bash
         run: |
           set +e
-          AO(){ curl -s -m 25 "https://api.allorigins.win/raw?url=$(python3 -c "import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1],safe=''))" "$1")"; }
-          AO "https://www.parfumo.com/Perfumes/Paco_Rabanne/1_Million" > /tmp/b
-          echo "== imgs"; grep -o 'https://media.parfumo.com/perfumes/[^" ]*' /tmp/b | sort -u | head -8
-          echo "== desc"; grep -io '<meta name="description"[^>]*>' /tmp/b | head -c 400; echo
-          echo "== search"; AO "https://www.parfumo.com/s_perfumes_x.php?in=1&filter=sauvage+dior" > /tmp/s; wc -c /tmp/s; grep -o 'href="https://www.parfumo.com/Perfumes/[^"]*"' /tmp/s | sort -u | head -8; grep -o 'https://media.parfumo.com/perfumes/[^" ]*' /tmp/s | head -4
-          echo "== search2"; AO "https://www.parfumo.com/search?q=sauvage" > /tmp/s2; wc -c /tmp/s2; grep -o 'href="https://www.parfumo.com/Perfumes/[^"]*"' /tmp/s2 | sort -u | head -8
-          echo "== img hotlink"; I=$(grep -o 'https://media.parfumo.com/perfumes/[^" ]*' /tmp/b | head -1); echo $I; curl -s -D - -o /dev/null -H "Referer: https://charleslebontoh-cloud.github.io/" "$I" | head -4
-          echo "== social"; curl -s -D - -o /dev/null -H "Referer: https://charleslebontoh-cloud.github.io/" "https://media.parfumo.com/perfume_social/fc/fc9d08-1-million-eau-de-toilette-rabanne_1200.jpg?format=jpg&quality=90" | head -4
+          AO(){ curl -s -m 30 "https://api.allorigins.win/raw?url=$(python3 -c "import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1],safe=''))" "$1")"; }
+          AO "https://www.parfumo.com/s_perfumes_x.php?in=1&filter=sauvage+dior" > /tmp/s
+          python3 - <<'P'
+          s=open('/tmp/s',encoding='utf-8',errors='ignore').read()
+          i=s.find('a28d94-sauvage-eau-de-toilette-dior');print(s[i-1500:i+1800])
+          P
+          for k in 1 2 3; do AO "https://www.parfumo.com/Perfumes/Dior/Sauvage_Eau_de_Toilette" > /tmp/b; wc -c /tmp/b; grep -c "og:image" /tmp/b && break; sleep 3; done
+          python3 - <<'P'
+          import re
+          s=open('/tmp/b',encoding='utf-8',errors='ignore').read()
+          for p in ['og:image','og:description','name="description"','pyramid','notes_list','Top Notes','Head notes','accord']:
+              i=s.find(p);print('##',p,i, re.sub(r'\s+',' ',s[max(0,i-200):i+500]) if i>=0 else '')
+          P
