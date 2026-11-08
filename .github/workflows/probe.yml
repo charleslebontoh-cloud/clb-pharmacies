@@ -7,7 +7,7 @@ jobs:
       - shell: bash
         run: |
           set +e
-          curl -s -m 25 "https://r.jina.ai/https://www.parfumo.com/s_perfumes_x.php?in=1&filter=zara+saffron" | head -c 3500
-          echo; echo =====PAGE
-          curl -s -m 25 "https://r.jina.ai/https://www.parfumo.com/Perfumes/Paco_Rabanne/1_Million" | grep -iE "Image|notes|Top|Heart|Base|accord|Fresh|Spicy" | head -40 | cut -c1-250
-          echo =====HDR; curl -s -m 25 -H "X-Return-Format: html" "https://r.jina.ai/https://www.parfumo.com/s_perfumes_x.php?in=1&filter=zara+saffron" | grep -c 'class="col"'
+          curl -s -m 25 "https://r.jina.ai/https://www.parfumo.com/s_perfumes_x.php?in=1&filter=zara+saffron" > /tmp/j
+          grep -o '\[!\[Image [0-9]*: [^]]*\](https://media.parfumo.com/perfumes/[^)]*)\](https://www.parfumo.com/Perfumes/[^)]*)' /tmp/j | head -5
+          grep -n "Release_Years" /tmp/j | head -3 | cut -c1-200
+          curl -s -m 25 "https://api.allorigins.win/get?url=https%3A%2F%2Fwww.parfumo.com%2Fs_perfumes_x.php%3Fin%3D1%26filter%3Dsafran" | head -c 200; echo
