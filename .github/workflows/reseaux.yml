@@ -13,7 +13,7 @@ jobs:
       - run: |
           mkdir -p reseaux/raw
           curl -sSL -A "Mozilla/5.0" -o reseaux/raw/vitalis.pdf https://vitalis-ci.com/reseau-de-soins.pdf || true
-          curl -sSL -A "Mozilla/5.0" -o reseaux/raw/vitalis2.pdf https://demo.vitalis-ci.com/reseau-de-soins.pdf || true
+          curl -sSL -A "Mozilla/5.0" -o reseaux/raw/vitalis-full.pdf https://services.vitalis-ci.com/reseaudesoin/PRESENTATION.pdf || true
           for f in reseaux/raw/*.pdf; do file $f; pdftotext -layout $f ${f%.pdf}.txt || true; wc -l ${f%.pdf}.txt; done
           if [ "${{ inputs.step }}" = "build" ]; then python3 tools/reseaux.py; fi
       - run: |
