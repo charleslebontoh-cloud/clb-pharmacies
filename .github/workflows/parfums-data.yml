@@ -1,0 +1,21 @@
+name: parfums-data
+on:
+  workflow_dispatch:
+    inputs:
+      step: {default: "probe"}
+permissions: {contents: write}
+jobs:
+  p:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          curl -sSL -o /tmp/p.csv https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2024/2024-12-10/parfumo_data_clean.csv
+          ls -la /tmp/p.csv; head -c 1500 /tmp/p.csv; echo; python3 -c "import csv;r=list(csv.DictReader(open('/tmp/p.csv')));print(len(r));import collections;c=[x for x in r if x.get('Rating_Count') and float(x['Rating_Count'] or 0)>=100];print('>=100',len(c));c=[x for x in r if x.get('Rating_Count') and float(x['Rating_Count'] or 0)>=40];print('>=40',len(c));print([x for x in r if 'Sauvage' in x['Name']][:3])"
+          echo "== OBF"; curl -s -D - -o /tmp/o.json -H "Origin: https://x.github.io" "https://world.openbeautyfacts.org/cgi/search.pl?search_terms=dior+sauvage&search_simple=1&json=1&page_size=3&fields=product_name,brands,image_front_url,code" | grep -i "access-control\|HTTP/"; head -c 800 /tmp/o.json
+          echo; echo "== wiki"; curl -s "https://en.wikipedia.org/api/rest_v1/page/summary/Sauvage_(fragrance)" | head -c 300
+          if [ "${{ inputs.step }}" = "build" ]; then python3 tools/parfums_db.py /tmp/p.csv; fi
+      - run: |
+          git config user.name clb-bot; git config user.email bot@users.noreply.github.com
+          git add parfums; git commit -m "parfums: base de données" || exit 0
+          for i in 1 2 3; do git pull --rebase -X theirs origin main && git push && break; sleep 5; done
