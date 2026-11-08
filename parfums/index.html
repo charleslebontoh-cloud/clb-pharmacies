@@ -140,11 +140,11 @@ details.more{margin-top:16px}details.more summary{font-size:13px;font-weight:700
   <h1><em>Aurum</em></h1><div style="font-family:var(--serif);font-size:19px;letter-spacing:.06em;margin-top:6px">Private Fragrance Collection</div>
   <p>Ta collection, ton parfum du jour selon la météo, tes cocktails et tes découvertes.</p>
   <div class="go"><svg class="ico" viewBox="0 0 24 24"><path d="M9 8h6v12a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1z"/><path d="M10.5 8V5.5h3V8M12 3v2.5M15.5 4.5 17 3.5M15.5 6.5H18"/></svg>Toucher pour entrer</div>
-  <div class="v">Version 1.2.0</div>
+  <div class="v">Version 1.3.0</div>
  </div>
 </div>
 
-<header class="top"><div class="row"><div style="flex:1"><small id="hsub">Private Fragrance Collection</small><h1 id="htitle">Aurum</h1></div><button class="wx" id="wx" aria-label="Météo"><span id="wxt">…</span></button></div></header>
+<header class="top"><div class="row"><div style="flex:1"><small id="hsub">Private Fragrance Collection</small><h1 id="htitle">Aurum</h1></div><button class="wx" id="wx" aria-label="Météo"><span id="wxt">…</span></button><button class="wx" id="me-b" aria-label="Mon profil" style="width:38px;height:38px;justify-content:center;padding:0;background:var(--gold);color:#fff;font-family:var(--serif);font-size:17px">?</button></div></header>
 
 <main class="wrap">
  <!-- COLLECTION -->
@@ -228,7 +228,7 @@ details.more{margin-top:16px}details.more summary{font-size:13px;font-weight:700
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const norm=s=>(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
-const VERSION="1.2.0";
+const VERSION="1.3.0";
 function toast(m){const t=$("toast");t.textContent=m;t.classList.add("on");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("on"),2600);}
 const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){toast("Mémoire du téléphone pleine");}}};
 /* ---------- IndexedDB pour les photos ---------- */
@@ -257,6 +257,20 @@ function dbMatchText(txt){if(!DB)return[];const T=norm(txt).split(" ").filter(w=
  for(let i=0;i<DB.p.length;i++){const x=DB.idx[i];const nw=x.n.split(" ").filter(w=>w.length>=2&&!STOP.has(w));if(!nw.length)continue;let hit=0;for(const w of nw)if(TS.has(w)||(w.length>=5&&T.some(t=>t.length>=5&&(t.includes(w)||w.includes(t)))))hit++;if(!hit)continue;
   const bw=x.b.split(" ").filter(w=>w.length>=3);const bh=bw.some(w=>TS.has(w))?1:0;const s=hit/nw.length*3+bh*2.5+Math.log10((DB.p[i][5]||0)+3)*.4;if(s>=2.6)out.push([s,i]);}
  return out.sort((a,b)=>b[0]-a[0]).slice(0,8).map(x=>x[1]);}
+/* ---------- profil de l'utilisateur ---------- */
+S.me=S.me||{};
+function gName(n){n=" "+norm(n)+" ";if(/ (pour femme|for her|femme|woman|women|lady|girl|donna|elle|mademoiselle|her|she|pour elle|feminin|feminine) /.test(n))return "f";if(/ (pour homme|for him|homme|man|men|uomo|him|male|masculin|he) /.test(n))return "m";return "";}
+const SEXL={m:"Homme",f:"Femme",u:"Les deux"};
+function gOK(g){const sx=S.me.sexe;if(!sx||sx==="u"||!g||g==="u")return true;return g===sx;}
+function hello(){const h=new Date().getHours();return (h<5||h>=18?"Bonsoir":"Bonjour")+(S.me.nom?" "+S.me.nom:"");}
+function openMe(first){const d=$("det");d.innerHTML=`<div class="grab"></div><h2 style="font-size:26px">${first?"Bienvenue":"Mon profil"}</h2><div class="note">Pour te proposer des parfums qui te correspondent.</div>
+ <label class="l">Ton prénom</label><input id="me-n" value="${esc(S.me.nom||"")}" placeholder="Ex. Charles" autocomplete="given-name">
+ <label class="l">Les parfums que tu portes</label><div class="seg" id="me-s">${["m","f","u"].map(k=>`<button data-s="${k}" class="${(S.me.sexe||"m")===k?"on":""}">${k==="m"?"♂ Homme":k==="f"?"♀ Femme":"⚥ Les deux"}</button>`).join("")}</div>
+ <div class="note">« Homme » : je te propose des parfums masculins et mixtes, jamais de parfums féminins.</div>
+ <button class="btn gold full" id="me-ok" style="margin-top:14px">Enregistrer</button>`;
+ $("sh-det").classList.add("on");let sx=S.me.sexe||"m";$("me-s").querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>{sx=b.dataset.s;$("me-s").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));});
+ $("me-ok").onclick=()=>{S.me={nom:$("me-n").value.trim(),sexe:sx};save();$("sh-det").classList.remove("on");hdr();toast("Profil enregistré"+(S.me.nom?", "+S.me.nom:""));if(document.querySelector("#t-dec.on"))decRender();};}
+function hdr(){const on=document.querySelector(".tab.on");if(on&&on.id==="t-col")$("hsub").textContent=hello();$("now-sub").textContent=(S.me.nom?S.me.nom+", je":"Je")+" choisis selon la météo, l'heure, l'occasion et ce que tu as porté récemment.";$("me-b").textContent=(S.me.nom||"?").slice(0,1).toUpperCase();}
 /* ---------- profil olfactif d'un parfum ---------- */
 const W5=[1,.8,.65,.5,.4];
 function prof(p){const a={};(p.acc||[]).forEach((x,i)=>a[x]=(a[x]||0)+(W5[i]||.3));const g=k=>a[k]||0;
@@ -400,11 +414,13 @@ async function decRender(){const box=$("dec-l");const F=[["gout","❤️ Mon go�
   const q=(r[4]?(r[4]-6.5)/10:0)+Math.min(.25,Math.log10((r[5]||0)+1)/14);s+=q;
   const pp=prof({acc:r[6].map(a=>DB.accords[a]),conc:r[3]});
   if(decF==="chaleur")s+=(pp.fresh-pp.warm)*.25;if(decF==="soir")s+=(pp.warm+pp.inten*.5-pp.fresh)*.2;if(decF==="recent"){if((r[2]||0)<2021)continue;}if(decF==="complement")s=s*.4+(ckGap==="warm"?pp.warm+pp.woody*.5:pp.fresh+pp.floral*.4)*.35+q;
-  if((r[5]||0)<40&&!(r[5]===0&&r[7].length))continue;out.push([s,i]);}
- out.sort((a,b)=>b[0]-a[0]);const R=[];for(const [s,i] of out){const k=norm(DB.p[i][1]+" "+DB.p[i][0].split(" ").slice(0,2).join(" "));if(seen.has(k))continue;seen.add(k);R.push(i);if(R.length>=12)break;}
+  if((r[5]||0)<40&&!(r[5]===0&&r[7].length))continue;const gn=gName(r[0]);if(!gOK(gn))continue;if(S.me.sexe==="m"&&!gn&&["Floral","Fruity","Powdery"].includes(DB.accords[r[6][0]]))s-=.35;if(S.me.sexe==="f"&&!gn&&["Leathery","Smoky","Fougère"].includes(DB.accords[r[6][0]]))s-=.3;if(PG[(r[10]?"https://www.parfumo.com/Perfumes/"+r[10]:"")]&&!gOK(PG["https://www.parfumo.com/Perfumes/"+r[10]]))continue;out.push([s,i]);}
+ out.sort((a,b)=>b[0]-a[0]);const R=[];for(const [s,i] of out){const k=norm(DB.p[i][1]+" "+DB.p[i][0].split(" ").slice(0,2).join(" "));if(seen.has(k))continue;seen.add(k);R.push(i);if(R.length>=24)break;}const POOL=R.splice(12);
  box.innerHTML=R.map((i,n)=>{const p=fromDB(i);return `<div class="srow fadein" style="animation-delay:${n*40}ms"><div class="im" id="di-${i}">${phSVG(p)}</div><div class="bd"><small class="note">${esc(p.marque)}${p.annee?" · "+p.annee:""}</small><b>${esc(p.nom)}</b><div>${p.acc.slice(0,3).map(a=>`<span class="tag">${accFR(a)}</span>`).join("")}</div><div class="note">${p.votes?`★ ${String(p.note).replace(".",",")}/10 · `:""}<a class="lnk" href="${esc(infoURL(p))}" target="_blank" rel="noopener">Fiche</a> · <a class="lnk" href="${shopURL(p)}" target="_blank" rel="noopener">Acheter</a></div></div><button class="btn sm" data-dv="${i}">Voir</button></div>`;}).join("");
  box.querySelectorAll("[data-dv]").forEach(b=>b.onclick=()=>openPreview(+b.dataset.dv));
- R.forEach(i=>{const p=fromDB(i);queue(()=>pfImg(p.url)).then(u=>{const el=$("di-"+i);if(u&&el)el.innerHTML=`<img src="${esc(u)}" class="off" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`;});});}
+ const card=(i,n)=>{const p=fromDB(i);return `<div class="srow fadein" id="dr-${i}" style="animation-delay:${n*40}ms"><div class="im" id="di-${i}">${phSVG(p)}</div><div class="bd"><small class="note">${esc(p.marque)}${p.annee?" · "+p.annee:""}</small><b>${esc(p.nom)}</b><div>${p.acc.slice(0,3).map(a=>`<span class="tag">${accFR(a)}</span>`).join("")}</div><div class="note">${p.votes?`★ ${String(p.note).replace(".",",")}/10 · `:""}<a class="lnk" href="${esc(infoURL(p))}" target="_blank" rel="noopener">Fiche</a> · <a class="lnk" href="${shopURL(p)}" target="_blank" rel="noopener">Acheter</a></div></div><button class="btn sm" data-dv="${i}">Voir</button></div>`;};
+ const load=i=>{const p=fromDB(i);queue(()=>pfImg(p.url)).then(u=>{const el=$("di-"+i);if(u&&el)el.innerHTML=`<img src="${esc(u)}" class="off" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`;const g=PG[p.url];if(g&&!gOK(g)){const row=$("dr-"+i);if(row&&POOL.length){const ni=POOL.shift();row.outerHTML=card(ni,0);$("dr-"+ni).querySelector("[data-dv]").onclick=()=>openPreview(ni);load(ni);}else if(row)row.remove();}});};
+ box.innerHTML=R.map(card).join("");box.querySelectorAll("[data-dv]").forEach(b=>b.onclick=()=>openPreview(+b.dataset.dv));R.forEach(load);}
 /* image officielle via Open Beauty Facts */
 const OFFC=LS.get("offc",{});
 async function offImg(p,code){const k=code||norm(p.marque+" "+p.nom);if(OFFC[k]!==undefined)return OFFC[k];let u="";
@@ -426,20 +442,22 @@ const BIG=src=>src?src.replace(/\?.*$/,"")+"?width=600&aspect_ratio=1:1":"";
 const CONCM={"Eau de Toilette":"EDT","Eau de Parfum":"EDP","Extrait de Parfum":"Extrait","Eau de Cologne":"EDC","Parfum":"Parfum","Eau de Parfum Intense":"EDP Intense","Elixir":"Elixir","Cologne":"Cologne","Eau Fraîche":"Eau Fraîche","Extrait":"Extrait"};
 function splitName(full){const m=full.match(/^(.*?)\s*\(([^)]+)\)\s*$/);return m?{nom:m[1].trim(),conc:CONCM[m[2].trim()]||m[2].trim()}:{nom:full.trim(),conc:""};}
 async function pfSearch(q){const R0=await proxGet("https://www.parfumo.com/s_perfumes_x.php?in=1&filter="+encodeURIComponent(q).replace(/%20/g,"+"));
- if(R0.t==="md"){const out=[],seen=new Set();const re=/\[!\[Image \d+: ([^\]]+?) by ([^\]]+?)\]\((https:\/\/media\.parfumo\.com\/perfumes\/[^)\s]+)\)\]\((https:\/\/www\.parfumo\.com\/Perfumes\/[^)\s]+)\)/g;let m;while((m=re.exec(R0.x))){if(seen.has(m[4]))continue;seen.add(m[4]);const n=splitName(m[1]);const after=R0.x.slice(m.index,m.index+900);const yr=(after.match(/Release_Years\/(\d{4})/)||[])[1]||"";out.push({nom:n.nom,conc:n.conc,marque:m[2].trim(),annee:yr,url:m[4],img:BIG(m[3]),note:0,votes:0});}return out;}
+ if(R0.t==="md"){const out=[],seen=new Set();const re=/\[!\[Image \d+: ([^\]]+?) by ([^\]]+?)\]\((https:\/\/media\.parfumo\.com\/perfumes\/[^)\s]+)\)\]\((https:\/\/www\.parfumo\.com\/Perfumes\/[^)\s]+)\)/g;let m;while((m=re.exec(R0.x))){if(seen.has(m[4]))continue;seen.add(m[4]);const n=splitName(m[1]);const after=R0.x.slice(m.index,m.index+900);const yr=(after.match(/Release_Years\/(\d{4})/)||[])[1]||"";out.push({g:gName(n.nom),nom:n.nom,conc:n.conc,marque:m[2].trim(),annee:yr,url:m[4],img:BIG(m[3]),note:0,votes:0});}return out;}
  const d=new DOMParser().parseFromString(R0.x,"text/html");
  return [...d.querySelectorAll(".pgrid .col")].map(c=>{const a=c.querySelector(".name > a"),img=c.querySelector(".image img"),br=c.querySelector(".brand a"),yr=c.querySelector(".release_year"),lab=a&&a.querySelector(".label_a"),av=c.querySelector(".av");
   const conc=lab?lab.textContent.trim():"";const nom=a?a.textContent.replace(conc,"").replace(/\s+/g," ").trim():"";const tv=av&&av.querySelector(".tv");
-  return{nom,conc:CONCM[conc]||conc,marque:br?br.textContent.trim():"",annee:yr?yr.textContent.replace(/\D/g,""):"",url:a?a.getAttribute("href"):"",img:img?BIG(img.getAttribute("src")):"",note:av?parseFloat(av.firstChild.textContent)||0:0,votes:tv?parseInt(tv.textContent.replace(/\D/g,""))||0:0};}).filter(x=>x.url&&x.nom);}
+  const mi=c.querySelector(".fa-mars"),fi=c.querySelector(".fa-venus");const g=mi&&fi?"u":mi?"m":fi?"f":gName(nom);return{g,nom,conc:CONCM[conc]||conc,marque:br?br.textContent.trim():"",annee:yr?yr.textContent.replace(/\D/g,""):"",url:a?a.getAttribute("href"):"",img:img?BIG(img.getAttribute("src")):"",note:av?parseFloat(av.firstChild.textContent)||0:0,votes:tv?parseInt(tv.textContent.replace(/\D/g,""))||0:0};}).filter(x=>x.url&&x.nom);}
 async function pfPage(url){const R0=await proxGet(url);
- if(R0.t==="md"){const im=(R0.x.match(/https:\/\/media\.parfumo\.com\/perfumes\/[^)\s"]+/)||[])[0]||"";const acc=Object.keys(ACC_FR).filter(a=>new RegExp("\\n"+a+"\\s*\\n").test(R0.x)).slice(0,5);return{img:BIG(im),acc,tete:[],coeur:[],fond:[]};}
+ if(R0.t==="md"){const im=(R0.x.match(/https:\/\/media\.parfumo\.com\/perfumes\/[^)\s"]+/)||[])[0]||"";const acc=Object.keys(ACC_FR).filter(a=>new RegExp("\\n"+a+"\\s*\\n").test(R0.x)).slice(0,5);return{img:BIG(im),acc,tete:[],coeur:[],fond:[],g:gParse(R0.x)};}
  const h=R0.x;const d=new DOMParser().parseFromString(h,"text/html");const og=d.querySelector('meta[property="og:image"]');
  const acc=[...d.querySelectorAll(".s-circle-container .text-xs")].map(x=>x.textContent.trim()).filter(x=>ACC_FR[x]).slice(0,5);
  const P={tete:[],coeur:[],fond:[]};let cur=null,all=[];d.querySelectorAll(".notes_list").forEach(nl=>{nl.querySelectorAll("*").forEach(el=>{const tx=(el.childElementCount===0?el.textContent:"").trim();if(/^(top|head) notes?/i.test(tx))cur="tete";else if(/^(heart|middle) notes?/i.test(tx))cur="coeur";else if(/^base notes?/i.test(tx))cur="fond";if(el.tagName==="IMG"&&el.alt){(cur?P[cur]:all).push(el.alt);}});});
  if(!P.tete.length&&!P.coeur.length&&!P.fond.length&&all.length){P.coeur=all;}
- return{img:og?BIG(og.content.replace("/perfume_social/","/perfumes/")):"",acc,...P};}
-const PIMG=LS.get("pimg",{});
-async function pfImg(url){if(!url)return "";if(PIMG[url])return PIMG[url];try{const r=await pfPage(url);if(r.img){PIMG[url]=r.img;LS.set("pimg",PIMG);}return r.img;}catch(e){return "";}}
+ const ogd=d.querySelector('meta[property="og:description"]');return{img:og?BIG(og.content.replace("/perfume_social/","/perfumes/")):"",acc,...P,g:gParse(ogd?ogd.content:h.slice(0,20000))};}
+function gParse(t){const m=(t||"").match(/\bfor (women and men|men and women|men|women)\b/i);if(!m)return "";const v=m[1].toLowerCase();return v==="men"?"m":v==="women"?"f":"u";}
+const PIMG=LS.get("pimg",{}),PG=LS.get("pg",{});
+async function pfGender(url){if(!url)return "";if(PG[url]!=null)return PG[url];try{const r=await pfPage(url);PG[url]=r.g||"";LS.set("pg",PG);if(r.img&&!PIMG[url]){PIMG[url]=r.img;LS.set("pimg",PIMG);}return PG[url];}catch(e){return "";}}
+async function pfImg(url){if(!url)return "";if(PIMG[url])return PIMG[url];try{const r=await pfPage(url);if(r.g!=null&&PG[url]==null){PG[url]=r.g;LS.set("pg",PG);}if(r.img){PIMG[url]=r.img;LS.set("pimg",PIMG);}return r.img;}catch(e){return "";}}
 let qQ=Promise.resolve();const queue=fn=>{const p=qQ.then(fn,fn);qQ=p.catch(()=>{});return p;};
 function dbBySlug(url){if(!DB||!url)return -1;const sl=url.replace(/^https?:\/\/www\.parfumo\.com\/Perfumes\//,"").toLowerCase();if(!DB.slug){DB.slug={};DB.p.forEach((p,i)=>{if(p[10])DB.slug[p[10].toLowerCase()]=i;});}return DB.slug[sl]??-1;}
 function stepOn(n){["s1","s2","s3"].forEach((x,i)=>$(x).classList.toggle("on",i<n));}
@@ -450,8 +468,8 @@ async function pfSearchSmart(q){let last=[];for(const v of qVariants(q)){const r
 async function onlineSearch(q){q=(q||"").trim();if(norm(q).length<2)return;stepOn(1);$("a-res").innerHTML=[1,2,3].map(()=>`<div class="res skel" style="height:78px;border:0"></div>`).join("");$("a-st").textContent="🔎 Je cherche « "+q+" » sur internet…";prog(30);dbLoad();
  try{RES=await pfSearchSmart(q);prog(100);setTimeout(()=>prog(0),500);
   if(!RES.length){$("a-st").textContent="Aucun parfum trouvé en ligne. Essaie avec moins de mots, par exemple la marque et le mot principal (« Zara saffron »).";$("a-res").innerHTML="";return;}
-  stepOn(2);$("a-st").textContent=RES.length+" résultat(s). Touche le bon parfum :";
-  $("a-res").innerHTML=RES.slice(0,12).map((c,i)=>`<button class="res" data-c="${i}"><div class="im">${c.img?`<img src="${esc(c.img)}" alt="" referrerpolicy="no-referrer" loading="lazy">`:""}</div><div style="flex:1;min-width:0"><b>${esc(c.nom)}</b><small>${esc(c.marque)}${c.conc?" · "+esc(c.conc):""}${c.annee?" · "+c.annee:""}</small>${c.votes?`<small style="display:block">★ ${String(c.note).replace(".",",")}/10 · ${c.votes.toLocaleString("fr-FR")} avis</small>`:""}</div></button>`).join("");
+  RES.sort((a,b)=>(gOK(b.g)?1:0)-(gOK(a.g)?1:0));stepOn(2);$("a-st").textContent=RES.length+" résultat(s). Touche le bon parfum :";
+  $("a-res").innerHTML=RES.slice(0,12).map((c,i)=>`<button class="res" data-c="${i}"><div class="im">${c.img?`<img src="${esc(c.img)}" alt="" referrerpolicy="no-referrer" loading="lazy">`:""}</div><div style="flex:1;min-width:0"><b>${esc(c.nom)}</b><small>${c.g?({m:"♂ ",f:"♀ ",u:"⚥ "}[c.g]):""}${esc(c.marque)}${c.conc?" · "+esc(c.conc):""}${c.annee?" · "+c.annee:""}</small>${c.votes?`<small style="display:block">★ ${String(c.note).replace(".",",")}/10 · ${c.votes.toLocaleString("fr-FR")} avis</small>`:""}</div></button>`).join("");
   $("a-res").querySelectorAll("[data-c]").forEach(b=>b.addEventListener("click",()=>{$("a-res").querySelectorAll(".res").forEach(x=>x.classList.toggle("sel",x===b));openCand(RES[+b.dataset.c]);}));}
  catch(e){prog(0);await dbLoad();const L=dbSearch(q,10);$("a-st").textContent="La recherche en ligne ne répond pas (connexion ou service saturé). Voici ma base locale ; réessaie dans un instant pour la photo officielle.";
   RES=L.map(i=>{const p=fromDB(i);return{...p,img:"",dbi:i};});stepOn(2);
@@ -549,14 +567,14 @@ async function openDet(id,focus){const p=S.list.find(x=>x.id===id);if(!p)return;
  if(focus==="qty")setTimeout(()=>$("dt-q").scrollIntoView({behavior:"smooth",block:"center"}),350);}
 /* aperçu d'un parfum à découvrir */
 function openPreview(i){const p=fromDB(i);const d=$("det");const tags=whenTags(p);
- d.innerHTML=`<div class="grab"></div><div class="big" id="pv-im">${phSVG(p)}</div><div style="margin-top:14px"><small class="note">${esc(p.marque)}${p.annee?" · "+p.annee:""}</small><h2 style="font-size:28px;line-height:1.1">${esc(p.nom)}</h2><div class="note">${esc(p.conc||"")}${p.votes?` · ★ ${String(p.note).replace(".",",")}/10 (${p.votes} avis)`:""}</div><div style="margin-top:6px">${p.acc.map(a=>`<span class="tag">${accFR(a)}</span>`).join("")}</div></div>
+ d.innerHTML=`<div class="grab"></div><div class="big" id="pv-im">${phSVG(p)}</div><div style="margin-top:14px"><small class="note">${esc(p.marque)}${p.annee?" · "+p.annee:""}</small><h2 style="font-size:28px;line-height:1.1">${esc(p.nom)}</h2><div class="note">${esc(p.conc||"")}${p.votes?` · ★ ${String(p.note).replace(".",",")}/10 (${p.votes} avis)`:""} <span id="pv-g"></span></div><div style="margin-top:6px">${p.acc.map(a=>`<span class="tag">${accFR(a)}</span>`).join("")}</div></div>
  <div class="card"><h3 style="font-size:18px">Pourquoi pour toi</h3><div class="when">${tags.map(t=>`<span class="${t[2]?"hi":""}">${t[0]} ${t[1]}</span>`).join("")}</div><div class="note" style="margin-top:8px">${esc(descFR(p))}</div>
  <div class="pyr"><div><span>Tête</span>${esc(p.tete.map(noteFR).join(", ")||"–")}</div><div><span>Cœur</span>${esc(p.coeur.map(noteFR).join(", ")||"–")}</div><div><span>Fond</span>${esc(p.fond.map(noteFR).join(", ")||"–")}</div></div>
  ${S.list.length?`<div class="hl" style="margin-top:10px">🍸 En cocktail, il irait bien avec <b>${esc(S.list.map(x=>({x,s:pairScore(x,{...p,id:"tmp"},CTX).s})).sort((a,b)=>b.s-a.s)[0].x.nom)}</b> de ta collection.</div>`:""}
  <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><a class="btn sm" href="${esc(infoURL(p))}" target="_blank" rel="noopener">Fiche Parfumo</a><a class="btn sm gold" href="${shopURL(p)}" target="_blank" rel="noopener">Acheter</a><button class="btn sm" id="pv-add">Je l'ai déjà</button></div></div>
  <button class="btn full" data-close style="margin-top:8px;background:none;color:var(--mu)">Fermer</button>`;
  $("sh-det").classList.add("on");d.querySelector("[data-close]").onclick=()=>$("sh-det").classList.remove("on");
- $("pv-im").classList.add("white");pfImg(p.url).then(u=>{if(u)$("pv-im").innerHTML=`<img src="${esc(u)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`;});
+ $("pv-im").classList.add("white");pfGender(p.url).then(g=>{if(g&&$("pv-g"))$("pv-g").textContent=" · "+{m:"♂ pour homme",f:"♀ pour femme",u:"⚥ mixte"}[g];});pfImg(p.url).then(u=>{if(u)$("pv-im").innerHTML=`<img src="${esc(u)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`;});
  $("pv-add").onclick=()=>{addPhoto=null;openCand({...p,dbi:i,img:PIMG[p.url]||""});};}
 
 /* ---------- jet de parfum ---------- */
@@ -573,15 +591,16 @@ function spray(from,dirUp=true){const cv=$("mistc"),dpr=Math.min(2,devicePixelRa
   x.shadowBlur=0;if(alive)requestAnimationFrame(tick);else x.clearRect(0,0,innerWidth,innerHeight);})();}
 /* ---------- navigation ---------- */
 const TITLES={col:["Private Fragrance Collection","Aurum"],stk:["Niveaux et rachats","Mon stock"],now:["Mon parfum du jour","Je me parfume"],ck:["Superpositions","Cocktails"],dec:["Selon ton goût","Découvrir"]};
-function go(t){document.querySelectorAll(".tab").forEach(s=>s.classList.toggle("on",s.id==="t-"+t));document.querySelectorAll("nav.bot button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));$("hsub").textContent=TITLES[t][0];$("htitle").textContent=TITLES[t][1];window.scrollTo({top:0});
+function go(t){document.querySelectorAll(".tab").forEach(s=>s.classList.toggle("on",s.id==="t-"+t));document.querySelectorAll("nav.bot button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));$("hsub").textContent=t==="col"?hello():TITLES[t][0];$("htitle").textContent=TITLES[t][1];window.scrollTo({top:0});
  if(t==="col")colRender();if(t==="stk")stkRender();if(t==="now"){nowChips();wxRender();}if(t==="ck")ckRender();if(t==="dec")decRender();}
 document.querySelectorAll("nav.bot button").forEach(b=>b.onclick=()=>{if(b.dataset.t==="now")spray(b.querySelector(".o"));go(b.dataset.t);});
+$("me-b").onclick=()=>openMe(false);
 $("now-go").onclick=()=>{spray($("now-go"),false);setTimeout(nowRun,550);};$("wx").onclick=()=>{weather();toast("Météo mise à jour");};
 /* ---------- accueil ---------- */
 (function(){const m=$("mist");for(let i=0;i<22;i++){const e=document.createElement("i");e.style.left=(Math.random()*100)+"%";e.style.animationDelay=(Math.random()*7)+"s";e.style.width=e.style.height=(4+Math.random()*9)+"px";m.appendChild(e);}
  fetch("photos/accueil.json").then(r=>r.json()).then(c=>{const a=$("cr");a.textContent="Photo : "+c.author+" · "+c.license;a.href=c.page;}).catch(()=>{});
- $("splash").onclick=e=>{if(e.target.id==="cr")return;$("splash").classList.add("out");setTimeout(()=>$("splash").remove(),650);};})();
-S.list.forEach(p=>{if(p.n==null)p.n=1;if(p.show==="pic"&&p.off)delete p.show;});save();colRender();weather();setTimeout(()=>{dbLoad().then(fixImages);},1500);setInterval(()=>{CTX.hr=new Date().getHours();wxRender();},60000);
+ $("splash").onclick=e=>{if(e.target.id==="cr")return;$("splash").classList.add("out");setTimeout(()=>{$("splash").remove();if(!S.me.sexe)openMe(true);},650);};})();
+S.list.forEach(p=>{if(p.n==null)p.n=1;if(p.show==="pic"&&p.off)delete p.show;});save();colRender();hdr();weather();setTimeout(()=>{dbLoad().then(fixImages);},1500);setInterval(()=>{CTX.hr=new Date().getHours();wxRender();},60000);
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script>
 </body></html>
