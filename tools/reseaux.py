@@ -70,8 +70,12 @@ def geocode(items, cache):
         f=photon(place+" Côte d'Ivoire"); time.sleep(.4)
         cache[k]=[f[0]["geometry"]["coordinates"][1],f[0]["geometry"]["coordinates"][0]] if f else None; return cache[k]
     for i,e in enumerate(items):
-        key=e["cat"]+"|"+e["nom"]+"|"+e["lieu"]
-        if key in cache and (cache[key].get("prec")!="ville" or time.time()>DEADLINE): e.update(cache[key]); continue
+        key=e["cat"]+"|"+e["nom"]+"|"+e["lieu"];nk="N|"+norm(e["nom"])+"|"+norm(e["commune"] or e["ville"])
+        if key in cache and (cache[key].get("prec")!="ville" or time.time()>DEADLINE):
+            e.update(cache[key])
+            if cache[key].get("prec")=="exacte": cache[nk]=cache[key]
+            continue
+        if nk in cache: e.update(cache[nk]); cache[key]=cache[nk]; continue
         ref = (center(e["zone"]+" "+(e["commune"] or "")+" Abidjan") if e["ville"].upper()=="ABIDJAN" and e["zone"] else None) or (center(e["commune"]+" Abidjan") if e["commune"] else None) or center(e["ville"] or "Abidjan")
         res=None; T=toks(e["nom"])
         tags="&osm_tag=amenity&osm_tag=healthcare&osm_tag=shop"
@@ -90,21 +94,53 @@ def geocode(items, cache):
             if f: res={"lat":round(f[0]["geometry"]["coordinates"][1],6),"lon":round(f[0]["geometry"]["coordinates"][0],6),"prec":"quartier"}
         if not res and ref: res={"lat":ref[0],"lon":ref[1],"prec":"ville"}
         res=res or {}; cache[key]=res; e.update(res)
+        if res.get("prec")=="exacte": cache[nk]=res
         if i%25==0: print(i,len(items),e["nom"],res.get("prec"),flush=True)
     return items
-if __name__=="__main__":
-    src=sys.argv[1] if len(sys.argv)>1 else "reseaux/raw/vitalis-full.txt"
-    items=[tidy(e) for e in parse(open(src,encoding="utf-8").read())]
-    # dédoublonne
-    seen=set(); U=[]
+AACI_COMMUNES={"ABOBO":"Abobo","ADJAME":"Adjame","ANYAMA":"Anyama","BINGERVILE":"Bingerville","BINGERVILLE":"Bingerville","COCODY":"Cocody","GRAND BASSAM":"Grand-Bassam","KOUMASSI":"Koumassi","MARCORY":"Marcory","PLATEAU":"Plateau","PORT BOUET":"Port-Bouet","SONGON":"Songon","TREICHVILLE":"Treichville","YOPOUGON":"Yopougon"}
+PH=r"((?:\d{2}\s?){4}\d{2})"
+def parse_aaci(txt):
+    out=[];commune=None;cat=None
+    for raw in txt.splitlines():
+        s=raw.strip();n=norm(s)
+        if not s or n.startswith("RESEAU DE SOINS") or n.startswith("PAGE "): continue
+        if n in AACI_COMMUNES: commune=AACI_COMMUNES[n]; cat=None; continue
+        if not raw.startswith(" ") and not re.match(r"\d",s):
+            c=cat_of(n) or ("laboratoire" if "LABORATION" in n else "clinique" if "CENTRE DE SOINS" in n else None)
+            if c: cat=c; continue
+        m=re.match(r"^\s*(\d{1,3})\s+(.+?)\s{2,}(.*)$",raw)
+        if not m or not commune: continue
+        nom=re.sub(r"\s+"," ",m.group(2)).strip();rest=m.group(3).strip();tel="";adr=rest
+        mt=re.match(PH+r"(?:\s*/\s*"+PH+r")?\s*(.*)$",rest)
+        if mt: tel=mt.group(1);adr=mt.group(3).strip()
+        c=cat or cat_of(nom) or "clinique"
+        if c!="pharmacie" and cat_of(nom)=="hopital": c="hopital"
+        out.append({"nom":nom.title().replace(" De "," de ").replace(" Du "," du ").replace(" La "," la ").replace(" Des "," des "),"cat":c,"adr":adr.strip(" ,;").capitalize(),"tel":re.sub(r"\D","",tel),"ville":"Grand-Bassam" if commune=="Grand-Bassam" else "Abidjan","commune":"" if commune=="Grand-Bassam" else commune,"zone":""})
+    return out
+NETS={"vitalis":{"nom":"Vitalis Santé","src":"reseaux/raw/vitalis-full.txt","url":"https://services.vitalis-ci.com/reseaudesoin/PRESENTATION.pdf","parse":parse,"maj":"2026"},
+      "atlantique":{"nom":"Atlantique Assurances","src":"reseaux/raw/atlantique.txt","url":"https://www.atlantique-assurances.net/wp-content/uploads/2024/07/RESEAU-DE-SOINS-AACI-ABIDJAN.pdf","parse":parse_aaci,"maj":"janvier 2024"}}
+def build(k,geo=True,cache=None):
+    N=NETS[k];items=[tidy(e) for e in N["parse"](open(N["src"],encoding="utf-8").read())]
+    seen=set();U=[]
     for e in items:
-        k=(e["cat"],norm(e["nom"]),norm(e["lieu"]))
-        if k in seen: continue
-        seen.add(k); U.append(e)
+        kk=(e["cat"],norm(e["nom"]),norm(e["lieu"]))
+        if kk in seen: continue
+        seen.add(kk);U.append(e)
+    if geo: geocode(U,cache)
+    return U
+if __name__=="__main__":
+    from collections import Counter
+    keys=list(NETS) if (len(sys.argv)<2 or sys.argv[1]=="all") else [sys.argv[1]]
     if "--nogeo" in sys.argv:
-        from collections import Counter; print(len(U), Counter(e["cat"] for e in U)); [print(e) for e in U[:5]+U[600:605]+U[-5:]]; sys.exit()
-    cp="reseaux/geocache.json"; cache=json.load(open(cp)) if os.path.exists(cp) else {}
-    try: geocode(U, cache)
-    finally: json.dump(cache, open(cp,"w"), ensure_ascii=False)
-    from collections import Counter; print(Counter(e.get("prec") for e in U))
-    json.dump({"nom":"Vitalis Santé","source":"https://services.vitalis-ci.com/reseaudesoin/PRESENTATION.pdf","maj":time.strftime("%Y-%m-%d"),"lieux":[{k:v for k,v in e.items() if k!="lieu"} for e in U]}, open("reseaux/vitalis.json","w"), ensure_ascii=False, separators=(",",":"))
+        for k in keys:
+            U=build(k,False);print(k,len(U),Counter(e["cat"] for e in U));[print(e) for e in U[:3]+U[-3:]]
+        sys.exit()
+    cp="reseaux/geocache.json";cache=json.load(open(cp)) if os.path.exists(cp) else {}
+    idx=[]
+    try:
+        for k in keys:
+            U=build(k,True,cache);print(k,Counter(e.get("prec") for e in U),flush=True)
+            json.dump({"nom":NETS[k]["nom"],"source":NETS[k]["url"],"maj":NETS[k]["maj"],"lieux":[{kk:v for kk,v in e.items() if kk!="lieu"} for e in U]},open("reseaux/"+k+".json","w"),ensure_ascii=False,separators=(",",":"))
+            idx.append({"id":k,"nom":NETS[k]["nom"],"n":len(U),"maj":NETS[k]["maj"]})
+    finally: json.dump(cache,open(cp,"w"),ensure_ascii=False)
+    json.dump(idx,open("reseaux/index.json","w"),ensure_ascii=False)
