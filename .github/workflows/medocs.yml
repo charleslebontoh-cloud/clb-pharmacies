@@ -1,0 +1,20 @@
+name: medocs
+on:
+  workflow_dispatch:
+  schedule: [{cron: "41 2 2 * *"}]
+permissions: {contents: write}
+jobs:
+  b:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 tools/medocs_db.py
+      - shell: bash
+        run: |
+          set +e
+          for u in "https://base-donnees-publique.medicaments.gouv.fr/medicament/60234100/extrait" "https://base-donnees-publique.medicaments.gouv.fr/extrait.php?specid=60234100" "https://base-donnees-publique.medicaments.gouv.fr/affichageDoc.php?specid=60234100&typedoc=N"; do echo "$u $(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' -L -A Mozilla/5.0 "$u")"; done
+          curl -s "https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=filetype:bitmap%20doliprane&gsrnamespace=6&gsrlimit=5&prop=imageinfo&iiprop=url&iiurlwidth=300&format=json&origin=*" | head -c 600; echo
+      - run: |
+          git config user.name clb-bot; git config user.email bot@users.noreply.github.com
+          git add sante/medocs.json; git commit -m "médicaments : base ANSM" || exit 0
+          for i in 1 2 3; do git pull --rebase -X theirs origin main && git push && break; sleep 5; done
