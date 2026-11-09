@@ -1,0 +1,10 @@
+name: probe
+on: workflow_dispatch
+jobs:
+  p:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          curl -sL -A "Mozilla/5.0 Chrome/126" -m 40 https://www.sikafinance.com/marches/actualites_bourse_brvm -o a.html
+          python3 -c "
+          s=open('a.html',encoding='utf-8').read();i=s.find('champions-nationaux');print(s[i-1500:i+1500])"
