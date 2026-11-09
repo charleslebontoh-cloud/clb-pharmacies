@@ -69,7 +69,7 @@ h2 .more{margin-left:auto;letter-spacing:0;text-transform:none;font-weight:600;c
 .search input{flex:1;background:none;border:0;color:var(--tx);font:16px -apple-system,system-ui;padding:12px 0;outline:none}
 select{background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:9px 10px;font:600 13px -apple-system,system-ui}
 nav{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));display:flex;background:rgba(14,20,34,.86);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:24px;padding:7px;z-index:20;box-shadow:0 10px 40px rgba(0,0,0,.45)}
-nav button{flex:1;background:none;border:0;color:var(--mu);font:600 10.5px -apple-system,system-ui;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;border-radius:17px;position:relative}
+nav button{flex:1;min-width:0;background:none;border:0;color:var(--mu);font:600 10px -apple-system,system-ui;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;border-radius:17px;position:relative}
 nav button svg{width:22px;height:22px}
 nav button.on{color:var(--gold2);background:rgba(233,196,106,.10)}
 nav .pin{position:absolute;top:3px;right:calc(50% - 18px);background:var(--dn);color:#fff;border-radius:9px;font-size:9.5px;padding:1px 5px;display:none}
@@ -192,11 +192,7 @@ table{width:100%;border-collapse:collapse;font-size:12.5px}th,td{white-space:now
  <div id="sg-buy"></div>
  <div id="sg-sell" style="display:none"></div>
  <div id="sg-al" style="display:none">
-  <div class="card" style="margin-top:10px"><b>🔔 Alertes en temps réel sur ton iPhone</b><p class="note" style="margin:6px 0 0">Sentinel surveille le marché toutes les 30 minutes pendant la séance (9 h – 15 h). Pour recevoir les alertes même appli fermée : installe l'appli gratuite <b>ntfy</b>, puis abonne-toi au canal Sentinel.</p>
-   <a class="btn" href="https://apps.apple.com/app/id1625396347" target="_blank">1 · Installer ntfy</a>
-   <button class="btn g" id="ntfy-copy">2 · Copier le canal Sentinel</button>
-   <p class="note" style="margin:8px 0 0">Dans ntfy : touche « + », colle le canal <b class="gold" id="ntfy-t"></b>, puis « Subscribe ».</p></div>
-  <button class="btn g" onclick="openSet()" style="margin-top:10px">⚙️ Choisir mes alertes (achat, vente…)</button>
+  <button class="btn g" onclick="openSet()" style="margin-top:10px">⚙️ Régler mes alertes et les notifications iPhone</button>
   <div class="card" id="alall" style="margin-top:10px"></div>
  </div>
  <div id="sg-md" style="display:none"></div>
@@ -215,32 +211,9 @@ table{width:100%;border-collapse:collapse;font-size:12.5px}th,td{white-space:now
  <a class="btn g" href="https://www.africabourse.com" target="_blank" style="margin-top:16px">Ouvrir AfricaBourse (ma SGI)</a>
  <div class="priv"><span>🔒</span><span>Ton portefeuille, tes alertes de prix et tes valeurs suivies sont <b>confidentiels</b> : ils restent stockés uniquement sur ce téléphone. Personne d'autre n'y a accès.</span></div>
 </section>
-</main>
-
-<nav id="nav">
- <button data-s="mk" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 6-7"/></svg>Marché</button>
- <button data-s="ac"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Actions</button>
- <button data-s="sg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 20 7v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="m9 12 2 2 4-4"/></svg>Signaux<span class="pin" id="pin"></span></button>
- <button data-s="pf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Portefeuille</button>
-</nav>
-
-<!-- ======================= FICHE VALEUR -->
-<div class="sheet" id="sheet">
- <div class="sh-h"><button class="ib" onclick="closeSheet()">‹</button><div style="flex:1;min-width:0"><b id="f-t" style="display:block;font-size:16px"></b><span class="note" id="f-n"></span></div><button class="ib star" id="f-star">☆</button></div>
- <div style="padding:12px 14px">
-  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:10px"><div><div class="big num" id="f-px"></div><div class="num" id="f-var" style="font-weight:700"></div></div><span id="f-reco"></span></div>
-  <div class="rng" id="rng"><button data-r="21">1M</button><button data-r="63">3M</button><button data-r="126" class="on">6M</button><button data-r="252">1A</button><button data-r="756">3A</button><button data-r="1260">5A</button><button data-r="0">Max</button></div>
-  <canvas id="chart"></canvas>
-  <div class="note" id="f-leg" style="display:flex;gap:12px;margin-top:6px"><span><b style="color:var(--gold)">—</b> MM50</span><span><b style="color:var(--blue)">—</b> MM200</span><span><b class="up">┅</b> Prévision 3 mois</span></div>
-  <div class="tabs" id="ftabs"><button data-k="an" class="on">Analyse</button><button data-k="fc">Prévisions</button><button data-k="fu">Fondamentaux</button><button data-k="nw">Actualités</button></div>
-  <div id="f-body"></div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px"><button class="btn" id="f-buy">＋ Portefeuille</button><button class="btn g" id="f-alert">🔔 Alerte de prix</button></div>
- </div>
-</div>
-<div class="sheet" id="set">
- <div class="sh-h"><button class="ib" onclick="$('set').classList.remove('on')">‹</button><b style="flex:1;font-size:16px">Mon profil et mes alertes</b></div>
- <div style="padding:14px">
-  <h2 style="margin-top:6px">Identité</h2>
+<!-- ======================= PARAMÈTRES -->
+<section class="sec" id="s-st">
+ <h2 style="margin-top:10px">Mon identité</h2>
   <div class="card f"><label class="note">Prénom</label><input id="u-pre" autocomplete="given-name"><label class="note">Nom</label><input id="u-nom" autocomplete="family-name"><button class="btn" id="u-save">Enregistrer</button></div>
   <h2>Alertes d'achat et de vente</h2>
   <div class="card">
@@ -257,14 +230,51 @@ table{width:100%;border-collapse:collapse;font-size:12.5px}th,td{white-space:now
    <button class="btn g" onclick="copyTopic()">2 · Copier le canal Sentinel</button>
    <p class="note" style="margin:8px 0 0">3 · Dans ntfy : touche « + », colle le canal <b class="gold">sentinel-brvm-dbde7f93c237</b> puis « Subscribe ». Autorise les notifications quand iPhone le demande.</p></div>
   <div class="priv"><span>🔒</span><span>Ton nom, ton portefeuille et tes réglages sont <b>confidentiels</b> : ils restent stockés uniquement sur ce téléphone.</span></div>
-  <p class="note" style="text-align:center;margin-top:16px">Sentinel version 1.1.0</p>
+  <h2>Partager Sentinel</h2>
+  <div class="card" style="text-align:center"><p class="note" style="margin:0 0 10px">Fais découvrir Sentinel à un proche. Ses données à lui resteront sur son propre téléphone : il ne verra ni ton nom ni ton portefeuille.</p>
+   <img id="qr" alt="QR code Sentinel" width="170" height="170" style="border-radius:14px;background:#fff;padding:8px">
+   <div class="note" style="margin-top:6px">À scanner avec l'appareil photo de l'iPhone</div>
+   <button class="btn" id="share">📤 Partager l'appli</button>
+   <button class="btn g" id="copylink">🔗 Copier le lien</button></div>
+  <h2>Installer sur l'écran d'accueil</h2>
+  <div class="card"><p class="note" style="margin:0">Dans Safari : touche <b>Partager</b> (carré avec flèche) puis <b>« Sur l'écran d'accueil »</b>. Sentinel s'ouvre alors en plein écran, comme une vraie appli.</p></div>
+  <h2>Application</h2>
+  <div class="card">
+   <div class="tg" onclick="forceUpdate()"><span>🔄 Vérifier les mises à jour<small>Recharge la dernière version de Sentinel</small></span><span class="gold">›</span></div>
+   <div class="tg" onclick="go('sg');sgTab('md')"><span>🧠 Comment Sentinel décide<small>Méthode du score et fiabilité mesurée</small></span><span class="gold">›</span></div>
+   <div class="tg" onclick="resetData()"><span class="dn">🗑️ Effacer mes données<small>Nom, portefeuille, alertes de prix et réglages de ce téléphone</small></span><span class="gold">›</span></div>
+  </div>
+  <p class="note" style="margin:14px 4px 0">Données de marché : BRVM (cours différés de 15 min) et Sika Finance. Les signaux de Sentinel sont des aides à la décision produites par des algorithmes, pas des conseils en investissement : valide toujours tes ordres avec ta SGI.</p>
+  <p class="note" style="text-align:center;margin-top:16px">Sentinel · BRVM Intelligence · version 1.2.0</p>
+</section>
+</main>
+
+<nav id="nav">
+ <button data-s="mk" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 6-7"/></svg>Marché</button>
+ <button data-s="ac"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Actions</button>
+ <button data-s="sg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 20 7v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="m9 12 2 2 4-4"/></svg>Signaux<span class="pin" id="pin"></span></button>
+ <button data-s="pf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Portefeuille</button>
+ <button data-s="st"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Paramètres</button>
+</nav>
+
+<!-- ======================= FICHE VALEUR -->
+<div class="sheet" id="sheet">
+ <div class="sh-h"><button class="ib" onclick="closeSheet()">‹</button><div style="flex:1;min-width:0"><b id="f-t" style="display:block;font-size:16px"></b><span class="note" id="f-n"></span></div><button class="ib star" id="f-star">☆</button></div>
+ <div style="padding:12px 14px">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:10px"><div><div class="big num" id="f-px"></div><div class="num" id="f-var" style="font-weight:700"></div></div><span id="f-reco"></span></div>
+  <div class="rng" id="rng"><button data-r="21">1M</button><button data-r="63">3M</button><button data-r="126" class="on">6M</button><button data-r="252">1A</button><button data-r="756">3A</button><button data-r="1260">5A</button><button data-r="0">Max</button></div>
+  <canvas id="chart"></canvas>
+  <div class="note" id="f-leg" style="display:flex;gap:12px;margin-top:6px"><span><b style="color:var(--gold)">—</b> MM50</span><span><b style="color:var(--blue)">—</b> MM200</span><span><b class="up">┅</b> Prévision 3 mois</span></div>
+  <div class="tabs" id="ftabs"><button data-k="an" class="on">Analyse</button><button data-k="fc">Prévisions</button><button data-k="fu">Fondamentaux</button><button data-k="nw">Actualités</button></div>
+  <div id="f-body"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px"><button class="btn" id="f-buy">＋ Portefeuille</button><button class="btn g" id="f-alert">🔔 Alerte de prix</button></div>
  </div>
 </div>
 <div class="modal" id="modal" onclick="if(event.target===this)closeModal()"><div class="card" id="mod-c"></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
-const V="1.1.0",TOPIC="sentinel-brvm-dbde7f93c237";
+const V="1.2.0",TOPIC="sentinel-brvm-dbde7f93c237";
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const fmt=(x,d=0)=>x==null||isNaN(x)?"—":Number(x).toLocaleString("fr-FR",{minimumFractionDigits:d,maximumFractionDigits:d}).replace(/ /g," ");
@@ -467,7 +477,7 @@ function delTg(i){const T=LS.get("tg",[]);T.splice(i,1);LS.set("tg",T);renderPf(
 function checkTargets(){const T=LS.get("tg",[]);if(!T.length||!SIG)return;let ch=false;const mine=LS.get("myal",[]);T.forEach(x=>{const p=Q(x.t).px;if(!p||x.done)return;if((x.dir==="up"&&p>=x.p)||(x.dir==="down"&&p<=x.p)){x.done=1;ch=true;const a={ts:new Date().toISOString(),t:x.t,lv:"me",ti:`${x.t} a atteint ton seuil de ${fmt(x.p)} FCFA`,m:`Cours actuel : ${fmt(p)} FCFA. Recommandation Sentinel : ${SIG.s[x.t]?SIG.s[x.t].reco.toLowerCase():"—"}.`};mine.unshift(a);toast("🎯 "+a.ti,6000);if(navigator.vibrate)navigator.vibrate([80,60,80])}});if(ch){LS.set("myal",mine.slice(0,100));LS.set("tg",T.filter(x=>!x.done));render(true)}}
 
 /* ---------- navigation & événements */
-function go(k){document.querySelectorAll(".sec").forEach(s=>s.classList.toggle("on",s.id==="s-"+k));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.s===k));scrollTo(0,0);if(k==="sg"){renderSig()}if(k==="ac")renderList()}
+function go(k){document.querySelectorAll(".sec").forEach(s=>s.classList.toggle("on",s.id==="s-"+k));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.s===k));scrollTo(0,0);if(k==="sg"){renderSig()}if(k==="ac")renderList();if(k==="st")fillSet()}
 function sgTab(k){document.querySelectorAll("#sgseg button").forEach(b=>b.classList.toggle("on",b.dataset.k===k));["buy","sell","al","md"].forEach(x=>$("sg-"+x).style.display=x===k?"block":"none");if(k==="al"){LS.set("seenAl",new Date().toISOString());$("pin").style.display="none"}}
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.s));
 document.querySelectorAll("#sgseg button").forEach(b=>b.onclick=()=>sgTab(b.dataset.k));
@@ -478,8 +488,6 @@ const cv=$("chart");cv.addEventListener("touchstart",chartTouch,{passive:true});
 $("f-star").onclick=()=>{const W=LS.get("watch",[]),t=CUR;const i=W.indexOf(t);if(i>=0)W.splice(i,1);else W.push(t);LS.set("watch",W);$("f-star").classList.toggle("on",i<0);$("f-star").textContent=i<0?"★":"☆";renderPf()};
 $("f-buy").onclick=()=>posForm(null,CUR);
 $("f-alert").onclick=()=>{const t=CUR,p=Q(t).px;const v=prompt(`Alerte de prix pour ${t} (cours actuel ${fmt(p)} FCFA).\nSaisis le seuil en FCFA :`,Math.round(p*1.05));if(!v)return;const x=+String(v).replace(/\s/g,"").replace(",",".");if(!x)return;const T=LS.get("tg",[]);T.push({t,p:x,dir:x>=p?"up":"down"});LS.set("tg",T);renderPf();toast(`🔔 Alerte créée : ${t} ${x>=p?"≥":"≤"} ${fmt(x)} FCFA. Vérifiée à chaque ouverture et toutes les 90 s pendant la séance.`,5000)};
-$("ntfy-t").textContent=TOPIC;
-$("ntfy-copy").onclick=copyTopic;
 addEventListener("resize",()=>{if(CUR)drawChart()});
 document.addEventListener("visibilitychange",()=>{if(!document.hidden){load();live()}});
 
@@ -504,10 +512,16 @@ function newSignals(){if(!SIG)return;const last=LS.get("lastOpen","");const fres
  ${risk.length?`<div class="card" style="margin-top:12px;background:rgba(255,92,122,.08);border-color:rgba(255,92,122,.35)"><b class="dn">⚠️ Dans ton portefeuille</b>${risk.map(p=>`<div style="font-size:13.5px;margin-top:6px" onclick="closeModal();openT('${p.t}')"><b>${p.t}</b> ${esc(nameOf(p.t))} : signal <b>${SIG.s[p.t].reco.toLowerCase()}</b> (score ${fmt(SIG.s[p.t].score)})</div>`).join("")}</div>`:""}
  <div style="margin-top:6px">${fresh.slice(0,12).map(alHTML).join("")}</div><button class="btn" onclick="closeModal();go('sg')">Voir tous les signaux</button><button class="btn g" onclick="closeModal()">Fermer</button>`;
  $("modal").classList.add("on");if(navigator.vibrate)navigator.vibrate(60)}
-function openSet(){const u=user();$("u-pre").value=u.pre||"";$("u-nom").value=u.nom||"";const p=prefs();document.querySelectorAll("#set [data-p]").forEach(c=>c.checked=!!p[c.dataset.p]);$("set").classList.add("on");$("set").scrollTop=0}
+function fillSet(){const u=user();$("u-pre").value=u.pre||"";$("u-nom").value=u.nom||"";const p=prefs();document.querySelectorAll("#s-st [data-p]").forEach(c=>c.checked=!!p[c.dataset.p]);if(!$("qr").getAttribute("src"))$("qr").src="qr.png"}
+function openSet(){go("st")}
+const APPURL="https://charleslebontoh-cloud.github.io/clb-pharmacies/bourse/";
+$("share").onclick=async()=>{const d={title:"Sentinel · BRVM Intelligence",text:"Sentinel : l'appli qui surveille la BRVM, analyse chaque action et envoie des signaux d'achat et de vente.",url:APPURL};try{if(navigator.share)await navigator.share(d);else{await navigator.clipboard.writeText(APPURL);toast("Lien copié ✓")}}catch(e){}};
+$("copylink").onclick=async()=>{try{await navigator.clipboard.writeText(APPURL);toast("Lien copié ✓")}catch(e){toast(APPURL,8000)}};
+async function forceUpdate(){toast("Mise à jour en cours…");try{const r=await navigator.serviceWorker.getRegistrations();await Promise.all(r.map(x=>x.unregister()));const k=await caches.keys();await Promise.all(k.map(x=>caches.delete(x)))}catch(e){}location.replace(location.pathname+"?v="+Date.now())}
+function resetData(){if(!confirm("Effacer ton nom, ton portefeuille, tes alertes de prix et tes réglages de ce téléphone ?"))return;Object.keys(localStorage).filter(k=>k.startsWith("snt-")).forEach(k=>localStorage.removeItem(k));location.reload()}
 $("gear").onclick=openSet;
 $("u-save").onclick=()=>{const pre=$("u-pre").value.trim();if(!pre){toast("Indique au moins ton prénom");return}LS.set("user",{pre,nom:$("u-nom").value.trim()});hello();toast("Profil enregistré ✓")};
-document.querySelectorAll("#set [data-p]").forEach(c=>c.onchange=()=>{const p=prefs();p[c.dataset.p]=c.checked;LS.set("prefs",p);render(true)});
+document.querySelectorAll("#s-st [data-p]").forEach(c=>c.onchange=()=>{const p=prefs();p[c.dataset.p]=c.checked;LS.set("prefs",p);render(true)});
 async function copyTopic(){try{await navigator.clipboard.writeText(TOPIC);toast("Canal copié ✓ Colle-le dans ntfy")}catch(e){toast("Canal : "+TOPIC,8000)}}
 hello();splashDyn();setInterval(hello,60000);
 load().then(()=>{live()});

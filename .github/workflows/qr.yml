@@ -1,0 +1,15 @@
+name: qr
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  q:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          pip install -q segno
+          python -c "import segno;segno.make('https://charleslebontoh-cloud.github.io/clb-pharmacies/bourse/',error='m').save('bourse/qr.png',scale=10,border=1,dark='#060A13')"
+          git config user.name sentinel-bot; git config user.email actions@users.noreply.github.com
+          git rm -q .github/workflows/qr.yml
+          git add bourse/qr.png; git commit -qm "Sentinel : QR code de partage"; git pull -q --rebase origin main; git push -q
