@@ -272,8 +272,12 @@ nav button[data-t="med"].on{background:var(--g-amber)}
 .psum{display:flex;align-items:center;gap:12px}.psum .av{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:22px;background:linear-gradient(135deg,#CCFBF1,#E0F2FE);flex:none}
 .psum div{flex:1;min-width:0}.psum b{display:block;font-size:16px}.psum small{display:block;color:#64748B;font-size:12.5px;margin-top:2px}
 .psum .ed{width:44px;height:44px;border-radius:50%;border:1.5px solid rgba(15,42,58,.1);background:#fff;font-size:19px;flex:none;box-shadow:0 8px 18px -12px rgba(14,60,80,.6)}
+.sw{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid rgba(15,42,58,.07);font-weight:700;font-size:14.5px}.sw small{display:block;font-weight:500;font-size:12px;color:#64748B}
+.sw input{display:none}.sw i{flex:none;width:50px;height:30px;border-radius:999px;background:#CBD5E1;position:relative;transition:.25s}.sw i::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25);transition:.25s cubic-bezier(.34,1.56,.64,1)}
+.sw input:checked+i{background:#0E9F8E}.sw input:checked+i::after{left:23px}
 </style></head><body>
-<div id="wn" role="dialog" aria-modal="true" aria-labelledby="wn-h"><div class="sh"><span class="vt">VERSION 13.16.0</span><h2 id="wn-h">✨ Quoi de neuf ?</h2><ul>
+<div id="wn" role="dialog" aria-modal="true" aria-labelledby="wn-h"><div class="sh"><span class="vt">VERSION 13.17.0</span><h2 id="wn-h">✨ Quoi de neuf ?</h2><ul>
+<li><i>⚙️</i><span>Nouvelle section Paramètres (onglet Plus) : verrouillage, son et vibrations, langue.</span></li>
 <li><i>👤</i><span>Ton profil enregistré se replie : touche ✏️ pour le modifier.</span></li>
 <li><i>✨</i><span>Les nouveautés s'affichent ici, une seule fois après chaque mise à jour.</span></li>
 <li><i>📅</i><span>Prise des médicaments par jour, par semaine ou par mois.</span></li>
@@ -285,7 +289,7 @@ nav button[data-t="med"].on{background:var(--g-amber)}
 <div class="floaty"><span>💧</span><span>💊</span><span>❤️</span><span>🏃</span><span>🥗</span><span>🩺</span></div>
 <img src="icon-512.png?v=2" alt=""><b>CLB HEALTH</b><div class="slog">Ton assistant santé personnel</div>
 
-<span class="tap" id="sp-tap">Touche pour entrer</span><div style="font-size:11.5px;opacity:.75;margin-top:10px">🔒 Tes données restent sur ce téléphone, confidentielles.</div><div id="sp-err" style="min-height:1.3em;margin-top:8px;color:#FFD1DA;font-size:13px;font-weight:600"></div><a id="sp-sos" href="tel:185" onclick="event.stopPropagation()">🆘 SAMU 185</a><small class="vsm">version 13.16.0 · 9 nov. 2026 · <a href="#" id="upd" style="color:inherit;font-weight:700">Vérifier les mises à jour</a></small></div></div>
+<span class="tap" id="sp-tap">Touche pour entrer</span><div style="font-size:11.5px;opacity:.75;margin-top:10px">🔒 Tes données restent sur ce téléphone, confidentielles.</div><div id="sp-err" style="min-height:1.3em;margin-top:8px;color:#FFD1DA;font-size:13px;font-weight:600"></div><a id="sp-sos" href="tel:185" onclick="event.stopPropagation()">🆘 SAMU 185</a><small class="vsm">version 13.17.0 · 9 nov. 2026 · <a href="#" id="upd" style="color:inherit;font-weight:700">Vérifier les mises à jour</a></small></div></div>
 <div class="banner" id="nudge"></div>
 
 <!-- PHARMACIES -->
@@ -436,7 +440,8 @@ nav button[data-t="med"].on{background:var(--g-amber)}
 <section class="tab" id="t-eye">
 <header><div class="brand">CLB Health</div><h1>Portefeuille <span>& plus</span></h1><div class="per">Cliniques, assurance, documents, vision… et partage de l'appli.</div></header>
 <div class="pad">
- <div class="card2"><h3>🔐 Mon portefeuille santé</h3><div class="note" style="margin:0">Tout est gardé uniquement sur ce téléphone. Les images sont floutées : touche-les pour les afficher. Active le verrouillage Face ID (onglet Urgence) pour protéger l'accès.</div></div>
+ <button class="btn full" style="margin:0 0 4px" onclick="document.getElementById('params').scrollIntoView({behavior:'smooth'})">⚙️ Paramètres : verrouillage, son, langue</button>
+ <div class="card2"><h3>🔐 Mon portefeuille santé</h3><div class="note" style="margin:0">Tout est gardé uniquement sur ce téléphone. Les images sont floutées : touche-les pour les afficher. Active le verrouillage Face ID (Plus › Paramètres) pour protéger l'accès.</div></div>
  <div class="card2"><h3>🏥 Mes cliniques et médecins</h3><div id="cl-list"></div>
   <details style="margin-top:8px" id="cl-det"><summary id="cl-sum">➕ Ajouter un lieu de soins</summary><div style="display:grid;gap:8px;margin-top:8px">
    <div class="acw"><div class="acin"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg><input id="cl-nom" placeholder="Cherche la clinique (ex. PISAM, Farah…)" autocomplete="off" enterkeyhint="search"><span class="acsp" id="cl-spin"></span></div><div class="acl" id="cl-sug"></div></div><div id="cl-loc" class="locchip" style="display:none"></div><button class="lnk" id="cl-here" style="margin-top:0"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="7.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22"/></svg>Je suis sur place : utiliser ma position</button><select id="cl-type"><option>Clinique</option><option>Hôpital</option><option>Cabinet</option><option>Laboratoire</option><option>Pharmacie</option><option>Dentiste</option><option>Autre</option></select>
@@ -480,14 +485,22 @@ nav button[data-t="med"].on{background:var(--g-amber)}
  <div class="card2 sharec"><h3>📲 Partager CLB Health</h3><div class="note" style="margin:0 0 10px">🔒 Chaque personne garde ses propres données sur son téléphone : tu ne vois pas les leurs, et ils ne voient pas les tiennes. Envoie l'appli à tes proches : ils l'installent depuis Safari (Partager › Sur l'écran d'accueil). Chacun garde ses données sur son propre téléphone.</div>
   <div class="row"><button class="btn gold" id="sh-go" style="flex:1">📤 Partager</button><a class="btn" id="sh-wa" style="flex:1;text-align:center;text-decoration:none" target="_blank" rel="noopener">WhatsApp</a></div>
   <div class="row" style="margin-top:8px"><a class="btn" id="sh-sms" style="flex:1;text-align:center;text-decoration:none">SMS</a><button class="btn" id="sh-cp" style="flex:1">📋 Copier le lien</button></div></div>
- <div class="card2"><h3>📊 Statistiques anonymes</h3><div class="note" style="margin:0 0 8px">Pour améliorer l'appli, elle compte de façon anonyme les ouvertures et l'usage des sections (aucun nom, aucune donnée de santé, aucun identifiant).</div><label class="sx" style="margin:0"><input type="checkbox" id="st-ok"><span>Participer aux statistiques anonymes</span></label></div>
+ <div class="sech" id="params">⚙️ Paramètres</div>
+ <div class="card2 setc"><h3>🔒 Verrouillage</h3><div id="lk-box"></div><div class="note" id="lk-msg">L’appli demande Face ID à l’ouverture pour protéger ta fiche santé et tes données. Les numéros d’urgence restent accessibles sans déverrouiller.</div></div>
+ <div class="card2 setc"><h3>🔊 Son et vibrations</h3>
+  <label class="sw"><span>Son des rappels<small>Médicaments, eau, pause écran</small></span><input type="checkbox" id="set-snd"><i></i></label>
+  <label class="sw"><span>Vibrations</span><input type="checkbox" id="set-vib"><i></i></label>
+  <div class="row" style="margin-top:6px"><label for="set-vol">Volume</label><input type="range" id="set-vol" min="1" max="10" style="flex:2"></div>
+  <button class="btn full" id="set-test">🔔 Tester le son</button>
+  <div class="note">Sur iPhone, le son ne sort pas si le bouton silencieux est activé.</div></div>
+ <div class="card2 setc"><h3>🌐 Langue</h3><select id="set-lang"><option value="fr">🇫🇷 Français</option><option value="en" disabled>🇬🇧 English (bientôt)</option></select></div>
+ <div class="card2 setc"><h3>📊 Statistiques anonymes</h3><div class="note" style="margin:0 0 8px">Pour améliorer l'appli, elle compte de façon anonyme les ouvertures et l'usage des sections (aucun nom, aucune donnée de santé, aucun identifiant).</div><label class="sx" style="margin:0"><input type="checkbox" id="st-ok"><span>Participer aux statistiques anonymes</span></label></div>
 </div>
 </section>
 <!-- URGENCES -->
 <section class="tab" id="t-sos">
 <header><div class="brand">CLB Health</div><h1>Urgence <span>& fiche santé</span></h1><div class="per">Un toucher pour appeler. Appels gratuits.</div></header>
 <div class="pad urg">
- <div class="card2" style="border-left:4px solid #edbb00"><h3>🔒 Verrouillage Face ID</h3><div id="lk-box"></div><div class="note" id="lk-msg">Protège ta fiche santé et tes données : l’appli demande Face ID à l’ouverture. Les numéros d’urgence restent accessibles sans déverrouiller.</div></div>
  <div class="card2" style="border-left:4px solid #34c77b"><h3>🩺 Ma fiche santé</h3>
   <div id="f-view"></div>
   <details style="margin-top:8px"><summary style="color:var(--gold);font-weight:700">Modifier ma fiche</summary>
@@ -591,6 +604,11 @@ setInterval(()=>{const m=phMode();if(m.k!==MODE.k){render();}},60000);
 
 
 
+/* ---------- paramètres : son, vibrations, langue ---------- */
+let AC=null;
+function chime(force){const S=LS.get("set",{});if(!force&&S.snd===false)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==="suspended")AC.resume();
+ const v=(S.vol??7)/10*.35,t0=AC.currentTime;[[880,0],[1318.5,.16]].forEach(([f,d])=>{const o=AC.createOscillator(),g=AC.createGain();o.type="sine";o.frequency.value=f;g.gain.setValueAtTime(0,t0+d);g.gain.linearRampToValueAtTime(v,t0+d+.02);g.gain.exponentialRampToValueAtTime(.0001,t0+d+.6);o.connect(g).connect(AC.destination);o.start(t0+d);o.stop(t0+d+.65);});}catch(e){}}
+function buzz(p){const S=LS.get("set",{});if(S.vib!==false){try{navigator.vibrate&&navigator.vibrate(p);}catch(e){}}if(Array.isArray(p))chime();}
 /* ---------- Moi : synthèse / profil ---------- */
 function moiTab(k){document.querySelectorAll("#moi-seg button").forEach(b=>b.classList.toggle("on",b.dataset.ms===k));$("ms-syn").style.display=k==="syn"?"":"none";$("ms-pro").style.display=k==="pro"?"":"none";if(k==="pro")pView(false);
  $("moi-h").innerHTML=k==="syn"?"Ma santé <span>en un coup d'œil</span>":"Mon profil <span>santé</span>";$("moi-per").textContent=k==="syn"?"Ton diagnostic et tes recommandations personnalisées.":"Renseigne-le une fois : tout le diagnostic s'appuie dessus.";window.scrollTo({top:0,behavior:"smooth"});}
@@ -601,10 +619,14 @@ function pView(edit){const has=pHas(),ed=edit||!has;$("p-form").style.display=ed
 /* ---------- onglets ---------- */
 let TAB="ph";
 const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+(function setInit(){const S=LS.get("set",{}),sv=()=>LS.set("set",S);
+ $("set-snd").checked=S.snd!==false;$("set-vib").checked=S.vib!==false;$("set-vol").value=S.vol??7;$("set-lang").value=S.lang||"fr";
+ $("set-snd").onchange=e=>{S.snd=e.target.checked;sv();if(S.snd)chime(true);};$("set-vib").onchange=e=>{S.vib=e.target.checked;sv();if(S.vib)try{navigator.vibrate&&navigator.vibrate(40);}catch(x){}};
+ $("set-vol").onchange=e=>{S.vol=+e.target.value;sv();chime(true);};$("set-test").onclick=()=>chime(true);$("set-lang").onchange=e=>{S.lang=e.target.value;sv();};})();
 let phLoaded=false;
 function go(t){TAB=t;document.querySelectorAll(".tab").forEach(s=>s.classList.toggle("on",s.id==="t-"+t));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));
  LS.set("tab",t);if(location.hash!=="#"+t)history.replaceState(null,"","#"+t);window.scrollTo(0,0);
- if(t==="ph"&&!phLoaded){phLoaded=true;if(!cur)locate();} if(t==="eau")wRender(); if(t==="med")mRender(); if(t==="moi"){pRender();moiTab(P.age||P.poids||P.prenom?"syn":"pro");} stat("onglet-"+t); if(t==="eye"){vLoad();eTick();wlRender();} if(t==="sos"){fRender();lockRender();}}
+ if(t==="ph"&&!phLoaded){phLoaded=true;if(!cur)locate();} if(t==="eau")wRender(); if(t==="med")mRender(); if(t==="moi"){pRender();moiTab(P.age||P.poids||P.prenom?"syn":"pro");} stat("onglet-"+t); if(t==="eye"){vLoad();lockRender();eTick();wlRender();} if(t==="sos"){fRender();lockRender();}}
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.t));
 
 /* ---------- eau ---------- */
@@ -616,7 +638,7 @@ const fr=n=>n.toLocaleString("fr-FR");
 function save(){LS.set("water",W);}
 function add(ml){stat("eau-ajout");const k=today();(W.log[k]=W.log[k]||[]).push([Date.now(),ml]);
  const keys=Object.keys(W.log).sort();while(keys.length>40)delete W.log[keys.shift()];
- save();wRender();if(navigator.vibrate)navigator.vibrate(30);}
+ save();wRender();buzz(30);}
 function expectedNow(){const h=new Date().getHours()+new Date().getMinutes()/60;if(h<=W.from)return 0;if(h>=W.to)return W.goal;return W.goal*(h-W.from)/(W.to-W.from);}
 function wRender(){const k=today(),t=tot(k),p=Math.min(1,t/W.goal);
  $("w-date").textContent=new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
@@ -660,7 +682,7 @@ $("nudge").onclick=()=>go("eau");
 function behind(){const h=new Date().getHours();if(h<W.from||h>=W.to)return;const t=tot(today()),gap=expectedNow()-t;if(t>=W.goal||gap<300)return;
  const last=LS.get("lastBehind",0);if(Date.now()-last<60*60000)return;LS.set("lastBehind",Date.now());
  const msg=`Tu as bu ${fr(t)} ml, il en faudrait ${fr(Math.round(expectedNow()/50)*50)} à cette heure. Bois un verre maintenant.`;
- toast2(`💧 <b>En retard de ${fr(Math.round(gap/50)*50)} ml</b> · <a href="#eau" style="color:inherit">boire</a>`);if(navigator.vibrate)navigator.vibrate([150,80,150]);
+ toast2(`💧 <b>En retard de ${fr(Math.round(gap/50)*50)} ml</b> · <a href="#eau" style="color:inherit">boire</a>`);buzz([150,80,150]);
  if(("Notification"in window)&&Notification.permission==="granted")notify("💧 Tu es en retard sur ton eau",msg);}
 setInterval(behind,5*60000);setTimeout(behind,8000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)setTimeout(behind,1500);});
 setInterval(()=>{nudge();if(!W.notif||!("Notification"in window)||Notification.permission!=="granted")return;
@@ -945,7 +967,7 @@ function mRender(){const k=today(),D=doses(k),now=Date.now();{const mw=(typeof m
   +(late.length?`<div class="note" style="color:#B45309">Prise oubliée ? Prends-la dès que possible, sauf si la suivante est proche : dans ce cas, saute-la. Ne double jamais la dose. En cas de doute, demande à ton pharmacien.</div>`:"")
   :`<div class="note">Aucune prise prévue aujourd'hui. Ajoute un médicament ci-dessous.</div>`)
   +`<button class="btn full" id="m-ics">📅 Mettre toutes les prises dans mon agenda (rappels même téléphone verrouillé)</button>`;
- $("m-next").querySelectorAll("[data-take]").forEach(b=>b.onclick=()=>{M.taken[b.dataset.take]=Date.now();saveM();stat("med-pris");mRender();if(navigator.vibrate)navigator.vibrate(30);});
+ $("m-next").querySelectorAll("[data-take]").forEach(b=>b.onclick=()=>{M.taken[b.dataset.take]=Date.now();saveM();stat("med-pris");mRender();buzz(30);});
  $("m-ics").onclick=medIcs;
  const CUR=M.list.filter(m=>!m.end);
  $("m-list").innerHTML=CUR.length?CUR.map(m=>{const dn=dayN(m,k)+1,tot=m.days,done=tot&&dn>tot,all=Object.keys(M.taken).filter(x=>x.startsWith(m.id+"|")).length;
@@ -966,7 +988,7 @@ function medIcs(){if(!M.list.length){alert("Ajoute d'abord un médicament.");ret
 function medTick(){const k=today(),now=Date.now();doses(k).forEach(d=>{if(M.taken[d.key])return;const late=now-d.at;
  if(late>=0&&late<3*3600000){const n=M.notified[d.key]||0;if(now-n>30*60000){M.notified[d.key]=now;saveM();
   const txt=`${d.m.nom} ${d.m.dose||""}${d.m.rep?" · "+d.m.rep:""}`;if(("Notification"in window)&&Notification.permission==="granted")notify(late<10*60000?"💊 C'est l'heure de ton médicament":"⚠️ Prise de médicament en retard",txt);
-  toast2(`💊 ${late<10*60000?"C'est l'heure":"En retard"} : <b>${esc(txt)}</b> · <a href="#med" style="color:inherit">ouvrir</a>`);if(navigator.vibrate)navigator.vibrate([200,100,200]);if(TAB==="med")mRender();}}});
+  toast2(`💊 ${late<10*60000?"C'est l'heure":"En retard"} : <b>${esc(txt)}</b> · <a href="#med" style="color:inherit">ouvrir</a>`);buzz([200,100,200]);if(TAB==="med")mRender();}}});
  const keys=Object.keys(M.notified);if(keys.length>300){keys.slice(0,150).forEach(x=>delete M.notified[x]);saveM();}}
 setInterval(medTick,30000);setTimeout(medTick,3000);
 /* effets indésirables : conseils de prudence */
@@ -1218,10 +1240,10 @@ function eTick(){const now=Date.now();if(E.day!==today()){E.day=today();E.count=
  let left=E.next-now;if(left<=0&&!eSec){eBreak();left=0;}
  const m=Math.floor(left/60000),s=Math.floor(left%60000/1000);$("e-time").textContent=p2(m)+":"+p2(s);$("e-st").textContent="avant la pause";
  $("e-arc").style.strokeDashoffset=465*(left/BREAK);$("e-go").textContent="⏹︎ Arrêter la session";$("e-count").textContent=`${E.count} pause(s) faite(s) aujourd’hui.`;}
-function eBreak(){eSec=20;$("e-over").style.display="grid";$("e-sec").textContent=eSec;if(navigator.vibrate)navigator.vibrate([200,100,200]);
+function eBreak(){eSec=20;$("e-over").style.display="grid";$("e-sec").textContent=eSec;buzz([200,100,200]);
  if(document.hidden&&("Notification"in window)&&Notification.permission==="granted")notify("👀 Pause yeux","Regarde au loin (6 m) pendant 20 secondes.");
  const iv=setInterval(()=>{eSec--;$("e-sec").textContent=eSec;if(eSec<=0){clearInterval(iv);eEnd();}},1000);$("e-skip").onclick=()=>{clearInterval(iv);eEnd();};}
-function eEnd(){eSec=0;$("e-over").style.display="none";E.count++;E.next=Date.now()+BREAK;LS.set("eye",E);if(navigator.vibrate)navigator.vibrate(60);eTick();}
+function eEnd(){eSec=0;$("e-over").style.display="none";E.count++;E.next=Date.now()+BREAK;LS.set("eye",E);buzz(60);eTick();}
 $("e-go").onclick=()=>{E.on=!E.on;E.next=Date.now()+BREAK;LS.set("eye",E);eTick();};
 setInterval(eTick,1000);
 const VF=["date","doc","ods","odc","oda","ogs","ogc","oga","ep","epn","verres","next"];
@@ -1245,7 +1267,7 @@ function fRender(){const f=LS.get("fiche",{});{const P0=LS.get("profil",{});if(!
 $("f-save").onclick=()=>{const f={};FF.forEach(k=>f[k]=$("f-"+k).value.trim());LS.set("fiche",f);fRender();document.querySelector("#t-sos details").open=false;};
 
 /* ---------- animations iPhone ---------- */
-const haptic=(p=12)=>{try{navigator.vibrate&&navigator.vibrate(p);}catch(e){}};
+const haptic=(p=12)=>buzz(p);
 /* ---------- mise à jour forcée ---------- */
 async function forceUpdate(){try{const rs=await navigator.serviceWorker.getRegistrations();await Promise.all(rs.map(r=>r.unregister()));const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)));}catch(e){}location.replace(location.pathname+"?v="+Date.now()+location.hash);}
 document.addEventListener("click",e=>{if(e.target&&e.target.id==="upd"){e.preventDefault();forceUpdate();}});
@@ -1265,7 +1287,7 @@ async function faSetup(){const P0=LS.get("profil",{}),who=[P0.prenom,P0.nom].fil
  pubKeyCredParams:[{type:"public-key",alg:-7},{type:"public-key",alg:-257}],authenticatorSelection:{authenticatorAttachment:"platform",userVerification:"required",residentKey:"preferred"},timeout:60000,attestation:"none"}});
  LOCK={id:b64(c.rawId),t:Date.now()};LS.set("lock",LOCK);}
 let unlocked=false,hiddenAt=0;
-const VER="13.16.0";
+const VER="13.17.0";
 function wnShow(){const seen=LS.get("seenVer",null);if(seen===VER)return;
  if(seen===null&&!LS.get("profil",{}).age&&!LS.get("profil",{}).nom){LS.set("seenVer",VER);return;}
  const w=$("wn");w.classList.add("on");const close=()=>{w.classList.remove("on");LS.set("seenVer",VER);};$("wn-ok").onclick=close;w.onclick=e=>{if(e.target===w)close();};}
@@ -1304,7 +1326,7 @@ const _eb=eBreak;eBreak=function(){_eb();$("e-over").classList.add("show");hapti
 /* ---------- démarrage ---------- */
 if("serviceWorker"in navigator){let had=!!navigator.serviceWorker.controller,reloaded=false;
  navigator.serviceWorker.addEventListener("controllerchange",()=>{if(had&&!reloaded){reloaded=true;location.reload();}had=true;});
- navigator.serviceWorker.register("sw.js?v=13.16.0",{updateViaCache:"none"}).then(r=>{r.update();document.addEventListener("visibilitychange",()=>{if(!document.hidden)r.update();});}).catch(()=>{});}
+ navigator.serviceWorker.register("sw.js?v=13.17.0",{updateViaCache:"none"}).then(r=>{r.update();document.addEventListener("visibilitychange",()=>{if(!document.hidden)r.update();});}).catch(()=>{});}
 const start=(location.hash||"").slice(1),TABS=["moi","ph","eau","med","eye","sos"];go(TABS.includes(start)?start:(!LS.get("profil",{}).age?"moi":(TABS.includes(LS.get("tab","moi"))?LS.get("tab","moi"):"moi")));
 nudge();
 </script>
