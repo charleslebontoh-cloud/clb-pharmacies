@@ -1,0 +1,17 @@
+name: ntfytest
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  t:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          python3 - <<'P'
+          import json,urllib.request
+          b=json.dumps({"topic":"sentinel-brvm-dbde7f93c237","title":"✅ Sentinel est connecté","message":"Bravo Charles, les alertes Sentinel arrivent bien sur ton iPhone. Tu recevras ici les signaux d'achat et de vente de la BRVM et la synthèse du soir.","tags":["shield"],"priority":4,"click":"https://charleslebontoh-cloud.github.io/clb-pharmacies/bourse/"}).encode()
+          print(urllib.request.urlopen(urllib.request.Request("https://ntfy.sh/",b,{"Content-Type":"application/json"}),timeout=20).read()[:200])
+          P
+          git config user.name sentinel-bot; git config user.email actions@users.noreply.github.com
+          git rm -q .github/workflows/ntfytest.yml; git commit -qm "nettoyage test ntfy"; git pull -q --rebase origin main; git push -q
