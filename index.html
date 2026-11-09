@@ -251,8 +251,8 @@ nav button[data-t="med"].on{background:var(--g-amber)}
 <div class="spc"><div class="ecg"><svg viewBox="0 0 300 60" preserveAspectRatio="none"><path d="M0 30 H80 L95 30 L105 8 L118 52 L130 18 L140 30 H190 L200 30 L208 22 L216 30 H300"/></svg></div>
 <div class="floaty"><span>💧</span><span>💊</span><span>❤️</span><span>🏃</span><span>🥗</span><span>🩺</span></div>
 <img src="icon-512.png?v=2" alt=""><b>CLB HEALTH</b><div class="slog">Ton assistant santé personnel</div>
-<div class="news"><div class="vtag">Version 13.11.0 · nouveautés</div><ul><li>💊 En journée, toutes les pharmacies ouvertes autour de toi</li><li>🛡️ Toutes les assurances ivoiriennes, réseaux Vitalis et Atlantique</li><li>🛡️ Réseau de ton assurance : le partenaire le plus proche</li></ul></div>
-<span class="tap" id="sp-tap">Touche pour entrer</span><div id="sp-err" style="min-height:1.3em;margin-top:8px;color:#FFD1DA;font-size:13px;font-weight:600"></div><a id="sp-sos" href="tel:185" onclick="event.stopPropagation()">🆘 SAMU 185</a><small class="vsm">version 13.11.0 · 9 nov. 2026</small></div></div>
+<div class="news"><div class="vtag">Version 13.11.1 · nouveautés</div><ul><li>💊 En journée, toutes les pharmacies ouvertes autour de toi</li><li>🛡️ Toutes les assurances ivoiriennes, réseaux Vitalis et Atlantique</li><li>🛡️ Réseau de ton assurance : le partenaire le plus proche</li></ul></div>
+<span class="tap" id="sp-tap">Touche pour entrer</span><div id="sp-err" style="min-height:1.3em;margin-top:8px;color:#FFD1DA;font-size:13px;font-weight:600"></div><a id="sp-sos" href="tel:185" onclick="event.stopPropagation()">🆘 SAMU 185</a><small class="vsm">version 13.11.1 · 9 nov. 2026</small></div></div>
 <div class="banner" id="nudge"></div>
 
 <!-- PHARMACIES -->
@@ -482,9 +482,11 @@ const FERIES=new Set(["2026-11-01","2026-11-15","2026-12-25","2027-01-01","2027-
 const ymdL=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 function phMode(d=new Date()){const dow=d.getDay(),m=d.getHours()*60+d.getMinutes();
  if(FERIES.has(ymdL(d)))return{g:1,k:"ferie",why:"🎉 Jour férié : seules les pharmacies de garde sont ouvertes."};
- if(dow===0||dow===6)return{g:1,k:"we",why:"📅 Week-end : seules les pharmacies de garde sont ouvertes."};
+ if(dow===6&&m>=450&&m<780)return{g:0,k:"jour",why:"☀️ Samedi matin (jusqu'à 13 h) : toutes les pharmacies autour de toi. Cet après-midi, seules celles de garde resteront ouvertes."};
+ if(dow===6)return{g:1,k:"we",why:"📅 Samedi après-midi : seules les pharmacies de garde sont ouvertes."};
+ if(dow===0)return{g:1,k:"we",why:"📅 Dimanche : seules les pharmacies de garde sont ouvertes."};
  if(m<450||m>=1200)return{g:1,k:"nuit",why:"🌙 Nuit (20 h – 7 h 30) : seules les pharmacies de garde sont ouvertes."};
- return{g:0,k:"jour",why:`☀️ Journée : toutes les pharmacies autour de toi. Dès 20 h, le week-end et les jours fériés, je n'affiche que celles de garde.`};}
+ return{g:0,k:"jour",why:`☀️ Journée : toutes les pharmacies autour de toi. Dès 20 h, le samedi après-midi, le dimanche et les jours fériés, je n'affiche que celles de garde.`};}
 let PALL=null,MODE=phMode();const PK=n=>N(n||"").replace(/[^A-Z0-9 ]/g," ").replace(/^\s*(PHARMACIE|PHCIE|PHIE)\s+/,"").replace(/\b(DE LA|DE L|DES|DU|DE|D|LA|LE|LES|L)\b/g," ").replace(/\s+/g," ").trim();
 function gardeKeys(){return new Set((data?data.liste:[]).map(p=>PK(p.n)));}
 function enrichGarde(){if(!PALL||!data)return;const idx={};PALL.forEach(a=>{(idx[PK(a.n)]=idx[PK(a.n)]||[]).push(a);});data.liste.forEach(p=>{const c=C[p.c];const m=(idx[PK(p.n)]||[]).filter(a=>!c||dist(c,[a.la,a.lo])<10).sort((x,y)=>c?dist(c,[x.la,x.lo])-dist(c,[y.la,y.lo]):0)[0];if(m){p.la=m.la;p.lo=m.lo;if(m.h)p.h=m.h;}});}
