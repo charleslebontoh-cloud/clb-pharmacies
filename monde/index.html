@@ -231,7 +231,7 @@ nav button.on{color:#fff}nav button.on svg.i{transform:translateY(-1px) scale(1.
 
 <div id="splash" role="button" tabindex="0">
  <img class="bgp" id="spImg" alt=""><div class="shade"></div>
- <div class="c"><img src="icon-512.png" alt=""><div class="t">CLB World</div><div class="q">Culture, voyages, football. Le monde entier, chaque jour.</div><span class="tap">Embarquer <svg class="i"><use href="#i-arrow"/></svg></span><small style="display:block;margin-top:24px;opacity:.85;font-size:11px;font-weight:600">version 7.2.0 · 8 nov. 2026</small></div>
+ <div class="c"><img src="icon-512.png" alt=""><div class="t">CLB World</div><div class="q">Culture, voyages, football. Le monde entier, chaque jour.</div><span class="tap">Embarquer <svg class="i"><use href="#i-arrow"/></svg></span><small style="display:block;margin-top:24px;opacity:.85;font-size:11px;font-weight:600">version 7.3.0 · 8 nov. 2026</small></div>
  <div class="credit" id="spCred"></div>
 <div style="display:none"></div>
 </div>
@@ -296,11 +296,12 @@ nav button.on{color:#fff}nav button.on svg.i{transform:translateY(-1px) scale(1.
 
 <section class="view" id="v-bet">
  <h2>Coupons du jour</h2><p class="sub">Combinés de plusieurs matchs calculés à partir des statistiques de la saison, puis vérifiés après les matchs.</p>
+ <div class="chips" id="betTabs" style="margin:4px 0 12px"><button class="chip on" data-bt="day">🎯 Coupons du jour</button><button class="chip" data-bt="rep">📊 Mes coupons joués <b id="playedN" style="background:var(--coral);color:#fff;border-radius:999px;padding:0 7px;font-size:12px;display:none"></b></button></div>
  <div class="warn"><svg class="i" style="color:#C46A00"><use href="#i-shield"/></svg><div><b>Jeu responsable · 18+</b><br>Aucun pronostic n'est sûr : ce sont des probabilités, pas des certitudes. Ne mise que ce que tu peux perdre.</div></div>
- <div class="card reveal" id="budget"></div>
- <div id="coupons"><div class="card"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div></div>
- <div class="card reveal" id="report"></div>
- <div class="card reveal"><div class="sec" style="margin:0 0 8px"><span class="tile s t-violet"><svg class="i"><use href="#i-chart"/></svg></span>Comment lire un coupon</div>
+ <div class="card reveal betday" id="budget"></div>
+ <div class="betday" id="coupons"><div class="card"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div></div>
+ <div class="card" id="report" style="display:none"></div>
+ <div class="card reveal betday"><div class="sec" style="margin:0 0 8px"><span class="tile s t-violet"><svg class="i"><use href="#i-chart"/></svg></span>Comment lire un coupon</div>
   <p style="margin:0 0 8px;font-size:14px">Pour chaque match, l'appli estime les chances de victoire, de nul et de buts. Elle utilise les buts marqués et encaissés cette saison (loi de Poisson), avec un avantage pour l'équipe à domicile.</p>
   <p style="margin:0;font-size:14px"><b>Cote juste</b> = 1 ÷ probabilité. Si Betclic propose une cote <b>plus haute</b> que la cote juste, le pari a de la « valeur ». Sinon, mieux vaut passer.</p></div>
 </section>
@@ -655,14 +656,19 @@ async function renderBets(){renderBudget();const box=$("coupons");const{f}=calib
  box.querySelectorAll("[data-team]").forEach(p=>p.onclick=async()=>{const t=p.dataset.team;toast(await copy(t)?`📋 « ${t} » copié : colle-le dans la loupe de Betclic`:"Copie impossible");p.style.background="rgba(0,180,198,.08)";});
  box.querySelectorAll("[data-copy]").forEach(b=>b.onclick=async()=>{toast(await copy(txt(+b.dataset.copy))?"📋 Coupon copié":"Copie impossible");});
  box.querySelectorAll("[data-open]").forEach(b=>b.addEventListener("click",()=>{copy(txt(+b.dataset.open));setPlayed(CUR[+b.dataset.open][0],true);}));
- box.querySelectorAll("[data-played]").forEach(b=>b.onclick=()=>{const nm=CUR[+b.dataset.played][0];setPlayed(nm,!playedOf(nm));b.innerHTML=playedOf(nm)?"✅ Joué":"☐ Je l'ai joué";toast(playedOf(nm)?"Noté : coupon joué":"Retiré");});
+ box.querySelectorAll("[data-played]").forEach(b=>b.onclick=()=>{const nm=CUR[+b.dataset.played][0];setPlayed(nm,!playedOf(nm),true);b.innerHTML=playedOf(nm)?"✅ Joué":"☐ Je l'ai joué";toast(playedOf(nm)?"Noté : retrouve-le dans « Mes coupons joués »":"Retiré");renderReport();});
  obs(box);renderReport();}
 /* sauvegarde des coupons du jour pour le bilan */
 function saveToday(){const d=HIST[DAY]=HIST[DAY]||{day:DAY,date:new Date().toISOString(),coupons:[]};
  CUR.forEach(([nm,,,L])=>{if(d.coupons.some(c=>c.nm===nm))return;d.coupons.push({nm,played:false,picks:L.map(({p:x,o})=>({code:x.c,lg:x.n,date:x.e.date,h:x.h.team.displayName,a:x.a.team.displayName,hn:x.hn,an:x.an,mk:o[0],lab:o[1],p:+o[2].toFixed(3),res:null,sc:""}))});});
  const keys=Object.keys(HIST).map(Number).sort((a,b)=>a-b);while(keys.length>30)delete HIST[keys.shift()];LS.set("hist",HIST);}
 const playedOf=nm=>{const d=HIST[DAY];const c=d&&d.coupons.find(c=>c.nm===nm);return !!(c&&c.played);};
-function setPlayed(nm,v){const d=HIST[DAY];const c=d&&d.coupons.find(c=>c.nm===nm);if(c){c.played=v;LS.set("hist",HIST);}}
+function setPlayed(nm,v,ask){const d=HIST[DAY];const c=d&&d.coupons.find(c=>c.nm===nm);if(!c)return;c.played=v;
+ if(v){const fair=c.picks.reduce((s,p)=>s/p.p,1);if(ask){const m=prompt("Combien as-tu misé sur ce coupon (F CFA) ?",String(c.mise||budgetV));if(m===null){c.played=false;LS.set("hist",HIST);return;}c.mise=Math.max(0,parseInt(String(m).replace(/\D/g,""))||budgetV);
+  const k=prompt("Cote totale affichée par Betclic ? (laisse vide si tu ne sais pas)",c.cote?String(c.cote):"");const kv=parseFloat(String(k||"").replace(",","."));c.cote=kv>1?kv:null;}
+  else{c.mise=c.mise||budgetV;}c.coteJ=+fair.toFixed(2);c.at=c.at||new Date().toISOString();}
+ LS.set("hist",HIST);playedBadge();}
+function playedBadge(){const n=Object.values(HIST).reduce((a,d)=>a+d.coupons.filter(c=>c.played).length,0);const b=$("playedN");if(b){b.textContent=n;b.style.display=n?"inline":"none";}}
 function judge(mk,hs,as){const t=hs+as;return{"1":hs>as,"2":as>hs,"1N":hs>=as,"N2":as>=hs,"+2,5":t>=3,"-2,5":t<=2,"BTTS":hs>0&&as>0}[mk];}
 async function settle(){const todo=[];Object.values(HIST).forEach(d=>d.coupons.forEach(c=>c.picks.forEach(p=>{if(p.res==null&&Date.now()-new Date(p.date)>2.2*36e5)todo.push(p);})));
  const groups={};todo.forEach(p=>{const d=new Date(p.date),k=p.code+"|"+d.getUTCFullYear()+pad(d.getUTCMonth()+1)+pad(d.getUTCDate());(groups[k]=groups[k]||[]).push(p);});
@@ -672,14 +678,28 @@ async function settle(){const todo=[];Object.values(HIST).forEach(d=>d.coupons.f
 async function renderReport(){const box=$("report");await settle();const days=Object.values(HIST).sort((a,b)=>b.day-a.day);
  let n=0,hit=0,sp=0,cw=0,cd=0,pw=0,pd=0;days.forEach(d=>d.coupons.forEach(c=>{const done=c.picks.every(p=>p.res!=null)||c.picks.some(p=>p.res===false);c.picks.forEach(p=>{if(p.res!=null){n++;hit+=p.res?1:0;sp+=p.p;}});if(done){cd++;const w=c.picks.every(p=>p.res===true);if(w)cw++;if(c.played){pd++;if(w)pw++;}}}));
  const{c:CB,f}=calib();
- const head=`<div class="row" style="align-items:center;gap:10px;margin-bottom:10px">${T("chart","violet")}<div><b style="font:800 17px var(--disp)">Bilan de mes coupons</b><br><small style="color:var(--mu);font-weight:600">Mis à jour après chaque match</small></div></div>`;
- if(!n){box.innerHTML=head+`<p class="sub" style="margin:0">Le premier bilan apparaîtra ici dès la fin des matchs des coupons du jour : sélection par sélection, ✅ ou ❌, avec le score final.</p>`;return;}
- box.innerHTML=head+`<div class="stat" style="margin-bottom:12px"><div><b>${Math.round(hit*100/n)}%</b><small>paris gagnés (${hit}/${n})</small></div><div><b>${Math.round(sp*100/n)}%</b><small>prévu par le modèle</small></div><div><b>${cw}/${cd}</b><small>combinés gagnés</small></div></div>`+
+ const PL=[];days.forEach(d=>d.coupons.forEach(c=>{if(c.played)PL.push({d,c});}));let mT=0,gT=0,pW=0,pL=0,pE=0;
+ const plHTML=PL.map(({d,c})=>{const lost=c.picks.some(p=>p.res===false),won=c.picks.every(p=>p.res===true);const cote=c.cote||c.coteJ||c.picks.reduce((s,p)=>s/p.p,1);const mise=c.mise||budgetV;const gain=Math.round(mise*cote);
+  mT+=mise;if(won){gT+=gain;pW++;}else if(lost)pL++;else pE++;const ok=c.picks.filter(p=>p.res===true).length;
+  return `<div style="padding:12px;border-radius:16px;margin-bottom:10px;background:${won?"rgba(30,170,110,.08)":lost?"rgba(230,80,70,.07)":"rgba(0,150,200,.06)"};border:1px solid var(--line)"><div style="display:flex;justify-content:space-between;gap:8px"><b>🎟️ ${esc(c.nm)}</b><b>${won?"✅ Gagné":lost?"❌ Perdu":"⏳ En cours"}</b></div>
+   <div style="font-size:12.5px;color:var(--mu);margin:2px 0 6px">${new Date(d.date).toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"})} · ${ok}/${c.picks.length} sélections validées</div>
+   <div style="display:flex;gap:12px;font-size:13px;margin-bottom:6px"><span>Mise <b>${mise.toLocaleString("fr-FR")} F</b></span><span>Cote <b>${(+cote).toFixed(2)}</b>${c.cote?"":" <small>(estimée)</small>"}</span><span>${won?`Gain <b style="color:#1E9E63">+${gain.toLocaleString("fr-FR")} F</b>`:lost?`<b style="color:#D9483B">−${mise.toLocaleString("fr-FR")} F</b>`:`Gain possible <b>${gain.toLocaleString("fr-FR")} F</b>`}</span></div>`+
+   c.picks.map(p=>`<div style="font-size:12.5px;margin-top:3px">${p.res==null?"⏳":p.res?"✅":"❌"} ${esc(p.hn)} – ${esc(p.an)} ${p.sc?`<b>(${p.sc})</b>`:""} · ${esc(p.lab)}</div>`).join("")+`</div>`;}).join("");
+ const net=gT-PL.filter(x=>!x.c.picks.some(p=>p.res==null)||x.c.picks.some(p=>p.res===false)).reduce((a,x)=>a+(x.c.mise||budgetV),0);
+ const plBox=`<div class="row" style="align-items:center;gap:10px;margin-bottom:10px">${T("ticket","sunset")}<div><b style="font:800 17px var(--disp)">Mes coupons joués</b><br><small style="color:var(--mu);font-weight:600">Touche « Je l'ai joué » sous un coupon pour le suivre ici</small></div></div>`+
+  (PL.length?`<div class="stat" style="margin-bottom:12px"><div><b>${pW}/${pW+pL}</b><small>gagnés (terminés)</small></div><div><b>${mT.toLocaleString("fr-FR")} F</b><small>misés</small></div><div><b style="color:${net>=0?"#1E9E63":"#D9483B"}">${net>=0?"+":""}${net.toLocaleString("fr-FR")} F</b><small>bilan net</small></div></div>${pE?`<p class="note" style="margin:0 0 10px">⏳ ${pE} coupon(s) en cours : le bilan se met à jour après chaque match.</p>`:""}`+plHTML
+  :`<p class="sub" style="margin:0 0 6px">Aucun coupon joué pour l'instant. Dans « Coupons du jour », touche <b>☐ Je l'ai joué</b> : je te demande ta mise et la cote Betclic, puis je suis chaque match jusqu'au résultat.</p>`)+`<div style="height:14px"></div>`;
+ const head=plBox+`<div class="row" style="align-items:center;gap:10px;margin-bottom:10px">${T("chart","violet")}<div><b style="font:800 17px var(--disp)">Bilan de mes coupons</b><br><small style="color:var(--mu);font-weight:600">Mis à jour après chaque match</small></div></div>`;
+ if(!n){box.innerHTML=head+`<div class="comp">🧠 Fiabilité du modèle</div><p class="sub" style="margin:0">Le premier bilan apparaîtra ici dès la fin des matchs des coupons du jour : sélection par sélection, ✅ ou ❌, avec le score final.</p>`;return;}
+ box.innerHTML=head+`<div class="comp">🧠 Fiabilité du modèle (tous les coupons proposés)</div><div class="stat" style="margin-bottom:12px"><div><b>${Math.round(hit*100/n)}%</b><small>paris gagnés (${hit}/${n})</small></div><div><b>${Math.round(sp*100/n)}%</b><small>prévu par le modèle</small></div><div><b>${cw}/${cd}</b><small>combinés gagnés</small></div></div>`+
  (pd?`<p style="margin:0 0 10px;font-weight:700">🎟️ Coupons que tu as joués : ${pw} gagné${pw>1?"s":""} sur ${pd}.</p>`:"")+
  `<div class="comp">🧠 Ce que l'appli a appris</div><div style="font-size:13px">`+Object.entries(CB).map(([k,x])=>`<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed var(--line)"><span>${MK[k]}</span><span>${x.hit}/${x.n} · ${f[k]>1.02?"confiance ↑":f[k]<.98?"confiance ↓":"stable"}</span></div>`).join("")+`</div>`+
  days.slice(0,10).map(d=>`<div class="comp">📅 ${new Date(d.date).toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"})}</div>`+d.coupons.map(c=>{const st=c.picks.some(p=>p.res===false)?"❌ Perdu":c.picks.every(p=>p.res===true)?"✅ Gagné":"⏳ En cours";
   return `<div style="padding:8px 0;border-bottom:1px solid var(--line)"><b>${esc(c.nm)}</b> ${c.played?"🎟️":""} <span style="float:right;font-weight:800">${st}</span>`+c.picks.map(p=>`<div style="font-size:12.5px;color:var(--ink2);margin-top:3px">${p.res==null?"⏳":p.res?"✅":"❌"} ${esc(p.hn)} – ${esc(p.an)} ${p.sc?`<b>(${p.sc})</b>`:""} · ${esc(p.lab)} <span style="color:var(--mu)">${Math.round(p.p*100)}%</span></div>`).join("")+`</div>`;}).join("")).join("");}
 
+/* onglets coupons / bilan */
+document.querySelectorAll("#betTabs [data-bt]").forEach(b=>b.onclick=()=>{const rep=b.dataset.bt==="rep";document.querySelectorAll("#betTabs .chip").forEach(x=>x.classList.toggle("on",x===b));document.querySelectorAll("#v-bet .betday").forEach(x=>x.style.display=rep?"none":"");$("report").style.display=rep?"block":"none";if(rep){$("report").innerHTML=`<div class="skel"></div><div class="skel"></div>`;renderReport();}});
+setTimeout(playedBadge,300);
 /* démarrage */
 cultInit();renderHome();renderTrip();grid();obs();
 (()=>{try{const P=PHOTOS[(DAY+4)%PHOTOS.length],im=$("spImg");im.onload=()=>im.classList.add("ld");im.src=P.f;$("spCred").textContent=`📷 ${P.titre} · ${P.auteur} · ${P.licence} · Wikimedia Commons`;}catch(e){}})();
