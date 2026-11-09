@@ -6,10 +6,10 @@ jobs:
     steps:
       - run: |
           UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126 Safari/537.36"
-          curl -sL -A "$UA" -m 40 "https://www.sikafinance.com/marches/cotation_SNTS.sn" -o s.html
-          grep -o 'href="[^"]*"[^>]*>\(Actualités du marché\|Communiqués des sociétés\|Dividendes à venir\|SOCIETE\|ANALYSE ET CONSEILS\|HISTORIQUES\|ACTUS\|EVENEMENTS\)' s.html
-          grep -o 'href="/marches/[^"]*"' s.html | sort -u | head -40
-          for u in societe_SNTS.sn analyse_SNTS.sn; do echo "== $u"; curl -sL -A "$UA" -m 40 "https://www.sikafinance.com/marches/$u" -o x.html -w "%{http_code} %{size_download}\n"; python3 -c "
-          import re;s=open('x.html',encoding='utf-8',errors='ignore').read();t=re.sub(r'<script.*?</script>|<style.*?</style>',' ',s,flags=re.S);t=re.sub(r'<[^>]+>','|',t);t=re.sub(r'\s+',' ',t);t=re.sub(r'(\| ?)+','|',t)
-          i=t.find('Chiffre');print(t[max(0,i-1500):i+3000] if i>0 else t[3000:6000])"; done
-          for t in SNTS.sn ORAC.ci BOAB.bj SLBC.ci ONTBF.bf BOAM.ml BOAN.ne ETIT.tg SGBC.ci; do echo "== $t"; curl -s -A "$UA" -m 40 -H 'Content-Type: application/json' -d "{\"ticker\":\"$t\",\"datedeb\":\"2016-01-04\",\"datefin\":\"2016-03-31\",\"xperiod\":\"0\"}" https://www.sikafinance.com/api/general/GetHistos | head -c 150; echo; done
+          cat > t.py <<'P'
+          import re,sys;s=open(sys.argv[1],encoding='utf-8',errors='ignore').read();t=re.sub(r'<script.*?</script>|<style.*?</style>',' ',s,flags=re.S);t=re.sub(r'<[^>]+>','|',t);t=re.sub(r'\s+',' ',t);t=re.sub(r'(\| ?)+','|',t);import html;t=html.unescape(t)
+          k=sys.argv[2];i=t.find(k);print(t[max(0,i-300):i+int(sys.argv[3])])
+          P
+          for u in "societe/SNTS.sn|Chiffre|3500" "analyses/conseil/SNTS.sn|CONSEIL|2000" "actualites_bourse_brvm|ACTUALIT|2500" "dividendes|Dividende|2000" "palmares|Palmar|1200"; do IFS='|' read p k n <<< "$u"; case $p in analyses*) url=https://www.sikafinance.com/$p;; *) url=https://www.sikafinance.com/marches/$p;; esac; echo "== $url"; curl -sL -A "$UA" -m 40 "$url" -o x.html -w "%{http_code} %{size_download}\n"; python3 t.py x.html "$k" $n; done
+          grep -o 'href="/marches/[a-z0-9-]*_[0-9]*"' x.html | head -3
+          echo "== jina brvm"; curl -s -m 60 "https://r.jina.ai/https://www.brvm.org/fr/cours-actions/0" | head -c 800
