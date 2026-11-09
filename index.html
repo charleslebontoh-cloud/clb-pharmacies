@@ -244,23 +244,26 @@ nav button[data-t="med"].on{background:var(--g-amber)}
 .adbox{margin:14px 18px;border-radius:18px;overflow:hidden;background:#fff;border:1px dashed rgba(15,42,58,.15);min-height:60px;position:relative}
 .adbox:before{content:"Publicité";position:absolute;top:4px;right:10px;font:700 9px -apple-system;color:#9AAAB3;letter-spacing:.08em;text-transform:uppercase}
 .priv{margin:4px 18px 20px;font-size:12px;color:var(--muted);text-align:center}.priv a{color:#0E7490;font-weight:700}
+.phmode{margin:0 16px 8px;padding:10px 12px;border-radius:14px;font-size:13px;font-weight:600;background:#E8F7F4;color:#0E6B5C;border:1px solid #BFE9DF}.phmode.nuit,.phmode.we,.phmode.ferie{background:#EEF0FF;color:#3B3F8F;border-color:#D3D7FF}
+.gbadge{display:inline-block;font-size:11px;font-weight:800;color:#fff;background:#4F46E5;border-radius:999px;padding:2px 8px;margin-right:4px}
 </style></head><body>
 <div id="splash" role="button" tabindex="0" aria-label="Entrer dans CLB Health"><div class="mesh"><i></i><i></i><i></i></div>
 <div class="spc"><div class="ecg"><svg viewBox="0 0 300 60" preserveAspectRatio="none"><path d="M0 30 H80 L95 30 L105 8 L118 52 L130 18 L140 30 H190 L200 30 L208 22 L216 30 H300"/></svg></div>
 <div class="floaty"><span>💧</span><span>💊</span><span>❤️</span><span>🏃</span><span>🥗</span><span>🩺</span></div>
 <img src="icon-512.png?v=2" alt=""><b>CLB HEALTH</b><div class="slog">Ton assistant santé personnel</div>
-<div class="news"><div class="vtag">Version 13.10.0 · nouveautés</div><ul><li>🛡️ Toutes les assurances ivoiriennes, réseaux Vitalis et Atlantique</li><li>🛡️ Réseau de ton assurance : le partenaire le plus proche</li><li>📍 Cliniques trouvées en ligne avec téléphone</li></ul></div>
-<span class="tap" id="sp-tap">Touche pour entrer</span><div id="sp-err" style="min-height:1.3em;margin-top:8px;color:#FFD1DA;font-size:13px;font-weight:600"></div><a id="sp-sos" href="tel:185" onclick="event.stopPropagation()">🆘 SAMU 185</a><small class="vsm">version 13.10.0 · 8 nov. 2026</small></div></div>
+<div class="news"><div class="vtag">Version 13.11.0 · nouveautés</div><ul><li>💊 En journée, toutes les pharmacies ouvertes autour de toi</li><li>🛡️ Toutes les assurances ivoiriennes, réseaux Vitalis et Atlantique</li><li>🛡️ Réseau de ton assurance : le partenaire le plus proche</li></ul></div>
+<span class="tap" id="sp-tap">Touche pour entrer</span><div id="sp-err" style="min-height:1.3em;margin-top:8px;color:#FFD1DA;font-size:13px;font-weight:600"></div><a id="sp-sos" href="tel:185" onclick="event.stopPropagation()">🆘 SAMU 185</a><small class="vsm">version 13.11.0 · 9 nov. 2026</small></div></div>
 <div class="banner" id="nudge"></div>
 
 <!-- PHARMACIES -->
 <section class="tab" id="t-ph">
-<header><div class="brand">CLB Health</div><h1>Pharmacies <span>de garde</span></h1><div class="per" id="per">Chargement…</div></header>
+<header><div class="brand">CLB Health</div><h1>Pharmacies <span id="ph-mode">de garde</span></h1><div class="per" id="per">Chargement…</div></header>
+<div class="phmode" id="ph-why"></div>
 <div class="bar"><select id="zone" aria-label="Commune"></select><button id="loc" aria-label="Me relocaliser">📍</button></div>
 <div class="bar" style="padding-top:0"><input id="q" type="search" placeholder="Rechercher une pharmacie, une ville…" aria-label="Rechercher"></div>
 <div id="msg" role="status"></div>
 <div id="list"></div>
-<footer>Planning officiel UNPPCI, mis à jour chaque samedi. Appelle avant de te déplacer.</footer>
+<footer>Pharmacies de garde : planning officiel UNPPCI, mis à jour chaque samedi. Autres pharmacies : OpenStreetMap et réseau Vitalis. Appelle avant de te déplacer.</footer>
 </section>
 
 <!-- EAU -->
@@ -472,14 +475,33 @@ const dist=(a,b)=>{const R=6371,r=Math.PI/180,dl=(b[0]-a[0])*r,dg=(b[1]-a[1])*r,
 const fmt=x=>x.toLocaleString("fr-FR",{maximumFractionDigits:1});
 const fmtD=s=>{try{return new Date(s+"T12:00:00").toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});}catch(e){return s;}};
 const telHref=t=>{let d=t.replace(/\D/g,"");if(d.length===10)d="225"+d;return"tel:+"+d;};
-function card(p,km){const tels=p.t.split("/").map(x=>x.trim()).filter(Boolean),map="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(p.n+", "+p.c+", Côte d'Ivoire");
- return `<div class="c"><div class="top"><span class="pcross" aria-hidden="true">✚</span><div class="n" style="flex:1">${esc(p.n.replace(/^PHARMACIE /,"Pharmacie "))}</div>${km!=null?`<div class="d">~${fmt(km)} km</div>`:""}</div><div class="z">${esc(p.z)}</div><div class="a">${tels.map(t=>`<a class="call" href="${telHref(t)}">📞 ${esc(t)}</a>`).join("")}<a class="map" href="${map}" target="_blank" rel="noopener">🧭 Itinéraire</a></div></div>`;}
-function render(){const L=$("list");if(!data)return;const q=N($("q").value.trim());
- if(q){const it=data.liste.filter(p=>N(p.n+" "+p.z+" "+p.c).includes(q));L.innerHTML=it.length?it.map(p=>card(p,gps&&C[p.c]?dist(gps,C[p.c]):null)).join(""):'<div class="empty">Aucun résultat.</div>';return;}
+function card(p,km){const tels=(p.t||"").split(/[\/;,]/).map(x=>x.trim()).filter(x=>x.replace(/\D/g,"").length>=8),map=p.la!=null?`https://www.google.com/maps/dir/?api=1&destination=${p.la},${p.lo}`:"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(p.n+", "+(p.c||"")+", Côte d'Ivoire");
+ return `<div class="c"><div class="top"><span class="pcross" aria-hidden="true">✚</span><div class="n" style="flex:1">${esc(p.n.replace(/^PHARMACIE /,"Pharmacie "))}</div>${km!=null?`<div class="d">~${fmt(km)} km</div>`:""}</div><div class="z">${p.g?`<span class="gbadge">🌙 De garde</span> `:""}${esc(p.z||p.a||"")}${p.h?`<br><span style="opacity:.8">🕒 ${esc(p.h)}</span>`:""}</div><div class="a">${tels.map(t=>`<a class="call" href="${telHref(t)}">📞 ${esc(t)}</a>`).join("")}<a class="map" href="${map}" target="_blank" rel="noopener">🧭 Itinéraire</a></div></div>`;}
+/* ---- pharmacies ouvertes (journée) / de garde (nuit, week-end, fériés) ---- */
+const FERIES=new Set(["2026-11-01","2026-11-15","2026-12-25","2027-01-01","2027-03-06","2027-03-09","2027-03-29","2027-05-01","2027-05-06","2027-05-16","2027-05-17","2027-08-07","2027-08-14","2027-08-15","2027-11-01","2027-11-15","2027-12-25"]);
+const ymdL=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+function phMode(d=new Date()){const dow=d.getDay(),m=d.getHours()*60+d.getMinutes();
+ if(FERIES.has(ymdL(d)))return{g:1,k:"ferie",why:"🎉 Jour férié : seules les pharmacies de garde sont ouvertes."};
+ if(dow===0||dow===6)return{g:1,k:"we",why:"📅 Week-end : seules les pharmacies de garde sont ouvertes."};
+ if(m<450||m>=1200)return{g:1,k:"nuit",why:"🌙 Nuit (20 h – 7 h 30) : seules les pharmacies de garde sont ouvertes."};
+ return{g:0,k:"jour",why:`☀️ Journée : toutes les pharmacies autour de toi. Dès 20 h, le week-end et les jours fériés, je n'affiche que celles de garde.`};}
+let PALL=null,MODE=phMode();const PK=n=>N(n||"").replace(/[^A-Z0-9 ]/g," ").replace(/^\s*(PHARMACIE|PHCIE|PHIE)\s+/,"").replace(/\b(DE LA|DE L|DES|DU|DE|D|LA|LE|LES|L)\b/g," ").replace(/\s+/g," ").trim();
+function gardeKeys(){return new Set((data?data.liste:[]).map(p=>PK(p.n)));}
+function enrichGarde(){if(!PALL||!data)return;const idx={};PALL.forEach(a=>{(idx[PK(a.n)]=idx[PK(a.n)]||[]).push(a);});data.liste.forEach(p=>{const c=C[p.c];const m=(idx[PK(p.n)]||[]).filter(a=>!c||dist(c,[a.la,a.lo])<10).sort((x,y)=>c?dist(c,[x.la,x.lo])-dist(c,[y.la,y.lo]):0)[0];if(m){p.la=m.la;p.lo=m.lo;if(m.h)p.h=m.h;}});}
+function ref(){return gps||(cur&&C[cur])||null;}
+function phHead(){MODE=phMode();if(data){const d=data;$("per").innerHTML=MODE.g?`Garde du ${esc(fmtD(d.du))} au ${esc(fmtD(d.au))} · ${d.liste.length} pharmacies · 24 h/24`:`${PALL?PALL.length+" pharmacies connues · ":""}${d.liste.length} de garde cette semaine`;}$("ph-mode").textContent=MODE.g?"de garde":"ouvertes";$("ph-why").textContent=MODE.why;$("ph-why").className="phmode "+MODE.k;}
+function renderAll(){const L=$("list");const q=N($("q").value.trim());const G=gardeKeys();const r=ref();
+ let it=PALL.map(a=>({...a,g:G.has(PK(a.n)),d:r?dist(r,[a.la,a.lo]):null}));
+ if(q)it=it.filter(a=>N(a.n+" "+a.a).includes(q));
+ if(!r&&!q){L.innerHTML='<div class="empty">Autorise la localisation, ou choisis ta commune, pour voir les pharmacies ouvertes autour de toi.</div>';return;}
+ it.sort((a,b)=>(a.d??1e9)-(b.d??1e9));if(!q)it=it.filter((a,i)=>i<30&&(a.d==null||a.d<15));
+ L.innerHTML=it.length?`<div class="h">${it.length} pharmacie${it.length>1?"s":""} ${q?"trouvée(s)":"ouvertes les plus proches"}</div>`+it.map(a=>card(a,a.d)).join(""):'<div class="empty">Aucune pharmacie trouvée près d\'ici. Les pharmacies de garde restent visibles la nuit.</div>';}
+function render(){phHead();const L=$("list");if(!MODE.g&&PALL){renderAll();return;}if(!data)return;const q=N($("q").value.trim());const dd=p=>p.la!=null&&ref()?dist(ref(),[p.la,p.lo]):(gps&&C[p.c]?dist(gps,C[p.c]):null);
+ if(q){const it=data.liste.filter(p=>N(p.n+" "+p.z+" "+p.c).includes(q)).map(p=>({...p,g:1}));L.innerHTML=it.length?it.map(p=>card(p,dd(p))).join(""):'<div class="empty">Aucun résultat.</div>';return;}
  if(gps&&!cur){const byC={};data.liste.forEach(p=>{if(C[p.c])(byC[p.c]=byC[p.c]||[]).push(p);});
   const cs=Object.keys(byC).map(c=>[c,dist(gps,C[c])]).sort((a,b)=>a[1]-b[1]).filter((x,i)=>i<4||x[1]<5);
-  L.innerHTML=cs.map(([c,km])=>`<div class="h">${esc(c)} · ~${fmt(km)} km</div>`+byC[c].map(p=>card(p,km)).join("")).join("");return;}
- if(cur){const it=data.liste.filter(p=>p.c===cur);L.innerHTML=it.length?it.map(p=>card(p,gps&&C[cur]?dist(gps,C[cur]):null)).join(""):'<div class="empty">Aucune pharmacie de garde listée ici cette semaine.</div>';return;}
+  L.innerHTML=cs.map(([c,km])=>`<div class="h">${esc(c)} · ~${fmt(km)} km</div>`+byC[c].map(p=>({...p,g:1})).sort((a,b)=>(dd(a)??km)-(dd(b)??km)).map(p=>card(p,dd(p)??km)).join("")).join("");return;}
+ if(cur){const it=data.liste.filter(p=>p.c===cur).map(p=>({...p,g:1}));L.innerHTML=it.length?it.map(p=>card(p,dd(p))).join(""):'<div class="empty">Aucune pharmacie de garde listée ici cette semaine.</div>';return;}
  L.innerHTML='<div class="empty">Autorise la localisation, ou choisis ta commune.</div>';}
 function fillSel(){const have=new Set(data.liste.map(p=>p.c)),abj=ABJ.filter(c=>have.has(c)),int=[...have].filter(c=>!ABJ.includes(c)).sort((a,b)=>a.localeCompare(b,"fr"));
  $("zone").innerHTML='<option value="">📍 Autour de moi</option><optgroup label="Abidjan et environs">'+abj.map(c=>`<option>${esc(c)}</option>`).join("")+'</optgroup><optgroup label="Intérieur">'+int.map(c=>`<option>${esc(c)}</option>`).join("")+"</optgroup>";$("zone").value=cur||"";}
@@ -499,7 +521,9 @@ document.addEventListener("visibilitychange",()=>{if(!document.hidden&&TAB==="ph
 fetch("pharmacies.json?"+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(d=>{data={...d,liste:d.liste.map(p=>({...p,c:commune(p.z)}))};
  const old=new Date().toISOString().slice(0,10)>d.au;
  $("per").innerHTML=`Semaine du ${esc(fmtD(d.du))} au ${esc(fmtD(d.au))} · ${d.liste.length} pharmacies · 24 h/24`+(old?' · <b style="color:#f7b733">mise à jour en cours</b>':"");
- fillSel();render();}).catch(()=>{$("per").textContent="Liste indisponible, vérifie ta connexion.";});
+ fillSel();render();enrichGarde();}).catch(()=>{$("per").textContent="Liste indisponible, vérifie ta connexion.";});
+fetch("pharmacies-all.json",{cache:"no-store"}).then(r=>r.json()).then(d=>{PALL=d.liste;enrichGarde();render();}).catch(()=>{});
+setInterval(()=>{const m=phMode();if(m.k!==MODE.k){render();}},60000);
 
 
 
