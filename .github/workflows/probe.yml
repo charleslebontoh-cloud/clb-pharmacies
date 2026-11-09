@@ -1,0 +1,13 @@
+name: probe
+on: workflow_dispatch
+jobs:
+  p:
+    runs-on: ubuntu-latest
+    steps:
+      - shell: bash
+        run: |
+          set +e
+          echo "== bing"; curl -s -m 30 "https://r.jina.ai/https://www.bing.com/images/search?q=augmentin+1g+comprim%C3%A9+boite" > /tmp/b; wc -c /tmp/b; grep -o 'https://[^) ]*\(tse[0-9]\.mm\.bing\.net\|th\.bing\.com\)[^) ]*' /tmp/b | head -5
+          echo "== bing2 X-Return-Format"; curl -s -m 30 -H "X-With-Images-Summary: true" "https://r.jina.ai/https://www.bing.com/images/search?q=doliprane+1000" | grep -o 'Image [0-9]*: [^]]*\](https://[^)]*)' | head -5
+          echo "== ddg"; curl -s -m 30 "https://r.jina.ai/https://duckduckgo.com/?q=augmentin+1g&iax=images&ia=images" | grep -o 'https://external-content[^) ]*' | head -3
+          echo "== gdd"; curl -s -m 30 "https://r.jina.ai/https://www.pharma-gdd.com/fr/catalogsearch/result/?q=doliprane" | grep -o '!\[[^]]*\](https://[^)]*)' | head -4
