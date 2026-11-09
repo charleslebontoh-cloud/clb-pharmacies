@@ -261,13 +261,31 @@ nav button[data-t="med"].on{background:var(--g-amber)}
 .savebar{position:sticky;bottom:calc(96px + env(safe-area-inset-bottom));z-index:6;margin-top:12px;padding:6px;border-radius:18px;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 14px 30px -16px rgba(14,60,80,.5)}.savebar .btn{width:100%}.savebar .note{margin:6px 0 0;text-align:center;font-size:11.5px}
 .dgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.dgrid button{border:1.5px solid rgba(15,42,58,.12);background:#F8FAFB;border-radius:10px;padding:8px 0;font:700 13px -apple-system,system-ui;color:#0F2A3A}.dgrid button.on{background:#0E7490;color:#fff;border-color:#0E7490}
 .privline{margin:0 0 10px;padding:10px 12px;border-radius:14px;background:linear-gradient(135deg,#ECFDF5,#EFF6FF);border:1.5px solid #A7F3D0;font-size:12.5px;color:#065F46}
+#wn{position:fixed;inset:0;z-index:9998;display:none;align-items:flex-end;justify-content:center;background:rgba(8,20,30,.45);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+#wn.on{display:flex;animation:wnF .3s both}@keyframes wnF{from{opacity:0}}
+#wn .sh{width:100%;max-width:520px;background:#fff;color:#0F2A3A;border-radius:26px 26px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom));box-shadow:0 -20px 40px -20px rgba(0,0,0,.4);animation:wnU .45s cubic-bezier(.34,1.4,.64,1) both}
+@keyframes wnU{from{transform:translateY(100%)}}
+#wn .vt{display:inline-block;font-size:11.5px;font-weight:800;letter-spacing:.04em;color:#0E7490;background:#E0F2FE;border-radius:999px;padding:4px 10px}
+#wn h2{margin:10px 0 12px;font-size:21px}#wn ul{list-style:none;margin:0 0 16px;padding:0;display:grid;gap:10px}
+#wn li{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;line-height:1.4;padding:10px 12px;border-radius:14px;background:#F4F8FA}#wn li i{font-style:normal;font-size:18px}
+#wn .btn{width:100%}
+.psum{display:flex;align-items:center;gap:12px}.psum .av{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:22px;background:linear-gradient(135deg,#CCFBF1,#E0F2FE);flex:none}
+.psum div{flex:1;min-width:0}.psum b{display:block;font-size:16px}.psum small{display:block;color:#64748B;font-size:12.5px;margin-top:2px}
+.psum .ed{width:44px;height:44px;border-radius:50%;border:1.5px solid rgba(15,42,58,.1);background:#fff;font-size:19px;flex:none;box-shadow:0 8px 18px -12px rgba(14,60,80,.6)}
 </style></head><body>
+<div id="wn" role="dialog" aria-modal="true" aria-labelledby="wn-h"><div class="sh"><span class="vt">VERSION 13.16.0</span><h2 id="wn-h">✨ Quoi de neuf ?</h2><ul>
+<li><i>👤</i><span>Ton profil enregistré se replie : touche ✏️ pour le modifier.</span></li>
+<li><i>✨</i><span>Les nouveautés s'affichent ici, une seule fois après chaque mise à jour.</span></li>
+<li><i>📅</i><span>Prise des médicaments par jour, par semaine ou par mois.</span></li>
+<li><i>🇫🇷</i><span>Fiches médicaments en français d'abord (ANSM, HAS, Wikipédia).</span></li>
+<li><i>🤒</i><span>« Ce que je ressens » en dépliant.</span></li>
+</ul><button class="btn gold" id="wn-ok">C'est noté</button></div></div>
 <div id="splash" role="button" tabindex="0" aria-label="Entrer dans CLB Health"><div class="mesh"><i></i><i></i><i></i></div>
 <div class="spc"><div class="ecg"><svg viewBox="0 0 300 60" preserveAspectRatio="none"><path d="M0 30 H80 L95 30 L105 8 L118 52 L130 18 L140 30 H190 L200 30 L208 22 L216 30 H300"/></svg></div>
 <div class="floaty"><span>💧</span><span>💊</span><span>❤️</span><span>🏃</span><span>🥗</span><span>🩺</span></div>
 <img src="icon-512.png?v=2" alt=""><b>CLB HEALTH</b><div class="slog">Ton assistant santé personnel</div>
-<div class="news"><div class="vtag">Version 13.15.0 · nouveautés</div><ul><li>📅 Prise par jour, par semaine ou par mois</li><li>🇫🇷 Fiches médicaments en français d'abord (ANSM, HAS, Wikipédia)</li><li>🤒 « Ce que je ressens » en dépliant · 🔒 mention de confidentialité</li></ul></div>
-<span class="tap" id="sp-tap">Touche pour entrer</span><div style="font-size:11.5px;opacity:.75;margin-top:10px">🔒 Tes données restent sur ce téléphone, confidentielles.</div><div id="sp-err" style="min-height:1.3em;margin-top:8px;color:#FFD1DA;font-size:13px;font-weight:600"></div><a id="sp-sos" href="tel:185" onclick="event.stopPropagation()">🆘 SAMU 185</a><small class="vsm">version 13.15.0 · 9 nov. 2026 · <a href="#" id="upd" style="color:inherit;font-weight:700">Vérifier les mises à jour</a></small></div></div>
+
+<span class="tap" id="sp-tap">Touche pour entrer</span><div style="font-size:11.5px;opacity:.75;margin-top:10px">🔒 Tes données restent sur ce téléphone, confidentielles.</div><div id="sp-err" style="min-height:1.3em;margin-top:8px;color:#FFD1DA;font-size:13px;font-weight:600"></div><a id="sp-sos" href="tel:185" onclick="event.stopPropagation()">🆘 SAMU 185</a><small class="vsm">version 13.16.0 · 9 nov. 2026 · <a href="#" id="upd" style="color:inherit;font-weight:700">Vérifier les mises à jour</a></small></div></div>
 <div class="banner" id="nudge"></div>
 
 <!-- PHARMACIES -->
@@ -382,6 +400,8 @@ nav button[data-t="med"].on{background:var(--g-amber)}
   <button class="btn full" id="go-pro" style="margin-top:6px">✏️ Mettre à jour mon profil</button>
  </div>
  <div id="ms-pro" style="display:none">
+ <div class="card2" id="p-sum" style="display:none"><div class="psum"><span class="av">👤</span><div><b id="ps-n"></b><small id="ps-d"></small></div><button class="ed" id="p-edit" aria-label="Modifier mon profil">✏️</button></div></div>
+ <div id="p-form">
  <details class="dep privc" style="margin-bottom:10px"><summary><span>🔒 Tes données restent sur ce téléphone</span></summary><div class="note" style="margin:0 14px">Ton profil, tes médicaments, ton eau, ton portefeuille et tes photos sont enregistrés <b>uniquement sur ce téléphone</b>. Ils ne sont envoyés à aucun serveur : <b>personne ne peut les voir, pas même le créateur de l'appli</b>. Quand tu cherches un médicament ou une pharmacie, seul le nom cherché ou ta position part vers des services publics (sans ton nom). Les seules statistiques sont des compteurs anonymes (nombre d'ouvertures), que tu peux couper dans « Plus ».</div></details>
  <div class="card2"><h3>👤 Identité et mesures</h3>
   <div style="display:grid;gap:8px">
@@ -407,6 +427,7 @@ nav button[data-t="med"].on{background:var(--g-amber)}
   </div></div>
  <div class="savebar"><button class="btn gold" id="p-save">💾 Enregistrer mon profil</button></div>
  <div class="note" style="text-align:center;margin:8px 0 0">Ces informations restent uniquement sur ton téléphone. Elles ne remplacent pas un avis médical.</div>
+ </div>
  </div>
 </div>
 </section>
@@ -571,9 +592,12 @@ setInterval(()=>{const m=phMode();if(m.k!==MODE.k){render();}},60000);
 
 
 /* ---------- Moi : synthèse / profil ---------- */
-function moiTab(k){document.querySelectorAll("#moi-seg button").forEach(b=>b.classList.toggle("on",b.dataset.ms===k));$("ms-syn").style.display=k==="syn"?"":"none";$("ms-pro").style.display=k==="pro"?"":"none";
+function moiTab(k){document.querySelectorAll("#moi-seg button").forEach(b=>b.classList.toggle("on",b.dataset.ms===k));$("ms-syn").style.display=k==="syn"?"":"none";$("ms-pro").style.display=k==="pro"?"":"none";if(k==="pro")pView(false);
  $("moi-h").innerHTML=k==="syn"?"Ma santé <span>en un coup d'œil</span>":"Mon profil <span>santé</span>";$("moi-per").textContent=k==="syn"?"Ton diagnostic et tes recommandations personnalisées.":"Renseigne-le une fois : tout le diagnostic s'appuie dessus.";window.scrollTo({top:0,behavior:"smooth"});}
-document.querySelectorAll("#moi-seg button").forEach(b=>b.onclick=()=>moiTab(b.dataset.ms));$("go-pro").onclick=()=>moiTab("pro");
+document.querySelectorAll("#moi-seg button").forEach(b=>b.onclick=()=>moiTab(b.dataset.ms));$("go-pro").onclick=()=>{moiTab("pro");pView(true);};
+function pHas(){return !!(P&&(P.age||P.poids||P.nom||P.prenom));}
+function pView(edit){const has=pHas(),ed=edit||!has;$("p-form").style.display=ed?"":"none";$("p-sum").style.display=has&&!ed?"":"none";
+ if(has){$("ps-n").textContent=[P.prenom,P.nom].filter(Boolean).join(" ")||"Mon profil";$("ps-d").textContent=[P.sexe==="h"?"Homme":P.sexe==="f"?"Femme":"",P.age?P.age+" ans":"",P.poids?P.poids+" kg":"",P.taille?P.taille+" cm":""].filter(Boolean).join(" · ")||"Profil enregistré";}}
 /* ---------- onglets ---------- */
 let TAB="ph";
 const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
@@ -973,9 +997,10 @@ $("p-cond").innerHTML=COND.map(([k,l])=>`<label class="sx"><input type="checkbox
 $("p-all").innerHTML=ALL.map(([k,l])=>`<label class="sx"><input type="checkbox" value="${k}"><span>${l}</span></label>`).join("");
 function pFill(){["nom","prenom","sexe","age","poids","taille","act","obj","allx","tabac","alcool"].forEach(k=>{if(P[k]!=null&&$("p-"+k))$("p-"+k).value=P[k];});
  document.querySelectorAll("#p-cond input").forEach(i=>i.checked=(P.cond||[]).includes(i.value));document.querySelectorAll("#p-all input").forEach(i=>i.checked=(P.all||[]).includes(i.value));setTimeout(()=>{opsRender();},0);}
+$("p-edit").onclick=()=>{pView(true);haptic&&haptic(10);};
 $("p-save").onclick=()=>{["nom","prenom","sexe","age","poids","taille","act","obj","allx","tabac","alcool"].forEach(k=>P[k]=$("p-"+k).value.trim());
  P.cond=[...document.querySelectorAll("#p-cond input:checked")].map(i=>i.value);P.all=[...document.querySelectorAll("#p-all input:checked")].map(i=>i.value);
- LS.set("profil",P);stat("profil");pRender();moiTab("syn");toast2("✅ Profil enregistré : conseils mis à jour.");};
+ LS.set("profil",P);stat("profil");pRender();pView(false);moiTab("syn");toast2("✅ Profil enregistré : conseils mis à jour.");};
 
 /* opérations chirurgicales */
 const OPS=["Appendicite (appendicectomie)","Césarienne","Vésicule biliaire (cholécystectomie)","Hernie (inguinale, ombilicale…)","Amygdales (amygdalectomie)","Cœur : pontage ou valve","Pose de stent (angioplastie)","Prothèse de hanche","Prothèse de genou","Dos ou colonne (hernie discale…)","Cataracte","Utérus (hystérectomie)","Fibromes (myomectomie)","Prostate","Thyroïde","Chirurgie de l'obésité (anneau, sleeve, bypass)","Ablation de la rate (splénectomie)","Ablation d'un rein (néphrectomie)","Greffe d'organe","Sein","Fracture opérée (plaque, broche, clou)","Estomac ou intestin","Hémorroïdes","Varices","Circoncision","Autre (préciser)"];
@@ -1240,12 +1265,16 @@ async function faSetup(){const P0=LS.get("profil",{}),who=[P0.prenom,P0.nom].fil
  pubKeyCredParams:[{type:"public-key",alg:-7},{type:"public-key",alg:-257}],authenticatorSelection:{authenticatorAttachment:"platform",userVerification:"required",residentKey:"preferred"},timeout:60000,attestation:"none"}});
  LOCK={id:b64(c.rawId),t:Date.now()};LS.set("lock",LOCK);}
 let unlocked=false,hiddenAt=0;
+const VER="13.16.0";
+function wnShow(){const seen=LS.get("seenVer",null);if(seen===VER)return;
+ if(seen===null&&!LS.get("profil",{}).age&&!LS.get("profil",{}).nom){LS.set("seenVer",VER);return;}
+ const w=$("wn");w.classList.add("on");const close=()=>{w.classList.remove("on");LS.set("seenVer",VER);};$("wn-ok").onclick=close;w.onclick=e=>{if(e.target===w)close();};}
 function showSplash(){let s=$("splash");if(!s)return;s.classList.remove("out");s.style.display="grid";$("sp-tap").textContent=LOCK?"🔒 Touche pour déverrouiller avec Face ID":"Touche pour entrer";$("sp-err").textContent="";}
 (()=>{const s=$("splash");let busy=false,fails=0;showSplash();
  const enter=async()=>{if(busy||unlocked)return;busy=true;$("sp-err").textContent="";
-  try{await faVerify();unlocked=true;haptic(20);s.classList.add("out");setTimeout(()=>{s.style.display="none";},700);}
+  try{await faVerify();unlocked=true;haptic(20);s.classList.add("out");setTimeout(()=>{s.style.display="none";wnShow();},700);}
   catch(e){fails++;$("sp-err").innerHTML=(e&&e.name==="NotAllowedError"?"Face ID annulé ou non reconnu. Touche pour réessayer.":"Déverrouillage impossible. Touche pour réessayer.")+(LOCK&&LOCK.rc&&fails>=1?` <button id="sp-rc" style="margin-top:8px;border:0;border-radius:10px;padding:8px 12px;font-weight:700">Utiliser mon code de secours</button>`:"");
-   const rb=$("sp-rc");if(rb)rb.onclick=async ev=>{ev.stopPropagation();const t=prompt("Code de secours :","");if(t&&await sha(t)===LOCK.rc){unlocked=true;s.classList.add("out");setTimeout(()=>{s.style.display="none";},700);setTimeout(()=>{if(confirm("Déverrouillé. Veux-tu réactiver Face ID sur ce téléphone ?")){LOCK=null;LS.set("lock",null);go("sos");}},900);}else if(t)alert("Code incorrect.");};}
+   const rb=$("sp-rc");if(rb)rb.onclick=async ev=>{ev.stopPropagation();const t=prompt("Code de secours :","");if(t&&await sha(t)===LOCK.rc){unlocked=true;s.classList.add("out");setTimeout(()=>{s.style.display="none";wnShow();},700);setTimeout(()=>{if(confirm("Déverrouillé. Veux-tu réactiver Face ID sur ce téléphone ?")){LOCK=null;LS.set("lock",null);go("sos");}},900);}else if(t)alert("Code incorrect.");};}
   busy=false;};
  s.addEventListener("click",enter);s.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" ")enter();});
  document.addEventListener("visibilitychange",()=>{if(document.hidden){hiddenAt=Date.now();}else if(LOCK&&unlocked&&Date.now()-hiddenAt>LS.get("lockDelay",5)*60000){unlocked=false;showSplash();}});})();
@@ -1275,7 +1304,7 @@ const _eb=eBreak;eBreak=function(){_eb();$("e-over").classList.add("show");hapti
 /* ---------- démarrage ---------- */
 if("serviceWorker"in navigator){let had=!!navigator.serviceWorker.controller,reloaded=false;
  navigator.serviceWorker.addEventListener("controllerchange",()=>{if(had&&!reloaded){reloaded=true;location.reload();}had=true;});
- navigator.serviceWorker.register("sw.js?v=13.15.0",{updateViaCache:"none"}).then(r=>{r.update();document.addEventListener("visibilitychange",()=>{if(!document.hidden)r.update();});}).catch(()=>{});}
+ navigator.serviceWorker.register("sw.js?v=13.16.0",{updateViaCache:"none"}).then(r=>{r.update();document.addEventListener("visibilitychange",()=>{if(!document.hidden)r.update();});}).catch(()=>{});}
 const start=(location.hash||"").slice(1),TABS=["moi","ph","eau","med","eye","sos"];go(TABS.includes(start)?start:(!LS.get("profil",{}).age?"moi":(TABS.includes(LS.get("tab","moi"))?LS.get("tab","moi"):"moi")));
 nudge();
 </script>
