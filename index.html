@@ -259,13 +259,15 @@ nav button[data-t="med"].on{background:var(--g-amber)}
 .dep.rec{margin-top:8px;box-shadow:0 16px 32px -26px rgba(14,60,80,.5)}.dep.rec>div{margin:0 14px}.dep.rec h3{display:none}
 .lbl3{display:flex;gap:8px;margin:2px 4px -4px;font-size:11.5px;font-weight:800;color:#5F7684}.lbl3 span{flex:1}
 .savebar{position:sticky;bottom:calc(96px + env(safe-area-inset-bottom));z-index:6;margin-top:12px;padding:6px;border-radius:18px;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 14px 30px -16px rgba(14,60,80,.5)}.savebar .btn{width:100%}.savebar .note{margin:6px 0 0;text-align:center;font-size:11.5px}
+.dgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.dgrid button{border:1.5px solid rgba(15,42,58,.12);background:#F8FAFB;border-radius:10px;padding:8px 0;font:700 13px -apple-system,system-ui;color:#0F2A3A}.dgrid button.on{background:#0E7490;color:#fff;border-color:#0E7490}
+.privline{margin:0 0 10px;padding:10px 12px;border-radius:14px;background:linear-gradient(135deg,#ECFDF5,#EFF6FF);border:1.5px solid #A7F3D0;font-size:12.5px;color:#065F46}
 </style></head><body>
 <div id="splash" role="button" tabindex="0" aria-label="Entrer dans CLB Health"><div class="mesh"><i></i><i></i><i></i></div>
 <div class="spc"><div class="ecg"><svg viewBox="0 0 300 60" preserveAspectRatio="none"><path d="M0 30 H80 L95 30 L105 8 L118 52 L130 18 L140 30 H190 L200 30 L208 22 L216 30 H300"/></svg></div>
 <div class="floaty"><span>💧</span><span>💊</span><span>❤️</span><span>🏃</span><span>🥗</span><span>🩺</span></div>
 <img src="icon-512.png?v=2" alt=""><b>CLB HEALTH</b><div class="slog">Ton assistant santé personnel</div>
-<div class="news"><div class="vtag">Version 13.14.0 · nouveautés</div><ul><li>🔎 Cherche un médicament par son nom : photo, dosage, quantité</li><li>🔒 Face ID corrigé pour tous, code de secours</li><li>🛡️ Tes données restent sur ton téléphone</li></ul></div>
-<span class="tap" id="sp-tap">Touche pour entrer</span><div style="font-size:11.5px;opacity:.75;margin-top:10px">🔒 Tes données restent sur ce téléphone, confidentielles.</div><div id="sp-err" style="min-height:1.3em;margin-top:8px;color:#FFD1DA;font-size:13px;font-weight:600"></div><a id="sp-sos" href="tel:185" onclick="event.stopPropagation()">🆘 SAMU 185</a><small class="vsm">version 13.14.0 · 9 nov. 2026 · <a href="#" id="upd" style="color:inherit;font-weight:700">Vérifier les mises à jour</a></small></div></div>
+<div class="news"><div class="vtag">Version 13.15.0 · nouveautés</div><ul><li>📅 Prise par jour, par semaine ou par mois</li><li>🇫🇷 Fiches médicaments en français d'abord (ANSM, HAS, Wikipédia)</li><li>🤒 « Ce que je ressens » en dépliant · 🔒 mention de confidentialité</li></ul></div>
+<span class="tap" id="sp-tap">Touche pour entrer</span><div style="font-size:11.5px;opacity:.75;margin-top:10px">🔒 Tes données restent sur ce téléphone, confidentielles.</div><div id="sp-err" style="min-height:1.3em;margin-top:8px;color:#FFD1DA;font-size:13px;font-weight:600"></div><a id="sp-sos" href="tel:185" onclick="event.stopPropagation()">🆘 SAMU 185</a><small class="vsm">version 13.15.0 · 9 nov. 2026 · <a href="#" id="upd" style="color:inherit;font-weight:700">Vérifier les mises à jour</a></small></div></div>
 <div class="banner" id="nudge"></div>
 
 <!-- PHARMACIES -->
@@ -308,6 +310,7 @@ nav button[data-t="med"].on{background:var(--g-amber)}
 <section class="tab" id="t-med">
 <header><div class="brand">CLB Health</div><h1>Médicaments <span>& traitements</span></h1><div class="per">Photographie l'ordonnance ou la boîte : l'appli te rappelle chaque prise.</div></header>
 <div class="pad">
+ <div class="privline">🔒 Tes traitements, photos et ressentis sont <b>confidentiels</b> : ils restent stockés uniquement sur ce téléphone, personne d'autre n'y a accès.</div>
  <div class="card2" id="m-prof" style="display:none"></div>
  <div class="card2" id="m-next"></div>
  <div class="card2 addc"><h3><span class="tile g-violet"><svg class="ico w" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 20.5 3.5 13.5a5 5 0 0 1 7-7l7 7a5 5 0 0 1-7 7z"/><path d="m8.5 8.5 7 7"/></svg></span>Ajouter un médicament</h3>
@@ -329,7 +332,9 @@ nav button[data-t="med"].on{background:var(--g-amber)}
    <div style="display:grid;gap:8px">
     <input id="m-nom" placeholder="Nom du médicament (ex. Amoxicilline)">
     <input id="m-dose" placeholder="Dose par prise (ex. 500 mg, 1 comprimé)">
-    <div class="row"><label for="m-n">Prises par jour</label><select id="m-n"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div>
+    <div class="row"><label for="m-fq">Fréquence</label><select id="m-fq"><option value="j">Tous les jours</option><option value="s">Certains jours de la semaine</option><option value="m">Certains jours du mois</option></select></div>
+    <div id="m-fqd" style="display:none"></div>
+    <div class="row"><label for="m-n" id="m-nl">Prises par jour</label><select id="m-n"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div>
     <div class="row"><label for="m-first">1<sup>re</sup> prise</label><input id="m-first" type="datetime-local" style="flex:2"></div><label class="sx" style="margin:0"><input type="checkbox" id="m-took"><span>Je viens de prendre la 1<sup>re</sup> prise : l'appli cale les suivantes dessus</span></label>
     <div class="row" id="m-times"></div><div class="note" style="margin:0">Heures calculées à partir de ta 1<sup>re</sup> prise, modifiables.</div>
     <div id="m-info"></div>
@@ -346,7 +351,7 @@ nav button[data-t="med"].on{background:var(--g-amber)}
  <div class="card2" id="m-hist" style="display:none"></div>
  <div class="ov" id="ms-ov" style="display:none"><div class="ovc" id="ms-c"></div></div>
  <div class="ov" id="m-endov" style="display:none"><div class="ovc" id="m-endc"></div></div>
- <div class="card2"><h3>🤒 Ce que je ressens</h3>
+ <details class="dep rec" id="d-fx" style="margin-top:12px"><summary><span>🤒 Ce que je ressens</span><em id="n-fx"></em></summary><div style="margin:0 14px">
   <div class="note" style="margin:0 0 8px">Après une prise, note tes effets indésirables : l'appli te dit quoi faire.</div>
   <select id="s-med" class="vi" style="width:100%;padding:10px"></select>
   <div class="chk" id="s-list"></div>
@@ -355,7 +360,7 @@ nav button[data-t="med"].on{background:var(--g-amber)}
   <button class="btn gold full" id="s-go">🩺 Que dois-je faire ?</button>
   <div id="s-adv"></div>
   <div id="s-log"></div>
- </div>
+ </div></details>
  <div class="note" style="margin:10px 2px 20px">⚠️ CLB Health ne remplace pas un médecin ni un pharmacien. En cas de doute, appelle ton médecin ou une pharmacie de garde ; en cas d'urgence, le SAMU (185). Tes traitements et photos restent uniquement sur ce téléphone.</div>
 </div>
 </section>
@@ -651,7 +656,7 @@ function fromFirst(){const v=$("m-first").value;if(!v){timesUI(DEF[+$("m-n").val
 $("m-n").onchange=fromFirst;$("m-first").onchange=fromFirst;
 let mPhotos=[],mTexts=[];
 function openForm(med){$("m-form").style.display="block";mEdit=med?med.id:null;$("m-took").checked=false;$("m-info").innerHTML=med&&med.info?infoHTML(med.info):"";$("m-first").value=med&&med.first?med.first:(med?"":localDT(new Date()));
- $("m-nom").value=med?med.nom:"";$("m-dose").value=med?med.dose:"";$("m-n").value=med?med.times.length:2;timesUI(med?med.times:DEF[2]);
+ FQ=med&&med.fq?JSON.parse(JSON.stringify(med.fq)):{t:"j",dows:[],doms:[]};$("m-fq").value=FQ.t;setTimeout(fqUI,0);$("m-nom").value=med?med.nom:"";$("m-dose").value=med?med.dose:"";$("m-n").value=med?med.times.length:2;timesUI(med?med.times:DEF[2]);
  $("m-days").value=med?String(med.days):"7";$("m-start").value=med?med.start:today();$("m-rep").value=med?med.rep:"";$("m-notes").value=med?med.notes:"";
  if(!med){mPhotos=[];mTexts=[];thumbs();mPhoto="";$("m-ocr").textContent="";$("m-txtbox").style.display="none";fromFirst();}else{mPhotos=med.photos||(med.photo?[med.photo]:[]);thumbs();}
  durNote();$("m-form").scrollIntoView({behavior:"smooth",block:"start"});}
@@ -697,25 +702,30 @@ function infoHTML(x){if(!x)return"";const fda=x.fda||{};
  const q=(x.q||x.t||"").toLowerCase(),warn=(typeof medWarnings==="function"?medWarnings(q):[]).filter(w=>w[1].toLowerCase().includes(q.slice(0,6)));
  return `<div class="xcard"><div class="xh"><span class="tile g-violet" style="margin:0">🔬</span><div><b>${esc(x.t)}</b><small>Fiche multi-sources</small></div></div>`
   +warn.map(w=>`<div class="adv ${w[0]}" style="margin-top:8px"><b>${w[1]}</b><p>${w[2]}</p></div>`).join("")
-  +(x.e?`<div class="xs"><span class="src">Wikipédia</span><p>${esc(x.e)}</p></div>`:"")
-  +(x.mp?`<div class="xs"><span class="src">MedlinePlus · Bibliothèque nationale de médecine (États-Unis)</span><p>${esc(x.mp.t)}${x.mp.s?" : "+esc(x.mp.s):""}</p></div>`:"")
-  +(sec.length?`<details class="xs"><summary><span class="src">Notice officielle FDA (en anglais)</span></summary>${sec.map(([l,k])=>`<p><b>${l} :</b> ${esc(fda[k])}</p>`).join("")}</details>`:"")
-  +`<div class="row" style="margin-top:8px">${x.mp&&x.mp.u?`<a class="btn" href="${x.mp.u}" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;font-size:13px">MedlinePlus</a>`:""}<a class="btn" href="https://www.vidal.fr/recherche.html?query=${encodeURIComponent(x.q||x.t)}" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;font-size:13px">VIDAL</a><a class="btn" href="https://base-donnees-publique.medicaments.gouv.fr/" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;font-size:13px">Base ANSM</a>${x.u?`<a class="btn" href="${x.u}" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;font-size:13px">Wikipédia</a>`:""}</div>
+  +(x.has?`<div class="xs"><span class="src">Avis de la Haute Autorité de santé (France)</span><p>${esc(x.has)}</p></div>`:"")
+  +(x.e?`<div class="xs"><span class="src">Wikipédia en français</span><p>${esc(x.e)}</p></div>`:"")
+  +(x.forme?`<div class="xs"><span class="src">Base officielle des médicaments (ANSM)</span><p>${esc(x.forme)}</p></div>`:"")
+  +(x.mp||sec.length?`<details class="xs"><summary><span class="src">Compléments en anglais (sources américaines)</span></summary>${x.mp?`<p><b>MedlinePlus :</b> ${esc(x.mp.t)}${x.mp.s?" : "+esc(x.mp.s):""}</p>`:""}${sec.map(([l,k])=>`<p><b>${l} :</b> ${esc(fda[k])}</p>`).join("")}</details>`:"")
+  +`<div class="row" style="margin-top:8px">${x.mp&&x.mp.u?`<a class="btn" href="${x.mp.u}" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;font-size:13px">MedlinePlus</a>`:""}<a class="btn" href="https://www.vidal.fr/recherche.html?query=${encodeURIComponent(x.q||x.t)}" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;font-size:13px">VIDAL</a><a class="btn" href="${x.cis?"https://base-donnees-publique.medicaments.gouv.fr/extrait.php?specid="+x.cis:"https://base-donnees-publique.medicaments.gouv.fr/"}" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;font-size:13px">Base ANSM</a>${x.u?`<a class="btn" href="${x.u}" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;font-size:13px">Wikipédia</a>`:""}</div>
   <div class="note">Informations de référence générales. La dose et la durée à suivre sont celles de ton ordonnance ; en cas de doute, demande à ton pharmacien.</div></div>`;}
 let mInfo=null;
-async function lookup(q){const raw=(typeof q==="string"&&q?q:($("m-nom").value||"")).trim();const n=raw.split(/[\s,]+/)[0];if(n.length<4)return;
- $("m-info").innerHTML=`<div class="note">🔬 Recherche dans les bases médicales (Wikipédia, FDA, MedlinePlus)…</div>`;
+async function lookup(q,cis0){const raw=(typeof q==="string"&&q?q:($("m-nom").value||"")).trim();let n=raw.split(/[\s,]+/)[0];if(n.length<4)return;
+ let cis=cis0||"",prod=null;try{await mdbLoad();const NB=NU(raw.split(/\s+\d/)[0]);prod=(cis&&MDB.p.find(p=>p[0]===cis))||MDB.p.find(p=>NU(p.base)===NB)||MDB.p.find(p=>NU(p.base)===NU(n));if(prod){cis=prod[0];const d=prod[4][0]&&prod[4][0][0];if(d&&NU(n)!==NU(d)&&!cis0)n=d;else if(d&&cis0)n=d;}}catch(e){}
+ const frT=t=>t.charAt(0).toUpperCase()+t.slice(1).toLowerCase();n=frT(n.replace(/\s*\(.*$/,"").split(/[ ,]/)[0]);
+ $("m-info").innerHTML=`<div class="note">🔬 Recherche dans les bases médicales (ANSM, HAS, Wikipédia, puis sources américaines)…</div>`;
  const en=enName(raw.toLowerCase().includes("acide")?raw:n);
  const J2=u=>fetch(u).then(r=>r.ok?r.json():null).catch(()=>null);
  const [wk,fd,rx]=await Promise.all([J2("https://fr.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(n)),
   J2(`https://api.fda.gov/drug/label.json?search=openfda.generic_name:%22${encodeURIComponent(en)}%22&limit=1`).then(j=>j||J2(`https://api.fda.gov/drug/label.json?search=openfda.brand_name:%22${encodeURIComponent(en)}%22&limit=1`)),
   J2("https://rxnav.nlm.nih.gov/REST/rxcui.json?name="+encodeURIComponent(en))]);
- const x={q:n,t:(wk&&wk.title)||raw,e:wk&&wk.type!=="disambiguation"&&wk.extract?cut(wk.extract,420):"",u:wk&&wk.content_urls&&wk.content_urls.mobile?wk.content_urls.mobile.page:""};
+ const x={q:n,t:(wk&&wk.title)||raw,e:wk&&wk.type!=="disambiguation"&&wk.extract?cut(wk.extract,700):"",u:wk&&wk.content_urls&&wk.content_urls.mobile?wk.content_urls.mobile.page:"",cis};
+ if(prod){x.forme=`${prod[1]}. Voie ${MDB.v[prod[3]]}. Substance${prod[4].length>1?"s":""} active${prod[4].length>1?"s":""} : ${prod[4].map(a=>a[0].toLowerCase()+" "+a[1]).join(", ")}.${prod[5]?" Laboratoire : "+prod[5]+".":""}`;
+  try{const sh=await fetch("sante/smr/"+cis.slice(0,3)+".json").then(r=>r.ok?r.json():{});if(sh[cis]&&sh[cis].length>60)x.has=sh[cis];}catch(e){}}
  const L=fd&&fd.results&&fd.results[0];if(L)x.fda={ind:cut(L.indications_and_usage),ci:cut(L.contraindications),warn:cut(L.warnings_and_cautions||L.warnings||L.boxed_warning),ae:cut(L.adverse_reactions),inter:cut(L.drug_interactions),preg:cut(L.pregnancy||L["pregnancy_or_breast_feeding"])};
  const id=rx&&rx.idGroup&&rx.idGroup.rxnormId&&rx.idGroup.rxnormId[0];
  if(id){const mp=await J2(`https://connect.medlineplus.gov/service?mainSearchCriteria.v.cs=2.16.840.1.113883.6.88&mainSearchCriteria.v.c=${id}&knowledgeResponseType=application/json`);
   const e=mp&&mp.feed&&mp.feed.entry&&mp.feed.entry[0];if(e)x.mp={t:(e.title&&e.title._value)||"",s:cut(((e.summary&&e.summary._value)||"").replace(/<[^>]+>/g," "),300),u:e.link&&e.link[0]&&e.link[0].href};}
- if(!x.e&&!x.fda&&!x.mp){$("m-info").innerHTML=`<div class="note">Aucune fiche trouvée automatiquement. <a href="https://www.vidal.fr/recherche.html?query=${encodeURIComponent(n)}" target="_blank" rel="noopener">Chercher sur VIDAL</a></div>`;mInfo=null;return;}
+ if(!x.e&&!x.fda&&!x.mp&&!x.has&&!x.forme){$("m-info").innerHTML=`<div class="note">Aucune fiche trouvée automatiquement. <a href="https://www.vidal.fr/recherche.html?query=${encodeURIComponent(n)}" target="_blank" rel="noopener">Chercher sur VIDAL</a></div>`;mInfo=null;return;}
  mInfo=x;$("m-info").innerHTML=infoHTML(x);}
 
 /* ---------- diagnostic santé (profil + suivi) ---------- */
@@ -853,7 +863,7 @@ function mPick(g){const ov=$("ms-ov"),c=$("ms-c");let pres=g.L.slice().sort((a,b
    if(img){mPhotos=[img];mCanv=[];mRead=[];thumbs();const a=$("m-ana");if(a)a.style.display="none";}
    ["m-nom","m-dose","m-notes"].forEach(id=>{const el=$(id);el.classList.remove("filled");void el.offsetWidth;el.classList.add("filled");});
    $("m-sum").innerHTML=`<div class="adv g"><b>✓ ${esc(g.b)} : fiche remplie</b><p>Indique l'heure de ta première prise, le nombre de prises par jour et la durée, puis enregistre.</p></div>`;
-   ov.style.display="none";const dci=(sel&&sel[4][0]?sel[4][0][0]:"")||g.b;lookup(dci);setTimeout(()=>$("m-first").scrollIntoView({behavior:"smooth",block:"center"}),300);stat("med-recherche-ok");};};
+   ov.style.display="none";const dci=(sel&&sel[4][0]?sel[4][0][0]:"")||g.b;lookup(dci,sel?sel[0]:"");setTimeout(()=>$("m-first").scrollIntoView({behavior:"smooth",block:"center"}),300);stat("med-recherche-ok");};};
  let IM=null;const showImgs=()=>{const el=$("ms-im");if(!el||!IM)return;el.innerHTML=IM.length?IM.map(u=>`<button data-i="${esc(u)}" class="${u===img?"on":""}" style="background-image:url('${esc(u)}')" aria-label="Choisir cette photo"></button>`).join(""):`<div class="note" style="grid-column:1/-1">Pas de photo trouvée : tu pourras photographier la boîte.</div>`;
   el.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{img=b.dataset.i;showImgs();});};
  draw();ov.style.display="flex";
@@ -877,7 +887,7 @@ function histRender(){const H=M.list.filter(m=>m.end).sort((a,b)=>b.end.date.loc
  el.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{if(confirm("Effacer ce traitement de l'historique ?")){M.list=M.list.filter(x=>x.id!==b.dataset.del);saveM();mRender();}});}
 $("m-save").onclick=()=>{const nom=$("m-nom").value.trim();if(!nom){alert("Indique au moins le nom du médicament.");return;}
  const times=[...document.querySelectorAll(".m-t")].map(i=>i.value).filter(Boolean).sort();if(!times.length){alert("Indique au moins une heure de prise.");return;}
- const med={id:mEdit||("m"+Date.now()),nom,dose:$("m-dose").value.trim(),times,days:+$("m-days").value||0,start:$("m-start").value||today(),rep:$("m-rep").value,notes:$("m-notes").value.trim(),photos:mPhotos.slice(0,3),photo:mPhotos[0]||"",first:$("m-first").value,info:mInfo||((M.list.find(x=>x.id===mEdit)||{}).info||null),on:true};
+ const med={id:mEdit||("m"+Date.now()),nom,dose:$("m-dose").value.trim(),times,days:+$("m-days").value||0,start:$("m-start").value||today(),rep:$("m-rep").value,notes:$("m-notes").value.trim(),photos:mPhotos.slice(0,3),photo:mPhotos[0]||"",first:$("m-first").value,fq:FQ.t==="j"?null:JSON.parse(JSON.stringify(FQ)),info:mInfo||((M.list.find(x=>x.id===mEdit)||{}).info||null),on:true};
  const i=M.list.findIndex(x=>x.id===med.id);if(i>=0){if(M.list[i].end){med.end=M.list[i].end;med.on=false;}M.list[i]=med;}else M.list.push(med);
  if($("m-took").checked&&med.first){const d=new Date(med.first),k=dkey(d),t=p2(d.getHours())+":"+p2(d.getMinutes());if(!med.times.includes(t)){med.times.push(t);med.times.sort();}M.taken[med.id+"|"+k+"|"+t]=d.getTime();}
  try{saveM();}catch(e){med.photos=med.photos.slice(0,1);try{saveM();}catch(e2){med.photos=[];med.photo="";saveM();}}stat("med-ajout");
@@ -886,7 +896,22 @@ $("m-save").onclick=()=>{const nom=$("m-nom").value.trim();if(!nom){alert("Indiq
  if(("Notification"in window)&&Notification.permission==="default")Notification.requestPermission();};
 function toast2(t){const b=$("nudge");b.style.display="block";b.innerHTML=t;clearTimeout(b._t);b._t=setTimeout(()=>{b.style.display="none";nudge();},3500);}
 const dayN=(m,k)=>Math.floor((new Date(k)-new Date(m.start))/864e5);
-const activeOn=(m,k)=>m.on&&dayN(m,k)>=0&&(!m.days||dayN(m,k)<m.days);
+
+/* ---------- fréquence : jour / semaine / mois ---------- */
+const JS7=["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];let FQ={t:"j",dows:[],doms:[]};
+function fqUI(){const t=$("m-fq").value,el=$("m-fqd");FQ.t=t;$("m-nl").textContent=t==="j"?"Prises par jour":"Prises ces jours-là";
+ if(t==="j"){el.style.display="none";return;}el.style.display="block";
+ if(t==="s"){if(!FQ.dows.length)FQ.dows=[(new Date().getDay()+6)%7+1];el.innerHTML=`<div class="note" style="margin:0 0 6px">Touche les jours de prise :</div><div class="optg" style="margin:0">${JS7.map((d,i)=>`<button type="button" data-dw="${i+1}" class="${FQ.dows.includes(i+1)?"on":""}">${d}</button>`).join("")}</div><div class="note" style="margin:6px 0 0" id="m-fqs"></div>`;}
+ else{if(!FQ.doms.length)FQ.doms=[new Date().getDate()];el.innerHTML=`<div class="note" style="margin:0 0 6px">Touche les jours du mois :</div><div class="dgrid">${Array.from({length:31},(_,i)=>`<button type="button" data-dm="${i+1}" class="${FQ.doms.includes(i+1)?"on":""}">${i+1}</button>`).join("")}</div><div class="note" style="margin:6px 0 0" id="m-fqs"></div>`;}
+ el.querySelectorAll("[data-dw]").forEach(b=>b.onclick=()=>{const v=+b.dataset.dw;FQ.dows=FQ.dows.includes(v)?FQ.dows.filter(x=>x!==v):[...FQ.dows,v].sort();if(!FQ.dows.length)FQ.dows=[v];fqUI();});
+ el.querySelectorAll("[data-dm]").forEach(b=>b.onclick=()=>{const v=+b.dataset.dm;FQ.doms=FQ.doms.includes(v)?FQ.doms.filter(x=>x!==v):[...FQ.doms,v].sort((a,b)=>a-b);if(!FQ.doms.length)FQ.doms=[v];fqUI();});
+ $("m-fqs").textContent=fqLabel(FQ,+$("m-n").value);}
+function fqLabel(F,n){if(!F||F.t==="j"||!F.t)return n+" prise"+(n>1?"s":"")+" par jour";if(F.t==="s")return (F.dows.length===1?"1 fois par semaine":F.dows.length+" fois par semaine")+" : "+F.dows.map(d=>JS7[d-1].toLowerCase()).join(", ")+(n>1?" · "+n+" prises ce jour-là":"");
+ return (F.doms.length===1?"1 fois par mois":F.doms.length+" fois par mois")+" : le "+F.doms.join(", ")+(n>1?" · "+n+" prises ce jour-là":"");}
+function fqOn(m,k){const F=m.fq;if(!F||F.t==="j")return true;const d=new Date(k+"T12:00");if(F.t==="s")return F.dows.includes((d.getDay()+6)%7+1);
+ const last=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();return F.doms.some(x=>Math.min(x,last)===d.getDate());}
+$("m-fq").onchange=fqUI;$("m-n").addEventListener("change",()=>{if(FQ.t!=="j"&&$("m-fqs"))$("m-fqs").textContent=fqLabel(FQ,+$("m-n").value);});
+const activeOn=(m,k)=>m.on&&dayN(m,k)>=0&&(!m.days||dayN(m,k)<m.days)&&fqOn(m,k);
 function doses(k){const out=[];M.list.forEach(m=>{if(!activeOn(m,k))return;m.times.forEach(t=>{const[h,mi]=t.split(":").map(Number),d=new Date(k+"T00:00");d.setHours(h,mi,0,0);out.push({m,t,at:d.getTime(),key:m.id+"|"+k+"|"+t});});});return out.sort((a,b)=>a.at-b.at);}
 function mRender(){const k=today(),D=doses(k),now=Date.now();{const mw=(typeof medWarnings==="function"&&P)?medWarnings():[];const el=$("m-prof");if(mw.length){el.style.display="block";el.innerHTML=`<h3><span class="tile g-coral">⚕️</span>Selon ton profil</h3>`+mw.map(w=>`<div class="adv ${w[0]}" style="margin-top:8px"><b>${w[1]}</b><p>${w[2]}</p></div>`).join("");}else el.style.display="none";}
  const nx=D.find(d=>!M.taken[d.key]&&d.at>now-60*60000)||null;
@@ -901,7 +926,7 @@ function mRender(){const k=today(),D=doses(k),now=Date.now();{const mw=(typeof m
  const CUR=M.list.filter(m=>!m.end);
  $("m-list").innerHTML=CUR.length?CUR.map(m=>{const dn=dayN(m,k)+1,tot=m.days,done=tot&&dn>tot,all=Object.keys(M.taken).filter(x=>x.startsWith(m.id+"|")).length;
   let exp=0;for(let i=0;i<Math.min(Math.max(0,dn),tot||dn);i++)exp+=m.times.length;exp=Math.max(0,exp-m.times.filter(t=>new Date(k+"T"+t)>new Date()).length*(dn<=(tot||dn)?1:0));
-  return `<div class="medc">${m.photo?`<img src="${m.photo}" alt="">`:`<span class="tile g-violet" style="margin:0">💊</span>`}<div style="flex:1;min-width:0"><b>${esc(m.nom)}</b> <small>${esc(m.dose||"")}</small><div class="note" style="margin:2px 0">${m.times.join(" · ")}${m.rep?" · "+esc(m.rep):""}</div><div class="note" style="margin:0">${done?"✅ Durée écoulée":tot?`Jour ${Math.max(1,dn)} sur ${tot} · fin le ${(()=>{const e=new Date(m.start+"T12:00");e.setDate(e.getDate()+tot-1);return e.toLocaleDateString("fr-FR",{day:"numeric",month:"short"});})()}`:"En continu"}${exp?` · prises suivies : ${Math.min(100,Math.round(all*100/exp))} %`:""}</div>${m.notes?`<div class="note" style="margin:2px 0">${esc(m.notes)}</div>`:""}${done?`<div class="adv o" style="margin-top:6px;padding:10px"><b>🏁 Ce traitement est arrivé à son terme</b><p style="margin:4px 0 0">Dis-moi comment ça s'est passé.</p></div>`:""}
+  return `<div class="medc">${m.photo?`<img src="${m.photo}" alt="">`:`<span class="tile g-violet" style="margin:0">💊</span>`}<div style="flex:1;min-width:0"><b>${esc(m.nom)}</b> <small>${esc(m.dose||"")}</small><div class="note" style="margin:2px 0">${m.fq?esc(fqLabel(m.fq,m.times.length))+" · ":""}${m.times.join(" · ")}${m.rep?" · "+esc(m.rep):""}</div><div class="note" style="margin:0">${done?"✅ Durée écoulée":tot?`Jour ${Math.max(1,dn)} sur ${tot} · fin le ${(()=>{const e=new Date(m.start+"T12:00");e.setDate(e.getDate()+tot-1);return e.toLocaleDateString("fr-FR",{day:"numeric",month:"short"});})()}`:"En continu"}${exp?` · prises suivies : ${Math.min(100,Math.round(all*100/exp))} %`:""}</div>${m.notes?`<div class="note" style="margin:2px 0">${esc(m.notes)}</div>`:""}${done?`<div class="adv o" style="margin-top:6px;padding:10px"><b>🏁 Ce traitement est arrivé à son terme</b><p style="margin:4px 0 0">Dis-moi comment ça s'est passé.</p></div>`:""}
    <div class="row" style="margin-top:6px"><button class="btn" data-ed="${m.id}" style="padding:7px 10px;font-size:13px"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4.2L19.4 8.8a2.1 2.1 0 0 0-3-3L5.2 17v3z"/><path d="m14.8 7.4 3 3"/></svg>Modifier</button><button class="btn" data-off="${m.id}" style="padding:7px 10px;font-size:13px">${m.on?'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>Pause':'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg>Reprendre'}</button><button class="btn ${done?"gold":""}" data-end="${m.id}" style="padding:7px 10px;font-size:13px"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg>Terminer</button><button class="btn" data-del="${m.id}" style="padding:7px 10px;font-size:13px" aria-label="Supprimer"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13"/><path d="M10 11v5.5M14 11v5.5"/></svg></button></div></div></div>`;}).join(""):`<div class="note">Aucun traitement en cours.</div>`;
  $("m-list").querySelectorAll("[data-end]").forEach(b=>b.onclick=()=>endMed(b.dataset.end));histRender();
  $("m-list").querySelectorAll("[data-ed]").forEach(b=>b.onclick=()=>{const m=M.list.find(x=>x.id===b.dataset.ed);openForm(m);if(m.photo){$("m-prev").src=m.photo;$("m-prev").style.display="block";}});
@@ -1250,7 +1275,7 @@ const _eb=eBreak;eBreak=function(){_eb();$("e-over").classList.add("show");hapti
 /* ---------- démarrage ---------- */
 if("serviceWorker"in navigator){let had=!!navigator.serviceWorker.controller,reloaded=false;
  navigator.serviceWorker.addEventListener("controllerchange",()=>{if(had&&!reloaded){reloaded=true;location.reload();}had=true;});
- navigator.serviceWorker.register("sw.js?v=13.14.0",{updateViaCache:"none"}).then(r=>{r.update();document.addEventListener("visibilitychange",()=>{if(!document.hidden)r.update();});}).catch(()=>{});}
+ navigator.serviceWorker.register("sw.js?v=13.15.0",{updateViaCache:"none"}).then(r=>{r.update();document.addEventListener("visibilitychange",()=>{if(!document.hidden)r.update();});}).catch(()=>{});}
 const start=(location.hash||"").slice(1),TABS=["moi","ph","eau","med","eye","sos"];go(TABS.includes(start)?start:(!LS.get("profil",{}).age?"moi":(TABS.includes(LS.get("tab","moi"))?LS.get("tab","moi"):"moi")));
 nudge();
 </script>
