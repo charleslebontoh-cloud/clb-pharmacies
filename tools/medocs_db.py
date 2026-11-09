@@ -28,3 +28,19 @@ for r in cis:
 os.makedirs("sante",exist_ok=True)
 json.dump({"src":"Base de données publique des médicaments (ANSM)","f":F,"v":V,"p":out},open("sante/medocs.json","w"),ensure_ascii=False,separators=(",",":"))
 print("kept",len(out),os.path.getsize("sante/medocs.json")); print(out[:2])
+# textes HAS (service médical rendu) en français, découpés par préfixe du code CIS
+keep={r[0] for r in out}
+try:
+    smr=[l.split("\t") for l in get("CIS_HAS_SMR_bdpm.txt").splitlines() if l.strip()]
+    best={}
+    for r in smr:
+        if len(r)<6 or r[0] not in keep: continue
+        d=r[3]; t=r[5].strip()
+        if not t: continue
+        if r[0] not in best or d>best[r[0]][0]: best[r[0]]=(d,t)
+    import re as _re
+    os.makedirs("sante/smr",exist_ok=True); sh=collections.defaultdict(dict)
+    for k,(d,t) in best.items(): sh[k[:3]][k]=_re.sub(r"\s+"," ",t)[:700]
+    for p,dct in sh.items(): json.dump(dct,open(f"sante/smr/{p}.json","w"),ensure_ascii=False,separators=(",",":"))
+    print("smr",len(best),"shards",len(sh)); print(list(best.items())[:1])
+except SystemExit as e: print("smr indisponible",e)
