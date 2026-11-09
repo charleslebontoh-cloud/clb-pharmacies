@@ -7,6 +7,6 @@ jobs:
       - shell: bash
         run: |
           set +e
-          echo "== jina jumia"; curl -s -m 30 "https://r.jina.ai/https://www.jumia.ci/catalog/?q=dior+sauvage" > /tmp/j; wc -c /tmp/j; grep -iE "FCFA|CFA" /tmp/j | head -12 | cut -c1-250
-          echo "== ao jumia"; curl -s -m 30 "https://api.allorigins.win/get?url=https%3A%2F%2Fwww.jumia.ci%2Fcatalog%2F%3Fq%3Ddior%2Bsauvage" > /tmp/a; wc -c /tmp/a; grep -o 'class=\\"prc\\">[^<]*' /tmp/a | head -5; grep -o '"name\\":\\"[^\\]*' /tmp/a | head -3
-          echo "== jina notino"; curl -s -m 30 "https://r.jina.ai/https://www.notino.fr/search.asp?exps=dior%20sauvage" > /tmp/n; wc -c /tmp/n; grep -E "€" /tmp/n | head -6 | cut -c1-200
+          curl -s -m 30 "https://r.jina.ai/https://www.notino.fr/search.asp?exps=dior%20sauvage" > /tmp/n
+          grep -n "Image 10\|Image 11\|Image 12" /tmp/n | head; L=$(grep -n "Image 10:" /tmp/n | cut -d: -f1); sed -n "$((L-3)),$((L+30))p" /tmp/n | cut -c1-400
+          echo "== zara"; curl -s -m 30 "https://r.jina.ai/https://www.notino.fr/search.asp?exps=zara%20vibrant%20leather" | grep -E "€|Image [0-9]+:" | head -8 | cut -c1-300
