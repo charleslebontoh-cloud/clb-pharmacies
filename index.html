@@ -277,21 +277,35 @@ nav button[data-t="med"].on{background:var(--g-amber)}nav button[data-t="set"].o
 .sw input{display:none}.sw i{flex:none;width:50px;height:30px;border-radius:999px;background:#CBD5E1;position:relative;transition:.25s}.sw i::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25);transition:.25s cubic-bezier(.34,1.56,.64,1)}
 .sw input:checked+i{background:#0E9F8E}.sw input:checked+i::after{left:23px}
 .refin{padding:0 0 14px}.refin>.note:first-child{margin-top:0}
+/* ===== Habillage 14 : finitions ===== */
+header.hero .brand{display:none!important}
+.hero h1{letter-spacing:-.02em}.hero h1 span{color:inherit!important;font-weight:600;opacity:.82}
+.big,.kp b,.gauge b,#e-time{font-variant-numeric:tabular-nums}
+nav{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%)}
+.btn,.drinks button,nav button,.dep summary,.urg a,.psum .ed{transition:transform .14s ease,box-shadow .2s}
+.btn:active,.drinks button:active,.urg a:active,.psum .ed:active{transform:scale(.97)}nav button:active{transform:scale(.92)}
+.dep summary>span{display:flex;align-items:center;gap:10px}.dep summary .st{width:32px;height:32px;flex:none;border-radius:11px;display:grid;place-items:center;font-size:16px;color:#fff;box-shadow:0 8px 14px -8px rgba(0,0,0,.35)}
+.dep[open]>summary{background:linear-gradient(180deg,#F4FBFC,#fff)}
+#day{background:#fff;border-radius:24px;padding:16px;margin-top:12px;box-shadow:0 18px 36px -24px rgba(14,60,80,.55);border:1px solid rgba(15,42,58,.06)}
+#day h3{margin:0 0 4px;font-size:17px}#day .sub{font-size:12.5px;color:#64748B;margin:0 0 12px}
+.rings{display:flex;gap:16px;align-items:center}.rings svg{flex:none;width:118px;height:118px;transform:rotate(-90deg)}
+.rings circle{fill:none;stroke-width:11;stroke-linecap:round}.rings .bg{opacity:.14}.rings .fg{transition:stroke-dashoffset 1.1s cubic-bezier(.22,1,.36,1)}
+.rl{flex:1;display:grid;gap:8px}.rl button{display:flex;align-items:center;gap:10px;border:0;background:#F6F9FB;border-radius:14px;padding:8px 10px;text-align:left;font:inherit;color:#0F2A3A}
+.rl i{width:10px;height:10px;border-radius:50%;flex:none}.rl b{font-size:13.5px;display:block}.rl small{font-size:11.5px;color:#64748B;font-variant-numeric:tabular-nums}
+.rl button.done{background:#ECFDF5}.rl button.done small{color:#047857;font-weight:700}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style></head><body>
-<div id="wn" role="dialog" aria-modal="true" aria-labelledby="wn-h"><div class="sh"><span class="vt">VERSION 13.19.0</span><h2 id="wn-h">✨ Quoi de neuf ?</h2><ul>
-<li><i>📚</i><span>Nouveaux onglets « Références » et « Paramètres » : fais glisser la barre du bas pour les voir.</span></li>
-<li><i>👤</i><span>Ton profil enregistré se replie : touche ✏️ pour le modifier.</span></li>
-<li><i>✨</i><span>Les nouveautés s'affichent ici, une seule fois après chaque mise à jour.</span></li>
-<li><i>📅</i><span>Prise des médicaments par jour, par semaine ou par mois.</span></li>
-<li><i>🇫🇷</i><span>Fiches médicaments en français d'abord (ANSM, HAS, Wikipédia).</span></li>
-<li><i>🤒</i><span>« Ce que je ressens » en dépliant.</span></li>
+<div id="wn" role="dialog" aria-modal="true" aria-labelledby="wn-h"><div class="sh"><span class="vt">VERSION 13.20.0</span><h2 id="wn-h">✨ Quoi de neuf ?</h2><ul>
+<li><i>⭕</i><span>« Ma journée » : trois anneaux pour l'eau, les médicaments et les pauses écran, à remplir chaque jour.</span></li>
+<li><i>👋</i><span>L'appli te salue par ton prénom.</span></li>
+<li><i>🎨</i><span>Rubriques plus lisibles, barre du bas défilante et boutons plus vivants au toucher.</span></li>
 </ul><button class="btn gold" id="wn-ok">C'est noté</button></div></div>
 <div id="splash" role="button" tabindex="0" aria-label="Entrer dans CLB Health"><div class="mesh"><i></i><i></i><i></i></div>
 <div class="spc"><div class="ecg"><svg viewBox="0 0 300 60" preserveAspectRatio="none"><path d="M0 30 H80 L95 30 L105 8 L118 52 L130 18 L140 30 H190 L200 30 L208 22 L216 30 H300"/></svg></div>
 <div class="floaty"><span>💧</span><span>💊</span><span>❤️</span><span>🏃</span><span>🥗</span><span>🩺</span></div>
 <img src="icon-512.png?v=2" alt=""><b>CLB HEALTH</b><div class="slog">Ton assistant santé personnel</div>
 
-<span class="tap" id="sp-tap">Touche pour entrer</span><div style="font-size:11.5px;opacity:.75;margin-top:10px">🔒 Tes données restent sur ce téléphone, confidentielles.</div><div id="sp-err" style="min-height:1.3em;margin-top:8px;color:#FFD1DA;font-size:13px;font-weight:600"></div><a id="sp-sos" href="tel:185" onclick="event.stopPropagation()">🆘 SAMU 185</a><small class="vsm">version 13.19.0 · 9 nov. 2026 · <a href="#" id="upd" style="color:inherit;font-weight:700">Vérifier les mises à jour</a></small></div></div>
+<span class="tap" id="sp-tap">Touche pour entrer</span><div style="font-size:11.5px;opacity:.75;margin-top:10px">🔒 Tes données restent sur ce téléphone, confidentielles.</div><div id="sp-err" style="min-height:1.3em;margin-top:8px;color:#FFD1DA;font-size:13px;font-weight:600"></div><a id="sp-sos" href="tel:185" onclick="event.stopPropagation()">🆘 SAMU 185</a><small class="vsm">version 13.20.0 · 9 nov. 2026 · <a href="#" id="upd" style="color:inherit;font-weight:700">Vérifier les mises à jour</a></small></div></div>
 <div class="banner" id="nudge"></div>
 
 <!-- PHARMACIES -->
@@ -396,6 +410,7 @@ nav button[data-t="med"].on{background:var(--g-amber)}nav button[data-t="set"].o
 <div class="pad">
  <div class="mseg" id="moi-seg"><button data-ms="syn" class="on">📊 Synthèse</button><button data-ms="pro">👤 Mon profil</button></div>
  <div id="ms-syn">
+  <div id="day"></div>
   <div class="card2" id="p-diag"></div>
   <div class="card2" id="p-bilan"></div>
   <div class="sech">Mes recommandations</div>
@@ -1292,7 +1307,7 @@ async function faSetup(){const P0=LS.get("profil",{}),who=[P0.prenom,P0.nom].fil
  pubKeyCredParams:[{type:"public-key",alg:-7},{type:"public-key",alg:-257}],authenticatorSelection:{authenticatorAttachment:"platform",userVerification:"required",residentKey:"preferred"},timeout:60000,attestation:"none"}});
  LOCK={id:b64(c.rawId),t:Date.now()};LS.set("lock",LOCK);}
 let unlocked=false,hiddenAt=0;
-const VER="13.19.0";
+const VER="13.20.0";
 function wnShow(){const seen=LS.get("seenVer",null);if(seen===VER)return;
  if(seen===null&&!LS.get("profil",{}).age&&!LS.get("profil",{}).nom){LS.set("seenVer",VER);return;}
  const w=$("wn");w.classList.add("on");const close=()=>{w.classList.remove("on");LS.set("seenVer",VER);};$("wn-ok").onclick=close;w.onclick=e=>{if(e.target===w)close();};}
@@ -1331,7 +1346,7 @@ const _eb=eBreak;eBreak=function(){_eb();$("e-over").classList.add("show");hapti
 /* ---------- démarrage ---------- */
 if("serviceWorker"in navigator){let had=!!navigator.serviceWorker.controller,reloaded=false;
  navigator.serviceWorker.addEventListener("controllerchange",()=>{if(had&&!reloaded){reloaded=true;location.reload();}had=true;});
- navigator.serviceWorker.register("sw.js?v=13.19.0",{updateViaCache:"none"}).then(r=>{r.update();document.addEventListener("visibilitychange",()=>{if(!document.hidden)r.update();});}).catch(()=>{});}
+ navigator.serviceWorker.register("sw.js?v=13.20.0",{updateViaCache:"none"}).then(r=>{r.update();document.addEventListener("visibilitychange",()=>{if(!document.hidden)r.update();});}).catch(()=>{});}
 const start=(location.hash||"").slice(1),TABS=["moi","ph","eau","med","eye","sos","set"];go(TABS.includes(start)?start:(!LS.get("profil",{}).age?"moi":(TABS.includes(LS.get("tab","moi"))?LS.get("tab","moi"):"moi")));
 nudge();
 </script>
@@ -1346,5 +1361,29 @@ nudge();
  const TG=["g-teal","g-sky","g-violet","g-amber","g-mint","g-coral"];let k=0;
  document.querySelectorAll(".card2 h3").forEach(h=>{const m=h.textContent.match(/^(\p{Extended_Pictographic}[️‍\p{Extended_Pictographic}]*|🇫🇷)\s*/u);if(!m)return;h.innerHTML=`<span class="tile ${TG[k++%TG.length]}">${m[1]}</span>`+h.innerHTML.replace(m[1],"").trim();});
 })();
+</script>
+<script>
+/* ===== Habillage 14 : ma journée, salutation, icônes de rubriques ===== */
+(()=>{const C={eau:["#38BDF8","#0284C7"],med:["#FBBF24","#D97706"],eye:["#A78BFA","#7C3AED"]};
+ function hello(){const h=new Date().getHours();return h<5?"Bonne nuit":h<18?"Bonjour":"Bonsoir";}
+ function dayData(){const k=today();const w=(W.log[k]||[]).reduce((a,e)=>a+e[1],0),wg=W.goal||2000;
+  let D=[];try{D=doses(k);}catch(e){}const tk=D.filter(d=>M.taken[d.key]).length;
+  const ec=(E&&E.day===k)?E.count:0,eg=6;
+  return[{t:"eau",l:"Eau",v:w/wg,s:`${w.toLocaleString("fr-FR")} / ${wg.toLocaleString("fr-FR")} ml`},
+   {t:"med",l:"Médicaments",v:D.length?tk/D.length:null,s:D.length?`${tk} / ${D.length} prises`:"Aucune prise aujourd'hui"},
+   {t:"eye",l:"Pauses écran",v:ec/eg,s:`${ec} / ${eg} pauses`}];}
+ window.dayRender=function(){const el=document.getElementById("day");if(!el)return;const R=dayData(),rad=[50,37,24];
+  const done=R.filter(r=>r.v!==null&&r.v>=1).length,act=R.filter(r=>r.v!==null).length;
+  const msg=done===act&&act?"Journée complète, bravo.":R[0].v<.5&&new Date().getHours()>=14?"Pense à boire : tu es en retard sur ton eau.":"Remplis tes anneaux au fil de la journée.";
+  el.innerHTML=`<h3>Ma journée</h3><p class="sub">${msg}</p><div class="rings"><svg viewBox="0 0 120 120"><defs>${R.map(r=>`<linearGradient id="rg-${r.t}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${C[r.t][0]}"/><stop offset="1" stop-color="${C[r.t][1]}"/></linearGradient>`).join("")}</defs>${R.map((r,i)=>{const c=2*Math.PI*rad[i],v=r.v===null?0:Math.min(1,r.v);return`<circle class="bg" cx="60" cy="60" r="${rad[i]}" fill="none" stroke-width="11" stroke="${C[r.t][1]}" style="opacity:.14"/><circle class="fg" cx="60" cy="60" r="${rad[i]}" fill="none" stroke-width="11" stroke-linecap="round" stroke="url(#rg-${r.t})" stroke-dasharray="${c}" stroke-dashoffset="${c}" data-o="${c*(1-v)}"${v===0?' style="opacity:0"':""}/>`}).join("")}</svg>
+  <div class="rl">${R.map(r=>`<button data-go="${r.t}" class="${r.v!==null&&r.v>=1?"done":""}"><i style="background:${C[r.t][1]}"></i><span><b>${r.l}</b><small>${r.v!==null&&r.v>=1?"✓ ":""}${r.s}</small></span></button>`).join("")}</div></div>`;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>el.querySelectorAll(".fg").forEach(c=>c.style.strokeDashoffset=c.dataset.o)));
+  el.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go==="eye"?"eye":b.dataset.go));};
+ const _p=pRender;pRender=function(){_p.apply(this,arguments);try{dayRender();}catch(e){}};
+ const _m=moiTab;moiTab=function(k){_m(k);try{if(k==="syn"&&P&&P.prenom){document.getElementById("moi-h").textContent=hello()+" "+P.prenom.split(" ")[0];}}catch(e){}};
+ const pal=["linear-gradient(135deg,#34D399,#059669)","linear-gradient(135deg,#60A5FA,#2563EB)","linear-gradient(135deg,#FBBF24,#D97706)","linear-gradient(135deg,#A78BFA,#7C3AED)","linear-gradient(135deg,#F472B6,#DB2777)","linear-gradient(135deg,#2DD4BF,#0E7490)"];
+ document.querySelectorAll(".dep.rec>summary>span:first-child").forEach((sp,i)=>{const m=sp.textContent.match(/^(\p{Extended_Pictographic}\uFE0F?)\s*/u);if(!m)return;sp.innerHTML=`<i class="st" style="background:${pal[i%pal.length]}">${m[1]}</i>${sp.textContent.slice(m[0].length)}`;});
+ document.addEventListener("visibilitychange",()=>{if(!document.hidden&&TAB==="moi")dayRender();});
+ if(TAB==="moi"){pRender();moiTab(document.getElementById("ms-syn").style.display==="none"?"pro":"syn");}})();
 </script>
 </body></html>
