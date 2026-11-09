@@ -18,3 +18,11 @@ Gestion de la collection de parfums de Charles : reconnaissance par photo (lectu
 - Images officielles : Open Beauty Facts quand le produit y figure, sinon la photo de l'utilisateur.
 - Données personnelles : uniquement sur le téléphone (localStorage + IndexedDB).
 - Version 1.5.0 (prix en ligne Notino convertis en FCFA, valeur de la collection).
+
+## Sentinel · BRVM Intelligence (dossier `bourse/`) — version 1.0.0
+
+Appli de veille boursière BRVM : résumé de séance, cours en direct (différé 15 min), graphiques sur 10 ans, score Sentinel par valeur (modèle multifactoriel validé sur l'historique depuis 2017, fondamentaux, technique, actualités), prévisions 1, 3 et 12 mois avec fourchette, signaux d'achat/vente, alertes et portefeuille personnel (stocké uniquement sur le téléphone).
+
+- Données : `bourse/data/` mises à jour par `.github/workflows/bourse.yml` (toutes les 30 min pendant la séance, analyse complète chaque soir).
+- Moteur : `tools/bourse.py` (sources : brvm.org, sikafinance.com).
+- Alertes sur iPhone : appli ntfy, canal affiché dans l'onglet Signaux.

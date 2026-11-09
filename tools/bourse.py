@@ -93,6 +93,17 @@ ALIAS = {
     "BOABF": ["BOA Burkina", "Bank of Africa Burkina"],
 }
 
+DISPLAY = {"ABJC": "Servair Abidjan", "BBGC": "Bridge Bank Group CI", "BICB": "BIIC Bénin", "BICC": "BICICI", "BNBC": "Bernabé CI",
+           "BOAB": "BOA Bénin", "BOABF": "BOA Burkina Faso", "BOAC": "BOA Côte d'Ivoire", "BOAM": "BOA Mali", "BOAN": "BOA Niger",
+           "BOAS": "BOA Sénégal", "CABC": "Sicable", "CBIBF": "Coris Bank International", "CFAC": "CFAO Motors CI", "CIEC": "CIE",
+           "ECOC": "Ecobank CI", "ETIT": "Ecobank Transnational (ETI)", "FTSC": "Filtisac", "LNBB": "Loterie Nationale du Bénin",
+           "NEIC": "NEI-CEDA", "NSBC": "NSIA Banque CI", "NTLC": "Nestlé CI", "ONTBF": "Onatel Burkina", "ORAC": "Orange Côte d'Ivoire",
+           "ORGT": "Oragroup", "PALC": "Palmci", "PRSC": "Tractafric Motors", "SAFC": "Safca", "SCRC": "Sucrivoire", "SDCC": "SODECI",
+           "SDSC": "Africa Global Logistics", "SEMC": "Eviosys Packaging Siem", "SGBC": "Société Générale CI", "SHEC": "Vivo Energy CI",
+           "SIBC": "Société Ivoirienne de Banque", "SICC": "Sicor", "SIVC": "Erium CI (ex-Air Liquide)", "SLBC": "Solibra", "SMBC": "SMB",
+           "SNTS": "Sonatel", "SOGC": "SOGB", "SPHC": "SAPH", "STAC": "Setao", "STBC": "Sitab", "TTLC": "TotalEnergies CI",
+           "TTLS": "TotalEnergies Sénégal", "UNLC": "Unilever CI", "UNXC": "Uniwax"}
+
 SECTOR_FIX = {"Services Financiers": "Services financiers", "Consommation de Base": "Consommation de base",
               "Consommation Discrétionnaire": "Consommation discrétionnaire", "Télécommunications": "Télécoms",
               "Services Publics": "Services publics", "Industriels": "Industrie", "Energie": "Énergie"}
@@ -130,8 +141,10 @@ def brvm_sectors():
         if not m or m.group(1).strip() == "Toutes":
             continue
         name = html.unescape(m.group(1).strip())
+        if name not in SECTOR_FIX:
+            continue
         for t in re.findall(r"<tr><td>([A-Z0-9]{3,6})</td>", h):
-            sec[t] = SECTOR_FIX.get(name, name)
+            sec.setdefault(t, SECTOR_FIX[name])
     return sec
 
 
@@ -140,7 +153,7 @@ def universe(q):
     for t, x in q.items():
         u = U.get(t, {"t": t})
         u["n"] = x["n"]
-        up = fold(x["n"]).upper()
+        up = fold(x["n"].replace("’", "'")).upper()
         for k, suf, lab in COUNTRY:
             if fold(k).upper() in up:
                 u["c"] = lab
@@ -149,7 +162,14 @@ def universe(q):
                 break
         u.setdefault("sk", t + ".ci")
         U[t] = u
-    if not any(u.get("s") for u in U.values()) or NOW.weekday() == 0 and NOW.hour >= 18:
+    cnt = {}
+    for t, u in U.items():
+        u["nm"] = DISPLAY.get(t) or (u.get("nm") or t).title()
+        cnt[u["nm"]] = cnt.get(u["nm"], 0) + 1
+    for u in U.values():
+        if cnt[u["nm"]] > 1 and u.get("c"):
+            u["nm"] = u["nm"] + " " + u["c"]
+    if any(u.get("s") in (None, "Actions") for u in U.values()) or NOW.weekday() == 0 and NOW.hour >= 18:
         try:
             sec = brvm_sectors()
             for t, s in sec.items():
@@ -370,10 +390,13 @@ def update_news(U):
     N = load(D + "/news.json", {})
     h = get("https://www.sikafinance.com/marches/actualites_bourse_brvm")
     seen = 0
-    for a, b in re.findall(r'href="(/marches/[a-z0-9-]+_\d+)"[^>]*>([^<]{25,})<', h):
+    for a, b in re.findall(r'href="(/marches/[a-z0-9-]+_\d+)"[^>]*>(.*?)</a>', h, flags=re.S):
+        b = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", b))).strip()
+        if len(b) < 20:
+            b = a.split("/")[-1].rsplit("_", 1)[0].replace("-", " ").capitalize()
         u = "https://www.sikafinance.com" + a
-        if u not in N:
-            N[u] = {"t": html.unescape(b).strip(), "d": NOW.date().isoformat(), "id": int(a.rsplit("_", 1)[1])}
+        if u not in N or not N[u].get("t"):
+            N[u] = {"t": b, "d": N.get(u, {}).get("d") or NOW.date().isoformat(), "id": int(a.rsplit("_", 1)[1])}
             seen += 1
     F = load(D + "/fund.json", {})
     for t, f in F.items():
@@ -383,13 +406,14 @@ def update_news(U):
     # tagging
     al = {}
     for t, u in U.items():
-        names = ALIAS.get(t, []) + ([u.get("nm")] if u.get("nm") and len(u.get("nm", "")) > 3 else [])
+        names = ALIAS.get(t, []) + ([u.get("nm")] if u.get("nm") and len(u.get("nm", "")) > 3 and not u["nm"].startswith("BOA") else [])
         al[t] = [fold(x) for x in names if x]
     for u, x in N.items():
         ft = " " + fold(x["t"]) + " "
         x["tk"] = [t for t, ns in al.items() if any(re.search(r"(?<![a-z0-9])" + re.escape(n) + r"(?![a-z0-9])", ft) for n in ns)]
         x["s"] = sentiment(x["t"])
     # garder 400 plus récentes
+    N = {u: x for u, x in N.items() if x.get("t")}
     items = sorted(N.items(), key=lambda kv: (kv[1]["d"], kv[1].get("id", 0)), reverse=True)[:400]
     N = dict(items)
     save(D + "/news.json", N)
@@ -497,115 +521,121 @@ def ridge(X, y, lam=8.0):
     return np.linalg.solve(X1.T @ X1 + I, X1.T @ y)
 
 
-def build_panel(HS):
-    """dates communes (jours de bourse de l'indice), échantillonnage hebdomadaire"""
-    allds = sorted(set(d for h in HS.values() for d in h["d"]))
-    di = {d: i for i, d in enumerate(allds)}
-    T = len(allds)
-    P = {}
-    for t, h in HS.items():
-        c = np.full(T, np.nan)
-        v = np.zeros(T)
-        for d, cc, vv in zip(h["d"], h["c"], h["v"]):
-            c[di[d]] = cc
-            v[di[d]] = vv
-        # report du dernier cours (pas de cotation = cours inchangé)
+FW = {"ey": 0.35, "dy": 0.20, "lv": 0.15, "vr": 0.15, "rv": 0.15}
+FEAT_FR = {"ey": "rendement bénéficiaire (PER bas)", "dy": "rendement du dividende", "lv": "faible volatilité",
+           "vr": "regain d'intérêt des acheteurs (volumes)", "rv": "repli récent à rattraper"}
+
+
+def model(HS, F):
+    """Modèle multifactoriel BRVM : poids fixés a priori (valeur, rendement, faible volatilité,
+    volumes, retour à la moyenne court terme), validé sur l'historique depuis 2017."""
+    tk = sorted(HS)
+    ds = sorted(set(d for h in HS.values() for d in h["d"]))
+    di = {d: i for i, d in enumerate(ds)}
+    T = len(ds)
+    M = np.full((len(tk), T), np.nan)
+    VV = np.zeros((len(tk), T))
+    for k, t in enumerate(tk):
+        for d, c, v in zip(HS[t]["d"], HS[t]["c"], HS[t]["v"]):
+            M[k, di[d]] = c
+            VV[k, di[d]] = v
         last = np.nan
         for i in range(T):
-            if np.isnan(c[i]):
-                c[i] = last
+            if np.isnan(M[k, i]):
+                M[k, i] = last
             else:
-                last = c[i]
-        first = np.argmax(~np.isnan(c))
-        if np.isnan(c).all() or T - first < 300:
+                last = M[k, i]
+    L = np.log(M)
+    MV = np.nan_to_num(M) * VV
+    cs = np.cumsum(np.insert(MV, 0, 0, axis=1), axis=1)
+    lr = np.diff(L, axis=1, prepend=L[:, :1])
+
+    def mval(i, n):
+        return (cs[:, i + 1] - cs[:, i + 1 - n]) / n
+
+    def dvy(i):
+        Y = int(ds[i][:4])
+        out = np.full(len(tk), np.nan)
+        for k, t in enumerate(tk):
+            d = None
+            for y, a, r in F.get(t, {}).get("dvh", []) or []:
+                if y == Y - 2 and d is None:
+                    d = a
+                if y == Y - 1 and ds[i][5:] >= "07-01":
+                    d = a
+            if d and M[k, i] > 0:
+                out[k] = d / M[k, i]
+        return out
+
+    def ey(i):
+        Y = int(ds[i][:4])
+        out = np.full(len(tk), np.nan)
+        for k, t in enumerate(tk):
+            f = F.get(t, {})
+            e = None
+            b = f.get("bnpa") or []
+            for j, y in enumerate(f.get("yrs") or []):
+                if j < len(b) and b[j] is not None and (y == Y - 2 or (y == Y - 1 and ds[i][5:] >= "06-01")):
+                    e = b[j]
+            if e is not None and M[k, i] > 0:
+                out[k] = e / M[k, i]
+        return out
+
+    def factors(i):
+        with np.errstate(all="ignore"):
+            lv = -np.nanstd(lr[:, i - 62:i + 1], axis=1)
+            vr = np.log((mval(i, 21) + 1) / (mval(i, 121) + 1))
+            rv = -(L[:, i] - L[:, i - 5])
+        return {"ey": ey(i), "dy": dvy(i), "lv": lv, "vr": vr, "rv": rv}
+
+    def rz(x):
+        r = np.full(len(x), np.nan)
+        ok = ~np.isnan(x)
+        if ok.sum() < 5:
+            return np.zeros(len(x))
+        rk = np.argsort(np.argsort(x[ok]))
+        r[ok] = (rk / (ok.sum() - 1) - 0.5) * 2
+        return np.nan_to_num(r)
+
+    def score(i):
+        f = factors(i)
+        parts = {k: FW[k] * rz(f[k]) for k in FW}
+        sc = sum(parts.values())
+        sc[np.isnan(L[:, i])] = np.nan
+        return sc, parts, f
+
+    res, X, Yr = {}, [], []
+    for i in range(260, T - H, 5):
+        sc, _, _ = score(i)
+        y = L[:, i + H] - L[:, i]
+        ok = ~(np.isnan(sc) | np.isnan(y))
+        if ok.sum() < 10:
             continue
-        cc = c[first:]
-        X, r1, vol = features(cc, v[first:])
-        lc = np.log(cc)
-        fwd = np.full(len(cc), np.nan)
-        fwd[:-H] = lc[H:] - lc[:-H]
-        Xf = np.full((T, len(FEATS)), np.nan)
-        Xf[first:] = X
-        ff = np.full(T, np.nan)
-        ff[first:] = fwd
-        P[t] = (Xf, ff)
-    return allds, P
-
-
-def model(HS):
-    allds, P = build_panel(HS)
-    tk = sorted(P)
-    T = len(allds)
-    rows = []
-    for i in range(260, T, 5):
-        Xs, ys, ts = [], [], []
-        for t in tk:
-            x, y = P[t][0][i], P[t][1][i]
-            if not np.isnan(x).any():
-                Xs.append(x)
-                ys.append(y)
-                ts.append(t)
-        if len(Xs) >= 8:
-            rows.append((allds[i], ts, zcs(np.array(Xs)), np.array(ys)))
-    # validation glissante : on entraîne sur le passé, on teste l'année suivante
-    years = sorted(set(r[0][:4] for r in rows))
-    bt = []
-    preds, reals = [], []
-    for Y in years[3:]:
-        cut = "%s-01-01" % Y
-        lim = (dt.date(int(Y), 1, 1) - dt.timedelta(days=100)).isoformat()
-        tr = [r for r in rows if r[0] < lim]
-        te = [r for r in rows if r[0][:4] == Y]
-        Xtr = np.vstack([r[2] for r in tr])
-        ytr = np.concatenate([r[3] - np.nanmean(r[3]) for r in tr])
-        ok = ~np.isnan(ytr)
-        w = ridge(Xtr[ok], ytr[ok])
-        ics, hits, spread = [], [], []
-        for d, ts, Z, y in te:
-            if np.isnan(y).any():
-                continue
-            p = w[0] + Z @ w[1:]
-            ics.append(spearman(p, y))
-            ex = y - y.mean()
-            hits.append(np.mean(np.sign(p) == np.sign(ex)))
-            q = max(2, len(p) // 5)
-            o = np.argsort(p)
-            spread.append(y[o[-q:]].mean() - y[o[:q]].mean())
-            preds.extend(p.tolist())
-            reals.extend(ex.tolist())
-        if ics:
-            bt.append({"y": int(Y), "ic": round(float(np.nanmean(ics)), 3), "hit": round(float(np.mean(hits)), 3),
-                       "ls": round(float(np.mean(spread)), 4), "n": len(ics)})
-    # calibration : pente réalisé ~ prédit (hors échantillon)
-    pr, re_ = np.array(preds), np.array(reals)
-    slope = float(np.clip((pr @ re_) / max(pr @ pr, 1e-9), 0.0, 1.0)) if len(pr) > 50 else 0.3
-    # modèle final sur tout l'historique disponible
-    rows = [r for r in rows if not np.isnan(r[3]).all()]
-    Xall = np.vstack([r[2] for r in rows])
-    yall = np.concatenate([r[3] - np.nanmean(r[3]) for r in rows])
-    ok = ~np.isnan(yall)
-    w = ridge(Xall[ok], yall[ok])
-    # prédiction du jour
+        a, b = sc[ok], y[ok] - y[ok].mean()
+        ic = spearman(a, b)
+        o = np.argsort(a)
+        q = max(2, ok.sum() // 5)
+        r = res.setdefault(ds[i][:4], {"ic": [], "hit": [], "ls": []})
+        r["ic"].append(ic)
+        r["hit"].append(float(np.mean(np.sign(a) == np.sign(b))))
+        r["ls"].append(float(b[o[-q:]].mean() - b[o[:q]].mean()))
+        X.extend(a.tolist())
+        Yr.extend(b.tolist())
+    X, Yr = np.array(X), np.array(Yr)
+    slope = float(max(0.0, (X @ Yr) / max(X @ X, 1e-9))) if len(X) > 50 else 0.0
+    bt = [{"y": int(y), "ic": round(float(np.mean(r["ic"])), 3), "hit": round(float(np.mean(r["hit"])), 3),
+           "ls": round(float(np.mean(r["ls"])), 4), "n": len(r["ic"])} for y, r in sorted(res.items())]
+    ics = [v for r in res.values() for v in r["ic"]]
     i = T - 1
-    Xs, ts = [], []
-    for t in tk:
-        x = P[t][0][i]
-        if not np.isnan(x).any():
-            Xs.append(x)
-            ts.append(t)
-    Z = zcs(np.array(Xs))
-    pnow = {t: float((w[0] + Z[k] @ w[1:]) * slope) for k, t in enumerate(ts)}
-    contrib = {t: {f: float(Z[k][j] * w[1 + j]) for j, f in enumerate(FEATS)} for k, t in enumerate(ts)}
-    ics = [b["ic"] for b in bt]
-    summ = {"ic": round(float(np.mean(ics)), 3) if ics else None, "hit": round(float(np.mean([b["hit"] for b in bt])), 3) if bt else None,
-            "ls": round(float(np.mean([b["ls"] for b in bt])), 4) if bt else None, "slope": round(slope, 3), "years": bt,
-            "w": {f: round(float(w[1 + j]), 4) for j, f in enumerate(FEATS)}, "h": H, "asof": allds[-1]}
+    sc, parts, f = score(i)
+    pnow = {t: float(sc[k] * slope) for k, t in enumerate(tk) if not np.isnan(sc[k])}
+    contrib = {t: {kk: float(parts[kk][k]) for kk in FW} for k, t in enumerate(tk)}
+    summ = {"ic": round(float(np.mean(ics)), 3) if ics else None,
+            "t": round(float(np.mean(ics) / (np.std(ics) or 1) * math.sqrt(len(ics) / 13)), 1) if ics else None,
+            "hit": round(float(np.mean([b["hit"] for b in bt])), 3) if bt else None,
+            "ls": round(float(np.mean([b["ls"] for b in bt])), 4) if bt else None,
+            "slope": round(slope, 4), "years": bt, "w": FW, "h": H, "asof": ds[-1]}
     return pnow, contrib, summ
-
-
-FEAT_FR = {"r21": "dynamique sur 1 mois", "r63": "dynamique sur 3 mois", "r126": "dynamique sur 6 mois", "r252": "dynamique sur 12 mois",
-           "dma50": "écart à la moyenne 50 jours", "dma200": "écart à la moyenne 200 jours", "rsi": "RSI", "vol63": "volatilité",
-           "vr": "regain de volumes", "hi52": "distance au plus haut annuel", "rev5": "variation de la semaine"}
 
 
 def pct(x, p):
@@ -622,7 +652,7 @@ def analyze(U, q, mk, st, upd):
     F = load(D + "/fund.json", {})
     N = load(D + "/news.json", {})
     try:
-        pnow, contrib, msum = model(HS)
+        pnow, contrib, msum = model(HS, F)
     except Exception as e:
         print("model ERR", e)
         pnow, contrib, msum = {}, {}, load(D + "/signals.json", {}).get("model", {})
@@ -675,7 +705,8 @@ def analyze(U, q, mk, st, upd):
         S[t] = {"px": px, "r1w": r(5), "r1m": r(21), "r3m": r(63), "r6m": r(126), "r1y": r(252),
                 "ytd": (px / c[[i for i, d in enumerate(h["d"]) if d >= "%d-01-01" % today.year][0] - 1] - 1) if any(d >= "%d-01-01" % today.year for d in h["d"]) and h["d"][0] < "%d-01-01" % today.year else None,
                 "rsi": rs, "vol": vol, "ma50": ma50, "ma200": ma200, "hi52": hi52, "lo52": lo52, "dv": dv, "vr": vr,
-                "macd": float(macd[-1] - sig[-1]), "tech": max(0, min(100, tech)), "why": reasons}
+                "macd": float(macd[-1] - sig[-1]), "tech": max(0, min(100, tech)), "why": reasons,
+                "sp": [float(x) for x in c[-64::3]] + ([float(px)] if px != c[-1] else [])}
     # --- fondamentaux par secteur
     for t, s in S.items():
         f = F.get(t, {})
@@ -761,17 +792,19 @@ def analyze(U, q, mk, st, upd):
             s["quant"] = 100 * rank
             top = sorted(contrib.get(t, {}).items(), key=lambda kv: -abs(kv[1]))[:2]
             for f, c in top:
-                if abs(c) > 0.004:
+                if abs(c) > 0.06:
                     s["why"].append(["+" if c > 0 else "-", "Modèle : %s %s" % (FEAT_FR[f], "favorable" if c > 0 else "défavorable")])
         else:
             s["quant"] = 50
-        sc = 0.35 * s["quant"] + 0.35 * s["fund"] + 0.15 * s["tech"] + 0.15 * s["news"]
+        sc = 0.5 * s["quant"] + 0.25 * s["fund"] + 0.1 * s["tech"] + 0.15 * s["news"]
         liquid = s["dv"] >= 5e6
         s["liq"] = liquid
         if not liquid:
             s["why"].append(["-", "Titre peu liquide : ordres difficiles à exécuter"])
         s["score"] = round(sc, 1)
-        reco = "Achat fort" if sc >= 68 else "Achat" if sc >= 58 else "Conserver" if sc >= 45 else "Alléger" if sc >= 37 else "Vendre"
+        first = "+" if sc >= 50 else "-"
+        s["why"] = [w for w in s["why"] if w[0] == first] + [w for w in s["why"] if w[0] != first]
+        reco = "Achat fort" if sc >= 72 else "Achat" if sc >= 62 else "Conserver" if sc >= 42 else "Alléger" if sc >= 33 else "Vendre"
         if not liquid and reco == "Achat fort":
             reco = "Achat"
         s["reco"] = reco
@@ -781,7 +814,7 @@ def analyze(U, q, mk, st, upd):
         up = max(-0.5, min(0.5, up))
         dy = s["dy"] or 0
         mkt = 0.08  # dérive annuelle prudente du marché
-        e = {"m1": m3 / 3 + mkt / 12 + up * 0.03, "m3": m3 + mkt / 4 + up * 0.1, "m12": m3 * 1.5 + mkt + up * 0.35}
+        e = {"m1": m3 / 3 + mkt / 12 + up * 0.03, "m3": m3 + mkt / 4 + up * 0.08, "m12": m3 * 2 + mkt + up * 0.3}
         fc = {}
         for k, hz in [("m1", 21), ("m3", 63), ("m12", 252)]:
             sd = s["vol"] * math.sqrt(hz / 252)
@@ -841,7 +874,7 @@ def big(x):
 
 
 def nm(U, t):
-    return (U.get(t, {}).get("nm") or t).title() if t in U else t
+    return (U.get(t, {}).get("nm") or t) if t in U else t
 
 
 def rnd(s):
@@ -884,13 +917,13 @@ def alerts(U, cur, prev, N):
                     "Score %.0f/100. %s" % (s["score"], best_reason(s, "-")))
         qv = cur["q"].get(t, {}).get("var")
         if qv is not None and abs(qv) >= 5:
-            add("move:" + t, t, "up" if qv > 0 else "down", "%s %s de %.1f %%" % (n, "bondit" if qv > 0 else "chute", abs(qv)),
+            add("move:" + t, t, "up" if qv > 0 else "down", "%s %s de %s %%" % (n, "bondit" if qv > 0 else "chute", fr(abs(qv))[:-1] if abs(qv) < 10 else fr(abs(qv))),
                 "Cours %s FCFA. Recommandation actuelle : %s." % (big(s["px"]), s["reco"].lower()))
         if s.get("hi52") and s["px"] >= s["hi52"] * 0.995 and (s.get("vr") or 0) > 1.8 and s["liq"]:
-            add("brk:" + t, t, "buy", "%s casse son plus haut annuel" % n, "Volumes %.1f fois supérieurs à la moyenne : momentum haussier." % s["vr"])
+            add("brk:" + t, t, "buy", "%s casse son plus haut annuel" % n, "Volumes %s fois supérieurs à la moyenne : momentum haussier." % fr(s["vr"])[:-1])
         if s.get("rsi") is not None and s["rsi"] < 30 and s["fund"] >= 60:
             add("ovs:" + t, t, "buy", "%s en survente sur des fondamentaux solides" % n, "RSI %.0f, PER %s, rendement %s." % (
-                s["rsi"], ("%.1f" % s["per"]) if s.get("per") else "n.d.", ("%.1f %%" % (s["dy"] * 100)) if s.get("dy") else "n.d."))
+                s["rsi"], fr(s["per"])[:-1] if s.get("per") else "n.d.", (fr(s["dy"] * 100)[:-1] + " %") if s.get("dy") else "n.d."))
     # actualités fortes du jour
     for u, x in N.items():
         if x["d"] == day and abs(x.get("s", 0)) >= 2 and x.get("tk"):
