@@ -405,13 +405,17 @@ def update_news(U):
         if len(b) < 20:
             b, sl = a.split("/")[-1].rsplit("_", 1)[0].replace("-", " ").capitalize(), 1
         u = "https://www.sikafinance.com" + a
+        slug = a.split("/")[-1].rsplit("_", 1)[0].replace("-", " ").capitalize()
+        if u in N and N[u].get("t", "").strip() == slug.strip():
+            N[u]["sl"] = 1
         if u not in N or not N[u].get("t") or (N[u].get("sl") and not sl):
             N[u] = {"t": b, "d": N.get(u, {}).get("d") or NOW.date().isoformat(), "id": int(a.rsplit("_", 1)[1]), "sl": sl}
             seen += 1
+    print("titres", list(best.values())[:4])
     F = load(D + "/fund.json", {})
     for t, f in F.items():
         for d, ttl, u in f.get("news", []):
-            if u and (u not in N or N[u].get("sl")):
+            if u and (u not in N or N[u].get("sl") or N[u].get("t", "").strip() == u.split("/")[-1].rsplit("_", 1)[0].replace("-", " ").capitalize().strip()):
                 N[u] = {"t": ttl, "d": d, "id": int(u.rsplit("_", 1)[1]) if re.search(r"_\d+$", u) else 0}
     # tagging
     al = {}
