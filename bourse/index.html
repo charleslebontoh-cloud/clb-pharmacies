@@ -148,6 +148,11 @@ table{width:100%;border-collapse:collapse;font-size:12.5px}th,td{white-space:now
 .sp-bar{height:4px;border-radius:4px;background:rgba(255,255,255,.22);margin:22px auto 0;width:150px;overflow:hidden;opacity:0;animation:rise .5s 2.3s forwards}
 .sp-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#FDE68A,#6EE7B7);animation:fill 2.6s 2.3s ease-in-out forwards;border-radius:4px}
 @keyframes fill{to{width:100%}}
+.sp-v{opacity:0;animation:rise .8s 2.6s forwards;margin:22px auto 0;text-align:left;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:18px;padding:12px 14px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.sp-vt{font:800 11px -apple-system,system-ui;letter-spacing:.14em;text-transform:uppercase;color:#FDE68A}
+.sp-v ul{margin:6px 0 0;padding-left:18px;font-size:12.5px;line-height:1.5;color:#fff}
+.sp-tap{opacity:0;animation:rise .8s 3s forwards,blink 1.6s 3.8s ease-in-out infinite;margin-top:22px;font:700 13px -apple-system,system-ui;letter-spacing:.06em;color:rgba(255,255,255,.9)}
+@keyframes blink{50%{opacity:.35}}
 .sp-form{margin-top:20px;text-align:left;opacity:0;animation:rise .7s 2.2s forwards}
 .sp-form input{width:100%;background:rgba(255,255,255,.95);border:0;color:var(--tx);border-radius:14px;padding:14px;font:16px -apple-system,system-ui;margin-top:8px;box-shadow:0 8px 18px -10px rgba(0,0,0,.4)}
 .sp-form .note{color:rgba(255,255,255,.8)!important}
@@ -271,7 +276,7 @@ table{width:100%;border-collapse:collapse;font-size:12.5px}th,td{white-space:now
    <div class="tg" onclick="resetData()"><span class="dn">🗑️ Effacer mes données<small>Nom, portefeuille, alertes de prix et réglages de ce téléphone</small></span><span class="gold">›</span></div>
   </div>
   <p class="note" style="margin:14px 4px 0">Données de marché : BRVM (cours différés de 15 min) et Sika Finance. Les signaux de Sentinel sont des aides à la décision produites par des algorithmes, pas des conseils en investissement : valide toujours tes ordres avec ta SGI.</p>
-  <p class="note" style="text-align:center;margin-top:16px">Sentinel · BRVM Intelligence · version 1.3.0</p>
+  <p class="note" style="text-align:center;margin-top:16px">Sentinel · BRVM Intelligence · version 1.4.0</p>
 </section>
 </main>
 
@@ -300,7 +305,7 @@ table{width:100%;border-collapse:collapse;font-size:12.5px}th,td{white-space:now
 <div class="toast" id="toast"></div>
 
 <script>
-const V="1.3.0",TOPIC="sentinel-brvm-dbde7f93c237";
+const V="1.4.0",TOPIC="sentinel-brvm-dbde7f93c237";
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const fmt=(x,d=0)=>x==null||isNaN(x)?"—":Number(x).toLocaleString("fr-FR",{minimumFractionDigits:d,maximumFractionDigits:d}).replace(/ /g," ");
@@ -533,13 +538,14 @@ let READY=false;const T0=Date.now();
 const user=()=>LS.get("user",{});
 function hello(){const u=user(),h=new Date().getHours();const g=h<12?"Bonjour":h<18?"Bon après-midi":"Bonsoir";$("hi").textContent=u.pre?`${g} ${u.pre} 👋`:`${g} 👋`;
  const o=marketOpen();$("hi2").textContent=o?"La séance BRVM est ouverte, Sentinel surveille le marché":"Sentinel veille sur la BRVM pour toi"}
+const NEWS_V=["Accueil affichant la version, ouverture au toucher","Mise à jour automatique dès qu'une nouvelle version sort","Thème clair lumineux et graphiques 3D (v1.3)","Onglet Paramètres et partage de l'appli (v1.2)"];
+(async()=>{try{const r=await fetch("version.json?_="+Date.now(),{cache:"no-store"});const j=await r.json();if(j.v&&j.v!==V&&sessionStorage.getItem("snt-upd")!==j.v){sessionStorage.setItem("snt-upd",j.v);forceUpdate()}}catch(e){}})();
 const QUOTES=["« Le marché est un outil qui transfère l'argent des impatients vers les patients. »","« Achetez au son du canon, vendez au son du clairon. »","« Le temps passé sur le marché compte plus que le moment choisi pour y entrer. »","« La diversification est la seule protection gratuite de l'investisseur. »"];
 function splashDyn(){const u=user();
  if(!u.pre){$("sp-dyn").innerHTML=`<div class="sp-form"><div class="sp-g" style="margin:0;opacity:1;animation:none;text-align:center">Bienvenue. Comment t'appelles-tu ?</div><input id="sp-pre" placeholder="Prénom" autocomplete="given-name"><input id="sp-nom" placeholder="Nom" autocomplete="family-name"><button class="btn" id="sp-go">Entrer dans Sentinel</button><div class="note" style="text-align:center;margin-top:8px">🔒 Enregistré uniquement sur ce téléphone</div></div>`;
   $("sp-go").onclick=()=>{const pre=$("sp-pre").value.trim();if(!pre){$("sp-pre").focus();return}LS.set("user",{pre,nom:$("sp-nom").value.trim()});hello();hideSplash(true)};return}
- const h=new Date().getHours();$("sp-dyn").innerHTML=`<div class="sp-g">${h<12?"Bonjour":h<18?"Bon après-midi":"Bonsoir"}, <b class="gold">${esc(u.pre)}</b></div><div class="sp-q">${QUOTES[new Date().getDate()%QUOTES.length]}</div><div class="sp-bar"><i></i></div>`;
- $("splash").onclick=()=>{if(READY)hideSplash(true)};
- const wait=()=>{if(READY&&Date.now()-T0>=4800)hideSplash();else setTimeout(wait,150)};wait();}
+ const h=new Date().getHours();$("sp-dyn").innerHTML=`<div class="sp-g">${h<12?"Bonjour":h<18?"Bon après-midi":"Bonsoir"}, <b class="gold">${esc(u.pre)}</b></div><div class="sp-q">${QUOTES[new Date().getDate()%QUOTES.length]}</div><div class="sp-v"><div class="sp-vt">Version ${V} · nouveautés</div><ul>${NEWS_V.map(n=>`<li>${n}</li>`).join("")}</ul></div><div class="sp-tap">Touche l'écran pour entrer</div>`;
+ $("splash").onclick=()=>hideSplash(true);}
 let SPLASHED=false;function hideSplash(){if(SPLASHED)return;SPLASHED=true;$("splash").classList.add("off");setTimeout(()=>{newSignals();const m=location.hash.match(/t=([A-Z0-9]+)/);if(m)openT(m[1])},700)}
 const H2I=[[/résumé/i,'<path d="M4 19h16"/><path d="M6 15l4-4 3 3 5-6"/>',"#818CF8,#4F46E5"],[/opportunit/i,'<path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.5 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/>',"#FCD34D,#D97706"],[/palmar/i,'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>',"#F9A8D4,#DB2777"],[/secteur/i,'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',"#22D3EE,#0E7490"],[/alerte/i,'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',"#FB7185,#E11D48"],[/actualit/i,'<path d="M4 5h13v14H6a2 2 0 0 1-2-2z"/><path d="M8 9h5M8 13h5"/>',"#93C5FD,#2563EB"],[/position|portefeuille/i,'<rect x="3" y="7" width="18" height="13" rx="3"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',"#A78BFA,#6D28D9"],[/suivies/i,'<path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.5 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/>',"#FCD34D,#D97706"],[/identit/i,'<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',"#818CF8,#4F46E5"],[/partager/i,'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/>',"#34D399,#059669"],[/installer/i,'<rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/>',"#22D3EE,#0E7490"],[/application/i,'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>',"#94A3B8,#475569"],[/recevoir/i,'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>',"#FB923C,#C2410C"]];
 document.querySelectorAll("h2").forEach(h=>{const m=H2I.find(x=>x[0].test(h.textContent));if(!m)return;const c=m[2].split(",");h.insertAdjacentHTML("afterbegin",`<span class="i3" style="background:linear-gradient(145deg,${c[0]},${c[1]})"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${m[1]}</svg></span>`)});
