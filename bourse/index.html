@@ -173,6 +173,25 @@ table{width:100%;border-collapse:collapse;font-size:12.5px}th,td{white-space:now
 #donut{width:100%;height:170px;display:block}
 .legend{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12px;margin-top:4px}.legend span{display:flex;align-items:center;gap:5px}.legend i{width:10px;height:10px;border-radius:3px}.kpi .legend b{display:inline;font-size:12px;margin:0}
 .hero .up{color:#6EE7B7}.hero .dn{color:#FECDD3}
+#prof{position:fixed;right:10px;bottom:calc(96px + env(safe-area-inset-bottom));z-index:30;display:flex;align-items:flex-end;gap:6px;pointer-events:none;transition:opacity .4s,transform .4s}
+#prof.off{opacity:0;transform:translateY(20px) scale(.8)}
+#prof svg{width:92px;height:105px;pointer-events:auto;cursor:pointer;filter:drop-shadow(0 10px 12px rgba(30,50,110,.3))}
+#prof .bub{pointer-events:auto;max-width:210px;background:#fff;border-radius:18px 18px 4px 18px;padding:10px 12px;font-size:12.5px;line-height:1.45;color:var(--tx);box-shadow:0 14px 30px -10px rgba(30,50,110,.4);margin-bottom:60px;opacity:0;transform:translateY(8px) scale(.95);transition:.35s;transform-origin:bottom right}
+#prof .bub.on{opacity:1;transform:none}
+#prof .bub b{color:var(--pri)}
+#prof .bub small{display:block;color:var(--mu);font-size:10.5px;margin-top:4px}
+.pf-bob{animation:bob 2.6s ease-in-out infinite;transform-origin:64px 150px}
+@keyframes bob{50%{transform:translateY(-4px) rotate(-1.5deg)}}
+.pf-arm{animation:wave 2.2s ease-in-out infinite;transform-origin:92px 120px}
+@keyframes wave{0%,100%{transform:rotate(0)}20%{transform:rotate(-22deg)}40%{transform:rotate(6deg)}60%{transform:rotate(-18deg)}80%{transform:rotate(2deg)}}
+.pf-eye{animation:blink 4.2s infinite;transform-box:fill-box;transform-origin:center}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+.pf-hair{animation:hair 3s ease-in-out infinite;transform-origin:64px 60px}
+@keyframes hair{50%{transform:rotate(2deg) scale(1.02)}}
+.pf-brow{animation:brow 4.2s infinite}
+@keyframes brow{0%,80%,100%{transform:translateY(0)}86%{transform:translateY(-2.5px)}}
+#prof.joy .pf-bob{animation:jump .6s ease-in-out 2}
+@keyframes jump{50%{transform:translateY(-14px) rotate(3deg)}}
 </style>
 </head>
 <body>
@@ -253,6 +272,7 @@ table{width:100%;border-collapse:collapse;font-size:12.5px}th,td{white-space:now
    <label class="tg"><span>🧭 Synthèse du soir<small>Chaque soir de bourse : les meilleurs achats et les ventes du jour</small></span><span class="sw"><input type="checkbox" data-p="dig"><i></i></span></label>
    <label class="tg"><span>🚀 Fortes variations<small>Hausse ou baisse de plus de 5 % en séance</small></span><span class="sw"><input type="checkbox" data-p="move"><i></i></span></label>
    <label class="tg"><span>📰 Actualités fortes<small>Nouvelle très positive ou négative sur une société</small></span><span class="sw"><input type="checkbox" data-p="news"><i></i></span></label>
+   <label class="tg"><span>🧑‍🔬 Le Professeur Sentinel<small>Afficher la mascotte et ses conseils à l'écran</small></span><span class="sw"><input type="checkbox" data-p="prof"><i></i></span></label>
    <label class="tg"><span>💼 Seulement mes valeurs<small>Ne montrer que les alertes sur mon portefeuille et mes valeurs suivies</small></span><span class="sw"><input type="checkbox" data-p="mine"><i></i></span></label>
   </div>
   <h2>Recevoir les alertes appli fermée</h2>
@@ -276,7 +296,7 @@ table{width:100%;border-collapse:collapse;font-size:12.5px}th,td{white-space:now
    <div class="tg" onclick="resetData()"><span class="dn">🗑️ Effacer mes données<small>Nom, portefeuille, alertes de prix et réglages de ce téléphone</small></span><span class="gold">›</span></div>
   </div>
   <p class="note" style="margin:14px 4px 0">Données de marché : BRVM (cours différés de 15 min) et Sika Finance. Les signaux de Sentinel sont des aides à la décision produites par des algorithmes, pas des conseils en investissement : valide toujours tes ordres avec ta SGI.</p>
-  <p class="note" style="text-align:center;margin-top:16px">Sentinel · BRVM Intelligence · version 1.4.0</p>
+  <p class="note" style="text-align:center;margin-top:16px">Sentinel · BRVM Intelligence · version 1.5.0</p>
 </section>
 </main>
 
@@ -301,11 +321,42 @@ table{width:100%;border-collapse:collapse;font-size:12.5px}th,td{white-space:now
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px"><button class="btn" id="f-buy">＋ Portefeuille</button><button class="btn g" id="f-alert">🔔 Alerte de prix</button></div>
  </div>
 </div>
+<div id="prof" class="off"><div class="bub" id="prof-b"></div><svg id="prof-s" viewBox="0 0 140 160" aria-label="Le Professeur Sentinel">
+<defs><linearGradient id="pfc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#E2E8F0"/></linearGradient><radialGradient id="pfs" cx=".45" cy=".4" r=".7"><stop offset="0" stop-color="#FAD7B5"/><stop offset="1" stop-color="#E9B48A"/></radialGradient><linearGradient id="pfh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#D9E0EA"/></linearGradient></defs>
+<g class="pf-bob">
+ <ellipse cx="64" cy="155" rx="34" ry="4.5" fill="rgba(30,50,110,.2)"/>
+ <path d="M34 154c-6-14-4-30 4-38M94 154c6-14 4-30-4-38" stroke="#94A3B8" stroke-width="13" stroke-linecap="round" fill="none" opacity=".0"/>
+ <path d="M26 156c0-30 14-48 38-48s38 18 38 48z" fill="url(#pfc)" stroke="#94A3B8" stroke-width="1.6"/>
+ <path d="M50 110l14 20 14-20z" fill="#BFDBFE"/>
+ <path d="M50 110l-6 46M78 110l6 46" stroke="#CBD5E1" stroke-width="1.6"/>
+ <path d="M50 110l-8 10 6 4-4 6M78 110l8 10-6 4 4 6" fill="none" stroke="#94A3B8" stroke-width="1.4" stroke-linejoin="round"/>
+ <path d="M57 114l7 4-7 4zM71 114l-7 4 7 4z" fill="#F59E0B" stroke="#B45309" stroke-width=".8"/><circle cx="64" cy="118" r="2.2" fill="#B45309"/>
+ <rect x="80" y="128" width="11" height="8" rx="1.5" fill="#E0E7FF" stroke="#A5B4FC" stroke-width=".8"/><path d="M83 128v-4M86 128v-5" stroke="#4F46E5" stroke-width="1.6" stroke-linecap="round"/>
+ <path d="M36 122c-6 8-8 18-6 28" stroke="#94A3B8" stroke-width="12" stroke-linecap="round" fill="none"/><path d="M36 122c-6 8-8 18-6 28" stroke="#fff" stroke-width="9" stroke-linecap="round" fill="none"/><circle cx="30" cy="151" r="5" fill="url(#pfs)"/>
+ <g class="pf-arm">
+  <path d="M92 120c10-6 18-18 22-34" stroke="#94A3B8" stroke-width="12" stroke-linecap="round" fill="none"/><path d="M92 120c10-6 18-18 22-34" stroke="#fff" stroke-width="9" stroke-linecap="round" fill="none"/>
+  <circle cx="115" cy="82" r="6" fill="url(#pfs)"/>
+  <g transform="rotate(-8 118 62)"><rect x="103" y="48" width="30" height="24" rx="4" fill="#fff" stroke="#4F46E5" stroke-width="2"/><path d="M108 66l6-6 5 4 9-10" stroke="#10B981" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="128" cy="54" r="2" fill="#10B981"/><path d="M116 72v6" stroke="#4F46E5" stroke-width="2"/></g>
+ </g>
+ <rect x="57" y="86" width="14" height="26" rx="5" fill="#E9B48A"/>
+ <g class="pf-hair"><path d="M37.9 66.6 Q37.9 66.6 30.6 65.6 Q23.4 64.6 28.2 61.9 Q33.0 59.2 29.1 56.4 Q25.2 53.6 29.9 52.2 Q34.5 50.9 29.6 46.2 Q24.7 41.5 31.6 42.4 Q38.5 43.3 37.1 39.1 Q35.7 35.0 40.1 36.0 Q44.6 37.1 43.4 31.0 Q42.2 25.0 47.2 28.9 Q52.2 32.8 53.1 27.3 Q54.0 21.9 57.4 26.3 Q60.9 30.7 63.3 27.1 Q65.7 23.4 67.7 27.3 Q69.8 31.1 73.8 26.4 Q77.9 21.8 78.1 27.8 Q78.2 33.8 82.3 32.1 Q86.3 30.4 85.9 34.6 Q85.5 38.8 91.3 37.2 Q97.1 35.6 94.0 40.5 Q91.0 45.4 95.5 46.0 Q100.0 46.6 97.1 50.0 Q94.2 53.3 98.4 55.1 Q102.7 56.9 98.8 59.3 Q94.9 61.8 99.9 64.9 Q104.9 68.1 97.2 68.4 L89.4 68.8 Z" fill="url(#pfh)" stroke="#B6C2D2" stroke-width="1.4" stroke-linejoin="round"/></g>
+ <ellipse cx="40" cy="68" rx="4.5" ry="6.5" fill="#E9B48A"/><ellipse cx="88" cy="68" rx="4.5" ry="6.5" fill="#E9B48A"/>
+ <ellipse cx="64" cy="66" rx="24" ry="26" fill="url(#pfs)"/>
+ <g class="pf-brow" fill="#F8FAFC" stroke="#94A3B8" stroke-width="1"><path d="M43 55c3-6 12-7 16-3-4 1-11 1-16 3z"/><path d="M85 55c-3-6-12-7-16-3 4 1 11 1 16 3z"/></g>
+ <g fill="rgba(255,255,255,.4)" stroke="#334155" stroke-width="2.2"><circle cx="53" cy="63" r="7.5"/><circle cx="75" cy="63" r="7.5"/></g><path d="M60.5 63h7" stroke="#334155" stroke-width="2.2"/>
+ <ellipse class="pf-eye" cx="53" cy="63" rx="2.5" ry="3" fill="#1E293B"/><ellipse class="pf-eye" cx="75" cy="63" rx="2.5" ry="3" fill="#1E293B"/>
+ <circle cx="54" cy="62" r=".9" fill="#fff"/><circle cx="76" cy="62" r=".9" fill="#fff"/>
+ <path d="M64 66c-2 4-3 7 1 8" stroke="#C98B5E" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+ <ellipse cx="47" cy="74" rx="4.5" ry="2.8" fill="#F9A8A8" opacity=".75"/><ellipse cx="81" cy="74" rx="4.5" ry="2.8" fill="#F9A8A8" opacity=".75"/>
+ <path d="M54 81c5 8 15 8 20 0z" fill="#fff" stroke="#9A3412" stroke-width="1.8" stroke-linejoin="round"/><path d="M56.5 84c3 3 12 3 15 0" fill="#FB7185" opacity=".7"/>
+ <path d="M50 79c3-6 9-6 14-3 5-3 11-3 14 3-4 1-8-1-14 1-6-2-10 0-14-1z" fill="#F8FAFC" stroke="#94A3B8" stroke-width="1.1" stroke-linejoin="round"/>
+ <path d="M54 77l-2 3M58 76l-1 3M70 76l1 3M74 77l2 3" stroke="#CBD5E1" stroke-width="1" stroke-linecap="round"/>
+</g></svg></div>
 <div class="modal" id="modal" onclick="if(event.target===this)closeModal()"><div class="card" id="mod-c"></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
-const V="1.4.0",TOPIC="sentinel-brvm-dbde7f93c237";
+const V="1.5.0",TOPIC="sentinel-brvm-dbde7f93c237";
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const fmt=(x,d=0)=>x==null||isNaN(x)?"—":Number(x).toLocaleString("fr-FR",{minimumFractionDigits:d,maximumFractionDigits:d}).replace(/ /g," ");
@@ -411,7 +462,7 @@ function render(soft){
 const IG={buy:["#34D399","#059669"],up:["#34D399","#0D9488"],sell:["#FB7185","#E11D48"],down:["#FDA4AF","#BE123C"],news:["#93C5FD","#2563EB"],me:["#FCD34D","#D97706"],dig:["#A78BFA","#6D28D9"]};
 const IP={buy:'<path d="M4 17l6-6 4 4 7-8"/><path d="M15 7h6v6"/>',up:'<path d="M12 19V5"/><path d="m5 12 7-7 7 7"/>',sell:'<path d="M12 8v5"/><path d="M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>',down:'<path d="M12 5v14"/><path d="m19 12-7 7-7-7"/>',news:'<path d="M4 5h13v14H6a2 2 0 0 1-2-2z"/><path d="M17 9h3v8a2 2 0 0 1-2 2"/><path d="M8 9h5M8 13h5"/>',me:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r=".5"/>',dig:'<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/>'};
 const icon3=lv=>{const g=IG[lv]||IG.news;return`<div class="ic" style="background:linear-gradient(145deg,${g[0]},${g[1]});--s:${g[1]}"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${IP[lv]||IP.news}</svg></div>`};
-const PDEF={buy:true,sell:true,dig:true,move:true,news:true,mine:false};
+const PDEF={buy:true,sell:true,dig:true,move:true,news:true,mine:false,prof:true};
 const prefs=()=>Object.assign({},PDEF,LS.get("prefs",{}));
 function alOk(a){const p=prefs();const k=a.lv==="up"||a.lv==="down"?"move":a.lv;if(a.lv!=="me"&&p[k]===false)return false;if(p.mine&&a.lv!=="me"&&a.lv!=="dig"){const mine=LS.get("pos",[]).map(x=>x.t).concat(LS.get("watch",[]));if(!mine.includes(a.t))return false}return true}
 function alHTML(a){const d=new Date(a.ts),own=LS.get("pos",[]).some(p=>p.t===a.t);return`<div class="alert lv-${a.lv==="dig"?"buy":a.lv}" onclick="${a.t&&a.lv!=="dig"?`closeModal();openT('${a.t}')`:a.lv==="dig"?"closeModal();go('sg')":""}">${icon3(a.lv)}<div style="flex:1;min-width:0"><b>${esc(a.ti)}${own&&a.lv!=="dig"?' <span class="pill" style="color:var(--gold)">dans mon portefeuille</span>':""}</b><p style="white-space:pre-line">${esc(a.m)}</p><small>${d.toLocaleDateString("fr-FR",{day:"numeric",month:"short"})} · ${d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}</small></div></div>`}
@@ -447,7 +498,7 @@ function renderSig(){
 }
 
 /* ---------- fiche valeur */
-async function openT(t){
+async function openT(t){$("prof").classList.add("off");
  if(!SIG||!SIG.s[t])return;CUR=t;FTAB="an";$("sheet").classList.add("on");$("sheet").scrollTop=0;
  document.querySelectorAll("#ftabs button").forEach(b=>b.classList.toggle("on",b.dataset.k==="an"));
  $("f-t").textContent=t;$("f-n").textContent=nameOf(t)+(TK[t]&&TK[t].c?" · "+TK[t].c:"");
@@ -456,7 +507,7 @@ async function openT(t){
  if(!HC[t]){try{HC[t]=await J("data/h/"+t+".json")}catch(e){HC[t]=null}}
  drawChart();
 }
-function closeSheet(){$("sheet").classList.remove("on");CUR=null;history.replaceState(null,"",location.pathname)}
+function closeSheet(){setTimeout(profShow,300);$("sheet").classList.remove("on");CUR=null;history.replaceState(null,"",location.pathname)}
 function fHead(){const t=CUR,s=SIG.s[t],q=Q(t);$("f-px").textContent=fmt(q.px)+" FCFA";$("f-var").innerHTML=`<span class="${cls(q.var)}">${pc(q.var)}</span> <span class="mu">aujourd'hui</span>`;$("f-reco").innerHTML=badge(s.reco)}
 function gauge(v){const a=Math.PI*1.5*(v/100),r=38,cx=46,cy=46,s0=Math.PI*.75,x1=cx+r*Math.cos(s0),y1=cy+r*Math.sin(s0),x2=cx+r*Math.cos(s0+a),y2=cy+r*Math.sin(s0+a),xe=cx+r*Math.cos(s0+Math.PI*1.5),ye=cy+r*Math.sin(s0+Math.PI*1.5);const c2=v>=62?["#34D399","#059669"]:v>=42?["#FCD34D","#D97706"]:["#FB7185","#E11D48"];return`<svg viewBox="0 0 92 92"><defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c2[0]}"/><stop offset="1" stop-color="${c2[1]}"/></linearGradient></defs><circle cx="46" cy="46" r="30" fill="#fff"/><path d="M${x1} ${y1}A${r} ${r} 0 1 1 ${xe} ${ye}" fill="none" stroke="#E2E8F0" stroke-width="9" stroke-linecap="round"/><path d="M${x1} ${y1}A${r} ${r} 0 ${a>Math.PI?1:0} 1 ${x2} ${y2}" fill="none" stroke="url(#gg)" stroke-width="9" stroke-linecap="round"/><text x="46" y="50" text-anchor="middle" fill="#0E1A33" font-size="22" font-weight="700" font-family="-apple-system,system-ui">${Math.round(v)}</text><text x="46" y="66" text-anchor="middle" fill="#94A3B8" font-size="9" font-family="-apple-system,system-ui">/ 100</text></svg>`}
 function fBody(){
@@ -519,8 +570,8 @@ function delTg(i){const T=LS.get("tg",[]);T.splice(i,1);LS.set("tg",T);renderPf(
 function checkTargets(){const T=LS.get("tg",[]);if(!T.length||!SIG)return;let ch=false;const mine=LS.get("myal",[]);T.forEach(x=>{const p=Q(x.t).px;if(!p||x.done)return;if((x.dir==="up"&&p>=x.p)||(x.dir==="down"&&p<=x.p)){x.done=1;ch=true;const a={ts:new Date().toISOString(),t:x.t,lv:"me",ti:`${x.t} a atteint ton seuil de ${fmt(x.p)} FCFA`,m:`Cours actuel : ${fmt(p)} FCFA. Recommandation Sentinel : ${SIG.s[x.t]?SIG.s[x.t].reco.toLowerCase():"—"}.`};mine.unshift(a);toast("🎯 "+a.ti,6000);if(navigator.vibrate)navigator.vibrate([80,60,80])}});if(ch){LS.set("myal",mine.slice(0,100));LS.set("tg",T.filter(x=>!x.done));render(true)}}
 
 /* ---------- navigation & événements */
-function go(k){document.querySelectorAll(".sec").forEach(s=>s.classList.toggle("on",s.id==="s-"+k));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.s===k));scrollTo(0,0);if(k==="sg"){renderSig()}if(k==="ac")renderList();if(k==="st")fillSet();if(k==="pf")requestAnimationFrame(renderPf);if(k==="mk")requestAnimationFrame(sec3d)}
-function sgTab(k){document.querySelectorAll("#sgseg button").forEach(b=>b.classList.toggle("on",b.dataset.k===k));["buy","sell","al","md"].forEach(x=>$("sg-"+x).style.display=x===k?"block":"none");if(k==="al"){LS.set("seenAl",new Date().toISOString());$("pin").style.display="none"}}
+let CURSEC="mk",SGK="buy";function go(k){CURSEC=k;setTimeout(profShow,50);document.querySelectorAll(".sec").forEach(s=>s.classList.toggle("on",s.id==="s-"+k));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.s===k));scrollTo(0,0);if(k==="sg"){renderSig()}if(k==="ac")renderList();if(k==="st")fillSet();if(k==="pf")requestAnimationFrame(renderPf);if(k==="mk")requestAnimationFrame(sec3d)}
+function sgTab(k){SGK=k;if(CURSEC==="sg")setTimeout(()=>profSay(0),50);document.querySelectorAll("#sgseg button").forEach(b=>b.classList.toggle("on",b.dataset.k===k));["buy","sell","al","md"].forEach(x=>$("sg-"+x).style.display=x===k?"block":"none");if(k==="al"){LS.set("seenAl",new Date().toISOString());$("pin").style.display="none"}}
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.s));
 document.querySelectorAll("#sgseg button").forEach(b=>b.onclick=()=>sgTab(b.dataset.k));
 document.querySelectorAll("#rng button").forEach(b=>b.onclick=()=>{RANGE=+b.dataset.r;document.querySelectorAll("#rng button").forEach(x=>x.classList.toggle("on",x===b));drawChart();fHead()});
@@ -538,7 +589,7 @@ let READY=false;const T0=Date.now();
 const user=()=>LS.get("user",{});
 function hello(){const u=user(),h=new Date().getHours();const g=h<12?"Bonjour":h<18?"Bon après-midi":"Bonsoir";$("hi").textContent=u.pre?`${g} ${u.pre} 👋`:`${g} 👋`;
  const o=marketOpen();$("hi2").textContent=o?"La séance BRVM est ouverte, Sentinel surveille le marché":"Sentinel veille sur la BRVM pour toi"}
-const NEWS_V=["Accueil affichant la version, ouverture au toucher","Mise à jour automatique dès qu'une nouvelle version sort","Thème clair lumineux et graphiques 3D (v1.3)","Onglet Paramètres et partage de l'appli (v1.2)"];
+const NEWS_V=["Le Professeur Sentinel : ta mascotte qui commente achats, ventes et portefeuille","Accueil affichant la version, ouverture au toucher (v1.4)","Thème clair lumineux et graphiques 3D (v1.3)","Onglet Paramètres et partage de l'appli (v1.2)"];
 (async()=>{try{const r=await fetch("version.json?_="+Date.now(),{cache:"no-store"});const j=await r.json();if(j.v&&j.v!==V&&sessionStorage.getItem("snt-upd")!==j.v){sessionStorage.setItem("snt-upd",j.v);forceUpdate()}}catch(e){}})();
 const QUOTES=["« Le marché est un outil qui transfère l'argent des impatients vers les patients. »","« Achetez au son du canon, vendez au son du clairon. »","« Le temps passé sur le marché compte plus que le moment choisi pour y entrer. »","« La diversification est la seule protection gratuite de l'investisseur. »"];
 function splashDyn(){const u=user();
@@ -546,7 +597,7 @@ function splashDyn(){const u=user();
   $("sp-go").onclick=()=>{const pre=$("sp-pre").value.trim();if(!pre){$("sp-pre").focus();return}LS.set("user",{pre,nom:$("sp-nom").value.trim()});hello();hideSplash(true)};return}
  const h=new Date().getHours();$("sp-dyn").innerHTML=`<div class="sp-g">${h<12?"Bonjour":h<18?"Bon après-midi":"Bonsoir"}, <b class="gold">${esc(u.pre)}</b></div><div class="sp-q">${QUOTES[new Date().getDate()%QUOTES.length]}</div><div class="sp-v"><div class="sp-vt">Version ${V} · nouveautés</div><ul>${NEWS_V.map(n=>`<li>${n}</li>`).join("")}</ul></div><div class="sp-tap">Touche l'écran pour entrer</div>`;
  $("splash").onclick=()=>hideSplash(true);}
-let SPLASHED=false;function hideSplash(){if(SPLASHED)return;SPLASHED=true;$("splash").classList.add("off");setTimeout(()=>{newSignals();const m=location.hash.match(/t=([A-Z0-9]+)/);if(m)openT(m[1])},700)}
+let SPLASHED=false;function hideSplash(){if(SPLASHED)return;SPLASHED=true;$("splash").classList.add("off");setTimeout(()=>{profShow();newSignals();const m=location.hash.match(/t=([A-Z0-9]+)/);if(m)openT(m[1])},700)}
 const H2I=[[/résumé/i,'<path d="M4 19h16"/><path d="M6 15l4-4 3 3 5-6"/>',"#818CF8,#4F46E5"],[/opportunit/i,'<path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.5 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/>',"#FCD34D,#D97706"],[/palmar/i,'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>',"#F9A8D4,#DB2777"],[/secteur/i,'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',"#22D3EE,#0E7490"],[/alerte/i,'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',"#FB7185,#E11D48"],[/actualit/i,'<path d="M4 5h13v14H6a2 2 0 0 1-2-2z"/><path d="M8 9h5M8 13h5"/>',"#93C5FD,#2563EB"],[/position|portefeuille/i,'<rect x="3" y="7" width="18" height="13" rx="3"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',"#A78BFA,#6D28D9"],[/suivies/i,'<path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.5 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/>',"#FCD34D,#D97706"],[/identit/i,'<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',"#818CF8,#4F46E5"],[/partager/i,'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/>',"#34D399,#059669"],[/installer/i,'<rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/>',"#22D3EE,#0E7490"],[/application/i,'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>',"#94A3B8,#475569"],[/recevoir/i,'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>',"#FB923C,#C2410C"]];
 document.querySelectorAll("h2").forEach(h=>{const m=H2I.find(x=>x[0].test(h.textContent));if(!m)return;const c=m[2].split(",");h.insertAdjacentHTML("afterbegin",`<span class="i3" style="background:linear-gradient(145deg,${c[0]},${c[1]})"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${m[1]}</svg></span>`)});
 /* ---------- graphiques 3D : barres isométriques des secteurs, anneau du portefeuille */
@@ -575,6 +626,21 @@ function donut3d(items){const cv=$("donut");if(!cv)return;const r=devicePixelRat
  x.beginPath();x.ellipse(cx,cy,R,R*ry,0,Math.PI*1.05,Math.PI*1.75);x.strokeStyle="rgba(255,255,255,.6)";x.lineWidth=2;x.stroke();
 }
 addEventListener("resize",()=>{sec3d()});
+
+/* ---------- le Professeur Sentinel (mascotte) */
+let PI=0,PT=null;
+function profTips(){if(!SIG)return[];const S=SIG.s,ts=Object.keys(S),u=user(),nm=u.pre?u.pre:"";
+ const b=ts.filter(t=>/Achat/.test(S[t].reco)).sort((a,c)=>S[c].score-S[a].score),v=ts.filter(t=>/Vendre|Alléger/.test(S[t].reco)).sort((a,c)=>S[a].score-S[c].score);
+ const P=LS.get("pos",[]),risk=P.filter(p=>S[p.t]&&/Vendre|Alléger/.test(S[p.t].reco)),sec=CURSEC;const T=[];
+ if(sec==="sg"&&SGK==="sell"){T.push(`Côté <b>ventes</b> : ${v.length} valeur${v.length>1?"s":""} à alléger ou vendre. La plus fragile : <b>${esc(nameOf(v[0]||""))}</b>.`);if(risk.length)T.push(`Attention ${esc(nm)}, tu détiens <b>${risk.map(p=>p.t).join(", ")}</b> : Sentinel conseille de ${S[risk[0].t].reco.toLowerCase()}.`);T.push("Vendre une valeur faible, c'est libérer du capital pour une meilleure opportunité.")}
+ else if(sec==="sg"){T.push(`${b.length} signaux d'<b>achat</b> aujourd'hui. Mon préféré : <b>${esc(nameOf(b[0]||""))}</b> (score ${fmt(S[b[0]]?S[b[0]].score:0)}).`);T.push("Un bon dividende réinvesti chaque année, c'est la magie des intérêts composés !")}
+ else if(sec==="pf"){T.push(P.length?(risk.length?`Je surveille ${P.length} position${P.length>1?"s":""}. <b>${risk.map(p=>p.t).join(", ")}</b> mérite${risk.length>1?"nt":""} ton attention.`:`Tes ${P.length} position${P.length>1?"s":""} sont sous bonne garde. Aucune alerte de vente !`):"Ajoute tes titres AfricaBourse : je te préviendrai si l'un d'eux faiblit.");T.push("Ne mets jamais tous tes œufs dans le même panier : vise au moins 3 secteurs.")}
+ else{T.push(`${nm?"Bonsoir "+esc(nm)+" ! ":""}Aujourd'hui j'ai repéré <b>${b.length} achats</b> et <b>${v.length} ventes</b>.`);if(b[0])T.push(`Ma meilleure idée : <b>${esc(nameOf(b[0]))}</b>, objectif 3 mois ${pc(S[b[0]].fc.m3.e*100,1)}.`);T.push("Les marchés récompensent la patience plus que l'agitation.")}
+ return T}
+function profSay(i){const T=profTips();if(!T.length)return;PI=(i==null?0:i)%T.length;const b=$("prof-b");b.innerHTML=T[PI]+`<small>Le Professeur Sentinel · touche-moi pour la suite</small>`;b.classList.add("on");clearTimeout(PT);PT=setTimeout(()=>b.classList.remove("on"),9000)}
+function profShow(){const p=$("prof");const ok=["mk","sg","pf"].includes(CURSEC)&&LS.get("prefs",{}).prof!==false;p.classList.toggle("off",!ok);if(ok)setTimeout(()=>profSay(0),500)}
+$("prof-s").onclick=()=>{const p=$("prof");p.classList.remove("joy");void p.offsetWidth;p.classList.add("joy");profSay(PI+1)};
+$("prof-b").onclick=()=>$("prof-b").classList.remove("on");
 function closeModal(){$("modal").classList.remove("on")}
 function newSignals(){if(!SIG)return;const last=LS.get("lastOpen","");const fresh=AL.filter(a=>a.ts>last&&["buy","sell","dig"].includes(a.lv)&&alOk(a));LS.set("lastOpen",new Date().toISOString().slice(0,16)+"Z");
  const P=LS.get("pos",[]);const risk=P.filter(p=>SIG.s[p.t]&&/Vendre|Alléger/.test(SIG.s[p.t].reco)&&prefs().sell);
