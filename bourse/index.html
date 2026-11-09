@@ -173,10 +173,10 @@ table{width:100%;border-collapse:collapse;font-size:12.5px}th,td{white-space:now
 #donut{width:100%;height:170px;display:block}
 .legend{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12px;margin-top:4px}.legend span{display:flex;align-items:center;gap:5px}.legend i{width:10px;height:10px;border-radius:3px}.kpi .legend b{display:inline;font-size:12px;margin:0}
 .hero .up{color:#6EE7B7}.hero .dn{color:#FECDD3}
-#prof{position:fixed;left:0;bottom:calc(88px + env(safe-area-inset-bottom));z-index:30;width:96px;height:122px;pointer-events:none;transition:opacity .4s;will-change:transform}
+#prof{position:fixed;left:0;top:0;z-index:30;width:96px;height:122px;pointer-events:none;transition:opacity .4s;will-change:transform}
 #prof.off{opacity:0}
 #prof svg{width:96px;height:122px;pointer-events:auto;cursor:pointer;filter:drop-shadow(0 8px 10px rgba(30,50,110,.28));overflow:visible}
-#prof-b{position:fixed;z-index:31;bottom:calc(214px + env(safe-area-inset-bottom));left:10px;max-width:240px;background:#fff;border-radius:18px;padding:11px 13px;font-size:12.8px;line-height:1.45;color:var(--tx);box-shadow:0 14px 30px -10px rgba(30,50,110,.45);opacity:0;transform:translateY(8px) scale(.95);transition:opacity .3s,transform .3s;pointer-events:none}
+#prof-b{position:fixed;z-index:31;top:0;left:10px;max-width:240px;background:#fff;border-radius:18px;padding:11px 13px;font-size:12.8px;line-height:1.45;color:var(--tx);box-shadow:0 14px 30px -10px rgba(30,50,110,.45);opacity:0;transform:translateY(8px) scale(.95);transition:opacity .3s,transform .3s;pointer-events:none}
 #prof-b.on{opacity:1;transform:none;pointer-events:auto}
 #prof-b b{color:var(--pri)}
 #prof-b small{display:block;color:var(--mu);font-size:10.5px;margin-top:4px}
@@ -186,6 +186,8 @@ table{width:100%;border-collapse:collapse;font-size:12.5px}th,td{white-space:now
 #prof-b.buy .ub{background:linear-gradient(135deg,#34D399,#059669)}
 #prof-b .go{display:inline-block;margin-top:7px;font:800 12px -apple-system,system-ui;color:#fff;background:linear-gradient(135deg,#6366F1,#7C3AED);border-radius:10px;padding:6px 11px}
 @keyframes urg{50%{transform:scale(1.03)}}
+.pf-spot{position:relative;z-index:6;animation:spot 1.1s ease-in-out infinite!important}
+@keyframes spot{0%,100%{box-shadow:0 0 0 3px rgba(245,158,11,.95),0 0 0 8px rgba(245,158,11,.25),0 14px 30px -10px rgba(30,50,110,.4)}50%{box-shadow:0 0 0 3px rgba(245,158,11,.95),0 0 0 15px rgba(245,158,11,.05),0 14px 30px -10px rgba(30,50,110,.4)}}
 </style>
 </head>
 <body>
@@ -290,7 +292,7 @@ table{width:100%;border-collapse:collapse;font-size:12.5px}th,td{white-space:now
    <div class="tg" onclick="resetData()"><span class="dn">🗑️ Effacer mes données<small>Nom, portefeuille, alertes de prix et réglages de ce téléphone</small></span><span class="gold">›</span></div>
   </div>
   <p class="note" style="margin:14px 4px 0">Données de marché : BRVM (cours différés de 15 min) et Sika Finance. Les signaux de Sentinel sont des aides à la décision produites par des algorithmes, pas des conseils en investissement : valide toujours tes ordres avec ta SGI.</p>
-  <p class="note" style="text-align:center;margin-top:16px">Sentinel · BRVM Intelligence · version 1.6.0</p>
+  <p class="note" style="text-align:center;margin-top:16px">Sentinel · BRVM Intelligence · version 1.7.0</p>
 </section>
 </main>
 
@@ -330,7 +332,7 @@ table{width:100%;border-collapse:collapse;font-size:12.5px}th,td{white-space:now
  <g id="pf-armR">
   <path d="M91 116c10-6 18-18 22-32" stroke="#94A3B8" stroke-width="12" stroke-linecap="round" fill="none"/><path d="M91 116c10-6 18-18 22-32" stroke="#fff" stroke-width="9" stroke-linecap="round" fill="none"/>
   <circle cx="114" cy="80" r="6" fill="url(#pfs)"/>
-  <g transform="rotate(-8 118 60)"><rect x="103" y="46" width="30" height="24" rx="4" fill="#fff" stroke="#4F46E5" stroke-width="2"/><path id="pf-sign" d="M108 64l6-6 5 4 9-10" stroke="#10B981" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M116 70v6" stroke="#4F46E5" stroke-width="2"/></g>
+  <g id="pf-stick" opacity="0"><path d="M114 80L162 52" stroke="#92400E" stroke-width="3.4" stroke-linecap="round"/><path d="M114 80L162 52" stroke="#F59E0B" stroke-width="1.4" stroke-linecap="round"/><circle cx="163" cy="51.5" r="3.6" fill="#E11D48"/></g><g id="pf-board" transform="rotate(-8 118 60)"><rect x="103" y="46" width="30" height="24" rx="4" fill="#fff" stroke="#4F46E5" stroke-width="2"/><path id="pf-sign" d="M108 64l6-6 5 4 9-10" stroke="#10B981" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M116 70v6" stroke="#4F46E5" stroke-width="2"/></g>
  </g>
  <g id="pf-head">
   <rect x="57" y="86" width="14" height="24" rx="5" fill="#E9B48A"/>
@@ -351,7 +353,7 @@ table{width:100%;border-collapse:collapse;font-size:12.5px}th,td{white-space:now
 <div class="toast" id="toast"></div>
 
 <script>
-const V="1.6.0",TOPIC="sentinel-brvm-dbde7f93c237";
+const V="1.7.0",TOPIC="sentinel-brvm-dbde7f93c237";
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const fmt=(x,d=0)=>x==null||isNaN(x)?"—":Number(x).toLocaleString("fr-FR",{minimumFractionDigits:d,maximumFractionDigits:d}).replace(/ /g," ");
@@ -566,7 +568,7 @@ function checkTargets(){const T=LS.get("tg",[]);if(!T.length||!SIG)return;let ch
 
 /* ---------- navigation & événements */
 let CURSEC="mk",SGK="buy";function go(k){CURSEC=k;setTimeout(profShow,50);document.querySelectorAll(".sec").forEach(s=>s.classList.toggle("on",s.id==="s-"+k));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.s===k));scrollTo(0,0);if(k==="sg"){renderSig()}if(k==="ac")renderList();if(k==="st")fillSet();if(k==="pf")requestAnimationFrame(renderPf);if(k==="mk")requestAnimationFrame(sec3d)}
-function sgTab(k){SGK=k;if(CURSEC==="sg")setTimeout(()=>profSay(0),50);document.querySelectorAll("#sgseg button").forEach(b=>b.classList.toggle("on",b.dataset.k===k));["buy","sell","al","md"].forEach(x=>$("sg-"+x).style.display=x===k?"block":"none");if(k==="al"){LS.set("seenAl",new Date().toISOString());$("pin").style.display="none"}}
+function sgTab(k){SGK=k;if(CURSEC==="sg")setTimeout(profShow,80);document.querySelectorAll("#sgseg button").forEach(b=>b.classList.toggle("on",b.dataset.k===k));["buy","sell","al","md"].forEach(x=>$("sg-"+x).style.display=x===k?"block":"none");if(k==="al"){LS.set("seenAl",new Date().toISOString());$("pin").style.display="none"}}
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.s));
 document.querySelectorAll("#sgseg button").forEach(b=>b.onclick=()=>sgTab(b.dataset.k));
 document.querySelectorAll("#rng button").forEach(b=>b.onclick=()=>{RANGE=+b.dataset.r;document.querySelectorAll("#rng button").forEach(x=>x.classList.toggle("on",x===b));drawChart();fHead()});
@@ -584,7 +586,7 @@ let READY=false;const T0=Date.now();
 const user=()=>LS.get("user",{});
 function hello(){const u=user(),h=new Date().getHours();const g=h<12?"Bonjour":h<18?"Bon après-midi":"Bonsoir";$("hi").textContent=u.pre?`${g} ${u.pre} 👋`:`${g} 👋`;
  const o=marketOpen();$("hi2").textContent=o?"La séance BRVM est ouverte, Sentinel surveille le marché":"Sentinel veille sur la BRVM pour toi"}
-const NEWS_V=["Le Professeur court sur les pages et t'alerte en sautant quand une opportunité est urgente","Le Professeur Sentinel : ta mascotte qui commente achats, ventes et portefeuille (v1.5)","Accueil affichant la version, ouverture au toucher (v1.4)","Thème clair lumineux et graphiques 3D (v1.3)","Onglet Paramètres et partage de l'appli (v1.2)"];
+const NEWS_V=["Le Professeur se déplace partout et te présente chaque élément avec sa baguette, comme au tableau","Le Professeur court sur les pages et t'alerte en sautant quand une opportunité est urgente","Le Professeur Sentinel : ta mascotte qui commente achats, ventes et portefeuille (v1.5)","Accueil affichant la version, ouverture au toucher (v1.4)"];
 (async()=>{try{const r=await fetch("version.json?_="+Date.now(),{cache:"no-store"});const j=await r.json();if(j.v&&j.v!==V&&sessionStorage.getItem("snt-upd")!==j.v){sessionStorage.setItem("snt-upd",j.v);forceUpdate()}}catch(e){}})();
 const QUOTES=["« Le marché est un outil qui transfère l'argent des impatients vers les patients. »","« Achetez au son du canon, vendez au son du clairon. »","« Le temps passé sur le marché compte plus que le moment choisi pour y entrer. »","« La diversification est la seule protection gratuite de l'investisseur. »"];
 function splashDyn(){const u=user();
@@ -622,47 +624,79 @@ function donut3d(items){const cv=$("donut");if(!cv)return;const r=devicePixelRat
 }
 addEventListener("resize",()=>{sec3d()});
 
-/* ---------- le Professeur Sentinel (mascotte) */
-let PI=0,PT=null;
-function profTips(){if(!SIG)return[];const S=SIG.s,ts=Object.keys(S),u=user(),nm=u.pre?u.pre:"";
+/* ---------- le Professeur Sentinel (mascotte) : se déplace partout et présente les éléments */
+let PI=0,PT=null,TOUR=null;
+const Q1=(sel)=>()=>document.querySelector(sel);
+const byT=(root,t)=>()=>document.querySelector(`${root} [onclick*="'${t}'"]`);
+const posRow=t=>()=>[...document.querySelectorAll("#pf-list .row")].find(r=>(r.querySelector(".tk")||{}).textContent===t.slice(0,5));
+function profTips(){if(!SIG)return[];const S=SIG.s,ts=Object.keys(S),u=user(),nm=u.pre||"";
  const b=ts.filter(t=>/Achat/.test(S[t].reco)).sort((a,c)=>S[c].score-S[a].score),v=ts.filter(t=>/Vendre|Alléger/.test(S[t].reco)).sort((a,c)=>S[a].score-S[c].score);
- const P=LS.get("pos",[]),risk=P.filter(p=>S[p.t]&&/Vendre|Alléger/.test(S[p.t].reco)),sec=CURSEC;const T=[];
- if(sec==="sg"&&SGK==="sell"){T.push(`Côté <b>ventes</b> : ${v.length} valeur${v.length>1?"s":""} à alléger ou vendre. La plus fragile : <b>${esc(nameOf(v[0]||""))}</b>.`);if(risk.length)T.push(`Attention ${esc(nm)}, tu détiens <b>${risk.map(p=>p.t).join(", ")}</b> : Sentinel conseille de ${S[risk[0].t].reco.toLowerCase()}.`);T.push("Vendre une valeur faible, c'est libérer du capital pour une meilleure opportunité.")}
- else if(sec==="sg"){T.push(`${b.length} signaux d'<b>achat</b> aujourd'hui. Mon préféré : <b>${esc(nameOf(b[0]||""))}</b> (score ${fmt(S[b[0]]?S[b[0]].score:0)}).`);T.push("Un bon dividende réinvesti chaque année, c'est la magie des intérêts composés !")}
- else if(sec==="pf"){T.push(P.length?(risk.length?`Je surveille ${P.length} position${P.length>1?"s":""}. <b>${risk.map(p=>p.t).join(", ")}</b> mérite${risk.length>1?"nt":""} ton attention.`:`Tes ${P.length} position${P.length>1?"s":""} sont sous bonne garde. Aucune alerte de vente !`):"Ajoute tes titres AfricaBourse : je te préviendrai si l'un d'eux faiblit.");T.push("Ne mets jamais tous tes œufs dans le même panier : vise au moins 3 secteurs.")}
- else{T.push(`${nm?"Bonsoir "+esc(nm)+" ! ":""}Aujourd'hui j'ai repéré <b>${b.length} achats</b> et <b>${v.length} ventes</b>.`);if(b[0])T.push(`Ma meilleure idée : <b>${esc(nameOf(b[0]))}</b>, objectif 3 mois ${pc(S[b[0]].fc.m3.e*100,1)}.`);T.push("Les marchés récompensent la patience plus que l'agitation.")}
+ const P=LS.get("pos",[]),risk=P.filter(p=>S[p.t]&&/Vendre|Alléger/.test(S[p.t].reco));const T=[];const c=SIG.mk["BRVM-C"]||[];
+ if(CURSEC==="sg"&&SGK==="sell"){
+  if(v[0])T.push({h:`Regarde ici : <b>${esc(nameOf(v[0]))}</b> est la valeur la plus fragile (score ${fmt(S[v[0]].score)}). ${v.length} valeurs sont à alléger ou vendre.`,el:Q1("#sg-sell .card")});
+  if(v[1])T.push({h:`Juste en dessous, <b>${esc(nameOf(v[1]))}</b> : ${esc((S[v[1]].why[0]||["",""])[1])}.`,el:()=>document.querySelectorAll("#sg-sell .card")[1]});
+  if(risk.length)T.push({h:`Attention ${esc(nm)}, tu détiens <b>${risk.map(p=>p.t).join(", ")}</b> : Sentinel conseille de ${S[risk[0].t].reco.toLowerCase()}.`});
+  T.push({h:"Vendre une valeur faible, c'est libérer du capital pour une meilleure opportunité."})}
+ else if(CURSEC==="sg"&&SGK==="md")T.push({h:"Voici ma méthode : je note chaque action sur 100. Ce tableau montre ma fiabilité réelle, année par année.",el:Q1("#sg-md .card")});
+ else if(CURSEC==="sg"){
+  if(b[0])T.push({h:`Mon préféré du jour : <b>${esc(nameOf(b[0]))}</b>, score ${fmt(S[b[0]].score)}, objectif 3 mois ${pc(S[b[0]].fc.m3.e*100,1)}.`,el:Q1("#sg-buy .card")});
+  if(b[1])T.push({h:`Ensuite <b>${esc(nameOf(b[1]))}</b> : ${esc((S[b[1]].why[0]||["",""])[1])}.`,el:()=>document.querySelectorAll("#sg-buy .card")[1]});
+  T.push({h:"Un dividende réinvesti chaque année, c'est la magie des intérêts composés !"})}
+ else if(CURSEC==="pf"){
+  if(P.length)T.push({h:`Voici la valeur de ton portefeuille, ${esc(nm)}. Je la recalcule avec les derniers cours.`,el:()=>$("pf-v").closest(".card")});
+  if(risk.length)T.push({h:`<b>${esc(nameOf(risk[0].t))}</b> mérite ton attention : signal ${S[risk[0].t].reco.toLowerCase()}.`,el:posRow(risk[0].t)});
+  if(P.length)T.push({h:"Ce camembert 3D montre ta répartition par secteur. Vise au moins 3 secteurs !",el:()=>$("donut")&&$("donut").closest(".card")});
+  if(!P.length)T.push({h:"Ajoute tes titres AfricaBourse ici : je te préviendrai si l'un d'eux faiblit.",el:()=>$("pf-list")})}
+ else{
+  T.push({h:`${nm?"Bonsoir "+esc(nm)+" ! ":""}Le BRVM Composite est à <b>${fmt(c[0],2)}</b> points (${pc(c[1])}).`,el:()=>document.querySelector("#idx .card")});
+  T.push({h:"Ici, mon résumé de la séance : tout ce qu'il faut retenir aujourd'hui.",el:()=>$("summary").closest(".card")});
+  if(b[0])T.push({h:`Ma meilleure idée : <b>${esc(nameOf(b[0]))}</b>, objectif 3 mois ${pc(S[b[0]].fc.m3.e*100,1)}.`,el:byT("#opp",b[0])});
+  T.push({h:"Les secteurs en 3D : plus la barre monte, plus le secteur a progressé ce mois-ci.",el:()=>$("sec3d")&&$("sec3d").closest(".card")});
+  T.push({h:`Aujourd'hui j'ai repéré <b>${b.length} achats</b> et <b>${v.length} ventes</b>. Les marchés récompensent la patience !`})}
  return T}
-/* moteur d'animation (JavaScript, compatible iPhone) */
-const PF={x:-120,tx:0,mode:"hide",dir:1,t0:performance.now(),lastMove:0,jumpUntil:0,urg:null,blinkAt:0,patrol:0,on:false};
+/* moteur d'animation */
+const PF={x:-120,y:0,tx:0,ty:0,mode:"hide",face:1,t0:performance.now(),lastMove:0,urg:null,on:false,el:null,side:-1};
 const $p=id=>document.getElementById(id);
 function pfSet(id,tr){const e=$p(id);if(e)e.setAttribute("transform",tr)}
-function pfW(){return innerWidth}
-function pfRest(){return pfW()-108}
-function pfRunTo(x,then){PF.tx=x;PF.mode="run";PF.dir=x>=PF.x?1:-1;PF.then=then||null}
+const pfW=()=>innerWidth,pfH=()=>innerHeight,PW=96,PH=122,NAVH=100;
+function pfHome(){return[pfW()-PW-8,pfH()-NAVH-PH]}
+function pfClampY(y){return Math.max(60,Math.min(pfH()-NAVH-PH,y))}
+function pfAnchor(el){const r=el.getBoundingClientRect();if(r.bottom<60||r.top>pfH()-NAVH-30)return null;const W=pfW();let x,side;
+ if(r.width<W*.6){if(r.right+PW-10<W){x=r.right-14;side=-1}else{x=r.left-PW+14;side=1}}else{x=W-PW-4;side=-1}
+ const cy=Math.max(r.top,60)+Math.min(r.height,170)/2;return{x:Math.max(2,Math.min(W-PW-2,x)),y:pfClampY(cy-62),side}}
+function pfRunTo(x,y,then){PF.tx=x;PF.ty=y;PF.mode="run";PF.then=then||null}
+function pfReveal(el){const sc=el&&el.closest(".opp");if(sc&&sc!==el){sc.scrollTo({left:Math.max(0,el.offsetLeft-sc.offsetLeft-14),behavior:"smooth"})}}
+function pfSpot(el){if(el)pfReveal(el);document.querySelectorAll(".pf-spot").forEach(e=>e.classList.remove("pf-spot"));if(el)el.classList.add("pf-spot")}
+function pfBubble(){const b=$p("prof-b");if(!b.classList.contains("on"))return;const bw=b.offsetWidth||230,bh=b.offsetHeight||90;let top=PF.y-bh-6;if(top<50)top=PF.y+PH+6;if(top+bh>pfH()-NAVH)top=Math.max(50,PF.y-bh-6);b.style.left=Math.max(8,Math.min(pfW()-bw-8,PF.x+PW/2-bw/2))+"px";b.style.top=top+"px"}
 function pfFrame(now){
  const dt=Math.min(50,now-(PF.last||now))/1000;PF.last=now;const t=(now-PF.t0)/1000;
  if(!PF.on){requestAnimationFrame(pfFrame);return}
- let legA=0,armR=0,armL=0,bob=0,headR=0,lift=0;
- if(PF.mode==="run"){const sp=PF.urg?320:230,d=PF.tx-PF.x;const st=Math.sign(d)*Math.min(Math.abs(d),sp*dt);PF.x+=st;PF.dir=d>=0?1:-1;
+ // suivre l'élément présenté quand la page défile
+ if(PF.el&&(PF.mode==="run"||PF.mode==="point")){const a=pfAnchor(PF.el);if(!a){pfEnd();}else{PF.tx=a.x;PF.ty=a.y;PF.side=a.side;if(PF.mode==="point"&&Math.hypot(a.x-PF.x,a.y-PF.y)>30)PF.mode="run"}}
+ let legA=0,armR=0,armL=0,bob=0,headR=0,lift=0,point=0;
+ if(PF.mode==="run"){const sp=PF.urg?340:250,dx=PF.tx-PF.x,dy=PF.ty-PF.y,d=Math.hypot(dx,dy);const st=Math.min(d,sp*dt);if(d>0){PF.x+=dx/d*st;PF.y+=dy/d*st}if(Math.abs(dx)>2)PF.face=dx>0?1:-1;
   const ph=t*15;legA=Math.sin(ph)*34;armL=-Math.sin(ph)*30;armR=Math.sin(ph)*16;bob=-Math.abs(Math.sin(ph))*6;headR=Math.sin(ph)*2.5;
-  if(Math.abs(PF.tx-PF.x)<1){PF.x=PF.tx;PF.mode=PF.urg?"alert":"idle";PF.lastMove=now;const f=PF.then;PF.then=null;if(f)f()}}
+  if(d<1.5){PF.x=PF.tx;PF.y=PF.ty;PF.lastMove=now;PF.mode=PF.el?"point":PF.urg?"alert":"idle";const f=PF.then;PF.then=null;if(f)f()}}
+ else if(PF.mode==="point"){PF.x+= (PF.tx-PF.x)*.2;PF.y+=(PF.ty-PF.y)*.2;PF.face=-PF.side*-1;PF.face=PF.side===-1?-1:1;point=1;armR=38+Math.sin(t*5)*6;armL=Math.sin(t*2)*5;headR=Math.sin(t*2.5)*3;bob=Math.sin(t*3)*1.5;if(PF.urg){lift=-Math.abs(Math.sin(t*9))*10}}
  else if(PF.mode==="alert"){const ph=t*9;lift=-Math.abs(Math.sin(ph))*16;legA=Math.sin(ph*2)*10;armR=Math.sin(t*16)*24;armL=-20+Math.sin(t*16)*10;headR=Math.sin(t*8)*4}
  else{bob=Math.sin(t*2.4)*2.2;armR=(Math.sin(t*1.6)>.4?Math.sin(t*9)*18:0);armL=Math.sin(t*1.2)*4;headR=Math.sin(t*1.3)*3;legA=Math.sin(t*1.2)*2;
-  if(now-PF.lastMove>14000&&!PF.urg&&$p("prof-b").className.indexOf("on")<0){const w=pfW();const nx=PF.x>w/2?12+Math.random()*(w*.25):w*.55+Math.random()*(w*.45-108);pfRunTo(nx,()=>{setTimeout(()=>{if(PF.mode==="idle")pfRunTo(pfRest())},1600)})}}
+  if(now-PF.lastMove>12000&&!PF.urg&&!$p("prof-b").classList.contains("on"))pfWander()}
  const blink=(t%4.3)<.12?.12:1;
  pfSet("pf-legL",`rotate(${legA} 54 132)`);pfSet("pf-legR",`rotate(${-legA} 74 132)`);
  pfSet("pf-armL",`rotate(${armL} 37 116)`);pfSet("pf-armR",`rotate(${armR} 91 116)`);
+ const st=$p("pf-stick"),bd=$p("pf-board");if(st)st.setAttribute("opacity",point);if(bd)bd.setAttribute("opacity",1-point);
  pfSet("pf-head",`rotate(${headR} 64 100)`);pfSet("pf-hair",`rotate(${Math.sin(t*3)*2} 64 60) scale(${1+Math.sin(t*5)*.015})`);
  pfSet("pf-eyes",`translate(0 ${63*(1-blink)}) scale(1 ${blink})`);
- pfSet("pf-brow",`translate(0 ${PF.mode==="alert"?-3:(t%4.3>3.6&&t%4.3<3.9?-2.5:0)})`);
+ pfSet("pf-brow",`translate(0 ${PF.mode==="alert"||point?-3:(t%4.3>3.6&&t%4.3<3.9?-2.5:0)})`);
  pfSet("pf-all",`translate(0 ${bob+lift})`);
  const sh=$p("pf-sh");if(sh){sh.setAttribute("rx",30-(Math.abs(lift)/2));sh.setAttribute("opacity",1-Math.abs(lift)/30)}
  const al=$p("pf-alarm");if(al)al.setAttribute("opacity",PF.urg?(Math.sin(t*10)>-.2?1:.25):0);
  const sg=$p("pf-sign");if(sg){sg.setAttribute("stroke",PF.urg&&PF.urg.k==="sell"?"#E11D48":"#10B981");sg.setAttribute("d",PF.urg&&PF.urg.k==="sell"?"M108 52l6 6 5-4 9 10":"M108 64l6-6 5 4 9-10")}
- const el=$p("prof");el.style.transform=`translateX(${PF.x}px)`;$p("prof-s").style.transform=`scaleX(${PF.mode==="run"?PF.dir:1})`;
- const b=$p("prof-b");if(b.classList.contains("on")){const bw=b.offsetWidth||220;b.style.left=Math.max(8,Math.min(pfW()-bw-8,PF.x+48-bw/2))+"px"}
+ $p("prof").style.transform=`translate(${PF.x}px,${PF.y}px)`;$p("prof-s").style.transform=`scaleX(${PF.face})`;pfBubble();
  requestAnimationFrame(pfFrame)}
 requestAnimationFrame(pfFrame);
+function pfWander(){const W=pfW(),H=pfH();const x=8+Math.random()*(W-PW-16),y=pfClampY(80+Math.random()*(H-NAVH-PH-90));pfRunTo(x,y,()=>{setTimeout(()=>{if(PF.mode==="idle"&&!PF.el){const h=pfHome();pfRunTo(h[0],h[1])}},1800)})}
+function pfEnd(){PF.el=null;pfSpot(null);if(PF.mode==="point"||PF.mode==="run"){const h=pfHome();pfRunTo(h[0],h[1])}}
 function profUrgent(){if(!SIG)return null;const S=SIG.s,P=LS.get("pos",[]),W=LS.get("watch",[]),mine=P.map(p=>p.t).concat(W);const p=prefs();
  const day=new Date(Date.now()-36e5*20).toISOString();
  const risk=P.find(x=>S[x.t]&&S[x.t].reco==="Vendre")||P.find(x=>S[x.t]&&S[x.t].reco==="Alléger");
@@ -672,17 +706,24 @@ function profUrgent(){if(!SIG)return null;const S=SIG.s,P=LS.get("pos",[]),W=LS.
  const mv=AL.find(a=>a.ts>day&&(a.lv==="up"||a.lv==="down")&&mine.includes(a.t));
  if(mv&&p.move!==false)return{k:mv.lv==="up"?"buy":"sell",t:mv.t,h:`<b>${esc(mv.ti)}</b><br>${esc(mv.m)}`};
  return null}
-function profSay(i,urg){const b=$p("prof-b");clearTimeout(PT);
- if(urg){b.className="on urg "+(urg.k==="buy"?"buy":"sell");b.innerHTML=`<span class="ub">${urg.k==="buy"?"🚀 OPPORTUNITÉ URGENTE":"🚨 ALERTE URGENTE"}</span><br>${urg.h}<br><span class="go" onclick="event.stopPropagation();$('prof-b').classList.remove('on');PF.urg=null;openT('${urg.t}')">Voir ${urg.t} ›</span><small>Le Professeur Sentinel · touche-moi pour fermer</small>`;
-  if(navigator.vibrate)navigator.vibrate([120,80,120]);return}
- const T=profTips();if(!T.length)return;PI=(i==null?0:i)%T.length;b.className="on";b.innerHTML=T[PI]+`<small>Le Professeur Sentinel · touche-moi pour la suite</small>`;PT=setTimeout(()=>b.classList.remove("on"),9000)}
-function profShow(){const p=$p("prof");const ok=["mk","sg","pf"].includes(CURSEC)&&prefs().prof!==false;p.classList.toggle("off",!ok);PF.on=ok;if(!ok){$p("prof-b").classList.remove("on");return}
+function pfShowBubble(html,cls,ms){const b=$p("prof-b");clearTimeout(PT);b.className="on "+(cls||"");b.innerHTML=html;pfBubble();if(ms)PT=setTimeout(()=>{b.classList.remove("on");pfEnd();if(TOUR)TOUR()},ms)}
+function profSay(i,urg){
+ if(urg){const el=(byT("#opp",urg.t)()||posRow(urg.t)()||byT("#sg-buy",urg.t)()||byT("#sg-sell",urg.t)());const go=()=>pfShowBubble(`<span class="ub">${urg.k==="buy"?"🚀 OPPORTUNITÉ URGENTE":"🚨 ALERTE URGENTE"}</span><br>${urg.h}<br><span class="go" onclick="event.stopPropagation();$('prof-b').classList.remove('on');PF.urg=null;pfEnd();openT('${urg.t}')">Voir ${urg.t} ›</span><small>Le Professeur Sentinel · touche-moi pour fermer</small>`,"urg "+(urg.k==="buy"?"buy":"sell"));
+  const a=el&&pfAnchor(el);if(a){PF.el=el;pfSpot(el);pfRunTo(a.x,a.y,go)}else{PF.el=null;pfRunTo(pfW()/2-PW/2,pfH()/2-PH/2,go)}if(navigator.vibrate)navigator.vibrate([120,80,120]);return}
+ const T=profTips();if(!T.length)return;PI=((i==null?0:i)%T.length+T.length)%T.length;const tip=T[PI];
+ const html=tip.h+`<small>Le Professeur Sentinel · touche-moi pour la suite</small>`;
+ const el=tip.el&&tip.el();const a=el&&pfAnchor(el);
+ $p("prof-b").classList.remove("on");pfSpot(null);
+ if(a){PF.el=el;pfSpot(el);pfRunTo(a.x,a.y,()=>pfShowBubble(html,"",7000))}else{PF.el=null;const h=pfHome();pfRunTo(h[0],h[1],()=>pfShowBubble(html,"",7000))}}
+function profShow(){const p=$p("prof");const ok=["mk","sg","pf"].includes(CURSEC)&&prefs().prof!==false;p.classList.toggle("off",!ok);PF.on=ok;clearTimeout(PT);TOUR=null;pfSpot(null);PF.el=null;$p("prof-b").classList.remove("on");if(!ok)return;
  const u=profUrgent();const seen=sessionStorage.getItem("snt-urg");const key=u?u.k+u.t:"";PF.urg=(u&&seen!==key)?u:null;
- PF.x=-110;PF.last=performance.now();
- pfRunTo(PF.urg?pfW()*.5-48:pfRest(),()=>{if(PF.urg){sessionStorage.setItem("snt-urg",key);profSay(0,PF.urg)}else profSay(0)})}
-$p("prof-s").onclick=()=>{if(PF.urg){PF.urg=null;$p("prof-b").classList.remove("on");pfRunTo(pfRest());return}PF.mode="alert";setTimeout(()=>{if(PF.mode==="alert"&&!PF.urg)PF.mode="idle"},900);profSay(PI+1)};
-$p("prof-b").onclick=()=>{$p("prof-b").classList.remove("on");if(PF.urg){PF.urg=null;pfRunTo(pfRest())}};
-addEventListener("resize",()=>{if(PF.mode==="idle")PF.x=Math.min(PF.x,pfRest())});
+ if(PF.x<-50||PF.mode==="hide"){PF.x=-110;PF.y=pfClampY(pfH()*.55)}PF.last=performance.now();
+ if(PF.urg){sessionStorage.setItem("snt-urg",key);profSay(0,PF.urg);return}
+ // visite guidée : il présente chaque élément l'un après l'autre
+ let k=0;const n=profTips().length;TOUR=()=>{k++;if(k<n)setTimeout(()=>profSay(k),500);else{TOUR=null;const h=pfHome();pfRunTo(h[0],h[1])}};profSay(0)}
+$p("prof-s").onclick=()=>{if(PF.urg){PF.urg=null;$p("prof-b").classList.remove("on");pfEnd();return}TOUR=null;PF.mode="alert";setTimeout(()=>{if(PF.mode==="alert"&&!PF.urg)PF.mode="idle";profSay(PI+1)},700)};
+$p("prof-b").onclick=()=>{$p("prof-b").classList.remove("on");clearTimeout(PT);if(PF.urg){PF.urg=null}pfEnd();if(TOUR)TOUR()};
+addEventListener("resize",()=>{const h=pfHome();if(PF.mode==="idle"){PF.x=Math.min(PF.x,h[0]);PF.y=Math.min(PF.y,h[1])}});
 function closeModal(){$("modal").classList.remove("on")}
 function newSignals(){if(!SIG)return;const last=LS.get("lastOpen","");const fresh=AL.filter(a=>a.ts>last&&["buy","sell","dig"].includes(a.lv)&&alOk(a));LS.set("lastOpen",new Date().toISOString().slice(0,16)+"Z");
  const P=LS.get("pos",[]);const risk=P.filter(p=>SIG.s[p.t]&&/Vendre|Alléger/.test(SIG.s[p.t].reco)&&prefs().sell);

@@ -19,7 +19,7 @@ Gestion de la collection de parfums de Charles : reconnaissance par photo (lectu
 - Données personnelles : uniquement sur le téléphone (localStorage + IndexedDB).
 - Version 1.5.0 (prix en ligne Notino convertis en FCFA, valeur de la collection).
 
-## Sentinel · BRVM Intelligence (dossier `bourse/`) — version 1.6.0
+## Sentinel · BRVM Intelligence (dossier `bourse/`) — version 1.7.0
 
 Appli de veille boursière BRVM : résumé de séance, cours en direct (différé 15 min), graphiques sur 10 ans, score Sentinel par valeur (modèle multifactoriel validé sur l'historique depuis 2017, fondamentaux, technique, actualités), prévisions 1, 3 et 12 mois avec fourchette, signaux d'achat/vente, alertes et portefeuille personnel (stocké uniquement sur le téléphone).
 
