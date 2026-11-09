@@ -1,0 +1,17 @@
+name: probe
+on: workflow_dispatch
+jobs:
+  p:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126 Safari/537.36"
+          echo "== brvm cours"; curl -sL -A "$UA" -m 40 https://www.brvm.org/fr/cours-actions/0 -o c.html -w "%{http_code} %{size_download}\n"; grep -o '<td[^>]*>[^<]*</td>' c.html | head -40
+          echo "== brvm indices"; curl -sL -A "$UA" -m 40 https://www.brvm.org/fr/indices -o i.html -w "%{http_code} %{size_download}\n"; grep -o '<td[^>]*>[^<]*</td>' i.html | head -20
+          echo "== sika histos"; curl -s -A "$UA" -m 40 -H 'Content-Type: application/json' -d '{"ticker":"SNTS","datedeb":"2026-08-01","datefin":"2026-11-09","xperiod":"0"}' https://www.sikafinance.com/api/general/GetHistos | head -c 900; echo
+          echo "== sika histos old"; curl -s -A "$UA" -m 40 -H 'Content-Type: application/json' -d '{"ticker":"SNTS","datedeb":"2020-01-01","datefin":"2020-03-30","xperiod":"0"}' https://www.sikafinance.com/api/general/GetHistos | head -c 300; echo
+          echo "== sika index"; curl -s -A "$UA" -m 40 -H 'Content-Type: application/json' -d '{"ticker":"BRVMC","datedeb":"2026-10-01","datefin":"2026-11-09","xperiod":"0"}' https://www.sikafinance.com/api/general/GetHistos | head -c 300; echo
+          echo "== sika actu"; curl -sL -A "$UA" -m 40 https://www.sikafinance.com/marches/actualites_bourse_brvm -o a.html -w "%{http_code} %{size_download}\n"; grep -o 'href="/marches/[^"]*_[0-9]*"[^>]*>[^<]\{20,\}' a.html | head -15
+          echo "== sika cotation"; curl -sL -A "$UA" -m 40 https://www.sikafinance.com/marches/aaz -o z.html -w "%{http_code} %{size_download}\n"; grep -o '<td[^>]*>[^<]*</td>' z.html | head -30
+          echo "== sika societe"; curl -sL -A "$UA" -m 40 "https://www.sikafinance.com/marches/cotation_SNTS.sn" -o s.html -w "%{http_code} %{size_download}\n"; sed 's/<[^>]*>/ /g' s.html | tr -s ' \n' | grep -io 'PER[^|]\{0,80\}\|BNPA[^|]\{0,80\}\|dividende[^|]\{0,80\}\|rendement[^|]\{0,60\}' | head -15
+          echo "== richbourse"; curl -sL -A "$UA" -m 40 https://www.richbourse.com/common/variation/index -o r.html -w "%{http_code} %{size_download}\n"; grep -o '<td[^>]*>[^<]*</td>' r.html | head -20
