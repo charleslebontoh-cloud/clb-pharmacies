@@ -1,0 +1,13 @@
+name: probe
+on: workflow_dispatch
+jobs:
+  p:
+    runs-on: ubuntu-latest
+    steps:
+      - shell: bash
+        run: |
+          set +e
+          U=https://charleslebontoh-cloud.github.io/clb-pharmacies
+          curl -s -D - "$U/index.html" -o /tmp/i | grep -iE "cache-control|age:|last-modified|x-cache"; grep -o "Version 13\.[0-9.]*" /tmp/i | head -2
+          curl -s "$U/" | grep -o "Version 13\.[0-9.]*" | head -1
+          curl -s -D - "$U/sw.js" -o /tmp/s | grep -iE "cache-control|age:"; head -c 40 /tmp/s; echo
