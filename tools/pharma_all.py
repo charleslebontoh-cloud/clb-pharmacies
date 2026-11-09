@@ -5,12 +5,14 @@ def norm(s): return re.sub(r"[^A-Z0-9 ]+"," ",unicodedata.normalize("NFD",s or "
 def key(n): n=norm(n); n=re.sub(r"^(PHARMACIE|PHCIE|PHIE|PHARMA)\s+","",n); n=re.sub(r"\b(DE LA|DE L|DES|DU|DE|D|LA|LE|LES|L)\b"," ",n); return re.sub(r"\s+"," ",n).strip()
 def km(a,b,c,d):
     r=math.pi/180; x=math.sin((c-a)*r/2)**2+math.cos(a*r)*math.cos(c*r)*math.sin((d-b)*r/2)**2; return 12742*math.asin(math.sqrt(x))
-Q='[out:json][timeout:180];area["ISO3166-1"="CI"][admin_level=2]->.a;nwr["amenity"="pharmacy"](area.a);out center tags;'
-for k in range(3):
+Q='[out:json][timeout:180];nwr["amenity"="pharmacy"](4.3,-8.7,10.8,-2.4);out center tags;'
+EP=["https://overpass.kumi.systems/api/interpreter","https://overpass.private.coffee/api/interpreter","https://overpass-api.de/api/interpreter","https://maps.mail.ru/osm/tools/overpass/api/interpreter"]
+osm=[]
+for k in range(8):
+    u=EP[k%len(EP)]
     try:
-        with urllib.request.urlopen(urllib.request.Request("https://overpass-api.de/api/interpreter",data=urllib.parse.urlencode({"data":Q}).encode(),headers={"User-Agent":"CLB-Health/1.0"}),timeout=240) as r: osm=json.load(r)["elements"]; break
-    except Exception as e: print("overpass",e); time.sleep(20)
-else: osm=[]
+        with urllib.request.urlopen(urllib.request.Request(u,data=urllib.parse.urlencode({"data":Q}).encode(),headers={"User-Agent":"CLB-Health/1.0 (github.com/charleslebontoh-cloud)"}),timeout=240) as r: osm=json.load(r)["elements"]; print("ok",u); break
+    except Exception as e: print("overpass",u,e); time.sleep(10)
 out=[]
 for e in osm:
     t=e.get("tags",{}); la=e.get("lat") or (e.get("center") or {}).get("lat"); lo=e.get("lon") or (e.get("center") or {}).get("lon")
