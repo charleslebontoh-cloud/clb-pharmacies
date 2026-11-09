@@ -942,15 +942,28 @@ def alerts(U, cur, prev, N):
     for u, x in N.items():
         if x["d"] == day and abs(x.get("s", 0)) >= 2 and x.get("tk"):
             add("news:" + hashlib.md5(u.encode()).hexdigest()[:8], x["tk"][0], "news", "Actualité %s : %s" % ("positive" if x["s"] > 0 else "négative", nm(U, x["tk"][0])), x["t"])
+    # synthèse quotidienne des signaux d'achat et de vente (analyse du soir)
+    if MODE in ("night", "full"):
+        buys = sorted([t for t in S if S[t]["reco"] in ("Achat fort", "Achat")], key=lambda t: -S[t]["score"])[:5]
+        sells = sorted([t for t in S if S[t]["reco"] in ("Vendre", "Alléger")], key=lambda t: S[t]["score"])[:5]
+        if buys or sells:
+            msg = []
+            if buys:
+                msg.append("ACHAT : " + ", ".join("%s (%s, objectif 3 mois %s)" % (nm(U, t), S[t]["reco"].lower(), sg(S[t]["fc"]["m3"]["e"] * 100, 1) + " %") for t in buys))
+            if sells:
+                msg.append("VENTE : " + ", ".join("%s (%s)" % (nm(U, t), S[t]["reco"].lower()) for t in sells))
+            add("digest", buys[0] if buys else sells[0], "dig", "Signaux Sentinel du jour : %d achats, %d ventes" % (
+                sum(1 for t in S if "Achat" in S[t]["reco"]), sum(1 for t in S if S[t]["reco"] in ("Vendre", "Alléger"))), "\n".join(msg))
     A = A[:300]
     save(D + "/alerts.json", A)
     print("alertes +", len(new))
-    if NTFY and new and prev:
-        for a in new[:6]:
+    push = [a for a in new if a["lv"] in ("buy", "sell", "dig")]
+    if NTFY and push and prev:
+        for a in push[:8]:
             try:
                 body = json.dumps({"topic": NTFY, "title": a["ti"], "message": a["m"], "click": APP + "#t=" + a["t"],
-                                   "tags": [{"buy": "chart_with_upwards_trend", "up": "rocket", "sell": "warning", "down": "chart_with_downwards_trend", "news": "newspaper"}.get(a["lv"], "bell")],
-                                   "priority": 4 if a["lv"] in ("buy", "sell") else 3}).encode()
+                                   "tags": [{"buy": "chart_with_upwards_trend", "sell": "warning", "dig": "compass"}.get(a["lv"], "bell")],
+                                   "priority": 4}).encode()
                 urllib.request.urlopen(urllib.request.Request("https://ntfy.sh/", body, {"Content-Type": "application/json"}), timeout=20)
             except Exception as e:
                 print("ntfy", e)
@@ -962,8 +975,11 @@ def best_reason(s, sign):
 
 
 # ---------------------------------------------------------------- main
+MODE = sys.argv[1] if len(sys.argv) > 1 else "live"
+
+
 def main():
-    mode = sys.argv[1] if len(sys.argv) > 1 else "live"
+    mode = MODE
     q, upd, mk, st = brvm_quotes()
     if not q:
         old = load(D + "/signals.json", {})
