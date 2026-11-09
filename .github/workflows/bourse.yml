@@ -29,7 +29,7 @@ jobs:
         run: |
           M="${{ github.event.inputs.mode }}"
           if [ -z "$M" ]; then if [ "$(date -u +%H)" -ge 18 ]; then M=night; else M=live; fi; fi
-          python tools/bourse.py "$M"
+          SECTORS=${{ github.event.inputs.mode == 'full' && '1' || '' }} python tools/bourse.py "$M"
       - name: Commit
         if: always()
         run: |

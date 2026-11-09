@@ -143,8 +143,10 @@ def brvm_sectors():
         name = html.unescape(m.group(1).strip())
         if name not in SECTOR_FIX:
             continue
-        for t in re.findall(r"<tr><td>([A-Z0-9]{3,6})</td>", h):
-            sec.setdefault(t, SECTOR_FIX[name])
+        a = h.find('id="block-system-main"')
+        body = h[a:h.find("</table>", a)] if a > 0 else ""
+        for t in re.findall(r"<tr><td>([A-Z0-9]{3,6})</td>", body):
+            sec[t] = SECTOR_FIX[name]
     return sec
 
 
@@ -169,7 +171,7 @@ def universe(q):
     for u in U.values():
         if cnt[u["nm"]] > 1 and u.get("c"):
             u["nm"] = u["nm"] + " " + u["c"]
-    if any(u.get("s") in (None, "Actions") for u in U.values()) or NOW.weekday() == 0 and NOW.hour >= 18:
+    if any(u.get("s") in (None, "Actions") for u in U.values()) or (NOW.weekday() == 0 and NOW.hour >= 18) or os.environ.get("SECTORS"):
         try:
             sec = brvm_sectors()
             for t, s in sec.items():
@@ -390,18 +392,23 @@ def update_news(U):
     N = load(D + "/news.json", {})
     h = get("https://www.sikafinance.com/marches/actualites_bourse_brvm")
     seen = 0
+    best = {}
     for a, b in re.findall(r'href="(/marches/[a-z0-9-]+_\d+)"[^>]*>(.*?)</a>', h, flags=re.S):
         b = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", b))).strip()
+        if len(b) > len(best.get(a, "")):
+            best[a] = b
+    for a, b in best.items():
+        sl = 0
         if len(b) < 20:
-            b = a.split("/")[-1].rsplit("_", 1)[0].replace("-", " ").capitalize()
+            b, sl = a.split("/")[-1].rsplit("_", 1)[0].replace("-", " ").capitalize(), 1
         u = "https://www.sikafinance.com" + a
-        if u not in N or not N[u].get("t"):
-            N[u] = {"t": b, "d": N.get(u, {}).get("d") or NOW.date().isoformat(), "id": int(a.rsplit("_", 1)[1])}
+        if u not in N or not N[u].get("t") or (N[u].get("sl") and not sl):
+            N[u] = {"t": b, "d": N.get(u, {}).get("d") or NOW.date().isoformat(), "id": int(a.rsplit("_", 1)[1]), "sl": sl}
             seen += 1
     F = load(D + "/fund.json", {})
     for t, f in F.items():
         for d, ttl, u in f.get("news", []):
-            if u and u not in N:
+            if u and (u not in N or N[u].get("sl")):
                 N[u] = {"t": ttl, "d": d, "id": int(u.rsplit("_", 1)[1]) if re.search(r"_\d+$", u) else 0}
     # tagging
     al = {}
