@@ -393,8 +393,11 @@ def update_news(U):
     h = get("https://www.sikafinance.com/marches/actualites_bourse_brvm")
     seen = 0
     best = {}
-    for a, b in re.findall(r'href="(/marches/[a-z0-9-]+_\d+)"[^>]*>(.*?)</a>', h, flags=re.S):
+    for a, at, b in re.findall(r'href="(?:https?://www\.sikafinance\.com)?(/marches/[a-z0-9-]+_\d+)"([^>]*)>(.*?)</a>', h, flags=re.S):
         b = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", b))).strip()
+        m = re.search(r'title="([^"]{20,})"', at)
+        if len(b) < 20 and m:
+            b = html.unescape(m.group(1)).strip()
         if len(b) > len(best.get(a, "")):
             best[a] = b
     for a, b in best.items():
