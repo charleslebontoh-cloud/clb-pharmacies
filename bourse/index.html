@@ -173,25 +173,19 @@ table{width:100%;border-collapse:collapse;font-size:12.5px}th,td{white-space:now
 #donut{width:100%;height:170px;display:block}
 .legend{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12px;margin-top:4px}.legend span{display:flex;align-items:center;gap:5px}.legend i{width:10px;height:10px;border-radius:3px}.kpi .legend b{display:inline;font-size:12px;margin:0}
 .hero .up{color:#6EE7B7}.hero .dn{color:#FECDD3}
-#prof{position:fixed;right:10px;bottom:calc(96px + env(safe-area-inset-bottom));z-index:30;display:flex;align-items:flex-end;gap:6px;pointer-events:none;transition:opacity .4s,transform .4s}
-#prof.off{opacity:0;transform:translateY(20px) scale(.8)}
-#prof svg{width:92px;height:105px;pointer-events:auto;cursor:pointer;filter:drop-shadow(0 10px 12px rgba(30,50,110,.3))}
-#prof .bub{pointer-events:auto;max-width:210px;background:#fff;border-radius:18px 18px 4px 18px;padding:10px 12px;font-size:12.5px;line-height:1.45;color:var(--tx);box-shadow:0 14px 30px -10px rgba(30,50,110,.4);margin-bottom:60px;opacity:0;transform:translateY(8px) scale(.95);transition:.35s;transform-origin:bottom right}
-#prof .bub.on{opacity:1;transform:none}
-#prof .bub b{color:var(--pri)}
-#prof .bub small{display:block;color:var(--mu);font-size:10.5px;margin-top:4px}
-.pf-bob{animation:bob 2.6s ease-in-out infinite;transform-origin:64px 150px}
-@keyframes bob{50%{transform:translateY(-4px) rotate(-1.5deg)}}
-.pf-arm{animation:wave 2.2s ease-in-out infinite;transform-origin:92px 120px}
-@keyframes wave{0%,100%{transform:rotate(0)}20%{transform:rotate(-22deg)}40%{transform:rotate(6deg)}60%{transform:rotate(-18deg)}80%{transform:rotate(2deg)}}
-.pf-eye{animation:blink 4.2s infinite;transform-box:fill-box;transform-origin:center}
-@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
-.pf-hair{animation:hair 3s ease-in-out infinite;transform-origin:64px 60px}
-@keyframes hair{50%{transform:rotate(2deg) scale(1.02)}}
-.pf-brow{animation:brow 4.2s infinite}
-@keyframes brow{0%,80%,100%{transform:translateY(0)}86%{transform:translateY(-2.5px)}}
-#prof.joy .pf-bob{animation:jump .6s ease-in-out 2}
-@keyframes jump{50%{transform:translateY(-14px) rotate(3deg)}}
+#prof{position:fixed;left:0;bottom:calc(88px + env(safe-area-inset-bottom));z-index:30;width:96px;height:122px;pointer-events:none;transition:opacity .4s;will-change:transform}
+#prof.off{opacity:0}
+#prof svg{width:96px;height:122px;pointer-events:auto;cursor:pointer;filter:drop-shadow(0 8px 10px rgba(30,50,110,.28));overflow:visible}
+#prof-b{position:fixed;z-index:31;bottom:calc(214px + env(safe-area-inset-bottom));left:10px;max-width:240px;background:#fff;border-radius:18px;padding:11px 13px;font-size:12.8px;line-height:1.45;color:var(--tx);box-shadow:0 14px 30px -10px rgba(30,50,110,.45);opacity:0;transform:translateY(8px) scale(.95);transition:opacity .3s,transform .3s;pointer-events:none}
+#prof-b.on{opacity:1;transform:none;pointer-events:auto}
+#prof-b b{color:var(--pri)}
+#prof-b small{display:block;color:var(--mu);font-size:10.5px;margin-top:4px}
+#prof-b.urg{border:2px solid transparent;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(135deg,#F59E0B,#E11D48,#7C3AED) border-box;animation:urg 1s ease-in-out infinite}
+#prof-b.urg.buy{background:linear-gradient(#fff,#fff) padding-box,linear-gradient(135deg,#34D399,#059669,#06B6D4) border-box}
+#prof-b .ub{display:inline-block;font:800 10.5px -apple-system,system-ui;letter-spacing:.08em;color:#fff;background:linear-gradient(135deg,#FB7185,#E11D48);border-radius:7px;padding:2px 7px;margin-bottom:5px}
+#prof-b.buy .ub{background:linear-gradient(135deg,#34D399,#059669)}
+#prof-b .go{display:inline-block;margin-top:7px;font:800 12px -apple-system,system-ui;color:#fff;background:linear-gradient(135deg,#6366F1,#7C3AED);border-radius:10px;padding:6px 11px}
+@keyframes urg{50%{transform:scale(1.03)}}
 </style>
 </head>
 <body>
@@ -296,7 +290,7 @@ table{width:100%;border-collapse:collapse;font-size:12.5px}th,td{white-space:now
    <div class="tg" onclick="resetData()"><span class="dn">🗑️ Effacer mes données<small>Nom, portefeuille, alertes de prix et réglages de ce téléphone</small></span><span class="gold">›</span></div>
   </div>
   <p class="note" style="margin:14px 4px 0">Données de marché : BRVM (cours différés de 15 min) et Sika Finance. Les signaux de Sentinel sont des aides à la décision produites par des algorithmes, pas des conseils en investissement : valide toujours tes ordres avec ta SGI.</p>
-  <p class="note" style="text-align:center;margin-top:16px">Sentinel · BRVM Intelligence · version 1.5.0</p>
+  <p class="note" style="text-align:center;margin-top:16px">Sentinel · BRVM Intelligence · version 1.6.0</p>
 </section>
 </main>
 
@@ -321,42 +315,43 @@ table{width:100%;border-collapse:collapse;font-size:12.5px}th,td{white-space:now
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px"><button class="btn" id="f-buy">＋ Portefeuille</button><button class="btn g" id="f-alert">🔔 Alerte de prix</button></div>
  </div>
 </div>
-<div id="prof" class="off"><div class="bub" id="prof-b"></div><svg id="prof-s" viewBox="0 0 140 160" aria-label="Le Professeur Sentinel">
+<div id="prof-b"></div><div id="prof" class="off"><svg id="prof-s" viewBox="0 0 140 178" aria-label="Le Professeur Sentinel">
 <defs><linearGradient id="pfc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#E2E8F0"/></linearGradient><radialGradient id="pfs" cx=".45" cy=".4" r=".7"><stop offset="0" stop-color="#FAD7B5"/><stop offset="1" stop-color="#E9B48A"/></radialGradient><linearGradient id="pfh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#D9E0EA"/></linearGradient></defs>
-<g class="pf-bob">
- <ellipse cx="64" cy="155" rx="34" ry="4.5" fill="rgba(30,50,110,.2)"/>
- <path d="M34 154c-6-14-4-30 4-38M94 154c6-14 4-30-4-38" stroke="#94A3B8" stroke-width="13" stroke-linecap="round" fill="none" opacity=".0"/>
- <path d="M26 156c0-30 14-48 38-48s38 18 38 48z" fill="url(#pfc)" stroke="#94A3B8" stroke-width="1.6"/>
- <path d="M50 110l14 20 14-20z" fill="#BFDBFE"/>
- <path d="M50 110l-6 46M78 110l6 46" stroke="#CBD5E1" stroke-width="1.6"/>
- <path d="M50 110l-8 10 6 4-4 6M78 110l8 10-6 4 4 6" fill="none" stroke="#94A3B8" stroke-width="1.4" stroke-linejoin="round"/>
- <path d="M57 114l7 4-7 4zM71 114l-7 4 7 4z" fill="#F59E0B" stroke="#B45309" stroke-width=".8"/><circle cx="64" cy="118" r="2.2" fill="#B45309"/>
- <rect x="80" y="128" width="11" height="8" rx="1.5" fill="#E0E7FF" stroke="#A5B4FC" stroke-width=".8"/><path d="M83 128v-4M86 128v-5" stroke="#4F46E5" stroke-width="1.6" stroke-linecap="round"/>
- <path d="M36 122c-6 8-8 18-6 28" stroke="#94A3B8" stroke-width="12" stroke-linecap="round" fill="none"/><path d="M36 122c-6 8-8 18-6 28" stroke="#fff" stroke-width="9" stroke-linecap="round" fill="none"/><circle cx="30" cy="151" r="5" fill="url(#pfs)"/>
- <g class="pf-arm">
-  <path d="M92 120c10-6 18-18 22-34" stroke="#94A3B8" stroke-width="12" stroke-linecap="round" fill="none"/><path d="M92 120c10-6 18-18 22-34" stroke="#fff" stroke-width="9" stroke-linecap="round" fill="none"/>
-  <circle cx="115" cy="82" r="6" fill="url(#pfs)"/>
-  <g transform="rotate(-8 118 62)"><rect x="103" y="48" width="30" height="24" rx="4" fill="#fff" stroke="#4F46E5" stroke-width="2"/><path d="M108 66l6-6 5 4 9-10" stroke="#10B981" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="128" cy="54" r="2" fill="#10B981"/><path d="M116 72v6" stroke="#4F46E5" stroke-width="2"/></g>
+<ellipse id="pf-sh" cx="64" cy="172" rx="30" ry="4.5" fill="rgba(30,50,110,.22)"/>
+<g id="pf-all">
+ <g id="pf-legL"><path d="M54 132v28" stroke="#334155" stroke-width="10" stroke-linecap="round"/><path d="M47 163h15c3 0 4 3 2 4H46c-2 0-2-4 1-4z" fill="#1E293B"/></g>
+ <g id="pf-legR"><path d="M74 132v28" stroke="#475569" stroke-width="10" stroke-linecap="round"/><path d="M67 163h15c3 0 4 3 2 4H66c-2 0-2-4 1-4z" fill="#0F172A"/></g>
+ <path d="M28 146c0-26 14-40 36-40s36 14 36 40c-8 3-16 4-24 2l-12-6-12 6c-8 2-16 1-24-2z" fill="url(#pfc)" stroke="#94A3B8" stroke-width="1.6"/>
+ <path d="M51 108l13 18 13-18z" fill="#BFDBFE"/>
+ <path d="M51 108l-5 38M77 108l5 38" stroke="#CBD5E1" stroke-width="1.5"/>
+ <path d="M58 112l6 4-6 4zM70 112l-6 4 6 4z" fill="#F59E0B" stroke="#B45309" stroke-width=".8"/><circle cx="64" cy="116" r="2.1" fill="#B45309"/>
+ <rect x="79" y="124" width="10" height="7" rx="1.5" fill="#E0E7FF" stroke="#A5B4FC" stroke-width=".8"/><path d="M82 124v-4M85 124v-5" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round"/>
+ <g id="pf-armL"><path d="M37 116c-6 8-8 16-7 24" stroke="#94A3B8" stroke-width="12" stroke-linecap="round" fill="none"/><path d="M37 116c-6 8-8 16-7 24" stroke="#fff" stroke-width="9" stroke-linecap="round" fill="none"/><circle cx="30" cy="142" r="5" fill="url(#pfs)"/></g>
+ <g id="pf-armR">
+  <path d="M91 116c10-6 18-18 22-32" stroke="#94A3B8" stroke-width="12" stroke-linecap="round" fill="none"/><path d="M91 116c10-6 18-18 22-32" stroke="#fff" stroke-width="9" stroke-linecap="round" fill="none"/>
+  <circle cx="114" cy="80" r="6" fill="url(#pfs)"/>
+  <g transform="rotate(-8 118 60)"><rect x="103" y="46" width="30" height="24" rx="4" fill="#fff" stroke="#4F46E5" stroke-width="2"/><path id="pf-sign" d="M108 64l6-6 5 4 9-10" stroke="#10B981" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M116 70v6" stroke="#4F46E5" stroke-width="2"/></g>
  </g>
- <rect x="57" y="86" width="14" height="26" rx="5" fill="#E9B48A"/>
- <g class="pf-hair"><path d="M37.9 66.6 Q37.9 66.6 30.6 65.6 Q23.4 64.6 28.2 61.9 Q33.0 59.2 29.1 56.4 Q25.2 53.6 29.9 52.2 Q34.5 50.9 29.6 46.2 Q24.7 41.5 31.6 42.4 Q38.5 43.3 37.1 39.1 Q35.7 35.0 40.1 36.0 Q44.6 37.1 43.4 31.0 Q42.2 25.0 47.2 28.9 Q52.2 32.8 53.1 27.3 Q54.0 21.9 57.4 26.3 Q60.9 30.7 63.3 27.1 Q65.7 23.4 67.7 27.3 Q69.8 31.1 73.8 26.4 Q77.9 21.8 78.1 27.8 Q78.2 33.8 82.3 32.1 Q86.3 30.4 85.9 34.6 Q85.5 38.8 91.3 37.2 Q97.1 35.6 94.0 40.5 Q91.0 45.4 95.5 46.0 Q100.0 46.6 97.1 50.0 Q94.2 53.3 98.4 55.1 Q102.7 56.9 98.8 59.3 Q94.9 61.8 99.9 64.9 Q104.9 68.1 97.2 68.4 L89.4 68.8 Z" fill="url(#pfh)" stroke="#B6C2D2" stroke-width="1.4" stroke-linejoin="round"/></g>
- <ellipse cx="40" cy="68" rx="4.5" ry="6.5" fill="#E9B48A"/><ellipse cx="88" cy="68" rx="4.5" ry="6.5" fill="#E9B48A"/>
- <ellipse cx="64" cy="66" rx="24" ry="26" fill="url(#pfs)"/>
- <g class="pf-brow" fill="#F8FAFC" stroke="#94A3B8" stroke-width="1"><path d="M43 55c3-6 12-7 16-3-4 1-11 1-16 3z"/><path d="M85 55c-3-6-12-7-16-3 4 1 11 1 16 3z"/></g>
- <g fill="rgba(255,255,255,.4)" stroke="#334155" stroke-width="2.2"><circle cx="53" cy="63" r="7.5"/><circle cx="75" cy="63" r="7.5"/></g><path d="M60.5 63h7" stroke="#334155" stroke-width="2.2"/>
- <ellipse class="pf-eye" cx="53" cy="63" rx="2.5" ry="3" fill="#1E293B"/><ellipse class="pf-eye" cx="75" cy="63" rx="2.5" ry="3" fill="#1E293B"/>
- <circle cx="54" cy="62" r=".9" fill="#fff"/><circle cx="76" cy="62" r=".9" fill="#fff"/>
- <path d="M64 66c-2 4-3 7 1 8" stroke="#C98B5E" stroke-width="1.8" fill="none" stroke-linecap="round"/>
- <ellipse cx="47" cy="74" rx="4.5" ry="2.8" fill="#F9A8A8" opacity=".75"/><ellipse cx="81" cy="74" rx="4.5" ry="2.8" fill="#F9A8A8" opacity=".75"/>
- <path d="M54 81c5 8 15 8 20 0z" fill="#fff" stroke="#9A3412" stroke-width="1.8" stroke-linejoin="round"/><path d="M56.5 84c3 3 12 3 15 0" fill="#FB7185" opacity=".7"/>
- <path d="M50 79c3-6 9-6 14-3 5-3 11-3 14 3-4 1-8-1-14 1-6-2-10 0-14-1z" fill="#F8FAFC" stroke="#94A3B8" stroke-width="1.1" stroke-linejoin="round"/>
- <path d="M54 77l-2 3M58 76l-1 3M70 76l1 3M74 77l2 3" stroke="#CBD5E1" stroke-width="1" stroke-linecap="round"/>
+ <g id="pf-head">
+  <rect x="57" y="86" width="14" height="24" rx="5" fill="#E9B48A"/>
+  <g id="pf-hair"><path d="M37.9 66.6 Q37.9 66.6 30.6 65.6 Q23.4 64.6 28.2 61.9 Q33.0 59.2 29.1 56.4 Q25.2 53.6 29.9 52.2 Q34.5 50.9 29.6 46.2 Q24.7 41.5 31.6 42.4 Q38.5 43.3 37.1 39.1 Q35.7 35.0 40.1 36.0 Q44.6 37.1 43.4 31.0 Q42.2 25.0 47.2 28.9 Q52.2 32.8 53.1 27.3 Q54.0 21.9 57.4 26.3 Q60.9 30.7 63.3 27.1 Q65.7 23.4 67.7 27.3 Q69.8 31.1 73.8 26.4 Q77.9 21.8 78.1 27.8 Q78.2 33.8 82.3 32.1 Q86.3 30.4 85.9 34.6 Q85.5 38.8 91.3 37.2 Q97.1 35.6 94.0 40.5 Q91.0 45.4 95.5 46.0 Q100.0 46.6 97.1 50.0 Q94.2 53.3 98.4 55.1 Q102.7 56.9 98.8 59.3 Q94.9 61.8 99.9 64.9 Q104.9 68.1 97.2 68.4 L89.4 68.8 Z" fill="url(#pfh)" stroke="#B6C2D2" stroke-width="1.4" stroke-linejoin="round"/></g>
+  <ellipse cx="40" cy="68" rx="4.5" ry="6.5" fill="#E9B48A"/><ellipse cx="88" cy="68" rx="4.5" ry="6.5" fill="#E9B48A"/>
+  <ellipse cx="64" cy="66" rx="24" ry="26" fill="url(#pfs)"/>
+  <g id="pf-brow" fill="#F8FAFC" stroke="#94A3B8" stroke-width="1"><path d="M43 55c3-6 12-7 16-3-4 1-11 1-16 3z"/><path d="M85 55c-3-6-12-7-16-3 4 1 11 1 16 3z"/></g>
+  <g fill="rgba(255,255,255,.4)" stroke="#334155" stroke-width="2.2"><circle cx="53" cy="63" r="7.5"/><circle cx="75" cy="63" r="7.5"/></g><path d="M60.5 63h7" stroke="#334155" stroke-width="2.2"/>
+  <g id="pf-eyes"><ellipse cx="53" cy="63" rx="2.5" ry="3" fill="#1E293B"/><ellipse cx="75" cy="63" rx="2.5" ry="3" fill="#1E293B"/><circle cx="54" cy="62" r=".9" fill="#fff"/><circle cx="76" cy="62" r=".9" fill="#fff"/></g>
+  <path d="M64 66c-2 4-3 7 1 8" stroke="#C98B5E" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <ellipse cx="47" cy="74" rx="4.5" ry="2.8" fill="#F9A8A8" opacity=".75"/><ellipse cx="81" cy="74" rx="4.5" ry="2.8" fill="#F9A8A8" opacity=".75"/>
+  <path id="pf-mouth" d="M54 81c5 8 15 8 20 0z" fill="#fff" stroke="#9A3412" stroke-width="1.8" stroke-linejoin="round"/>
+  <path d="M50 79c3-6 9-6 14-3 5-3 11-3 14 3-4 1-8-1-14 1-6-2-10 0-14-1z" fill="#F8FAFC" stroke="#94A3B8" stroke-width="1.1" stroke-linejoin="round"/>
+ </g>
+ <g id="pf-alarm" opacity="0"><circle cx="20" cy="28" r="13" fill="#E11D48" stroke="#fff" stroke-width="2.5"/><path d="M20 20v9" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/><circle cx="20" cy="34.5" r="2" fill="#fff"/><path d="M4 16l-4-4M6 28H0M4 40l-4 4" stroke="#E11D48" stroke-width="2.4" stroke-linecap="round"/></g>
 </g></svg></div>
 <div class="modal" id="modal" onclick="if(event.target===this)closeModal()"><div class="card" id="mod-c"></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
-const V="1.5.0",TOPIC="sentinel-brvm-dbde7f93c237";
+const V="1.6.0",TOPIC="sentinel-brvm-dbde7f93c237";
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const fmt=(x,d=0)=>x==null||isNaN(x)?"—":Number(x).toLocaleString("fr-FR",{minimumFractionDigits:d,maximumFractionDigits:d}).replace(/ /g," ");
@@ -498,7 +493,7 @@ function renderSig(){
 }
 
 /* ---------- fiche valeur */
-async function openT(t){$("prof").classList.add("off");
+async function openT(t){$("prof").classList.add("off");$("prof-b").classList.remove("on");PF.on=false;
  if(!SIG||!SIG.s[t])return;CUR=t;FTAB="an";$("sheet").classList.add("on");$("sheet").scrollTop=0;
  document.querySelectorAll("#ftabs button").forEach(b=>b.classList.toggle("on",b.dataset.k==="an"));
  $("f-t").textContent=t;$("f-n").textContent=nameOf(t)+(TK[t]&&TK[t].c?" · "+TK[t].c:"");
@@ -589,7 +584,7 @@ let READY=false;const T0=Date.now();
 const user=()=>LS.get("user",{});
 function hello(){const u=user(),h=new Date().getHours();const g=h<12?"Bonjour":h<18?"Bon après-midi":"Bonsoir";$("hi").textContent=u.pre?`${g} ${u.pre} 👋`:`${g} 👋`;
  const o=marketOpen();$("hi2").textContent=o?"La séance BRVM est ouverte, Sentinel surveille le marché":"Sentinel veille sur la BRVM pour toi"}
-const NEWS_V=["Le Professeur Sentinel : ta mascotte qui commente achats, ventes et portefeuille","Accueil affichant la version, ouverture au toucher (v1.4)","Thème clair lumineux et graphiques 3D (v1.3)","Onglet Paramètres et partage de l'appli (v1.2)"];
+const NEWS_V=["Le Professeur court sur les pages et t'alerte en sautant quand une opportunité est urgente","Le Professeur Sentinel : ta mascotte qui commente achats, ventes et portefeuille (v1.5)","Accueil affichant la version, ouverture au toucher (v1.4)","Thème clair lumineux et graphiques 3D (v1.3)","Onglet Paramètres et partage de l'appli (v1.2)"];
 (async()=>{try{const r=await fetch("version.json?_="+Date.now(),{cache:"no-store"});const j=await r.json();if(j.v&&j.v!==V&&sessionStorage.getItem("snt-upd")!==j.v){sessionStorage.setItem("snt-upd",j.v);forceUpdate()}}catch(e){}})();
 const QUOTES=["« Le marché est un outil qui transfère l'argent des impatients vers les patients. »","« Achetez au son du canon, vendez au son du clairon. »","« Le temps passé sur le marché compte plus que le moment choisi pour y entrer. »","« La diversification est la seule protection gratuite de l'investisseur. »"];
 function splashDyn(){const u=user();
@@ -637,10 +632,57 @@ function profTips(){if(!SIG)return[];const S=SIG.s,ts=Object.keys(S),u=user(),nm
  else if(sec==="pf"){T.push(P.length?(risk.length?`Je surveille ${P.length} position${P.length>1?"s":""}. <b>${risk.map(p=>p.t).join(", ")}</b> mérite${risk.length>1?"nt":""} ton attention.`:`Tes ${P.length} position${P.length>1?"s":""} sont sous bonne garde. Aucune alerte de vente !`):"Ajoute tes titres AfricaBourse : je te préviendrai si l'un d'eux faiblit.");T.push("Ne mets jamais tous tes œufs dans le même panier : vise au moins 3 secteurs.")}
  else{T.push(`${nm?"Bonsoir "+esc(nm)+" ! ":""}Aujourd'hui j'ai repéré <b>${b.length} achats</b> et <b>${v.length} ventes</b>.`);if(b[0])T.push(`Ma meilleure idée : <b>${esc(nameOf(b[0]))}</b>, objectif 3 mois ${pc(S[b[0]].fc.m3.e*100,1)}.`);T.push("Les marchés récompensent la patience plus que l'agitation.")}
  return T}
-function profSay(i){const T=profTips();if(!T.length)return;PI=(i==null?0:i)%T.length;const b=$("prof-b");b.innerHTML=T[PI]+`<small>Le Professeur Sentinel · touche-moi pour la suite</small>`;b.classList.add("on");clearTimeout(PT);PT=setTimeout(()=>b.classList.remove("on"),9000)}
-function profShow(){const p=$("prof");const ok=["mk","sg","pf"].includes(CURSEC)&&LS.get("prefs",{}).prof!==false;p.classList.toggle("off",!ok);if(ok)setTimeout(()=>profSay(0),500)}
-$("prof-s").onclick=()=>{const p=$("prof");p.classList.remove("joy");void p.offsetWidth;p.classList.add("joy");profSay(PI+1)};
-$("prof-b").onclick=()=>$("prof-b").classList.remove("on");
+/* moteur d'animation (JavaScript, compatible iPhone) */
+const PF={x:-120,tx:0,mode:"hide",dir:1,t0:performance.now(),lastMove:0,jumpUntil:0,urg:null,blinkAt:0,patrol:0,on:false};
+const $p=id=>document.getElementById(id);
+function pfSet(id,tr){const e=$p(id);if(e)e.setAttribute("transform",tr)}
+function pfW(){return innerWidth}
+function pfRest(){return pfW()-108}
+function pfRunTo(x,then){PF.tx=x;PF.mode="run";PF.dir=x>=PF.x?1:-1;PF.then=then||null}
+function pfFrame(now){
+ const dt=Math.min(50,now-(PF.last||now))/1000;PF.last=now;const t=(now-PF.t0)/1000;
+ if(!PF.on){requestAnimationFrame(pfFrame);return}
+ let legA=0,armR=0,armL=0,bob=0,headR=0,lift=0;
+ if(PF.mode==="run"){const sp=PF.urg?320:230,d=PF.tx-PF.x;const st=Math.sign(d)*Math.min(Math.abs(d),sp*dt);PF.x+=st;PF.dir=d>=0?1:-1;
+  const ph=t*15;legA=Math.sin(ph)*34;armL=-Math.sin(ph)*30;armR=Math.sin(ph)*16;bob=-Math.abs(Math.sin(ph))*6;headR=Math.sin(ph)*2.5;
+  if(Math.abs(PF.tx-PF.x)<1){PF.x=PF.tx;PF.mode=PF.urg?"alert":"idle";PF.lastMove=now;const f=PF.then;PF.then=null;if(f)f()}}
+ else if(PF.mode==="alert"){const ph=t*9;lift=-Math.abs(Math.sin(ph))*16;legA=Math.sin(ph*2)*10;armR=Math.sin(t*16)*24;armL=-20+Math.sin(t*16)*10;headR=Math.sin(t*8)*4}
+ else{bob=Math.sin(t*2.4)*2.2;armR=(Math.sin(t*1.6)>.4?Math.sin(t*9)*18:0);armL=Math.sin(t*1.2)*4;headR=Math.sin(t*1.3)*3;legA=Math.sin(t*1.2)*2;
+  if(now-PF.lastMove>14000&&!PF.urg&&$p("prof-b").className.indexOf("on")<0){const w=pfW();const nx=PF.x>w/2?12+Math.random()*(w*.25):w*.55+Math.random()*(w*.45-108);pfRunTo(nx,()=>{setTimeout(()=>{if(PF.mode==="idle")pfRunTo(pfRest())},1600)})}}
+ const blink=(t%4.3)<.12?.12:1;
+ pfSet("pf-legL",`rotate(${legA} 54 132)`);pfSet("pf-legR",`rotate(${-legA} 74 132)`);
+ pfSet("pf-armL",`rotate(${armL} 37 116)`);pfSet("pf-armR",`rotate(${armR} 91 116)`);
+ pfSet("pf-head",`rotate(${headR} 64 100)`);pfSet("pf-hair",`rotate(${Math.sin(t*3)*2} 64 60) scale(${1+Math.sin(t*5)*.015})`);
+ pfSet("pf-eyes",`translate(0 ${63*(1-blink)}) scale(1 ${blink})`);
+ pfSet("pf-brow",`translate(0 ${PF.mode==="alert"?-3:(t%4.3>3.6&&t%4.3<3.9?-2.5:0)})`);
+ pfSet("pf-all",`translate(0 ${bob+lift})`);
+ const sh=$p("pf-sh");if(sh){sh.setAttribute("rx",30-(Math.abs(lift)/2));sh.setAttribute("opacity",1-Math.abs(lift)/30)}
+ const al=$p("pf-alarm");if(al)al.setAttribute("opacity",PF.urg?(Math.sin(t*10)>-.2?1:.25):0);
+ const sg=$p("pf-sign");if(sg){sg.setAttribute("stroke",PF.urg&&PF.urg.k==="sell"?"#E11D48":"#10B981");sg.setAttribute("d",PF.urg&&PF.urg.k==="sell"?"M108 52l6 6 5-4 9 10":"M108 64l6-6 5 4 9-10")}
+ const el=$p("prof");el.style.transform=`translateX(${PF.x}px)`;$p("prof-s").style.transform=`scaleX(${PF.mode==="run"?PF.dir:1})`;
+ const b=$p("prof-b");if(b.classList.contains("on")){const bw=b.offsetWidth||220;b.style.left=Math.max(8,Math.min(pfW()-bw-8,PF.x+48-bw/2))+"px"}
+ requestAnimationFrame(pfFrame)}
+requestAnimationFrame(pfFrame);
+function profUrgent(){if(!SIG)return null;const S=SIG.s,P=LS.get("pos",[]),W=LS.get("watch",[]),mine=P.map(p=>p.t).concat(W);const p=prefs();
+ const day=new Date(Date.now()-36e5*20).toISOString();
+ const risk=P.find(x=>S[x.t]&&S[x.t].reco==="Vendre")||P.find(x=>S[x.t]&&S[x.t].reco==="Alléger");
+ if(risk&&p.sell!==false)return{k:"sell",t:risk.t,h:`Tu détiens <b>${esc(nameOf(risk.t))}</b> et Sentinel donne un signal <b>${S[risk.t].reco.toLowerCase()}</b> (score ${fmt(S[risk.t].score)}). Pense à protéger tes gains.`};
+ const nb=AL.find(a=>a.ts>day&&a.lv==="buy"&&/achat fort|casse son plus haut/.test(a.ti));
+ if(nb&&p.buy!==false)return{k:"buy",t:nb.t,h:`<b>${esc(nb.ti)}</b><br>${esc(nb.m)}`};
+ const mv=AL.find(a=>a.ts>day&&(a.lv==="up"||a.lv==="down")&&mine.includes(a.t));
+ if(mv&&p.move!==false)return{k:mv.lv==="up"?"buy":"sell",t:mv.t,h:`<b>${esc(mv.ti)}</b><br>${esc(mv.m)}`};
+ return null}
+function profSay(i,urg){const b=$p("prof-b");clearTimeout(PT);
+ if(urg){b.className="on urg "+(urg.k==="buy"?"buy":"sell");b.innerHTML=`<span class="ub">${urg.k==="buy"?"🚀 OPPORTUNITÉ URGENTE":"🚨 ALERTE URGENTE"}</span><br>${urg.h}<br><span class="go" onclick="event.stopPropagation();$('prof-b').classList.remove('on');PF.urg=null;openT('${urg.t}')">Voir ${urg.t} ›</span><small>Le Professeur Sentinel · touche-moi pour fermer</small>`;
+  if(navigator.vibrate)navigator.vibrate([120,80,120]);return}
+ const T=profTips();if(!T.length)return;PI=(i==null?0:i)%T.length;b.className="on";b.innerHTML=T[PI]+`<small>Le Professeur Sentinel · touche-moi pour la suite</small>`;PT=setTimeout(()=>b.classList.remove("on"),9000)}
+function profShow(){const p=$p("prof");const ok=["mk","sg","pf"].includes(CURSEC)&&prefs().prof!==false;p.classList.toggle("off",!ok);PF.on=ok;if(!ok){$p("prof-b").classList.remove("on");return}
+ const u=profUrgent();const seen=sessionStorage.getItem("snt-urg");const key=u?u.k+u.t:"";PF.urg=(u&&seen!==key)?u:null;
+ PF.x=-110;PF.last=performance.now();
+ pfRunTo(PF.urg?pfW()*.5-48:pfRest(),()=>{if(PF.urg){sessionStorage.setItem("snt-urg",key);profSay(0,PF.urg)}else profSay(0)})}
+$p("prof-s").onclick=()=>{if(PF.urg){PF.urg=null;$p("prof-b").classList.remove("on");pfRunTo(pfRest());return}PF.mode="alert";setTimeout(()=>{if(PF.mode==="alert"&&!PF.urg)PF.mode="idle"},900);profSay(PI+1)};
+$p("prof-b").onclick=()=>{$p("prof-b").classList.remove("on");if(PF.urg){PF.urg=null;pfRunTo(pfRest())}};
+addEventListener("resize",()=>{if(PF.mode==="idle")PF.x=Math.min(PF.x,pfRest())});
 function closeModal(){$("modal").classList.remove("on")}
 function newSignals(){if(!SIG)return;const last=LS.get("lastOpen","");const fresh=AL.filter(a=>a.ts>last&&["buy","sell","dig"].includes(a.lv)&&alOk(a));LS.set("lastOpen",new Date().toISOString().slice(0,16)+"Z");
  const P=LS.get("pos",[]);const risk=P.filter(p=>SIG.s[p.t]&&/Vendre|Alléger/.test(SIG.s[p.t].reco)&&prefs().sell);
