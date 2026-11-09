@@ -184,3 +184,23 @@ QZ.push(
 ["cin","De quel instrument jouait Manu Dibango, auteur de « Soul Makossa » ?",["Guitare","Saxophone","Piano","Batterie"],1,"Le Camerounais Manu Dibango était saxophoniste ; « Soul Makossa » date de 1972."],
 ["cin","Quelle plateforme a produit la série « La Casa de Papel » à l'international ?",["Netflix","Disney+","Amazon","HBO"],0,"Diffusée d'abord sur Antena 3, puis reprise et produite par Netflix."]
 );
+
+/* Ajout du 9 nov. 2026 — faits vérifiés */
+QZ.push(
+["his","En quelle année l'esclavage est-il définitivement aboli dans les colonies françaises ?",["1794","1802","1848","1865"],2,"Le décret du 27 avril 1848, porté par Victor Schœlcher, abolit l'esclavage (une première abolition de 1794 avait été annulée en 1802)."],
+["his","Quel navigateur portugais ouvre la route maritime vers l'Inde en 1498 ?",["Fernand de Magellan","Bartolomeu Dias","Vasco de Gama","Henri le Navigateur"],2,"Vasco de Gama contourne l'Afrique par le cap de Bonne-Espérance et atteint Calicut en 1498."],
+["geo","Quelle est la capitale du Burkina Faso ?",["Bobo-Dioulasso","Ouagadougou","Koudougou","Niamey"],1,"Ouagadougou ; Niamey est la capitale du Niger."],
+["geo","Quel est le point culminant de la Côte d'Ivoire ?",["Mont Tonkpi","Mont Nimba","Mont Sangbé","Mont Péko"],1,"Le mont Nimba (environ 1 752 m), à la frontière avec la Guinée et le Liberia."],
+["sci","Quelle planète est surnommée « la planète rouge » ?",["Vénus","Mars","Jupiter","Mercure"],1,"Mars doit sa couleur à l'oxyde de fer (la rouille) qui recouvre son sol."],
+["sci","Quel chimiste a publié le tableau périodique des éléments en 1869 ?",["Antoine Lavoisier","Dmitri Mendeleïev","Marie Curie","John Dalton"],1,"Le Russe Dmitri Mendeleïev y avait même laissé des cases vides pour des éléments encore inconnus."],
+["art","Qui a écrit « L'Enfant noir » (1953) ?",["Camara Laye","Mongo Beti","Ferdinand Oyono","Seydou Badian"],0,"Camara Laye, écrivain guinéen, y raconte son enfance en Haute-Guinée."],
+["art","Quel peintre néerlandais a peint « La Jeune Fille à la perle » ?",["Rembrandt","Johannes Vermeer","Vincent van Gogh","Frans Hals"],1,"Johannes Vermeer, vers 1665 ; le tableau est conservé au Mauritshuis de La Haye."],
+["eco","Quel pays est le premier producteur mondial de pétrole ?",["Arabie saoudite","Russie","États-Unis","Nigeria"],2,"Les États-Unis sont en tête depuis 2018, grâce au pétrole de schiste."],
+["eco","Que signifie le sigle ZLECAf ?",["Zone de libre-échange continentale africaine","Zone de libre échange des capitales africaines","Zone légale d'échanges commerciaux africains","Zone libre des États côtiers d'Afrique"],0,"Ce marché commun africain, dont le secrétariat est à Accra, est entré en vigueur en 2019."],
+["afr","Dans quel pays se trouve Addis-Abeba, siège de l'Union africaine ?",["Kenya","Éthiopie","Érythrée","Soudan"],1,"Addis-Abeba, capitale de l'Éthiopie, accueille le siège de l'Union africaine."],
+["afr","Quel artiste ivoirien, disparu en 2019, était surnommé le roi du coupé-décalé ?",["Douk Saga","DJ Arafat","Serge Beynaud","Debordo Leekunfa"],1,"DJ Arafat est mort le 12 août 2019 à Abidjan après un accident de moto."],
+["spo","Quel pays a remporté la Coupe du monde 2026 ?",["Argentine","France","Espagne","Brésil"],2,"L'Espagne bat l'Argentine 1-0 après prolongation en finale, près de New York : son 2e titre après 2010."],
+["spo","Combien de joueurs une équipe de handball aligne-t-elle sur le terrain ?",["5","6","7","11"],2,"Six joueurs de champ et un gardien de but."],
+["cin","Quel film de Christopher Nolan a reçu l'Oscar du meilleur film en 2024 ?",["Tenet","Interstellar","Oppenheimer","Dunkerque"],2,"Oppenheimer a remporté 7 Oscars, dont meilleur film et meilleur réalisateur."],
+["cin","Qui est le chanteur leader du groupe ivoirien Magic System ?",["A'Salfo","Meiway","Alpha Blondy","Tiken Jah Fakoly"],0,"Salif Traoré, dit A'Salfo, en est le chanteur leader ; il a aussi créé le festival FEMUA."]
+);
