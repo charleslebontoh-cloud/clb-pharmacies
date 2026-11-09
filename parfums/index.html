@@ -132,6 +132,7 @@ details.more{margin-top:16px}details.more summary{font-size:13px;font-weight:700
 .cnt{position:absolute;top:10px;right:10px;font-size:11.5px;font-weight:800;color:#F6E7C8;background:rgba(59,31,51,.9);padding:3px 8px;border-radius:999px}
 .pc .im img.off,.srow .im img.off,.alt .im img.off,.pick .im img.off,.cock .im img.off{object-fit:contain;background:#fff}
 .skel{background:linear-gradient(90deg,#F3EDE3,#FBF7F0,#F3EDE3);background-size:200% 100%;animation:sk 1.2s infinite}@keyframes sk{to{background-position:-200% 0}}
+.prx{font-family:var(--serif);font-size:17px;color:var(--gold1)}.pchip{display:inline-block;margin-top:4px;font-size:12.5px;font-weight:800;color:#8C6428;background:#FFF3DA;border-radius:999px;padding:3px 9px}
 .seg{display:flex;background:#EFE7DA;border-radius:14px;padding:3px;margin:10px 0}.seg button{flex:1;border:0;background:none;border-radius:11px;padding:8px;font-weight:700;font-size:13px;color:var(--mu)}.seg button.on{background:#fff;color:var(--ink);box-shadow:0 4px 10px -6px rgba(0,0,0,.3)}
 </style></head><body>
 
@@ -143,7 +144,7 @@ details.more{margin-top:16px}details.more summary{font-size:13px;font-weight:700
   <h1><em>Aurum</em></h1><div style="font-family:var(--serif);font-size:19px;letter-spacing:.06em;margin-top:6px">Private Fragrance Collection</div>
   <p>Ta collection, ton parfum du jour selon la météo, tes cocktails et tes découvertes.</p>
   <div class="go"><svg class="ico" viewBox="0 0 24 24"><path d="M9 8h6v12a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1z"/><path d="M10.5 8V5.5h3V8M12 3v2.5M15.5 4.5 17 3.5M15.5 6.5H18"/></svg>Toucher pour entrer</div>
-  <div class="v">Version 1.4.0</div>
+  <div class="v">Version 1.5.0</div>
  </div>
 </div>
 
@@ -233,7 +234,7 @@ details.more{margin-top:16px}details.more summary{font-size:13px;font-weight:700
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const norm=s=>(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
-const VERSION="1.4.0";
+const VERSION="1.5.0";
 function toast(m){const t=$("toast");t.textContent=m;t.classList.add("on");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("on"),2600);}
 const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){toast("Mémoire du téléphone pleine");}}};
 /* ---------- IndexedDB pour les photos ---------- */
@@ -360,8 +361,8 @@ function colRender(){const g=$("col-g");$("col-n").textContent=S.list.length?S.l
  g.innerHTML=L.map((p,i)=>{const pc=lvlPct(p);return `<div class="pc" data-id="${p.id}" style="animation-delay:${i*40}ms"><div class="im" id="im-${p.id}">${phSVG(p)}${p.fini?`<span class="badge" style="background:rgba(59,31,51,.9)">Terminé · à racheter</span>`:low(p)?`<span class="badge">À racheter</span>`:""}${(p.n||1)>1?`<span class="cnt">×${p.n}</span>`:""}</div><div class="tx"><small>${esc(p.marque)}</small><b>${esc(p.nom)}</b><small>${esc([p.conc,(p.acc||[])[0]&&accFR(p.acc[0])].filter(Boolean).join(" · "))}</small>${pc!=null?`<div class="lvl ${low(p)?"low":""}"><i style="width:${pc}%"></i></div>`:""}</div></div>`;}).join("")||`<div class="note">Aucun parfum dans ce filtre.</div>`;
  L.forEach(p=>{const el=$("im-"+p.id);imgOf(p).then(u=>{if(u){const b=el.querySelector(".badge");el.innerHTML=`<img src="${esc(u)}" class="${u.startsWith("data:")?"":"off"}" alt="" loading="lazy" referrerpolicy="no-referrer">`+(b?b.outerHTML:"")+((p.n||1)>1?`<span class="cnt">×${p.n}</span>`:"");}});});
  g.querySelectorAll(".pc").forEach(c=>c.onclick=()=>openDet(c.dataset.id));}
-function stkRender(){const L=S.list;const al=L.filter(low);const tot=L.reduce((a,p)=>a+(p.n||1),0);$("stk-sum").textContent=L.length?tot+" flacon"+(tot>1?"s":"")+" · "+L.length+" parfum"+(L.length>1?"s":""):"";
- $("stk-al").innerHTML=al.length?`<div class="card alert"><h3 style="font-size:18px">🛒 À réapprovisionner</h3>${al.map(p=>`<div class="note" style="margin-top:6px"><b style="color:var(--ink)">${esc(p.nom)}</b> · dernier flacon à ${lvlPct(p)} % · ${daysLeft(p)!=null?"≈ "+daysLeft(p)+" jours restants":""} · <a class="lnk" target="_blank" rel="noopener" href="${shopURL(p)}">Acheter</a></div>`).join("")}</div>`:"";
+function stkRender(){const L=S.list;const al=L.filter(low);const tot=L.reduce((a,p)=>a+(p.n||1),0);$("stk-sum").textContent=L.length?tot+" flacon"+(tot>1?"s":"")+" · "+L.length+" parfum"+(L.length>1?"s":""):"";const val=L.reduce((a,p)=>{const pp=+String(p.prix||"").replace(/\D/g,"");const r=PRIX[pKey(p)];const u=pp||(r&&r.fcfa)||0;return a+u*(p.n||1);},0);if(val)$("stk-sum").textContent+=" · ≈ "+fmtF(fcfa(val));
+ $("stk-al").innerHTML=al.length?`<div class="card alert"><h3 style="font-size:18px">🛒 À réapprovisionner</h3>${al.map(p=>`<div class="note" style="margin-top:6px"><b style="color:var(--ink)">${esc(p.nom)}</b> · dernier flacon à ${lvlPct(p)} % · ${daysLeft(p)!=null?"≈ "+daysLeft(p)+" jours restants":""} · ${PRIX[pKey(p)]&&PRIX[pKey(p)].fcfa?"≈ "+fmtF(PRIX[pKey(p)].fcfa)+" · ":""}<a class="lnk" target="_blank" rel="noopener" href="${esc(buyURL(p))}">Acheter</a></div>`).join("")}</div>`:"";
  $("stk-l").innerHTML=L.length?L.map(p=>{const pc=lvlPct(p),d=daysLeft(p);return `<div class="srow ${low(p)?"alert":""}" data-id="${p.id}"><div class="im" id="si-${p.id}">${phSVG(p)}</div><div class="bd"><b>${esc(p.nom)}</b><div class="note"><strong style="color:var(--ink)">${p.n||1} flacon${(p.n||1)>1?"s":""}</strong> · ${p.ml!=null?`flacon en cours ${pc} %`:"niveau non renseigné"}${d!=null?` · ≈ ${d} j de réserve`:""}</div>${pc!=null?`<div class="lvl ${low(p)?"low":""}"><i style="width:${pc}%"></i></div>`:""}</div><button class="btn sm" data-q="${p.id}">Ajuster</button></div>`;}).join(""):`<div class="empty">Ajoute tes parfums pour suivre leur niveau.</div>`;
  L.forEach(p=>{const el=$("si-"+p.id);if(el)setImg(el,p);});
  $("stk-l").querySelectorAll("[data-q]").forEach(b=>b.onclick=e=>{e.stopPropagation();openDet(b.dataset.q,"qty");});
@@ -425,8 +426,8 @@ async function decRender(){const box=$("dec-l");const F=[["gout","❤️ Mon go�
  out.sort((a,b)=>b[0]-a[0]);const R=[];for(const [s,i] of out){const k=norm(DB.p[i][1]+" "+DB.p[i][0].split(" ").slice(0,2).join(" "));if(seen.has(k))continue;seen.add(k);R.push(i);if(R.length>=24)break;}const POOL=R.splice(12);
  box.innerHTML=R.map((i,n)=>{const p=fromDB(i);return `<div class="srow fadein" style="animation-delay:${n*40}ms"><div class="im" id="di-${i}">${phSVG(p)}</div><div class="bd"><small class="note">${esc(p.marque)}${p.annee?" · "+p.annee:""}</small><b>${esc(p.nom)}</b><div>${p.acc.slice(0,3).map(a=>`<span class="tag">${accFR(a)}</span>`).join("")}</div><div class="note">${p.votes?`★ ${String(p.note).replace(".",",")}/10 · `:""}<a class="lnk" href="${esc(infoURL(p))}" target="_blank" rel="noopener">Fiche</a> · <a class="lnk" href="${shopURL(p)}" target="_blank" rel="noopener">Acheter</a></div></div><button class="btn sm" data-dv="${i}">Voir</button></div>`;}).join("");
  box.querySelectorAll("[data-dv]").forEach(b=>b.onclick=()=>openPreview(+b.dataset.dv));
- const card=(i,n)=>{const p=fromDB(i);return `<div class="srow fadein" id="dr-${i}" style="animation-delay:${n*40}ms"><div class="im" id="di-${i}">${phSVG(p)}</div><div class="bd"><small class="note">${esc(p.marque)}${p.annee?" · "+p.annee:""}</small><b>${esc(p.nom)}</b><div>${p.acc.slice(0,3).map(a=>`<span class="tag">${accFR(a)}</span>`).join("")}</div><div class="note">${p.votes?`★ ${String(p.note).replace(".",",")}/10 · `:""}<a class="lnk" href="${esc(infoURL(p))}" target="_blank" rel="noopener">Fiche</a> · <a class="lnk" href="${shopURL(p)}" target="_blank" rel="noopener">Acheter</a></div></div><button class="btn sm" data-dv="${i}">Voir</button></div>`;};
- const load=i=>{const p=fromDB(i);queue(()=>pfImg(p.url)).then(u=>{const el=$("di-"+i);if(u&&el)el.innerHTML=`<img src="${esc(u)}" class="off" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`;const g=PG[p.url];if(g&&!gOK(g)){const row=$("dr-"+i);if(row&&POOL.length){const ni=POOL.shift();row.outerHTML=card(ni,0);$("dr-"+ni).querySelector("[data-dv]").onclick=()=>openPreview(ni);load(ni);}else if(row)row.remove();}});};
+ const card=(i,n)=>{const p=fromDB(i);return `<div class="srow fadein" id="dr-${i}" style="animation-delay:${n*40}ms"><div class="im" id="di-${i}">${phSVG(p)}</div><div class="bd"><small class="note">${esc(p.marque)}${p.annee?" · "+p.annee:""}</small><b>${esc(p.nom)}</b><div>${p.acc.slice(0,3).map(a=>`<span class="tag">${accFR(a)}</span>`).join("")}</div><div class="note">${p.votes?`★ ${String(p.note).replace(".",",")}/10 · `:""}<a class="lnk" href="${esc(infoURL(p))}" target="_blank" rel="noopener">Fiche</a> · <a class="lnk" id="db-${i}" href="${esc(buyURL(p))}" target="_blank" rel="noopener">Acheter</a></div><span class="pchip" id="dp-${i}" style="display:none"></span></div><button class="btn sm" data-dv="${i}">Voir</button></div>`;};
+ const load=i=>{const p=fromDB(i);queue(()=>priceOf(p)).then(r=>{const el=$("dp-"+i);if(el&&r&&!r.none){el.style.display="inline-block";el.textContent=(r.from?"dès ":"")+"≈ "+fmtF(r.fcfa);const a=$("db-"+i);if(a)a.href=buyURL(p);}});queue(()=>pfImg(p.url)).then(u=>{const el=$("di-"+i);if(u&&el)el.innerHTML=`<img src="${esc(u)}" class="off" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`;const g=PG[p.url];if(g&&!gOK(g)){const row=$("dr-"+i);if(row&&POOL.length){const ni=POOL.shift();row.outerHTML=card(ni,0);$("dr-"+ni).querySelector("[data-dv]").onclick=()=>openPreview(ni);load(ni);}else if(row)row.remove();}});};
  box.innerHTML=R.map(card).join("");box.querySelectorAll("[data-dv]").forEach(b=>b.onclick=()=>openPreview(+b.dataset.dv));R.forEach(load);}
 /* image officielle via Open Beauty Facts */
 const OFFC=LS.get("offc",{});
@@ -549,6 +550,7 @@ async function openDet(id,focus){const p=S.list.find(x=>x.id===id);if(!p)return;
  <div style="margin-top:14px"><small class="note">${esc(p.marque)}${p.annee?" · "+p.annee:""}</small><h2 style="font-size:28px;line-height:1.1">${esc(p.nom)}</h2><div class="note">${esc(p.conc||"")}${wears?` · porté ${wears} fois`:""}</div>
  <div class="stars" id="dt-st" style="margin-top:6px">${[1,2,3,4,5].map(n=>`<button data-s="${n}" class="${(p.stars||0)>=n?"on":""}" aria-label="${n} étoiles">★</button>`).join("")}</div>
  <div style="margin-top:6px">${(p.acc||[]).map(a=>`<span class="tag">${accFR(a)}</span>`).join("")}</div></div>
+ <div class="card"><h3 style="font-size:18px">💰 Prix</h3><div id="dt-px" style="margin-top:6px"><span class="note">Recherche du prix en ligne…</span></div>${p.prix?`<div class="note" style="margin-top:6px">Tu l'as payé <b style="color:var(--ink)">${fmtF(+String(p.prix).replace(/\D/g,""))}</b>${p.achat?" le "+new Date(p.achat).toLocaleDateString("fr-FR"):""}</div>`:""}<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><a class="btn sm gold" id="dt-buy" href="${esc(buyURL(p))}" target="_blank" rel="noopener">🛒 Acheter</a><a class="btn sm" href="${shopURL(p)}" target="_blank" rel="noopener">Comparer les prix</a><button class="btn sm" id="dt-pxr">↻</button></div><div class="note" style="margin-top:6px;font-size:11.5px">Prix européen converti en FCFA (1 € = 655,957 F), hors livraison. En boutique à Abidjan, il peut être différent.</div></div>
  <div class="card"><h3 style="font-size:18px">Quand le porter</h3><div class="when">${tags.map(t=>`<span class="${t[2]?"hi":""}">${t[0]} ${t[1]}</span>`).join("")}</div><div class="note" style="margin-top:8px">${esc(descFR(p))}</div>${p.wiki?`<div class="note" style="margin-top:8px">${esc(p.wiki.slice(0,420))}${p.wiki.length>420?"…":""} <i>(Wikipédia)</i></div>`:""}
  ${(p.tete||[]).length+(p.coeur||[]).length+(p.fond||[]).length?`<div class="pyr"><div><span>Tête</span>${esc((p.tete||[]).map(noteFR).join(", ")||"–")}</div><div><span>Cœur</span>${esc((p.coeur||[]).map(noteFR).join(", ")||"–")}</div><div><span>Fond</span>${esc((p.fond||[]).map(noteFR).join(", ")||"–")}</div></div>`:""}
  <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><a class="btn sm" href="${esc(infoURL(p))}" target="_blank" rel="noopener">${p.url?"Fiche Parfumo":"Fiche en ligne"}</a><a class="btn sm" href="${shopURL(p)}" target="_blank" rel="noopener">Acheter</a></div></div>
@@ -568,7 +570,8 @@ async function openDet(id,focus){const p=S.list.find(x=>x.id===id);if(!p)return;
  $("dt-lvl").oninput=()=>{$("dt-lv").textContent=$("dt-lvl").value+" %";d.querySelector(".bottle .g i").style.height=$("dt-lvl").value+"%";};
  let dn=p.n||1;$("dt-m").onclick=()=>{dn=Math.max(1,dn-1);$("dt-n").textContent=dn;};$("dt-p").onclick=()=>{dn=Math.min(30,dn+1);$("dt-n").textContent=dn;};
  $("dt-save").onclick=()=>{p.n=dn;p.size=+$("dt-size").value;p.sprays=+$("dt-spr").value;p.ml=p.size*(+$("dt-lvl").value)/100;p.prix=$("dt-prix").value.trim();p.achat=$("dt-ach").value;save();colRender();stkRender();toast("Enregistré");openDet(id,"keep");};
- $("dt-wear").onclick=()=>{wear([p.id],{});openDet(id,"keep");};$("dt-fin").onclick=()=>finish(p);
+ $("dt-wear").onclick=()=>{wear([p.id],{});openDet(id,"keep");};
+ const px=f=>priceOf(p,f).then(r=>{if($("dt-px")){$("dt-px").innerHTML=priceHTML(r,p);$("dt-buy").href=buyURL(p);}});px(false);$("dt-pxr").onclick=()=>{$("dt-px").innerHTML=`<span class="note">Actualisation…</span>`;px(true);};$("dt-fin").onclick=()=>finish(p);
  $("dt-del").onclick=async()=>{if(!confirm("Supprimer "+p.nom+" de ta collection ?"))return;S.list=S.list.filter(x=>x.id!==id);S.hist=S.hist.map(h=>({...h,ids:h.ids.filter(x=>x!==id)})).filter(h=>h.ids.length);await IDB.del("p-"+id);delete IMGC[id];save();$("sh-det").classList.remove("on");colRender();stkRender();};
  $("dt-ph").onchange=async e=>{const f=e.target.files[0];if(!f)return;const sh=await shrink(f);await IDB.put("p-"+id,sh.url);IMGC[id]=sh.url;p.pic=true;p.show="pic";save();colRender();openDet(id,"keep");};
  if(focus==="qty")setTimeout(()=>$("dt-q").scrollIntoView({behavior:"smooth",block:"center"}),350);}
@@ -578,13 +581,33 @@ function openPreview(i){const p=fromDB(i);const d=$("det");const tags=whenTags(p
  <div class="card"><h3 style="font-size:18px">Pourquoi pour toi</h3><div class="when">${tags.map(t=>`<span class="${t[2]?"hi":""}">${t[0]} ${t[1]}</span>`).join("")}</div><div class="note" style="margin-top:8px">${esc(descFR(p))}</div>
  <div class="pyr"><div><span>Tête</span>${esc(p.tete.map(noteFR).join(", ")||"–")}</div><div><span>Cœur</span>${esc(p.coeur.map(noteFR).join(", ")||"–")}</div><div><span>Fond</span>${esc(p.fond.map(noteFR).join(", ")||"–")}</div></div>
  ${S.list.length?`<div class="hl" style="margin-top:10px">🍸 En cocktail, il irait bien avec <b>${esc(S.list.map(x=>({x,s:pairScore(x,{...p,id:"tmp"},CTX).s})).sort((a,b)=>b.s-a.s)[0].x.nom)}</b> de ta collection.</div>`:""}
- <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><a class="btn sm" href="${esc(infoURL(p))}" target="_blank" rel="noopener">Fiche Parfumo</a><a class="btn sm gold" href="${shopURL(p)}" target="_blank" rel="noopener">Acheter</a><button class="btn sm" id="pv-add">Je l'ai déjà</button></div></div>
+ <div class="hl" style="margin-top:10px">💰 <span id="pv-px">Recherche du prix…</span></div><div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><a class="btn sm" href="${esc(infoURL(p))}" target="_blank" rel="noopener">Fiche Parfumo</a><a class="btn sm gold" id="pv-buy" href="${shopURL(p)}" target="_blank" rel="noopener">🛒 Acheter</a><button class="btn sm" id="pv-add">Je l'ai déjà</button></div></div>
  <button class="btn full" data-close style="margin-top:8px;background:none;color:var(--mu)">Fermer</button>`;
  $("sh-det").classList.add("on");d.querySelector("[data-close]").onclick=()=>$("sh-det").classList.remove("on");
- $("pv-im").classList.add("white");pfGender(p.url).then(g=>{if(g&&$("pv-g"))$("pv-g").textContent=" · "+{m:"♂ pour homme",f:"♀ pour femme",u:"⚥ mixte"}[g];});pfImg(p.url).then(u=>{if(u)$("pv-im").innerHTML=`<img src="${esc(u)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`;});
+ $("pv-im").classList.add("white");priceOf(p).then(r=>{if($("pv-px")){$("pv-px").innerHTML=priceHTML(r,p);$("pv-buy").href=buyURL(p);}});pfGender(p.url).then(g=>{if(g&&$("pv-g"))$("pv-g").textContent=" · "+{m:"♂ pour homme",f:"♀ pour femme",u:"⚥ mixte"}[g];});pfImg(p.url).then(u=>{if(u)$("pv-im").innerHTML=`<img src="${esc(u)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`;});
  $("pv-add").onclick=()=>{addPhoto=null;openCand({...p,dbi:i,img:PIMG[p.url]||""});};}
 
 
+
+/* ---------- prix en ligne (Notino, converti en FCFA) ---------- */
+const EUR=655.957,PRIX=LS.get("prix",{});
+const fcfa=n=>Math.round(n/500)*500;const fmtF=n=>n.toLocaleString("fr-FR")+" FCFA";
+function pKey(p){return norm(p.marque+" "+p.nom+" "+(p.conc||""));}
+async function priceOf(p,force){const k=pKey(p);const c=PRIX[k];if(c&&!force&&Date.now()-c.at<7*864e5)return c;
+ const STOPN=new Set(["eau","de","parfum","toilette","edt","edp","pour","homme","the","n","no","n04","no04"]);
+ const nameW=norm(p.nom).split(" ").filter(w=>w.length>2&&!STOPN.has(w));const bw=norm(p.marque).split(" ").filter(w=>w.length>2)[0]||"";
+ let r=null;try{const q=(p.marque+" "+p.nom).replace(/N[ºo°]\s?\d+/i,"").trim();const R0=await viaJina("https://www.notino.fr/search.asp?exps="+encodeURIComponent(q));
+  const re=/\[(?:[^\[\]]*?)!\[Image \d+: ([^\]]+)\]\([^)]*\)([^\]]*?)\]\((https:\/\/www\.notino\.fr\/[^)\s]+)\)/g;let m;const C=[];
+  while((m=re.exec(R0.x))){const t=norm(m[1]);if(bw&&!t.includes(bw))continue;if(!nameW.every(w=>t.includes(w)))continue;if(!/eau de|parfum|extrait|cologne|elixir/.test(t)||/deodorant|gel douche|baume|lotion|shampo|serum|toner|savon|creme|stick|coffret|recharge(?!able)|body|corps|cheveux|hair/.test(t))continue;
+   const pm=m[2].match(/(\d{1,4}(?:[  .]\d{3})*,\d{2})\s*€/);if(!pm)continue;const eur=parseFloat(pm[1].replace(/[  .]/g,"").replace(",","."));
+   const cc=norm(p.conc||"");let sc=0;if(/edt|toilette/.test(cc)&&t.includes("toilette"))sc+=2;if(/edp|eau de parfum/.test(cc)&&t.includes("eau de parfum"))sc+=2;if(/^parfum$/.test(cc)&&/ parfum/.test(t)&&!t.includes("eau de parfum"))sc+=2;if(/extrait/.test(cc)&&t.includes("extrait"))sc+=2;if(/elixir/.test(cc)&&t.includes("elixir"))sc+=2;
+   if(!/elixir|intense|absolu|extreme|night|noir|gold|ice|aqua|sport|blue/.test(norm(p.nom))&&/elixir|intense|absolu|extreme/.test(t))sc-=1.5;
+   C.push({sc,eur,url:m[3],titre:m[1],from:/\bde\s*\d/.test(m[2])});}
+  C.sort((a,b)=>b.sc-a.sc);if(C.length){const b=C[0];r={eur:b.eur,fcfa:fcfa(b.eur*EUR),url:b.url,titre:b.titre,from:b.from,src:"Notino",at:Date.now()};}else r={none:1,at:Date.now()};}
+ catch(e){return c||null;}PRIX[k]=r;LS.set("prix",PRIX);return r;}
+function priceHTML(r,p){if(!r)return `<span class="note">Prix indisponible pour l'instant</span>`;if(r.none)return `<span class="note">Prix non trouvé en ligne · <a class="lnk" target="_blank" rel="noopener" href="${shopURL(p)}">chercher</a></span>`;
+ return `<b class="prx">${r.from?"dès ":""}≈ ${fmtF(r.fcfa)}</b> <span class="note">(${String(r.eur.toFixed(2)).replace(".",",")} € sur ${r.src})</span>`;}
+function buyURL(p){const r=PRIX[pKey(p)];return r&&r.url?r.url:shopURL(p);}
 /* ---------- fin d'un flacon ---------- */
 function finish(p){if((p.n||1)>1){p.n--;p.ml=p.size||100;delete p.fini;save();colRender();stkRender();toast(`🍾 Nouveau flacon entamé · il t'en reste ${p.n}`);openDet(p.id,"keep");return;}
  const d=$("det");d.innerHTML=`<div class="grab"></div><h2 style="font-size:24px">${esc(p.nom)} est terminé</h2><div class="note">C'était ton dernier flacon. Que veux-tu faire ?</div>
@@ -620,7 +643,7 @@ $("now-go").onclick=()=>{spray($("now-go"),false);setTimeout(nowRun,550);};$("wx
 (function(){const m=$("mist");for(let i=0;i<22;i++){const e=document.createElement("i");e.style.left=(Math.random()*100)+"%";e.style.animationDelay=(Math.random()*7)+"s";e.style.width=e.style.height=(4+Math.random()*9)+"px";m.appendChild(e);}
  fetch("photos/accueil.json").then(r=>r.json()).then(c=>{const a=$("cr");a.textContent="Photo : "+c.author+" · "+c.license;a.href=c.page;}).catch(()=>{});
  $("splash").onclick=e=>{if(e.target.id==="cr")return;$("splash").classList.add("out");setTimeout(()=>{$("splash").remove();if(!S.me.sexe)openMe(true);},650);};})();
-S.list.forEach(p=>{if(p.n==null)p.n=1;if(p.show==="pic"&&p.off)delete p.show;});save();document.body.classList.add("col");colRender();hdr();weather();setTimeout(()=>{dbLoad().then(fixImages);},1500);setInterval(()=>{CTX.hr=new Date().getHours();wxRender();},60000);
+S.list.forEach(p=>{if(p.n==null)p.n=1;if(p.show==="pic"&&p.off)delete p.show;});save();document.body.classList.add("col");colRender();hdr();weather();setTimeout(()=>{dbLoad().then(fixImages).then(async()=>{for(const p of S.list){const k=pKey(p);if(!PRIX[k]||Date.now()-PRIX[k].at>7*864e5){await queue(()=>priceOf(p));}}stkRender();});},1500);setInterval(()=>{CTX.hr=new Date().getHours();wxRender();},60000);
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script>
 </body></html>

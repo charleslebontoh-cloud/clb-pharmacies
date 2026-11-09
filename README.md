@@ -17,4 +17,4 @@ Gestion de la collection de parfums de Charles : reconnaissance par photo (lectu
 - Base olfactive : jeu de données Parfumo publié par TidyTuesday (2024-12-10), reconstruite par `tools/parfums_db.py` via le workflow `parfums-data` ; quelques parfums manquants ajoutés à partir de leurs pyramides publiées.
 - Images officielles : Open Beauty Facts quand le produit y figure, sinon la photo de l'utilisateur.
 - Données personnelles : uniquement sur le téléphone (localStorage + IndexedDB).
-- Version 1.4.0 (fin de flacon : racheter, déjà racheté ou sortir vers « Anciens parfums »).
+- Version 1.5.0 (prix en ligne Notino convertis en FCFA, valeur de la collection).
