@@ -143,7 +143,7 @@ details.more{margin-top:16px}details.more summary{font-size:13px;font-weight:700
   <h1><em>Aurum</em></h1><div style="font-family:var(--serif);font-size:19px;letter-spacing:.06em;margin-top:6px">Private Fragrance Collection</div>
   <p>Ta collection, ton parfum du jour selon la météo, tes cocktails et tes découvertes.</p>
   <div class="go"><svg class="ico" viewBox="0 0 24 24"><path d="M9 8h6v12a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1z"/><path d="M10.5 8V5.5h3V8M12 3v2.5M15.5 4.5 17 3.5M15.5 6.5H18"/></svg>Toucher pour entrer</div>
-  <div class="v">Version 1.3.1</div>
+  <div class="v">Version 1.4.0</div>
  </div>
 </div>
 
@@ -164,6 +164,7 @@ details.more{margin-top:16px}details.more summary{font-size:13px;font-weight:700
   <div class="sec"><h2>Mon stock</h2><span id="stk-sum"></span></div>
   <div id="stk-al"></div>
   <div id="stk-l"></div>
+  <div id="stk-old"></div>
   <div class="card"><h3 style="font-size:18px">Historique</h3><div id="stk-h" class="note" style="margin-top:6px"></div></div>
  </section>
 
@@ -232,7 +233,7 @@ details.more{margin-top:16px}details.more summary{font-size:13px;font-weight:700
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const norm=s=>(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
-const VERSION="1.3.1";
+const VERSION="1.4.0";
 function toast(m){const t=$("toast");t.textContent=m;t.classList.add("on");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("on"),2600);}
 const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){toast("Mémoire du téléphone pleine");}}};
 /* ---------- IndexedDB pour les photos ---------- */
@@ -242,7 +243,7 @@ const IDB={db:null,open(){return this.db?Promise.resolve(this.db):new Promise((o
  async del(k){const d=await this.open();return new Promise(ok=>{const t=d.transaction("img","readwrite");t.objectStore("img").delete(k);t.oncomplete=()=>ok();});}};
 const IMGC={};async function imgOf(p){if(p.off&&p.show!=="pic")return p.off;if(p.pic){if(IMGC[p.id])return IMGC[p.id];const v=await IDB.get("p-"+p.id);if(v){IMGC[p.id]=v;return v;}}return p.off||"";}
 /* ---------- état ---------- */
-let S=LS.get("parf",{list:[],hist:[],fav:[],wish:[]});["list","hist","fav","wish"].forEach(k=>S[k]=S[k]||[]);
+let S=LS.get("parf",{list:[],hist:[],fav:[],wish:[]});["list","hist","fav","wish","old"].forEach(k=>S[k]=S[k]||[]);
 const save=()=>LS.set("parf",S);
 /* ---------- traductions ---------- */
 const ACC_FR={Spicy:"Épicé",Sweet:"Sucré",Floral:"Floral",Woody:"Boisé",Fresh:"Frais",Fruity:"Fruité",Green:"Vert",Citrus:"Hespéridé",Powdery:"Poudré",Oriental:"Oriental",Synthetic:"Musqué moderne",Creamy:"Crémeux",Resinous:"Résineux",Gourmand:"Gourmand",Smoky:"Fumé",Leathery:"Cuir",Aquatic:"Aquatique",Earthy:"Terreux",Animal:"Animal",Chypre:"Chypré","Fougère":"Fougère"};
@@ -344,7 +345,7 @@ const PH_COL={frais:["#D7F0EE","#4C9C97"],"chaud et ambré":["#F6E3C6","#B07A2E"
 function phSVG(p){const c=PH_COL[FAM(p)]||["#F3EDE3","#B8893E"];return `<div class="ph" style="background:radial-gradient(80% 60% at 50% 40%,#fff,${c[0]})"><svg viewBox="0 0 64 80"><rect x="24" y="4" width="16" height="10" rx="2" fill="${c[1]}"/><rect x="28" y="14" width="8" height="5" fill="${c[1]}" opacity=".7"/><rect x="10" y="19" width="44" height="56" rx="12" fill="#fff" stroke="${c[1]}" stroke-width="2"/><rect x="15" y="40" width="34" height="31" rx="8" fill="${c[1]}" opacity=".35"/></svg></div>`;}
 function totalMl(p){return p.ml==null?null:((p.n||1)-1)*(p.size||100)+p.ml;}
 function lvlPct(p){return p.ml!=null&&p.size?Math.max(0,Math.min(100,Math.round(p.ml/p.size*100))):null;}
-function low(p){const pc=lvlPct(p);const d=daysLeft(p);return (p.n||1)<=1&&pc!=null&&(pc<=15||(d!=null&&d<=21));}
+function low(p){if(p.fini)return true;const pc=lvlPct(p);const d=daysLeft(p);return (p.n||1)<=1&&pc!=null&&(pc<=15||(d!=null&&d<=21));}
 function useRate(p){const w=S.hist.filter(x=>x.ids.includes(p.id)&&Date.now()-new Date(x.d)<60*864e5).length;const since=Math.min(60,Math.max(14,(Date.now()-new Date(p.added||Date.now()))/864e5));return w? w/since : 1/Math.max(2,S.list.length);}
 function daysLeft(p){if(p.ml==null)return null;const per=(p.sprays||3)*0.1;return Math.round(totalMl(p)/(per*useRate(p)));}
 async function setImg(el,p){const u=await imgOf(p);if(u)el.innerHTML=`<img src="${esc(u)}" class="${u.startsWith("data:")?"":"off"}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`;}
@@ -356,7 +357,7 @@ function colRender(){const g=$("col-g");$("col-n").textContent=S.list.length?S.l
  const L=S.list.filter(p=>colF==="tous"||(colF==="low"?low(p):FAM(p)===colF));
  if(!S.list.length){g.style.display="block";g.innerHTML=`<div class="empty"><svg viewBox="0 0 24 24" class="ico"><path d="M9 8h6v12a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1z"/><path d="M10.5 8V5.5h3V8M12 3v2.5"/></svg><h3 style="font-size:20px;color:var(--ink);margin-top:8px">Ta collection est vide</h3><p>Photographie ton premier flacon : je trouve son nom, sa fiche et son image.</p></div>`;return;}
  g.style.display="grid";
- g.innerHTML=L.map((p,i)=>{const pc=lvlPct(p);return `<div class="pc" data-id="${p.id}" style="animation-delay:${i*40}ms"><div class="im" id="im-${p.id}">${phSVG(p)}${low(p)?`<span class="badge">À racheter</span>`:""}${(p.n||1)>1?`<span class="cnt">×${p.n}</span>`:""}</div><div class="tx"><small>${esc(p.marque)}</small><b>${esc(p.nom)}</b><small>${esc([p.conc,(p.acc||[])[0]&&accFR(p.acc[0])].filter(Boolean).join(" · "))}</small>${pc!=null?`<div class="lvl ${low(p)?"low":""}"><i style="width:${pc}%"></i></div>`:""}</div></div>`;}).join("")||`<div class="note">Aucun parfum dans ce filtre.</div>`;
+ g.innerHTML=L.map((p,i)=>{const pc=lvlPct(p);return `<div class="pc" data-id="${p.id}" style="animation-delay:${i*40}ms"><div class="im" id="im-${p.id}">${phSVG(p)}${p.fini?`<span class="badge" style="background:rgba(59,31,51,.9)">Terminé · à racheter</span>`:low(p)?`<span class="badge">À racheter</span>`:""}${(p.n||1)>1?`<span class="cnt">×${p.n}</span>`:""}</div><div class="tx"><small>${esc(p.marque)}</small><b>${esc(p.nom)}</b><small>${esc([p.conc,(p.acc||[])[0]&&accFR(p.acc[0])].filter(Boolean).join(" · "))}</small>${pc!=null?`<div class="lvl ${low(p)?"low":""}"><i style="width:${pc}%"></i></div>`:""}</div></div>`;}).join("")||`<div class="note">Aucun parfum dans ce filtre.</div>`;
  L.forEach(p=>{const el=$("im-"+p.id);imgOf(p).then(u=>{if(u){const b=el.querySelector(".badge");el.innerHTML=`<img src="${esc(u)}" class="${u.startsWith("data:")?"":"off"}" alt="" loading="lazy" referrerpolicy="no-referrer">`+(b?b.outerHTML:"")+((p.n||1)>1?`<span class="cnt">×${p.n}</span>`:"");}});});
  g.querySelectorAll(".pc").forEach(c=>c.onclick=()=>openDet(c.dataset.id));}
 function stkRender(){const L=S.list;const al=L.filter(low);const tot=L.reduce((a,p)=>a+(p.n||1),0);$("stk-sum").textContent=L.length?tot+" flacon"+(tot>1?"s":"")+" · "+L.length+" parfum"+(L.length>1?"s":""):"";
@@ -365,6 +366,8 @@ function stkRender(){const L=S.list;const al=L.filter(low);const tot=L.reduce((a
  L.forEach(p=>{const el=$("si-"+p.id);if(el)setImg(el,p);});
  $("stk-l").querySelectorAll("[data-q]").forEach(b=>b.onclick=e=>{e.stopPropagation();openDet(b.dataset.q,"qty");});
  $("stk-l").querySelectorAll(".srow").forEach(r=>r.onclick=()=>openDet(r.dataset.id));
+ const O=S.old||[];$("stk-old").innerHTML=O.length?`<div class="card"><h3 style="font-size:18px">📦 Anciens parfums</h3>${O.slice().reverse().map((o,k)=>`<div class="alt"><div style="flex:1"><b>${esc(o.nom)}</b><div class="note">${esc(o.marque)} · sorti le ${new Date(o.sorti).toLocaleDateString("fr-FR")}</div></div><button class="btn sm" data-back="${O.length-1-k}">Remettre</button></div>`).join("")}</div>`:"";
+ $("stk-old").querySelectorAll("[data-back]").forEach(b=>b.onclick=()=>{const o=S.old.splice(+b.dataset.back,1)[0];delete o.sorti;o.ml=o.size||100;o.n=1;delete o.fini;S.list.push(o);save();colRender();stkRender();toast("🍾 "+o.nom+" de retour dans ta collection");});
  const H=S.hist.slice(-12).reverse();$("stk-h").innerHTML=H.length?H.map(h=>`${new Date(h.d).toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"})} · ${h.ids.map(id=>esc((S.list.find(p=>p.id===id)||{nom:"?"}).nom)).join(" + ")}`).join("<br>"):"Rien encore. Touche « Je le porte » quand tu te parfumes : je calcule ta consommation.";}
 function shopURL(p){return "https://www.google.com/search?tbm=shop&q="+encodeURIComponent(p.marque+" "+p.nom+" "+(p.conc||"")+" Abidjan");}
 function infoURL(p){return p.url||"https://www.google.com/search?q="+encodeURIComponent(p.marque+" "+p.nom+" "+(p.conc||"")+" parfum notes");}
@@ -384,7 +387,7 @@ function nowRun(){const box=$("now-r");CTX.hr=new Date().getHours();if(S.list.le
  setImg($("nw-im"),best.p);alts.forEach(a=>setImg($("al-"+a.p.id),a.p));if(C)ckImgs(C,"nck");
  $("wear1").onclick=()=>wear([best.p.id],{occ,mood});box.querySelectorAll("[data-wear]").forEach(b=>b.onclick=()=>wear([b.dataset.wear],{occ,mood}));box.querySelectorAll("[data-ckw]").forEach(b=>b.onclick=()=>wear(b.dataset.ckw.split(","),{occ,mood,ck:1}));
  box.scrollIntoView({behavior:"smooth",block:"start"});}
-function wear(ids,ctx){S.hist.push({d:new Date().toISOString(),ids,ctx:{...ctx,t:CTX.t,h:CTX.h}});ids.forEach(id=>{const p=S.list.find(x=>x.id===id);if(p&&p.ml!=null){p.ml-= (p.sprays||3)*0.1*(ids.length>1?.6:1);if(p.ml<=0&&(p.n||1)>1){p.n--;p.ml+=p.size||100;toast("Nouveau flacon de "+p.nom+" entamé");}p.ml=Math.max(0,p.ml);}});save();toast("✨ Bonne journée, tu sens bon !");colRender();stkRender();
+function wear(ids,ctx){S.hist.push({d:new Date().toISOString(),ids,ctx:{...ctx,t:CTX.t,h:CTX.h}});ids.forEach(id=>{const p=S.list.find(x=>x.id===id);if(p&&p.ml!=null){p.ml-= (p.sprays||3)*0.1*(ids.length>1?.6:1);if(p.ml<=0&&(p.n||1)>1){p.n--;p.ml+=p.size||100;toast("Nouveau flacon de "+p.nom+" entamé");}p.ml=Math.max(0,p.ml);if(p.ml<=0.3&&(p.n||1)<=1&&!p.fini){p.fini=1;setTimeout(()=>toast("🏁 "+p.nom+" est vide : touche-le pour le racheter ou le sortir"),3200);}}});save();toast("✨ Bonne journée, tu sens bon !");colRender();stkRender();
  const L=ids.map(id=>S.list.find(x=>x.id===id)).filter(p=>p&&low(p));if(L.length)setTimeout(()=>toast("🛒 "+L[0].nom+" arrive bientôt à sa fin"),2800);}
 /* cocktails */
 function ckHTML(c,k){const ky=[c.base.id,c.top.id].join(",");const fav=S.fav.includes(ky);return `<div class="cock" style="margin-top:10px"><div class="im" id="${k}-a">${phSVG(c.base)}</div><span class="plus">+</span><div class="im" id="${k}-b">${phSVG(c.top)}</div><div style="flex:1;padding-left:6px"><b style="font-family:var(--serif);font-size:16px">${esc(c.name)}</b><div class="note">${esc(c.base.nom)} + ${esc(c.top.nom)}</div></div></div>
@@ -403,7 +406,7 @@ function ckRender(){const box=$("ck-l");$("ck-seg").querySelectorAll("button").f
 $("ck-seg").querySelectorAll("button").forEach(b=>b.onclick=()=>{ckMode=b.dataset.k;ckRender();});
 /* découvrir */
 let decF="gout";
-function tasteVec(){const v={},nv={};let n=0;S.list.forEach(p=>{const w=(p.stars||3)/3*(1+Math.min(5,S.hist.filter(h=>h.ids.includes(p.id)).length)*.15);(p.acc||[]).forEach((a,i)=>v[a]=(v[a]||0)+(W5[i]||.3)*w);[...(p.tete||[]),...(p.coeur||[]),...(p.fond||[])].forEach(x=>nv[x]=(nv[x]||0)+w);n+=w;});return{v,nv,n};}
+function tasteVec(){const v={},nv={};let n=0;[...S.list,...(S.old||[]).map(o=>({...o,stars:o.stars||2}))].forEach(p=>{const w=(p.stars||3)/3*(1+Math.min(5,S.hist.filter(h=>h.ids.includes(p.id)).length)*.15);(p.acc||[]).forEach((a,i)=>v[a]=(v[a]||0)+(W5[i]||.3)*w);[...(p.tete||[]),...(p.coeur||[]),...(p.fond||[])].forEach(x=>nv[x]=(nv[x]||0)+w);n+=w;});return{v,nv,n};}
 function cos(a,b){let s=0,na=0,nb=0;for(const k in a){na+=a[k]*a[k];if(b[k])s+=a[k]*b[k];}for(const k in b)nb+=b[k]*b[k];return na&&nb?s/Math.sqrt(na*nb):0;}
 async function decRender(){const box=$("dec-l");const F=[["gout","❤️ Mon goût"],["chaleur","☀️ Pour la chaleur"],["soir","🌙 Pour le soir"],["complement","🧩 Pour mes cocktails"],["recent","🆕 Récents"]];
  $("dec-f").innerHTML=F.map(([k,l])=>`<button class="chip ${decF===k?"on":""}" data-d="${k}">${l}</button>`).join("");$("dec-f").querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>{decF=b.dataset.d;decRender();});
@@ -554,7 +557,7 @@ async function openDet(id,focus){const p=S.list.find(x=>x.id===id);if(!p)return;
   <label class="l">Flacon en cours : <span id="dt-lv">${pc??100} %</span></label><input id="dt-lvl" type="range" min="0" max="100" step="5" value="${pc??100}" style="padding:0;border:0">
   <div class="qty"><div><label class="l">Prix payé (FCFA)</label><input id="dt-prix" inputmode="numeric" value="${esc(p.prix||"")}" placeholder="facultatif"></div><div><label class="l">Acheté le</label><input id="dt-ach" type="date" value="${esc(p.achat||"")}"></div></div>
   <button class="btn gold full" id="dt-save" style="margin-top:12px">Enregistrer</button></div>
- <div style="display:flex;gap:8px"><button class="btn full" id="dt-wear">✓ Je le porte aujourd'hui</button></div>
+ <div style="display:flex;gap:8px"><button class="btn full" id="dt-wear">✓ Je le porte aujourd'hui</button><button class="btn full" id="dt-fin">🏁 Flacon terminé</button></div>
  <div style="display:flex;gap:8px;margin-top:8px"><label class="btn full" style="cursor:pointer">📷 Changer la photo<input id="dt-ph" type="file" accept="image/*" hidden></label><button class="btn full" id="dt-del" style="color:#C0504D">Supprimer</button></div>
  <button class="btn full" data-close style="margin-top:8px;background:none;color:var(--mu)">Fermer</button>`;
  $("sh-det").classList.add("on");
@@ -565,7 +568,7 @@ async function openDet(id,focus){const p=S.list.find(x=>x.id===id);if(!p)return;
  $("dt-lvl").oninput=()=>{$("dt-lv").textContent=$("dt-lvl").value+" %";d.querySelector(".bottle .g i").style.height=$("dt-lvl").value+"%";};
  let dn=p.n||1;$("dt-m").onclick=()=>{dn=Math.max(1,dn-1);$("dt-n").textContent=dn;};$("dt-p").onclick=()=>{dn=Math.min(30,dn+1);$("dt-n").textContent=dn;};
  $("dt-save").onclick=()=>{p.n=dn;p.size=+$("dt-size").value;p.sprays=+$("dt-spr").value;p.ml=p.size*(+$("dt-lvl").value)/100;p.prix=$("dt-prix").value.trim();p.achat=$("dt-ach").value;save();colRender();stkRender();toast("Enregistré");openDet(id,"keep");};
- $("dt-wear").onclick=()=>{wear([p.id],{});openDet(id,"keep");};
+ $("dt-wear").onclick=()=>{wear([p.id],{});openDet(id,"keep");};$("dt-fin").onclick=()=>finish(p);
  $("dt-del").onclick=async()=>{if(!confirm("Supprimer "+p.nom+" de ta collection ?"))return;S.list=S.list.filter(x=>x.id!==id);S.hist=S.hist.map(h=>({...h,ids:h.ids.filter(x=>x!==id)})).filter(h=>h.ids.length);await IDB.del("p-"+id);delete IMGC[id];save();$("sh-det").classList.remove("on");colRender();stkRender();};
  $("dt-ph").onchange=async e=>{const f=e.target.files[0];if(!f)return;const sh=await shrink(f);await IDB.put("p-"+id,sh.url);IMGC[id]=sh.url;p.pic=true;p.show="pic";save();colRender();openDet(id,"keep");};
  if(focus==="qty")setTimeout(()=>$("dt-q").scrollIntoView({behavior:"smooth",block:"center"}),350);}
@@ -581,6 +584,19 @@ function openPreview(i){const p=fromDB(i);const d=$("det");const tags=whenTags(p
  $("pv-im").classList.add("white");pfGender(p.url).then(g=>{if(g&&$("pv-g"))$("pv-g").textContent=" · "+{m:"♂ pour homme",f:"♀ pour femme",u:"⚥ mixte"}[g];});pfImg(p.url).then(u=>{if(u)$("pv-im").innerHTML=`<img src="${esc(u)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`;});
  $("pv-add").onclick=()=>{addPhoto=null;openCand({...p,dbi:i,img:PIMG[p.url]||""});};}
 
+
+/* ---------- fin d'un flacon ---------- */
+function finish(p){if((p.n||1)>1){p.n--;p.ml=p.size||100;delete p.fini;save();colRender();stkRender();toast(`🍾 Nouveau flacon entamé · il t'en reste ${p.n}`);openDet(p.id,"keep");return;}
+ const d=$("det");d.innerHTML=`<div class="grab"></div><h2 style="font-size:24px">${esc(p.nom)} est terminé</h2><div class="note">C'était ton dernier flacon. Que veux-tu faire ?</div>
+ <button class="res" id="fn-buy" style="margin-top:14px"><div style="font-size:26px">🛒</div><div><b>Je vais le racheter</b><small>Il reste dans ta collection, marqué « À racheter », et n'est plus proposé pour te parfumer.</small></div></button>
+ <button class="res" id="fn-new"><div style="font-size:26px">🍾</div><div><b>J'en ai déjà racheté</b><small>Je remets un flacon plein dans ton stock.</small></div></button>
+ <button class="res" id="fn-out"><div style="font-size:26px">📦</div><div><b>Le sortir de ma collection</b><small>Il passe dans « Anciens parfums ». Je garde son souvenir pour mieux connaître tes goûts.</small></div></button>
+ <button class="btn full" id="fn-x" style="margin-top:10px;background:none;color:var(--mu)">Annuler</button>`;
+ $("sh-det").classList.add("on");
+ $("fn-buy").onclick=()=>{p.ml=0;p.fini=1;save();colRender();stkRender();$("sh-det").classList.remove("on");toast("🛒 Ajouté à ta liste « À racheter »");};
+ $("fn-new").onclick=()=>{p.ml=p.size||100;p.n=1;delete p.fini;save();colRender();stkRender();openDet(p.id,"keep");toast("🍾 Flacon plein ajouté");};
+ $("fn-out").onclick=()=>{S.old=S.old||[];S.old.push({...p,sorti:new Date().toISOString()});S.list=S.list.filter(x=>x.id!==p.id);save();colRender();stkRender();$("sh-det").classList.remove("on");toast("📦 "+p.nom+" rangé dans tes anciens parfums");};
+ $("fn-x").onclick=()=>openDet(p.id,"keep");}
 /* ---------- jet de parfum ---------- */
 function spray(from,dirUp=true){const cv=$("mistc"),dpr=Math.min(2,devicePixelRatio||1);cv.width=innerWidth*dpr;cv.height=innerHeight*dpr;const x=cv.getContext("2d");x.setTransform(dpr,0,0,dpr,0,0);
  const r=from.getBoundingClientRect();const ox=r.left+r.width/2,oy=r.top+(dirUp?r.height*.18:r.height/2);const P=[];
