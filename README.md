@@ -26,3 +26,10 @@ Appli de veille boursière BRVM : résumé de séance, cours en direct (différ�
 - Données : `bourse/data/` mises à jour par `.github/workflows/bourse.yml` (toutes les 30 min pendant la séance, analyse complète chaque soir).
 - Moteur : `tools/bourse.py` (sources : brvm.org, sikafinance.com).
 - Alertes sur iPhone : appli ntfy, canal affiché dans l'onglet Signaux.
+
+## VERITAS · Compliance Academy (dossier `compliance/`) — version 1.0.0
+
+Appli de formation au métier de compliance officer (Côte d'Ivoire, UEMOA, international) : 13 modules avec tests notés sur 20, jeux (quiz éclair, détecteur de soupçons, cartes mémoire, vrai/faux, révision ciblée, examen blanc), entretien d'embauche chronométré (écrit ou voix), veille quotidienne automatique, suivi des notes et badges. Progression stockée uniquement sur le téléphone.
+
+- Contenu : `tools/compliance_content.py` → `compliance/data/content.json` (vérifié le 10 nov. 2026).
+- Veille : `tools/compliance_news.py` + `.github/workflows/veritas-news.yml` (chaque matin).
