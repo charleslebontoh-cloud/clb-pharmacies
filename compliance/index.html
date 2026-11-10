@@ -52,7 +52,7 @@ h1.t{font:700 26px/1.15 "Baskerville","Georgia",serif;margin:10px 4px 2px;color:
 .gm b{font-size:15px;line-height:1.25}.gm small{display:block;font-size:11.5px;opacity:.9;margin-top:3px}.gm .e{font-size:28px}
 .nav{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));display:flex;background:rgba(255,255,255,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid #fff;border-radius:26px;padding:7px 4px;z-index:20;box-shadow:0 14px 34px -10px rgba(11,61,46,.35)}
 .nav button{flex:1;min-width:0;background:none;border:0;color:#8C998F;font:700 9.5px -apple-system,system-ui;display:flex;flex-direction:column;align-items:center;gap:4px;padding:3px 0}
-.nav .nb{width:38px;height:32px;border-radius:12px;display:grid;place-items:center;transition:.25s}.nav svg{width:21px;height:21px}
+.nav .nb{width:34px;height:32px;border-radius:12px;display:grid;place-items:center;transition:.25s}.nav svg{width:21px;height:21px}
 .nav button.on{color:var(--em)}.nav button.on .nb{background:linear-gradient(145deg,#2BA57E,#0F5C45 60%,#0B3D2E);color:#fff;transform:translateY(-3px);box-shadow:0 9px 16px -6px rgba(11,61,46,.8),inset 0 1px 0 rgba(255,255,255,.4)}
 .sheet{position:fixed;inset:0;z-index:50;background:var(--bg);overflow-y:auto;transform:translateY(100%);transition:transform .34s cubic-bezier(.2,.8,.2,1);padding:env(safe-area-inset-top) 0 calc(30px + env(safe-area-inset-bottom))}
 .sheet.on{transform:none}
@@ -95,6 +95,19 @@ canvas.ch{width:100%;display:block}
 .rise{opacity:0;animation:rise .8s forwards}@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .sp-name{font:700 34px/1 "Baskerville","Didot","Georgia",serif;letter-spacing:.22em;margin-top:16px;background:linear-gradient(90deg,#fff,#F3E2B0);-webkit-background-clip:text;color:transparent}
 .sp-sub{font:700 10px -apple-system,system-ui;letter-spacing:.34em;color:var(--gold2);margin-top:8px}
+.sp-pres{margin:14px auto 0;max-width:330px;font-size:13.5px;line-height:1.5;color:rgba(255,255,255,.88)}
+.sp-syn{margin:18px auto 0;max-width:340px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:20px;padding:14px;text-align:left}
+.sp-syn .t{font:800 11px -apple-system,system-ui;letter-spacing:.14em;color:var(--gold2)}.sp-syn .r{font:700 19px "Baskerville","Georgia",serif;margin-top:4px}
+.sp-syn .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px;text-align:center}.sp-syn .g4 b{display:block;font:800 17px -apple-system,system-ui;color:#fff}.sp-syn .g4 small{font-size:10.5px;opacity:.8}
+.sp-syn .bar{background:rgba(255,255,255,.18);margin-top:8px}
+.sp-ver{margin-top:14px;font-size:11.5px;opacity:.7;letter-spacing:.04em}
+.evo{display:flex;gap:14px;align-items:center;position:relative}.evo .ring{margin:0;width:104px;height:104px;flex:none}.evo .ring svg{width:104px;height:104px}.evo .ring b{color:#fff;font-size:22px;flex-direction:column}.evo .ring b small{display:block;font:600 10px -apple-system,system-ui;opacity:.8}
+.g4h{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:14px;text-align:center}.g4h div{background:rgba(255,255,255,.12);border-radius:14px;padding:9px 2px}.g4h b{display:block;font:800 18px -apple-system,system-ui}.g4h small{font-size:10.5px;color:rgba(255,255,255,.8)}
+.nextstep{position:relative;display:flex;align-items:center;gap:10px;margin-top:12px;background:rgba(255,255,255,.95);color:var(--ink);border-radius:16px;padding:11px 12px;font-size:13.5px;cursor:pointer}.nextstep i{font-style:normal;font-size:22px}.nextstep b{display:block;font-size:14px}.nextstep span{color:var(--mu)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}.tile{background:#fff;border-radius:20px;padding:14px;box-shadow:var(--sh);cursor:pointer;border:1px solid var(--line);position:relative}.tile .ic3{margin-bottom:8px}.tile b{display:block;font:700 16px "Baskerville","Georgia",serif;color:var(--em2)}.tile span{display:block;font-size:12.5px;color:var(--mu);margin-top:3px;line-height:1.35}.tile em{position:absolute;top:12px;right:12px;font:800 11px -apple-system,system-ui;font-style:normal;color:var(--gold);background:#FBF3DF;border-radius:99px;padding:3px 8px}
+.job{display:block;padding:12px 2px;border-bottom:1px solid var(--line);color:var(--ink);text-decoration:none}.job:last-child{border:0}.job b{display:block;font-size:14.5px;line-height:1.3}.job .co{font-size:13px;color:var(--em2);font-weight:700;margin-top:3px}.job small{display:block;color:var(--mu);font-size:11.5px;margin-top:3px}
+.tag{display:inline-block;font:700 10.5px -apple-system,system-ui;border-radius:99px;padding:2px 8px;margin-right:4px;background:#ECF6F1;color:var(--em2)}.tag.r{background:#FBF3DF;color:#8A6A22}.tag.n{background:var(--em2);color:#fff}
+.links a{display:inline-block;margin:4px 6px 4px 0;padding:8px 12px;border-radius:99px;background:#fff;box-shadow:var(--sh);color:var(--em2);font:700 12.5px -apple-system,system-ui;text-decoration:none}
 .sp-v{margin:22px auto 0;text-align:left;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:18px;padding:12px 14px}
 .sp-v .t{font:800 11px -apple-system,system-ui;letter-spacing:.14em;color:var(--gold2)}.sp-v ul{margin:6px 0 0;padding-left:18px;font-size:12.5px;line-height:1.5}
 .sp-tap{margin-top:20px;font:700 13px -apple-system,system-ui;letter-spacing:.06em;color:rgba(255,255,255,.9);animation:rise .8s 2.6s forwards,blink 1.6s 3.4s ease-in-out infinite;opacity:0}@keyframes blink{50%{opacity:.35}}
@@ -129,16 +142,26 @@ canvas.ch{width:100%;display:block}
 <!-- ACCUEIL -->
 <section class="sec on" id="s-home">
  <h1 class="t" id="hi"></h1><div class="mu" style="margin:0 4px" id="hi2"></div>
- <div class="card hero" style="margin-top:12px"><div class="k">◆ MON RANG</div><div class="big" id="rank"></div><p id="rank2"></p><div class="bar"><i id="rankb" style="width:0"></i></div></div>
- <div class="kpis"><div class="card"><b class="num" id="k-avg">–</b><small>Moyenne /20</small></div><div class="card"><b class="num" id="k-mod">0/13</b><small>Modules validés</small></div><div class="card"><b class="num" id="k-str">0</b><small>Jours d'affilée</small></div></div>
- <h2>Question du jour</h2>
- <div class="card" id="qod"></div>
- <h2>Continuer ma formation <a class="more" onclick="go('learn')">Tous les cours</a></h2>
- <div class="card mods" id="next"></div>
- <h2>Défi rapide</h2>
- <div class="games" id="gquick"></div>
- <h2>Dernières actualités <a class="more" onclick="go('watch')">Veille</a></h2>
- <div class="card news" id="hnews"></div>
+ <div class="card hero" style="margin-top:12px"><div class="k">◆ MON ÉVOLUTION</div>
+  <div class="evo" style="margin-top:8px"><div class="ring" id="h-ring"></div><div style="min-width:0"><div class="big" id="rank" style="font-size:23px;margin-top:0"></div><p id="rank2" style="font-size:13px"></p></div></div>
+  <div class="g4h"><div><b class="num" id="k-avg">–</b><small>Moyenne /20</small></div><div><b class="num" id="k-mod">0/13</b><small>Modules</small></div><div><b class="num" id="k-str">0</b><small>Jours d'affilée</small></div><div><b class="num" id="k-itv">–</b><small>Entretien /20</small></div></div>
+  <div class="nextstep" id="h-next"></div>
+ </div>
+ <h2>Découvrir VERITAS</h2>
+ <div class="card" style="font-size:14px;line-height:1.55">VERITAS est ton académie de poche pour <b>devenir compliance officer</b> : apprendre les règles (BCEAO, CENTIF, GAFI, sanctions), t'entraîner en jouant, préparer tes entretiens et suivre le marché de l'emploi en Côte d'Ivoire. Choisis par où commencer :</div>
+ <div class="tiles" id="tiles" style="margin-top:10px"></div>
+ <div class="mu" style="text-align:center;font-size:12px;margin-top:14px">🔒 Ta progression reste sur ce téléphone</div>
+</section>
+
+<!-- EMPLOIS -->
+<section class="sec" id="s-jobs">
+ <h1 class="t">Offres d'emploi</h1><div class="mu" style="margin:0 4px">Postes en conformité, LCB-FT, risques et contrôle en Côte d'Ivoire, collectés chaque matin sur les sites d'emploi publics.</div>
+ <div class="chips" id="jchips" style="margin-top:10px"><button class="chip on" data-g="all">Toutes</button><button class="chip" data-g="Conformité">Conformité & LCB-FT</button><button class="chip" data-g="Risques & contrôle">Risques & contrôle</button></div>
+ <div class="card" id="jlist"></div>
+ <div class="mu" style="font-size:12px;margin:8px 4px" id="jupd"></div>
+ <h2>Chercher aussi sur</h2>
+ <div class="links" id="jlinks"></div>
+ <div style="margin-top:12px;padding:12px;border-radius:16px;background:#FBF3DF;border:1px solid #EBD9A8;font-size:12.5px;color:#5E4813">⚠️ Vérifie toujours une offre sur le site du recruteur. Un vrai recruteur ne demande jamais d'argent pour une candidature.</div>
 </section>
 
 <!-- COURS -->
@@ -154,7 +177,10 @@ canvas.ch{width:100%;display:block}
 <!-- JEUX -->
 <section class="sec" id="s-play">
  <h1 class="t">Jeux et entraînement</h1><div class="mu" style="margin:0 4px">Apprends en jouant : chaque bonne réponse te rapporte de l'expérience.</div>
- <div class="games" id="games" style="margin-top:14px"></div>
+ <h2>Question du jour</h2>
+ <div class="card" id="qod"></div>
+ <h2>Tous les jeux</h2>
+ <div class="games" id="games"></div>
 </section>
 
 <!-- ENTRETIEN -->
@@ -215,6 +241,7 @@ canvas.ch{width:100%;display:block}
  <button data-s="learn"><span class="nb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7l10-4 10 4-10 4z"/><path d="M6 9v5c3 2 9 2 12 0V9"/></svg></span>Cours</button>
  <button data-s="play"><span class="nb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 11v3M5.5 12.5h3M15 12h.01M18 13h.01"/></svg></span>Jeux</button>
  <button data-s="job"><span class="nb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M10 2h4"/></svg></span>Entretien</button>
+ <button data-s="jobs"><span class="nb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/></svg></span>Emplois</button>
  <button data-s="watch"><span class="nb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h13v14H6a2 2 0 0 1-2-2z"/><path d="M17 9h3v8a2 2 0 0 1-2 2M8 9h5M8 13h5"/></svg></span>Veille</button>
  <button data-s="prog"><span class="nb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>Suivi</button>
  <button data-s="set"><span class="nb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></span>Réglages</button>
@@ -224,7 +251,7 @@ canvas.ch{width:100%;display:block}
 <div class="toast" id="toast"></div>
 
 <script>
-const V="1.1.0";
+const V="1.2.0";
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const fr=(x,d=1)=>x==null||isNaN(x)?"–":Number(x).toLocaleString("fr-FR",{minimumFractionDigits:d,maximumFractionDigits:d});
@@ -248,18 +275,43 @@ const validated=()=>C.modules.filter(m=>(best(m.id)||0)>=14).length;
 
 /* ---------- chargement */
 async function J(u){const r=await fetch(u+(u.includes("?")?"&":"?")+"_="+Date.now(),{cache:"no-store"});if(!r.ok)throw 0;return r.json()}
-async function load(){try{C=await J("data/content.json");LS.set("c",C)}catch(e){C=LS.get("c",null)}try{NEWS=await J("data/news.json");LS.set("n",NEWS)}catch(e){NEWS=LS.get("n",[])}if(!C){$("hi").textContent="Connexion nécessaire au premier lancement.";return}render()}
+async function load(){try{C=await J("data/content.json");LS.set("c",C)}catch(e){C=LS.get("c",null)}try{NEWS=await J("data/news.json");LS.set("n",NEWS)}catch(e){NEWS=LS.get("n",[])}try{JOBS=await J("data/jobs.json");LS.set("j",JOBS)}catch(e){JOBS=LS.get("j",{u:null,jobs:[]})}if(!C){$("hi").textContent="Connexion nécessaire au premier lancement.";return}render()}
 
 /* ---------- rendu */
 function hello(){const h=new Date().getHours(),u=user();return(h<12?"Bonjour":h<18?"Bon après-midi":"Bonsoir")+(u.pre?" "+u.pre:"")}
 function render(){if(!C)return;const u=user();$("av").textContent=((u.pre||"?")[0]+(u.nom||"")[0]||"").toUpperCase()||"?";
- $("hi").textContent=hello();$("hi2").textContent="Objectif : devenir un compliance officer expert, en Côte d'Ivoire et dans le monde.";
+ $("hi").textContent=hello();$("hi2").textContent=S.xp?"Voici où tu en es dans ta formation.":"Bienvenue dans ton académie de la conformité.";
  const r=rank();$("rank").textContent=r.name;$("rank2").textContent=r.next?`${S.xp} XP · encore ${r.next[0]-S.xp} XP pour devenir « ${r.next[1]} »`:`${S.xp} XP · rang maximal atteint`;$("rankb").style.width=Math.round(r.p*100)+"%";
  const a=avg();$("k-avg").textContent=a==null?"–":fr(a);$("k-mod").textContent=validated()+"/"+C.modules.length;$("k-str").textContent=streak();
- qod();renderMods();renderNext();renderGames();renderWatch();renderItvHome();renderGloss();renderTools();renderRefs()}
+ qod();renderMods();renderHome();renderJobs();if($("sp-syn"))$("sp-syn").innerHTML=synIn();renderGames();renderWatch();renderItvHome();renderGloss();renderTools();renderRefs()}
 function modRow(m){const b=best(m.id),rd=(S.read[m.id]||[]).length;return`<div class="m" onclick="openMod('${m.id}')"><div class="ic3">${m.ic}</div><div class="x"><b>${esc(m.t)}</b><span>${m.lvl} · ${rd}/${m.lessons.length} leçons lues${b!=null&&b>=14?' · <b class="ok" style="display:inline">validé ✓</b>':""}</span></div><div class="note20 num ${b==null?"mu":b>=14?"ok":b>=10?"gold":"ko"}">${b==null?"–":fr(b)}<small>/20</small></div></div>`}
 function renderMods(){$("l-mods").innerHTML=C.modules.map(modRow).join("")}
-function renderNext(){const nx=C.modules.filter(m=>(best(m.id)||0)<14).slice(0,3);$("next").innerHTML=nx.length?nx.map(modRow).join(""):`<div class="empty">Tous les modules sont validés. Bravo ! Passe aux simulations d'entretien.</div>`}
+function ringSVG(p,col){const r=44,c=2*Math.PI*r;return`<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="${r}" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="9"/><circle cx="50" cy="50" r="${r}" fill="none" stroke="${col}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${c*Math.max(.001,p)} ${c}"/></svg>`}
+function itvBest(){return S.itv.length?Math.max(...S.itv.map(x=>x.n)):null}
+function nextStep(){const nx=C.modules.find(m=>(best(m.id)||0)<14);
+ if(!S.hist.length&&!Object.keys(S.read).length)return{i:"🎓",b:"Commence ton premier module",t:nx?nx.t:"",f:()=>openMod(nx.id)};
+ if(nx){const rd=(S.read[nx.id]||[]).length;return{i:"📘",b:rd<nx.lessons.length?"Continue : "+nx.t:"Valide le module : "+nx.t,t:best(nx.id)!=null?"Ta meilleure note : "+fr(best(nx.id))+"/20 · objectif 14":"Lis les leçons puis passe le quiz",f:()=>openMod(nx.id)}}
+ if(!S.itv.length)return{i:"🎤",b:"Passe ta première simulation d'entretien",t:"8 questions chronométrées",f:()=>go("job")};
+ return{i:"🏆",b:"Passe l'examen blanc",t:"20 questions, tous modules",f:()=>go("play")}}
+function renderHome(){const r=rank();$("h-ring").innerHTML=ringSVG(r.p,"#E9CF8B")+`<b class="num">${Math.round(r.p*100)}%<small>vers le rang suivant</small></b>`;
+ const ib=itvBest();$("k-itv").textContent=ib==null?"–":fr(ib);
+ const n=nextStep();$("h-next").innerHTML=`<i>${n.i}</i><div style="flex:1;min-width:0"><b>${esc(n.b)}</b><span>${esc(n.t)}</span></div><span style="font-size:20px;color:var(--gold)">›</span>`;$("h-next").onclick=n.f;
+ const nj=JOBS.jobs.length,nw=NEWS.length;
+ const T=[["learn","📚","Cours",`${C.modules.length} modules, glossaire, outils et textes officiels`,validated()+"/"+C.modules.length],
+  ["play","🎯","Jeux","Quiz éclair, cas pratiques, cartes mémoire, examen blanc",""],
+  ["job","🎤","Entretien","Questions chronométrées, à l'écrit ou à la voix",S.itv.length?S.itv.length+" faite"+(S.itv.length>1?"s":""):""],
+  ["jobs","💼","Emplois","Offres en conformité et risques en Côte d'Ivoire",nj?nj+" offre"+(nj>1?"s":""):""],
+  ["watch","📰","Veille","Actualités LCB-FT, sanctions et réglementation",nw?nw+" articles":""],
+  ["prog","📈","Mon suivi","Notes par module, évolution et points à revoir",""]];
+ $("tiles").innerHTML=T.map(t=>`<div class="tile" onclick="go('${t[0]}')">${t[4]?`<em>${t[4]}</em>`:""}<div class="ic3">${t[1]}</div><b>${t[2]}</b><span>${t[3]}</span></div>`).join("")}
+let JOBS={u:null,jobs:[]},JG="all";
+const JLINKS=[["LinkedIn","https://www.linkedin.com/jobs/search/?keywords=compliance%20conformit%C3%A9&location=C%C3%B4te%20d%27Ivoire"],["Africarrières","https://africarrieres.com/ivory-coast/fr/emplois?q=conformit%C3%A9"],["Educarriere","https://emploi.educarriere.ci/"],["Emploi.ci","https://www.emploi.ci/recherche-jobs-cote-ivoire?k=conformit%C3%A9"],["Novojob","https://www.novojob.com/cote-d-ivoire/offres-d-emploi"],["Go Africa Online","https://www.goafricaonline.com/ci/emploi"]];
+function ago(d){const n=Math.round((new Date(today())-new Date(d))/864e5);return n<=0?"aujourd'hui":n===1?"hier":n<7?`il y a ${n} jours`:n<30?`il y a ${Math.round(n/7)} sem.`:`il y a ${Math.round(n/30)} mois`}
+function renderJobs(){const L=JOBS.jobs.filter(j=>JG==="all"||j.g===JG);
+ $("jlist").innerHTML=L.length?L.map(j=>`<a class="job" href="${esc(j.u)}" target="_blank" rel="noopener"><span class="tag ${j.g==="Conformité"?"":"r"}">${j.g==="Conformité"?"Conformité":"Risques"}</span>${j.k?`<span class="tag">${esc(j.k)}</span>`:""}${(new Date(today())-new Date(j.f||j.d))/864e5<2?'<span class="tag n">Nouveau</span>':""}<b>${esc(j.t)}</b>${j.c?`<div class="co">${esc(j.c)}</div>`:""}<small>📍 ${esc(j.l||"Côte d'Ivoire")} · ${ago(j.d)}${j.x?" · clôture le "+new Date(j.x).toLocaleDateString("fr-FR"):""} · ${esc(j.s)}</small></a>`).join(""):`<div class="empty">Aucune offre pour l'instant dans cette catégorie. La liste se met à jour chaque matin ; consulte aussi les sites ci-dessous.</div>`;
+ $("jupd").textContent=JOBS.u?`Mise à jour : ${new Date(JOBS.u).toLocaleString("fr-FR",{day:"numeric",month:"long",hour:"2-digit",minute:"2-digit"})} · ${JOBS.jobs.length} offres`:"";
+ $("jlinks").innerHTML=JLINKS.map(l=>`<a href="${l[1]}" target="_blank" rel="noopener">${l[0]} ↗</a>`).join("")}
+document.querySelectorAll("#jchips .chip").forEach(b=>b.onclick=()=>{JG=b.dataset.g;document.querySelectorAll("#jchips .chip").forEach(x=>x.classList.toggle("on",x===b));renderJobs()});
 function allQ(){const out=[];C.modules.forEach(m=>m.quiz.forEach((q,i)=>out.push(Object.assign({id:m.id+"-"+i,mod:m.id},q))));return out}
 function qod(){const Q=allQ();const d=today();let h=0;for(const c of d)h=(h*31+c.charCodeAt(0))%9973;const q=Q[h%Q.length];const done=LS.get("qod",{})[d];
  $("qod").innerHTML=`<div class="q">${esc(q.q)}</div>`+q.o.map((o,i)=>`<button class="opt ${done!=null?(i===q.a?"good":i===done?"bad":""):""}" data-i="${i}">${esc(o)}</button>`).join("")+(done!=null?`<div class="expl">${esc(q.e)}</div>`:"");
@@ -302,7 +354,7 @@ function qEnd(){const z=QZ,n=z.qs.length,note=Math.round(z.ok/n*200)/10;const xp
 /* ---------- jeux */
 const GAMES=[["blitz","⚡","Quiz éclair","60 secondes, un maximum de bonnes réponses","#F59E0B","#B45309"],["case","🕵️","Détecteur de soupçons","Suspect ou normal ? Comme un analyste LBC","#10B981","#065F46"],["flash","🃏","Cartes mémoire","Le glossaire de l'expert, en révision espacée","#6366F1","#3730A3"],["rev","🎯","Révision ciblée","Uniquement tes erreurs passées","#F43F5E","#9F1239"],["exam","🏆","Examen blanc","20 questions tous modules, note sur 20","#0F5C45","#0B3D2E"],["tf","✅","Vrai ou faux ?","Affirmations éclair sur la réglementation","#0EA5E9","#075985"]];
 function gCard(g){return`<div class="gm" style="background:linear-gradient(145deg,${g[4]},${g[5]});--s:${g[5]}" onclick="game('${g[0]}')"><span class="e">${g[1]}</span><div><b>${g[2]}</b><small>${g[3]}</small></div></div>`}
-function renderGames(){$("games").innerHTML=GAMES.map(gCard).join("");$("gquick").innerHTML=[GAMES[0],GAMES[1]].map(gCard).join("")}
+function renderGames(){$("games").innerHTML=GAMES.map(gCard).join("");}
 function game(k){if(k==="exam")return quiz(null,shuffle(allQ()).slice(0,20),"Examen blanc");
  if(k==="rev"){const ids=Object.keys(S.miss).filter(x=>S.miss[x]>0);const Q=allQ().filter(q=>ids.includes(q.id));if(!Q.length)return toast("Aucune erreur à revoir pour l'instant 👍");return quiz(null,shuffle(Q).slice(0,15),"Révision ciblée")}
  if(k==="blitz")return blitz();if(k==="case")return cases();if(k==="flash")return flash();if(k==="tf")return tf()}
@@ -363,7 +415,7 @@ function itvEnd(){const R=IT.res,n=Math.round(R.reduce((a,r)=>a+r.note,0)/R.leng
 let WZ="all";
 function renderWatch(){const L=NEWS.filter(a=>WZ==="all"||a.z===WZ).slice(0,40);
  const li=a=>`<a href="${esc(a.u)}" target="_blank" rel="noopener">${esc(a.t)}<small>${esc(a.s||"")} · ${new Date(a.d).toLocaleDateString("fr-FR",{day:"numeric",month:"short",year:"numeric"})}${a.z?" · "+a.z:""}</small></a>`;
- $("wnews").innerHTML=L.length?L.map(li).join(""):`<div class="empty">La veille se met à jour chaque matin.</div>`;$("hnews").innerHTML=NEWS.length?NEWS.slice(0,4).map(li).join(""):`<div class="empty">La veille se met à jour chaque matin.</div>`;
+ $("wnews").innerHTML=L.length?L.map(li).join(""):`<div class="empty">La veille se met à jour chaque matin.</div>`;
  const t=today();$("tl").innerHTML=C.timeline.map(e=>`<div class="${e.d>t?"fut":""}"><b>${e.d.length>4?new Date(e.d).toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"}):e.d}${e.d>t?" · à venir":""}</b>${esc(e.t)}</div>`).join("");
  $("cver").textContent=`Contenu pédagogique vérifié le ${new Date(C.v).toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"})} · application version ${V}`}
 document.querySelectorAll("#wchips .chip").forEach(b=>b.onclick=()=>{WZ=b.dataset.z;document.querySelectorAll("#wchips .chip").forEach(x=>x.classList.toggle("on",x===b));renderWatch()});
@@ -420,12 +472,16 @@ document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>go(b.dataset.s
 addEventListener("resize",()=>{if(TAB==="prog")renderProg()});
 
 /* ---------- accueil animé : nom, version, ouverture au toucher */
-const NEWS_V=["Nouvel onglet Paramètres : profil, partage de l'appli, mises à jour","13 modules : de Bâle 2005 aux instructions BCEAO de 2025","Jeux : quiz éclair, détecteur de soupçons, cartes mémoire, examen blanc","Entretien d'embauche chronométré, à l'écrit ou à la voix","Veille automatique chaque jour et suivi de tes notes"];
-const verBox=()=>`<div class="sp-v rise" style="animation-delay:1.9s"><div class="t">VERSION ${V} · NOUVEAUTÉS</div><ul>${NEWS_V.map(n=>`<li>${n}</li>`).join("")}</ul></div>`;
+const NEWS_V=["Accueil épuré : présentation de l'appli, salutation et synthèse de ton évolution","Nouvelle section Emplois : offres en conformité, LCB-FT et risques en Côte d'Ivoire, mises à jour chaque matin","La question du jour est désormais dans Jeux","Onglet Réglages : profil, partage de l'appli, mises à jour"];
+const PRES="Ton académie pour apprendre et maîtriser le métier de compliance officer, en Côte d'Ivoire et dans le monde.";
+function synBox(){return`<div class="sp-syn rise" id="sp-syn" style="animation-delay:2s">${synIn()}</div>`}
+function synIn(){const r=rank(),a=C?avg():null,nm=C?C.modules.length:13,v=C?validated():0;
+ return`<div class="t">◆ TON ÉVOLUTION</div><div class="r">${esc(r.name)}</div><div class="bar"><i style="width:${Math.round(r.p*100)}%"></i></div><div style="font-size:12px;opacity:.85;margin-top:5px">${S.xp} XP${r.next?` · encore ${r.next[0]-S.xp} XP pour « ${esc(r.next[1])} »`:""}</div><div class="g4"><div><b>${a==null?"–":fr(a)}</b><small>Moy. /20</small></div><div><b>${v}/${nm}</b><small>Modules</small></div><div><b>${streak()}</b><small>Jours</small></div><div><b>${S.itv.length}</b><small>Entretiens</small></div></div>`}
+const verLine=()=>`<div class="sp-ver rise" style="animation-delay:2.3s">Version ${V} · détails dans Réglages</div>`;
 function splash(){const u=user();
- if(!u.pre){$("sp-dyn").innerHTML=`<div class="sp-form rise" style="animation-delay:1.8s;margin-top:20px;text-align:left"><div style="text-align:center;font-size:17px">Bienvenue. Comment t'appelles-tu ?</div><input class="f" id="sp-pre" placeholder="Prénom" autocomplete="given-name"><input class="f" id="sp-nom" placeholder="Nom" autocomplete="family-name"><button class="btn gold" id="sp-go">Entrer dans VERITAS</button><div style="text-align:center;font-size:12px;opacity:.8;margin-top:8px">🔒 Enregistré uniquement sur ce téléphone</div></div>${verBox()}`;
+ if(!u.pre){$("sp-dyn").innerHTML=`<div class="sp-pres rise" style="animation-delay:1.7s">${PRES} Cours, jeux, entretiens, offres d'emploi et veille : tout en un.</div><div class="sp-form rise" style="animation-delay:1.9s;margin-top:18px;text-align:left"><div style="text-align:center;font-size:17px">Bienvenue. Comment t'appelles-tu ?</div><input class="f" id="sp-pre" placeholder="Prénom" autocomplete="given-name"><input class="f" id="sp-nom" placeholder="Nom" autocomplete="family-name"><button class="btn gold" id="sp-go">Entrer dans VERITAS</button><div style="text-align:center;font-size:12px;opacity:.8;margin-top:8px">🔒 Enregistré uniquement sur ce téléphone</div></div>${verLine()}`;
   $("sp-go").onclick=()=>{const pre=$("sp-pre").value.trim();if(!pre)return $("sp-pre").focus();LS.set("user",{pre,nom:$("sp-nom").value.trim()});hideSplash()};return}
- $("sp-dyn").innerHTML=`<div class="rise" style="animation-delay:1.9s;margin-top:20px;font-size:18px">${hello()}</div>${verBox()}<div class="sp-tap">Touche l'écran pour entrer</div>`;
+ $("sp-dyn").innerHTML=`<div class="rise" style="animation-delay:1.7s;margin-top:18px;font-size:19px">${hello()} 👋</div><div class="sp-pres rise" style="animation-delay:1.8s">${PRES}</div>${synBox()}${verLine()}<div class="sp-tap">Touche l'écran pour entrer</div>`;
  $("splash").onclick=hideSplash}
 function hideSplash(){$("splash").classList.add("off");markDay();save();render()}
 (async()=>{try{const r=await fetch("version.json?_="+Date.now(),{cache:"no-store"});const j=await r.json();if(j.v&&j.v!==V&&sessionStorage.getItem("ver-upd")!==j.v){sessionStorage.setItem("ver-upd",j.v);forceUpdate()}}catch(e){}})();

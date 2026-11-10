@@ -76,7 +76,7 @@ def africarrieres():
     out = []
     for kw in ["conformité", "compliance", "LCB-FT", "KYC", "blanchiment", "risques", "contrôle interne", "audit interne"]:
         s = get("https://africarrieres.com/ivory-coast/fr/emplois?" + urllib.parse.urlencode({"q": kw}))
-        for m in re.finditer(r'<a href="(https://africarrieres\.com/[a-z-]+/fr/emplois/[^"]+)" class="block">(.*?)</a>', s, re.S):
+        for m in re.finditer(r'<a\s+href="(https://africarrieres\.com/[a-z-]+/fr/emplois/[^"]+)"\s+class="block"\s*>(.*?)</a>', s, re.S):
             b = m[2]
             t = re.search(r"<h3[^>]*>(.*?)</h3>", b, re.S)
             if not t:
