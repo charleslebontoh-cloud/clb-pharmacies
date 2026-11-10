@@ -100,12 +100,12 @@ canvas.ch{width:100%;display:block}
 .sp-syn .t{font:800 11px -apple-system,system-ui;letter-spacing:.14em;color:var(--gold2)}.sp-syn .r{font:700 19px "Baskerville","Georgia",serif;margin-top:4px}
 .sp-syn .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px;text-align:center}.sp-syn .g4 b{display:block;font:800 17px -apple-system,system-ui;color:#fff}.sp-syn .g4 small{font-size:10.5px;opacity:.8}
 .sp-syn .bar{background:rgba(255,255,255,.18);margin-top:8px}
-.sp-ver{margin-top:14px;font-size:11.5px;opacity:.7;letter-spacing:.04em}
+.sp-ver{margin-top:14px;font-size:11.5px;letter-spacing:.06em;color:rgba(255,255,255,.75)}.by{font:italic 700 13px "Baskerville","Georgia",serif;color:var(--gold2);letter-spacing:.08em}.byd{color:var(--gold);font:italic 700 13px "Baskerville","Georgia",serif;letter-spacing:.06em}
 .evo{display:flex;gap:14px;align-items:center;position:relative}.evo .ring{margin:0;width:104px;height:104px;flex:none}.evo .ring svg{width:104px;height:104px}.evo .ring b{color:#fff;font-size:22px;flex-direction:column}.evo .ring b{display:flex;align-items:center;justify-content:center;line-height:1.05;text-align:center}.evo .ring b small{display:block;font:600 10px -apple-system,system-ui;opacity:.8}
 .g4h{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:14px;text-align:center}.g4h div{background:rgba(255,255,255,.12);border-radius:14px;padding:9px 2px}.g4h b{display:block;font:800 18px -apple-system,system-ui}.g4h small{font-size:10.5px;color:rgba(255,255,255,.8)}
 .nextstep{position:relative;display:flex;align-items:center;gap:10px;margin-top:12px;background:rgba(255,255,255,.95);color:var(--ink);border-radius:16px;padding:11px 12px;font-size:13.5px;cursor:pointer}.nextstep i{font-style:normal;font-size:22px}.nextstep b{display:block;font-size:14px}.nextstep span{color:var(--mu)}
 .tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}.tile{background:#fff;border-radius:20px;padding:14px;box-shadow:var(--sh);cursor:pointer;border:1px solid var(--line);position:relative}.tile .ic3{margin-bottom:8px}.tile b{display:block;font:700 16px "Baskerville","Georgia",serif;color:var(--em2)}.tile span{display:block;font-size:12.5px;color:var(--mu);margin-top:3px;line-height:1.35}.tile em{position:absolute;top:12px;right:12px;font:800 11px -apple-system,system-ui;font-style:normal;color:var(--gold);background:#FBF3DF;border-radius:99px;padding:3px 8px}
-.job{display:block;padding:12px 2px;border-bottom:1px solid var(--line);color:var(--ink);text-decoration:none}.job:last-child{border:0}.job b{display:block;font-size:14.5px;line-height:1.3}.job .co{font-size:13px;color:var(--em2);font-weight:700;margin-top:3px}.job small{display:block;color:var(--mu);font-size:11.5px;margin-top:3px}
+.job .jl{display:block;color:var(--ink);text-decoration:none}.jap{margin-top:8px;font-size:12.5px;background:#ECF6F1;border-radius:12px;padding:8px 10px;color:var(--ink);line-height:1.45;word-break:break-word}.jap a{color:var(--em2);font-weight:700}.job .jap b{display:inline;font-size:12.5px}.jsee{display:inline-block;margin-top:6px;font:700 12px -apple-system,system-ui;color:var(--gold);text-decoration:none}.job{display:block;padding:12px 2px;border-bottom:1px solid var(--line);color:var(--ink);text-decoration:none}.job:last-child{border:0}.job b{display:block;font-size:14.5px;line-height:1.3}.job .co{font-size:13px;color:var(--em2);font-weight:700;margin-top:3px}.job small{display:block;color:var(--mu);font-size:11.5px;margin-top:3px}
 .tag{display:inline-block;font:700 10.5px -apple-system,system-ui;border-radius:99px;padding:2px 8px;margin-right:4px;background:#ECF6F1;color:var(--em2)}.tag.r{background:#FBF3DF;color:#8A6A22}.tag.n{background:var(--em2);color:#fff}
 .links a{display:inline-block;margin:4px 6px 4px 0;padding:8px 12px;border-radius:99px;background:#fff;box-shadow:var(--sh);color:var(--em2);font:700 12.5px -apple-system,system-ui;text-decoration:none}
 .sp-v{margin:22px auto 0;text-align:left;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:18px;padding:12px 14px}
@@ -142,7 +142,7 @@ canvas.ch{width:100%;display:block}
 <!-- ACCUEIL -->
 <section class="sec on" id="s-home">
  <h1 class="t" id="hi"></h1><div class="mu" style="margin:0 4px" id="hi2"></div>
- <div class="card hero" style="margin-top:12px"><div class="k">◆ MON ÉVOLUTION</div>
+ <div class="card hero" style="margin-top:12px"><div class="k">◆ MON ÉVOLUTION · <span id="h-lvl"></span></div>
   <div class="evo" style="margin-top:8px"><div class="ring" id="h-ring"></div><div style="min-width:0"><div class="big" id="rank" style="font-size:23px;margin-top:0"></div><p id="rank2" style="font-size:13px"></p></div></div>
   <div class="g4h"><div><b class="num" id="k-avg">–</b><small>Moyenne /20</small></div><div><b class="num" id="k-mod">0/13</b><small>Modules</small></div><div><b class="num" id="k-str">0</b><small>Jours d'affilée</small></div><div><b class="num" id="k-itv">–</b><small>Entretien /20</small></div></div>
   <div class="nextstep" id="h-next"></div>
@@ -228,11 +228,11 @@ canvas.ch{width:100%;display:block}
  <h2>Installer sur l'écran d'accueil</h2>
  <div class="card" style="font-size:13.5px">Dans Safari : touche <b>Partager</b> (carré avec flèche), puis <b>« Sur l'écran d'accueil »</b>. VERITAS s'ouvre alors en plein écran comme une vraie appli.</div>
  <h2>Mises à jour</h2>
- <div class="card"><div style="font-weight:800">Version <span id="s-v"></span></div><ul id="s-news" style="margin:6px 0 0;padding-left:18px;font-size:13.5px"></ul><div class="mu" style="font-size:12px;margin-top:6px" id="s-cv"></div><button class="btn g" id="s-up">🔄 Vérifier les mises à jour</button></div>
+ <div class="card"><div style="font-weight:800">Version <span id="s-v"></span> · <span class="byd">by CLB</span></div><ul id="s-news" style="margin:6px 0 0;padding-left:18px;font-size:13.5px"></ul><div class="mu" style="font-size:12px;margin-top:6px" id="s-cv"></div><button class="btn g" id="s-up">🔄 Vérifier les mises à jour</button></div>
  <h2>Ma progression</h2>
  <div class="card"><button class="btn g" id="s-rs" style="margin-top:0;color:var(--ko)">🗑️ Effacer ma progression</button></div>
  <div style="margin-top:12px;padding:12px;border-radius:16px;background:#ECF6F1;border:1px solid #BFE3D2;font-size:12.5px;color:#0B3D2E">🔒 Ton nom, tes notes et ta progression sont <b>confidentiels</b> : ils restent stockés uniquement sur ce téléphone.</div>
- <div class="mu" style="text-align:center;font-size:12px;margin-top:14px">Contenu pédagogique : vérifie toujours les textes officiels en vigueur.</div>
+ <div class="mu" style="text-align:center;font-size:12px;margin-top:14px">VERITAS · Compliance Academy · <span class="byd">by CLB</span><br>Contenu pédagogique : vérifie toujours les textes officiels en vigueur.</div>
 </section>
 </main>
 
@@ -251,7 +251,7 @@ canvas.ch{width:100%;display:block}
 <div class="toast" id="toast"></div>
 
 <script>
-const V="1.2.0";
+const V="1.3.0";
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const fr=(x,d=1)=>x==null||isNaN(x)?"–":Number(x).toLocaleString("fr-FR",{minimumFractionDigits:d,maximumFractionDigits:d});
@@ -293,7 +293,7 @@ function nextStep(){const nx=C.modules.find(m=>(best(m.id)||0)<14);
  if(nx){const rd=(S.read[nx.id]||[]).length;return{i:"📘",b:rd<nx.lessons.length?"Continue : "+nx.t:"Valide le module : "+nx.t,t:best(nx.id)!=null?"Ta meilleure note : "+fr(best(nx.id))+"/20 · objectif 14":"Lis les leçons puis passe le quiz",f:()=>openMod(nx.id)}}
  if(!S.itv.length)return{i:"🎤",b:"Passe ta première simulation d'entretien",t:"8 questions chronométrées",f:()=>go("job")};
  return{i:"🏆",b:"Passe l'examen blanc",t:"20 questions, tous modules",f:()=>go("play")}}
-function renderHome(){const r=rank();$("h-ring").innerHTML=ringH(r.p,"#E9CF8B")+`<b><span>${Math.round(r.p*100)}%</span><small>du rang<br>suivant</small></b>`;
+function renderHome(){const r=rank();$("h-lvl").textContent=`NIVEAU ${r.i+1} SUR ${RANKS.length}`;$("h-ring").innerHTML=ringH(r.p,"#E9CF8B")+`<b><span>${Math.round(r.p*100)}%</span><small>du rang<br>suivant</small></b>`;
  const ib=itvBest();$("k-itv").textContent=ib==null?"–":fr(ib);
  const n=nextStep();$("h-next").innerHTML=`<i>${n.i}</i><div style="flex:1;min-width:0"><b>${esc(n.b)}</b><span>${esc(n.t)}</span></div><span style="font-size:20px;color:var(--gold)">›</span>`;$("h-next").onclick=n.f;
  const nj=JOBS.jobs.length,nw=NEWS.length;
@@ -308,7 +308,11 @@ let JOBS={u:null,jobs:[]},JG="all";
 const JLINKS=[["LinkedIn","https://www.linkedin.com/jobs/search/?keywords=compliance%20conformit%C3%A9&location=C%C3%B4te%20d%27Ivoire"],["Africarrières","https://africarrieres.com/ivory-coast/fr/emplois?q=conformit%C3%A9"],["Educarriere","https://emploi.educarriere.ci/"],["Emploi.ci","https://www.emploi.ci/recherche-jobs-cote-ivoire?k=conformit%C3%A9"],["Novojob","https://www.novojob.com/cote-d-ivoire/offres-d-emploi"],["Go Africa Online","https://www.goafricaonline.com/ci/emploi"]];
 function ago(d){const n=Math.round((new Date(today())-new Date(d))/864e5);return n<=0?"aujourd'hui":n===1?"hier":n<7?`il y a ${n} jours`:n<30?`il y a ${Math.round(n/7)} sem.`:`il y a ${Math.round(n/30)} mois`}
 function renderJobs(){const L=JOBS.jobs.filter(j=>JG==="all"||j.g===JG);
- $("jlist").innerHTML=L.length?L.map(j=>`<a class="job" href="${esc(j.u)}" target="_blank" rel="noopener"><span class="tag ${j.g==="Conformité"?"":"r"}">${j.g==="Conformité"?"Conformité":"Risques"}</span>${j.k?`<span class="tag">${esc(j.k)}</span>`:""}${(new Date(today())-new Date(j.f||j.d))/864e5<2?'<span class="tag n">Nouveau</span>':""}<b>${esc(j.t)}</b>${j.c?`<div class="co">${esc(j.c)}</div>`:""}<small>📍 ${esc(j.l||"Côte d'Ivoire")} · ${ago(j.d)}${j.x?" · clôture le "+new Date(j.x).toLocaleDateString("fr-FR"):""} · ${esc(j.s)}</small></a>`).join(""):`<div class="empty">Aucune offre pour l'instant dans cette catégorie. La liste se met à jour chaque matin ; consulte aussi les sites ci-dessous.</div>`;
+ const how=j=>{const site=j.s;if(j.m&&j.m.length)return`<div class="jap">📧 <b>Candidature par e-mail :</b> ${j.m.map(m=>`<a href="mailto:${esc(m)}?subject=${encodeURIComponent("Candidature – "+j.t)}">${esc(m)}</a>`).join(" · ")}</div>`;
+  if(j.a==="mail-cache")return`<div class="jap">📧 <b>Candidature par e-mail</b> : l'adresse est affichée sur ${esc(site)} après connexion (inscription gratuite).</div>`;
+  if(j.w)return`<div class="jap">🌐 <b>Candidature en ligne</b> sur le site du recruteur : <a href="${esc(j.w)}" target="_blank" rel="noopener">${esc(j.w.split("/")[2].replace(/^www\./,""))} ↗</a></div>`;
+  return`<div class="jap">🌐 <b>Candidature en ligne</b> via ${esc(site)} (bouton « Postuler » de l'annonce)</div>`};
+ $("jlist").innerHTML=L.length?L.map(j=>`<div class="job"><a href="${esc(j.u)}" target="_blank" rel="noopener" class="jl"><span class="tag ${j.g==="Conformité"?"":"r"}">${j.g==="Conformité"?"Conformité":"Risques"}</span>${j.k?`<span class="tag">${esc(j.k)}</span>`:""}${(new Date(today())-new Date(j.f||j.d))/864e5<2?'<span class="tag n">Nouveau</span>':""}<b>${esc(j.t)}</b>${j.c?`<div class="co">${esc(j.c)}</div>`:""}<small>📍 ${esc(j.l||"Côte d'Ivoire")} · ${ago(j.d)}${j.x?" · clôture le "+new Date(j.x).toLocaleDateString("fr-FR"):""} · ${esc(j.s)}</small></a>${how(j)}<a class="jsee" href="${esc(j.u)}" target="_blank" rel="noopener">Voir l'annonce ↗</a></div>`).join(""):`<div class="empty">Aucune offre pour l'instant dans cette catégorie. La liste se met à jour chaque matin ; consulte aussi les sites ci-dessous.</div>`;
  $("jupd").textContent=JOBS.u?`Mise à jour : ${new Date(JOBS.u).toLocaleString("fr-FR",{day:"numeric",month:"long",hour:"2-digit",minute:"2-digit"})} · ${JOBS.jobs.length} offres`:"";
  $("jlinks").innerHTML=JLINKS.map(l=>`<a href="${l[1]}" target="_blank" rel="noopener">${l[0]} ↗</a>`).join("")}
 document.querySelectorAll("#jchips .chip").forEach(b=>b.onclick=()=>{JG=b.dataset.g;document.querySelectorAll("#jchips .chip").forEach(x=>x.classList.toggle("on",x===b));renderJobs()});
@@ -472,12 +476,12 @@ document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>go(b.dataset.s
 addEventListener("resize",()=>{if(TAB==="prog")renderProg()});
 
 /* ---------- accueil animé : nom, version, ouverture au toucher */
-const NEWS_V=["Accueil épuré : présentation de l'appli, salutation et synthèse de ton évolution","Nouvelle section Emplois : offres en conformité, LCB-FT et risques en Côte d'Ivoire, mises à jour chaque matin","La question du jour est désormais dans Jeux","Onglet Réglages : profil, partage de l'appli, mises à jour"];
+const NEWS_V=["Emplois : e-mail de candidature affiché quand l'annonce en donne un, sinon le mode de candidature en ligne","Ton niveau (1 à 7) affiché sur l'accueil et à l'ouverture","Signature « by CLB » à côté de la version","Accueil épuré : présentation, salutation et synthèse de ton évolution","Section Emplois : offres en conformité, LCB-FT et risques en Côte d'Ivoire"];
 const PRES="Ton académie pour apprendre et maîtriser le métier de compliance officer, en Côte d'Ivoire et dans le monde.";
 function synBox(){return`<div class="sp-syn rise" id="sp-syn" style="animation-delay:2s">${synIn()}</div>`}
 function synIn(){const r=rank(),a=C?avg():null,nm=C?C.modules.length:13,v=C?validated():0;
- return`<div class="t">◆ TON ÉVOLUTION</div><div class="r">${esc(r.name)}</div><div class="bar"><i style="width:${Math.round(r.p*100)}%"></i></div><div style="font-size:12px;opacity:.85;margin-top:5px">${S.xp} XP${r.next?` · encore ${r.next[0]-S.xp} XP pour « ${esc(r.next[1])} »`:""}</div><div class="g4"><div><b>${a==null?"–":fr(a)}</b><small>Moy. /20</small></div><div><b>${v}/${nm}</b><small>Modules</small></div><div><b>${streak()}</b><small>Jours</small></div><div><b>${S.itv.length}</b><small>Entretiens</small></div></div>`}
-const verLine=()=>`<div class="sp-ver rise" style="animation-delay:2.3s">Version ${V} · détails dans Réglages</div>`;
+ return`<div class="t">◆ TON NIVEAU : ${r.i+1} SUR ${RANKS.length}</div><div class="r">${esc(r.name)}</div><div class="bar"><i style="width:${Math.round(r.p*100)}%"></i></div><div style="font-size:12px;opacity:.85;margin-top:5px">${S.xp} XP${r.next?` · encore ${r.next[0]-S.xp} XP pour « ${esc(r.next[1])} »`:""}</div><div class="g4"><div><b>${a==null?"–":fr(a)}</b><small>Moy. /20</small></div><div><b>${v}/${nm}</b><small>Modules</small></div><div><b>${streak()}</b><small>Jours</small></div><div><b>${S.itv.length}</b><small>Entretiens</small></div></div>`}
+const verLine=()=>`<div class="sp-ver rise" style="animation-delay:2.3s">Version ${V} · <span class="by">by CLB</span></div>`;
 function splash(){const u=user();
  if(!u.pre){$("sp-dyn").innerHTML=`<div class="sp-pres rise" style="animation-delay:1.7s">${PRES} Cours, jeux, entretiens, offres d'emploi et veille : tout en un.</div><div class="sp-form rise" style="animation-delay:1.9s;margin-top:18px;text-align:left"><div style="text-align:center;font-size:17px">Bienvenue. Comment t'appelles-tu ?</div><input class="f" id="sp-pre" placeholder="Prénom" autocomplete="given-name"><input class="f" id="sp-nom" placeholder="Nom" autocomplete="family-name"><button class="btn gold" id="sp-go">Entrer dans VERITAS</button><div style="text-align:center;font-size:12px;opacity:.8;margin-top:8px">🔒 Enregistré uniquement sur ce téléphone</div></div>${verLine()}`;
   $("sp-go").onclick=()=>{const pre=$("sp-pre").value.trim();if(!pre)return $("sp-pre").focus();LS.set("user",{pre,nom:$("sp-nom").value.trim()});hideSplash()};return}
