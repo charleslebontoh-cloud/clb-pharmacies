@@ -101,7 +101,7 @@ canvas.ch{width:100%;display:block}
 .sp-syn .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px;text-align:center}.sp-syn .g4 b{display:block;font:800 17px -apple-system,system-ui;color:#fff}.sp-syn .g4 small{font-size:10.5px;opacity:.8}
 .sp-syn .bar{background:rgba(255,255,255,.18);margin-top:8px}
 .sp-ver{margin-top:14px;font-size:11.5px;opacity:.7;letter-spacing:.04em}
-.evo{display:flex;gap:14px;align-items:center;position:relative}.evo .ring{margin:0;width:104px;height:104px;flex:none}.evo .ring svg{width:104px;height:104px}.evo .ring b{color:#fff;font-size:22px;flex-direction:column}.evo .ring b small{display:block;font:600 10px -apple-system,system-ui;opacity:.8}
+.evo{display:flex;gap:14px;align-items:center;position:relative}.evo .ring{margin:0;width:104px;height:104px;flex:none}.evo .ring svg{width:104px;height:104px}.evo .ring b{color:#fff;font-size:22px;flex-direction:column}.evo .ring b{display:flex;align-items:center;justify-content:center;line-height:1.05;text-align:center}.evo .ring b small{display:block;font:600 10px -apple-system,system-ui;opacity:.8}
 .g4h{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:14px;text-align:center}.g4h div{background:rgba(255,255,255,.12);border-radius:14px;padding:9px 2px}.g4h b{display:block;font:800 18px -apple-system,system-ui}.g4h small{font-size:10.5px;color:rgba(255,255,255,.8)}
 .nextstep{position:relative;display:flex;align-items:center;gap:10px;margin-top:12px;background:rgba(255,255,255,.95);color:var(--ink);border-radius:16px;padding:11px 12px;font-size:13.5px;cursor:pointer}.nextstep i{font-style:normal;font-size:22px}.nextstep b{display:block;font-size:14px}.nextstep span{color:var(--mu)}
 .tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}.tile{background:#fff;border-radius:20px;padding:14px;box-shadow:var(--sh);cursor:pointer;border:1px solid var(--line);position:relative}.tile .ic3{margin-bottom:8px}.tile b{display:block;font:700 16px "Baskerville","Georgia",serif;color:var(--em2)}.tile span{display:block;font-size:12.5px;color:var(--mu);margin-top:3px;line-height:1.35}.tile em{position:absolute;top:12px;right:12px;font:800 11px -apple-system,system-ui;font-style:normal;color:var(--gold);background:#FBF3DF;border-radius:99px;padding:3px 8px}
@@ -281,19 +281,19 @@ async function load(){try{C=await J("data/content.json");LS.set("c",C)}catch(e){
 function hello(){const h=new Date().getHours(),u=user();return(h<12?"Bonjour":h<18?"Bon après-midi":"Bonsoir")+(u.pre?" "+u.pre:"")}
 function render(){if(!C)return;const u=user();$("av").textContent=((u.pre||"?")[0]+(u.nom||"")[0]||"").toUpperCase()||"?";
  $("hi").textContent=hello();$("hi2").textContent=S.xp?"Voici où tu en es dans ta formation.":"Bienvenue dans ton académie de la conformité.";
- const r=rank();$("rank").textContent=r.name;$("rank2").textContent=r.next?`${S.xp} XP · encore ${r.next[0]-S.xp} XP pour devenir « ${r.next[1]} »`:`${S.xp} XP · rang maximal atteint`;$("rankb").style.width=Math.round(r.p*100)+"%";
+ const r=rank();$("rank").textContent=r.name;$("rank2").textContent=r.next?`${S.xp} XP · encore ${r.next[0]-S.xp} XP pour devenir « ${r.next[1]} »`:`${S.xp} XP · rang maximal atteint`;
  const a=avg();$("k-avg").textContent=a==null?"–":fr(a);$("k-mod").textContent=validated()+"/"+C.modules.length;$("k-str").textContent=streak();
  qod();renderMods();renderHome();renderJobs();if($("sp-syn"))$("sp-syn").innerHTML=synIn();renderGames();renderWatch();renderItvHome();renderGloss();renderTools();renderRefs()}
 function modRow(m){const b=best(m.id),rd=(S.read[m.id]||[]).length;return`<div class="m" onclick="openMod('${m.id}')"><div class="ic3">${m.ic}</div><div class="x"><b>${esc(m.t)}</b><span>${m.lvl} · ${rd}/${m.lessons.length} leçons lues${b!=null&&b>=14?' · <b class="ok" style="display:inline">validé ✓</b>':""}</span></div><div class="note20 num ${b==null?"mu":b>=14?"ok":b>=10?"gold":"ko"}">${b==null?"–":fr(b)}<small>/20</small></div></div>`}
 function renderMods(){$("l-mods").innerHTML=C.modules.map(modRow).join("")}
-function ringSVG(p,col){const r=44,c=2*Math.PI*r;return`<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="${r}" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="9"/><circle cx="50" cy="50" r="${r}" fill="none" stroke="${col}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${c*Math.max(.001,p)} ${c}"/></svg>`}
+function ringH(p,col){const r=44,c=2*Math.PI*r;return`<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="${r}" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="9"/><circle cx="50" cy="50" r="${r}" fill="none" stroke="${col}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${c*Math.max(.001,p)} ${c}"/></svg>`}
 function itvBest(){return S.itv.length?Math.max(...S.itv.map(x=>x.n)):null}
 function nextStep(){const nx=C.modules.find(m=>(best(m.id)||0)<14);
  if(!S.hist.length&&!Object.keys(S.read).length)return{i:"🎓",b:"Commence ton premier module",t:nx?nx.t:"",f:()=>openMod(nx.id)};
  if(nx){const rd=(S.read[nx.id]||[]).length;return{i:"📘",b:rd<nx.lessons.length?"Continue : "+nx.t:"Valide le module : "+nx.t,t:best(nx.id)!=null?"Ta meilleure note : "+fr(best(nx.id))+"/20 · objectif 14":"Lis les leçons puis passe le quiz",f:()=>openMod(nx.id)}}
  if(!S.itv.length)return{i:"🎤",b:"Passe ta première simulation d'entretien",t:"8 questions chronométrées",f:()=>go("job")};
  return{i:"🏆",b:"Passe l'examen blanc",t:"20 questions, tous modules",f:()=>go("play")}}
-function renderHome(){const r=rank();$("h-ring").innerHTML=ringSVG(r.p,"#E9CF8B")+`<b class="num">${Math.round(r.p*100)}%<small>vers le rang suivant</small></b>`;
+function renderHome(){const r=rank();$("h-ring").innerHTML=ringH(r.p,"#E9CF8B")+`<b><span>${Math.round(r.p*100)}%</span><small>du rang<br>suivant</small></b>`;
  const ib=itvBest();$("k-itv").textContent=ib==null?"–":fr(ib);
  const n=nextStep();$("h-next").innerHTML=`<i>${n.i}</i><div style="flex:1;min-width:0"><b>${esc(n.b)}</b><span>${esc(n.t)}</span></div><span style="font-size:20px;color:var(--gold)">›</span>`;$("h-next").onclick=n.f;
  const nj=JOBS.jobs.length,nw=NEWS.length;

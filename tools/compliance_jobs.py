@@ -3,7 +3,7 @@
 Sources publiques : LinkedIn (offres invitées), Africarrières, Educarriere, Go Africa Online.
 Écrit compliance/data/jobs.json : {"u": date de mise à jour, "jobs": [...]}.
 Les offres sont cumulées d'un jour à l'autre, gardées 60 jours, retirées une fois expirées."""
-import json, os, re, html, urllib.request, urllib.parse, datetime as dt
+import json, os, re, html, urllib.request, urllib.parse, datetime as dt, time
 
 P = "compliance/data/jobs.json"
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126 Safari/537.36"
@@ -58,6 +58,7 @@ def linkedin():
     for kw in ["compliance", "conformité", "anti-money laundering", "KYC", "LCB-FT", "risk management banque", "contrôle interne"]:
         for start in (0, 25):
             q = urllib.parse.urlencode({"keywords": kw, "location": "Côte d'Ivoire", "start": start})
+            time.sleep(3)
             s = get("https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?" + q)
             for li in re.split(r"<li>", s)[1:]:
                 t = re.search(r'base-search-card__title[^>]*>(.*?)</h3>', li, re.S)
