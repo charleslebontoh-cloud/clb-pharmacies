@@ -305,7 +305,7 @@ nav{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(1
 <div class="floaty"><span>💧</span><span>💊</span><span>❤️</span><span>🏃</span><span>🥗</span><span>🩺</span></div>
 <img src="icon-512.png?v=2" alt=""><b>CLB HEALTH</b><div class="slog">Ton assistant santé personnel</div>
 
-<span class="tap" id="sp-tap">Touche pour entrer</span><div style="font-size:11.5px;opacity:.75;margin-top:10px">🔒 Tes données restent sur ce téléphone, confidentielles.</div><div id="sp-err" style="min-height:1.3em;margin-top:8px;color:#FFD1DA;font-size:13px;font-weight:600"></div><a id="sp-sos" href="tel:185" onclick="event.stopPropagation()">🆘 SAMU 185</a><small class="vsm">version 13.20.0 · 9 nov. 2026 · <a href="#" id="upd" style="color:inherit;font-weight:700">Vérifier les mises à jour</a></small></div></div>
+<span class="tap" id="sp-tap">Touche pour entrer</span><div style="font-size:11.5px;opacity:.75;margin-top:10px">🔒 Tes données restent sur ce téléphone, confidentielles.</div><div id="sp-err" style="min-height:1.3em;margin-top:8px;color:#FFD1DA;font-size:13px;font-weight:600"></div><a id="sp-sos" href="tel:185" onclick="event.stopPropagation()">🆘 SAMU 185</a><small class="vsm">version 13.21.0 · 9 nov. 2026 · <a href="#" id="upd" style="color:inherit;font-weight:700">Vérifier les mises à jour</a></small></div></div>
 <div class="banner" id="nudge"></div>
 
 <!-- PHARMACIES -->
@@ -504,6 +504,8 @@ nav{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(1
 <header><div class="brand">CLB Health</div><h1>Paramètres</h1><div class="per">Verrouillage, son, langue et partage de l'appli.</div></header>
 <div class="pad">
  <div class="card2 setc"><h3>🔒 Verrouillage</h3><div id="lk-box"></div><div class="note" id="lk-msg">L’appli demande Face ID à l’ouverture pour protéger ta fiche santé et tes données. Les numéros d’urgence restent accessibles sans déverrouiller.</div></div>
+ <div class="card2 setc"><h3>🧑‍⚕️ Le Professeur Santé</h3>
+  <label class="sw"><span>Afficher le Professeur<small>Il suit ton eau, tes médicaments et la chaleur, et te montre les points urgents</small></span><input type="checkbox" id="set-prof" checked><i></i></label></div>
  <div class="card2 setc"><h3>🔊 Son et vibrations</h3>
   <label class="sw"><span>Son des rappels<small>Médicaments, eau, pause écran</small></span><input type="checkbox" id="set-snd"><i></i></label>
   <label class="sw"><span>Vibrations</span><input type="checkbox" id="set-vib"><i></i></label>
@@ -1346,11 +1348,13 @@ const _eb=eBreak;eBreak=function(){_eb();$("e-over").classList.add("show");hapti
 /* ---------- démarrage ---------- */
 if("serviceWorker"in navigator){let had=!!navigator.serviceWorker.controller,reloaded=false;
  navigator.serviceWorker.addEventListener("controllerchange",()=>{if(had&&!reloaded){reloaded=true;location.reload();}had=true;});
- navigator.serviceWorker.register("sw.js?v=13.20.0",{updateViaCache:"none"}).then(r=>{r.update();document.addEventListener("visibilitychange",()=>{if(!document.hidden)r.update();});}).catch(()=>{});}
+ navigator.serviceWorker.register("sw.js?v=13.21.0",{updateViaCache:"none"}).then(r=>{r.update();document.addEventListener("visibilitychange",()=>{if(!document.hidden)r.update();});}).catch(()=>{});}
 const start=(location.hash||"").slice(1),TABS=["moi","ph","eau","med","eye","sos","set"];go(TABS.includes(start)?start:(!LS.get("profil",{}).age?"moi":(TABS.includes(LS.get("tab","moi"))?LS.get("tab","moi"):"moi")));
 nudge();
 </script>
 <script src="sante/credits.js"></script>
+<script src="prof.js?v=13.21.0"></script>
+<script>(function(){var c=document.getElementById("set-prof");if(!c)return;try{c.checked=!JSON.parse(localStorage.getItem("hp-off")||"false")}catch(e){}c.onchange=function(){window.HPROF&&HPROF.off(!c.checked)}})();</script>
 <script>
 /* ===== Habillage 13 : photos d'en-tête, icônes, cookies et pub ===== */
 (()=>{const SV={ph:'<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>',eau:'<path d="M12 2.7s7 7.4 7 12.3a7 7 0 0 1-14 0c0-4.9 7-12.3 7-12.3z"/><path d="M9 15.5a3 3 0 0 0 3 3"/>',eye:'<rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18M16 15h2"/><path d="M7 6V4h10v2"/>',sos:'<path d="M12 21s-8-4.5-8-11a5 5 0 0 1 8-4 5 5 0 0 1 8 4c0 6.5-8 11-8 11z"/><path d="M9 11h2l1-2 2 4 1-2h2"/>',med:'<path d="M10.5 20.5 3.5 13.5a5 5 0 0 1 7-7l7 7a5 5 0 0 1-7 7z"/><path d="m8.5 8.5 7 7"/>',moi:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',set:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>'};
