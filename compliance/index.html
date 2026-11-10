@@ -51,8 +51,8 @@ h1.t{font:700 26px/1.15 "Baskerville","Georgia",serif;margin:10px 4px 2px;color:
 .gm{border-radius:20px;padding:15px 13px;color:#fff;cursor:pointer;min-height:132px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 14px 24px -14px var(--s),inset 0 1px 0 rgba(255,255,255,.35)}
 .gm b{font-size:15px;line-height:1.25}.gm small{display:block;font-size:11.5px;opacity:.9;margin-top:3px}.gm .e{font-size:28px}
 .nav{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));display:flex;background:rgba(255,255,255,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid #fff;border-radius:26px;padding:7px 4px;z-index:20;box-shadow:0 14px 34px -10px rgba(11,61,46,.35)}
-.nav button{flex:1;min-width:0;background:none;border:0;color:#8C998F;font:700 10px -apple-system,system-ui;display:flex;flex-direction:column;align-items:center;gap:4px;padding:3px 0}
-.nav .nb{width:40px;height:32px;border-radius:12px;display:grid;place-items:center;transition:.25s}.nav svg{width:21px;height:21px}
+.nav button{flex:1;min-width:0;background:none;border:0;color:#8C998F;font:700 9.5px -apple-system,system-ui;display:flex;flex-direction:column;align-items:center;gap:4px;padding:3px 0}
+.nav .nb{width:38px;height:32px;border-radius:12px;display:grid;place-items:center;transition:.25s}.nav svg{width:21px;height:21px}
 .nav button.on{color:var(--em)}.nav button.on .nb{background:linear-gradient(145deg,#2BA57E,#0F5C45 60%,#0B3D2E);color:#fff;transform:translateY(-3px);box-shadow:0 9px 16px -6px rgba(11,61,46,.8),inset 0 1px 0 rgba(255,255,255,.4)}
 .sheet{position:fixed;inset:0;z-index:50;background:var(--bg);overflow-y:auto;transform:translateY(100%);transition:transform .34s cubic-bezier(.2,.8,.2,1);padding:env(safe-area-inset-top) 0 calc(30px + env(safe-area-inset-bottom))}
 .sheet.on{transform:none}
@@ -189,6 +189,25 @@ canvas.ch{width:100%;display:block}
  <h2>Mes badges</h2>
  <div class="card badges" id="badges"></div>
 </section>
+<!-- PARAMÈTRES -->
+<section class="sec" id="s-set">
+ <h1 class="t">Paramètres</h1><div class="mu" style="margin:0 4px">Profil, partage, mises à jour et confidentialité.</div>
+ <h2>Mon identité</h2>
+ <div class="card"><label class="mu">Prénom</label><input class="f" id="s-pre" autocomplete="given-name"><label class="mu" style="display:block;margin-top:8px">Nom</label><input class="f" id="s-nom" autocomplete="family-name"><button class="btn" id="s-sv">Enregistrer</button></div>
+ <h2>Partager VERITAS</h2>
+ <div class="card" style="text-align:center"><div class="mu" style="font-size:13px">Fais découvrir VERITAS à un collègue. Chacun garde sa propre progression sur son téléphone : personne ne voit tes notes.</div>
+  <img src="qr.png" alt="QR code VERITAS" width="170" height="170" style="border-radius:14px;background:#fff;padding:8px;margin-top:10px;box-shadow:var(--sh)">
+  <div class="mu" style="font-size:12px">À scanner avec l'appareil photo</div>
+  <button class="btn gold" id="s-sh">📤 Partager l'appli</button><button class="btn g" id="s-cp">🔗 Copier le lien</button></div>
+ <h2>Installer sur l'écran d'accueil</h2>
+ <div class="card" style="font-size:13.5px">Dans Safari : touche <b>Partager</b> (carré avec flèche), puis <b>« Sur l'écran d'accueil »</b>. VERITAS s'ouvre alors en plein écran comme une vraie appli.</div>
+ <h2>Mises à jour</h2>
+ <div class="card"><div style="font-weight:800">Version <span id="s-v"></span></div><ul id="s-news" style="margin:6px 0 0;padding-left:18px;font-size:13.5px"></ul><div class="mu" style="font-size:12px;margin-top:6px" id="s-cv"></div><button class="btn g" id="s-up">🔄 Vérifier les mises à jour</button></div>
+ <h2>Ma progression</h2>
+ <div class="card"><button class="btn g" id="s-rs" style="margin-top:0;color:var(--ko)">🗑️ Effacer ma progression</button></div>
+ <div style="margin-top:12px;padding:12px;border-radius:16px;background:#ECF6F1;border:1px solid #BFE3D2;font-size:12.5px;color:#0B3D2E">🔒 Ton nom, tes notes et ta progression sont <b>confidentiels</b> : ils restent stockés uniquement sur ce téléphone.</div>
+ <div class="mu" style="text-align:center;font-size:12px;margin-top:14px">Contenu pédagogique : vérifie toujours les textes officiels en vigueur.</div>
+</section>
 </main>
 
 <nav class="nav" id="nav">
@@ -198,13 +217,14 @@ canvas.ch{width:100%;display:block}
  <button data-s="job"><span class="nb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M10 2h4"/></svg></span>Entretien</button>
  <button data-s="watch"><span class="nb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h13v14H6a2 2 0 0 1-2-2z"/><path d="M17 9h3v8a2 2 0 0 1-2 2M8 9h5M8 13h5"/></svg></span>Veille</button>
  <button data-s="prog"><span class="nb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>Suivi</button>
+ <button data-s="set"><span class="nb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></span>Réglages</button>
 </nav>
 
 <div class="sheet" id="sheet"><div class="sh-h"><button class="ib" id="sh-x">‹</button><b id="sh-t" style="flex:1;font-size:16px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></b><span id="sh-r"></span></div><div class="sb" id="sh-b"></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
-const V="1.0.0";
+const V="1.1.0";
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const fr=(x,d=1)=>x==null||isNaN(x)?"–":Number(x).toLocaleString("fr-FR",{minimumFractionDigits:d,maximumFractionDigits:d});
@@ -383,21 +403,29 @@ function openProfile(){const u=user();sheet("Mon profil",`<div class="card"><lab
  $("u-sv").onclick=()=>{const pre=$("u-pre").value.trim();if(!pre)return toast("Indique ton prénom");LS.set("user",{pre,nom:$("u-nom").value.trim()});toast("Profil enregistré ✓");render()};
  $("u-sh").onclick=async()=>{const url=location.href.split("#")[0].split("?")[0];try{if(navigator.share)await navigator.share({title:"VERITAS · Compliance Academy",text:"L'appli pour apprendre et maîtriser le métier de compliance officer, en Côte d'Ivoire et dans le monde.",url});else{await navigator.clipboard.writeText(url);toast("Lien copié ✓")}}catch(e){}};
  $("u-up").onclick=forceUpdate;$("u-rs").onclick=()=>{if(confirm("Effacer toute ta progression sur ce téléphone ?")){S={xp:0,mods:{},read:{},hist:[],miss:{},cards:{},itv:[],days:[],badges:[]};save();toast("Progression effacée");closeSheet()}}}
-$("av").onclick=openProfile;
+$("av").onclick=()=>go("set");
+function fillSet(){const u=user();$("s-pre").value=u.pre||"";$("s-nom").value=u.nom||"";$("s-v").textContent=V;$("s-news").innerHTML=NEWS_V.map(n=>`<li>${n}</li>`).join("");if(C)$("s-cv").textContent=`Contenu vérifié le ${new Date(C.v).toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"})} · mise à jour automatique chaque mois`}
+const APPURL="https://charleslebontoh-cloud.github.io/clb-pharmacies/compliance/";
+$("s-sv").onclick=()=>{const pre=$("s-pre").value.trim();if(!pre)return toast("Indique ton prénom");LS.set("user",{pre,nom:$("s-nom").value.trim()});toast("Profil enregistré ✓");render()};
+$("s-sh").onclick=async()=>{try{if(navigator.share)await navigator.share({title:"VERITAS · Compliance Academy",text:"L'appli pour apprendre et maîtriser le métier de compliance officer, en Côte d'Ivoire et dans le monde.",url:APPURL});else{await navigator.clipboard.writeText(APPURL);toast("Lien copié ✓")}}catch(e){}};
+$("s-cp").onclick=async()=>{try{await navigator.clipboard.writeText(APPURL);toast("Lien copié ✓")}catch(e){toast(APPURL,8000)}};
+$("s-up").onclick=()=>forceUpdate();
+$("s-rs").onclick=()=>{if(confirm("Effacer toute ta progression sur ce téléphone ?")){S={xp:0,mods:{},read:{},hist:[],miss:{},cards:{},itv:[],days:[],badges:[]};save();toast("Progression effacée");render()}};
 async function forceUpdate(){toast("Mise à jour…");try{const r=await navigator.serviceWorker.getRegistrations();await Promise.all(r.map(x=>x.unregister()));const k=await caches.keys();await Promise.all(k.map(x=>caches.delete(x)))}catch(e){}location.replace(location.pathname+"?v="+Date.now())}
 
 /* ---------- navigation */
 let TAB="home";
-function go(k){TAB=k;document.querySelectorAll(".sec").forEach(s=>s.classList.toggle("on",s.id==="s-"+k));document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("on",b.dataset.s===k));scrollTo(0,0);if(k==="prog")requestAnimationFrame(renderProg)}
+function go(k){TAB=k;document.querySelectorAll(".sec").forEach(s=>s.classList.toggle("on",s.id==="s-"+k));document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("on",b.dataset.s===k));scrollTo(0,0);if(k==="prog")requestAnimationFrame(renderProg);if(k==="set")fillSet()}
 document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>go(b.dataset.s));
 addEventListener("resize",()=>{if(TAB==="prog")renderProg()});
 
 /* ---------- accueil animé : nom, version, ouverture au toucher */
-const NEWS_V=["13 modules : de Bâle 2005 aux instructions BCEAO de 2025","Jeux : quiz éclair, détecteur de soupçons, cartes mémoire, examen blanc","Entretien d'embauche chronométré, à l'écrit ou à la voix","Veille automatique chaque jour et suivi de tes notes"];
+const NEWS_V=["Nouvel onglet Paramètres : profil, partage de l'appli, mises à jour","13 modules : de Bâle 2005 aux instructions BCEAO de 2025","Jeux : quiz éclair, détecteur de soupçons, cartes mémoire, examen blanc","Entretien d'embauche chronométré, à l'écrit ou à la voix","Veille automatique chaque jour et suivi de tes notes"];
+const verBox=()=>`<div class="sp-v rise" style="animation-delay:1.9s"><div class="t">VERSION ${V} · NOUVEAUTÉS</div><ul>${NEWS_V.map(n=>`<li>${n}</li>`).join("")}</ul></div>`;
 function splash(){const u=user();
- if(!u.pre){$("sp-dyn").innerHTML=`<div class="sp-form rise" style="animation-delay:1.8s;margin-top:20px;text-align:left"><div style="text-align:center;font-size:17px">Bienvenue. Comment t'appelles-tu ?</div><input class="f" id="sp-pre" placeholder="Prénom" autocomplete="given-name"><input class="f" id="sp-nom" placeholder="Nom" autocomplete="family-name"><button class="btn gold" id="sp-go">Entrer dans VERITAS</button><div style="text-align:center;font-size:12px;opacity:.8;margin-top:8px">🔒 Enregistré uniquement sur ce téléphone</div></div>`;
+ if(!u.pre){$("sp-dyn").innerHTML=`<div class="sp-form rise" style="animation-delay:1.8s;margin-top:20px;text-align:left"><div style="text-align:center;font-size:17px">Bienvenue. Comment t'appelles-tu ?</div><input class="f" id="sp-pre" placeholder="Prénom" autocomplete="given-name"><input class="f" id="sp-nom" placeholder="Nom" autocomplete="family-name"><button class="btn gold" id="sp-go">Entrer dans VERITAS</button><div style="text-align:center;font-size:12px;opacity:.8;margin-top:8px">🔒 Enregistré uniquement sur ce téléphone</div></div>${verBox()}`;
   $("sp-go").onclick=()=>{const pre=$("sp-pre").value.trim();if(!pre)return $("sp-pre").focus();LS.set("user",{pre,nom:$("sp-nom").value.trim()});hideSplash()};return}
- $("sp-dyn").innerHTML=`<div class="rise" style="animation-delay:1.9s;margin-top:20px;font-size:18px">${hello()}</div><div class="sp-v rise" style="animation-delay:2.2s"><div class="t">VERSION ${V} · NOUVEAUTÉS</div><ul>${NEWS_V.map(n=>`<li>${n}</li>`).join("")}</ul></div><div class="sp-tap">Touche l'écran pour entrer</div>`;
+ $("sp-dyn").innerHTML=`<div class="rise" style="animation-delay:1.9s;margin-top:20px;font-size:18px">${hello()}</div>${verBox()}<div class="sp-tap">Touche l'écran pour entrer</div>`;
  $("splash").onclick=hideSplash}
 function hideSplash(){$("splash").classList.add("off");markDay();save();render()}
 (async()=>{try{const r=await fetch("version.json?_="+Date.now(),{cache:"no-store"});const j=await r.json();if(j.v&&j.v!==V&&sessionStorage.getItem("ver-upd")!==j.v){sessionStorage.setItem("ver-upd",j.v);forceUpdate()}}catch(e){}})();
