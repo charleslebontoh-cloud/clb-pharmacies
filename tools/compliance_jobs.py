@@ -148,7 +148,7 @@ def detail(j):
     # ne garder que l'annonce elle-même (pas les offres voisines de la page)
     k = t.lower().find(j["t"].lower()[:40])
     t = t[k if k >= 0 else 0:]
-    e = re.search(r"Autres offres|Offres? (?:d.emploi )?similaires|Vous aimerez aussi|Offres? r[ée]centes|Derni[èe]res offres|Offres? qui pourraient", t, re.I)
+    e = re.search(r"Autres offres|Offres? (?:d.emploi )?similaires|Vous aimerez aussi|Ces offres pourraient|pourraient (?:également|aussi) vous int[ée]resser|Offres? r[ée]centes|Derni[èe]res offres|Offres? qui pourraient", t, re.I)
     if e and e.start() > 200:
         t = t[:e.start()]
     t2 = re.sub(r"\s*[\[\(]\s*(?:at|arobase)\s*[\]\)]\s*", "@", t, flags=re.I)
@@ -172,6 +172,8 @@ def detail(j):
     # mode de candidature
     if j.get("m"):
         j["a"] = "mail"
+    elif re.search(r"voir l.e-?mail|see the e-?mail", t, re.I):
+        j["a"] = "mail-cache"
     elif j.get("w"):
         j["a"] = "site"
     else:
