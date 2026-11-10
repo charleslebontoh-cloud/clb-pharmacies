@@ -11,9 +11,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: python3 tools/compliance_news.py
+      - run: python3 tools/compliance_jobs.py
+        continue-on-error: true
       - run: |
           git config user.name "veritas-bot"; git config user.email "actions@users.noreply.github.com"
-          git add compliance/data/news.json
+          git add compliance/data/news.json compliance/data/jobs.json
           git diff --cached --quiet && exit 0
           git commit -qm "VERITAS : veille du $(date -u +%Y-%m-%d)"
           for i in 1 2 3; do git pull -q --rebase -X theirs origin main && git push -q && break; sleep 5; done

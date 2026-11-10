@@ -5,4 +5,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: python3 tools/_probe.py
+      - run: python3 tools/compliance_jobs.py
+      - run: python3 -c "import json;d=json.load(open('compliance/data/jobs.json'));[print(j) for j in d['jobs'][:6]]"
