@@ -128,6 +128,51 @@ def goafrica():
     return out
 
 
+SITE_DOM = re.compile(r"linkedin|africarrieres|educarriere|goafricaonline|novojob|emploi\.ci|google|sentry|example|w3\.org|schema\.org|wixpress|cloudflare|gravatar|facebook|twitter|whatsapp|\.png|\.jpe?g|\.gif|\.webp|\.svg", re.I)
+ATS = re.compile(r'href="(https?://[^"]*(?:careers-page|lucca|smartrecruiters|workday|greenhouse|lever\.co|recruitee|teamtailor|bamboohr|welcometothejungle|jobs\.|careers\.|recrutement|forms\.gle|docs\.google\.com/forms|typeform|kobo)[^"]*)"', re.I)
+
+
+def detail(j):
+    """Ouvre l'annonce : e-mail(s) de candidature, lien de candidature en ligne, date limite."""
+    u = j["u"]
+    if j["s"] == "LinkedIn":
+        m = re.search(r"-(\d{8,})/?$", u)
+        if m:
+            time.sleep(2)
+            u = "https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/" + m[1]
+    s = get(u, 30)
+    if not s:
+        return
+    body = re.sub(r"<(script|style|header|footer|nav)[^>]*>.*?</\1>", " ", s, flags=re.S | re.I)
+    t = txt(body)
+    t2 = re.sub(r"\s*[\[\(]\s*(?:at|arobase)\s*[\]\)]\s*", "@", t, flags=re.I)
+    mails = []
+    for e in re.findall(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}", t2 + " " + " ".join(re.findall(r'mailto:([^"?]+)', body))):
+        e = e.strip(".").lower()
+        if not SITE_DOM.search(e) and e not in mails and not e.startswith(("noreply", "no-reply")):
+            mails.append(e)
+    if mails:
+        j["m"] = mails[:3]
+    w = ATS.search(body)
+    if w and not SITE_DOM.search(w[1].split("/")[2]):
+        j["w"] = html.unescape(w[1])
+    if not j.get("x"):
+        m = re.search(r"(?:date limite|limite de (?:dépôt|candidature)|clôture|deadline)[^0-9]{0,40}(\d{1,2})[/.-](\d{1,2})[/.-](\d{4})", t, re.I)
+        if m:
+            try:
+                j["x"] = dt.date(int(m[3]), int(m[2]), int(m[1])).isoformat()
+            except ValueError:
+                pass
+    # mode de candidature
+    if j.get("m"):
+        j["a"] = "mail"
+    elif j.get("w"):
+        j["a"] = "site"
+    else:
+        j["a"] = "plateforme"
+    j["k2"] = 1
+
+
 def main():
     try:
         old = json.load(open(P, encoding="utf-8")).get("jobs", [])
@@ -157,6 +202,13 @@ def main():
             continue
         if j["d"] < (TODAY - dt.timedelta(days=60)).isoformat():
             continue
+        if not j.get("k2"):
+            try:
+                detail(j)
+            except Exception as e:
+                print("ERR detail", j["u"][:70], e)
+        if j.get("x") and j["x"] < TODAY.isoformat():
+            continue
         jobs.append({k: v for k, v in j.items() if v not in (None, "")})
     jobs.sort(key=lambda j: (j["g"] != "Conformité", j["d"]), reverse=False)
     jobs.sort(key=lambda j: j["d"], reverse=True)
@@ -166,7 +218,7 @@ def main():
     os.replace(tmp, P)
     print("sources (brutes, retenues):", stat, "→", len(jobs), "offres")
     for j in jobs[:25]:
-        print(" ", j["d"], j["g"][:4], "|", j["t"][:70], "|", j.get("c", "")[:30], "|", j["s"])
+        print(" ", j["d"], j["g"][:4], "|", j["t"][:60], "|", j.get("c", "")[:25], "|", j["s"], "|", j.get("a"), j.get("m", ""), j.get("w", "")[:60])
 
 
 if __name__ == "__main__":
