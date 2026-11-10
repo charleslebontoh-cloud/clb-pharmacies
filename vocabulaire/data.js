@@ -85,7 +85,19 @@ const DICO=[
 ["diligence","n. f.","Soin et rapidité dans l'exécution d'une tâche.","Merci de traiter ce dossier avec diligence.","célérité, empressement","soutenu","Communication"],
 ["exiguïté","n. f.","Caractère de ce qui est trop petit, trop étroit.","L'exiguïté du marché limite la croissance.","étroitesse, petitesse","soutenu","Économie"],
 ["inhérent","adj.","Qui appartient par nature à quelque chose.","Le risque est inhérent à toute activité de crédit.","propre, intrinsèque","soutenu","Général"],
-["désuet","adj.","Qui n'est plus en usage, démodé.","Cette procédure désuète doit être revue.","démodé, suranné","soutenu","Général"]
+["désuet","adj.","Qui n'est plus en usage, démodé.","Cette procédure désuète doit être revue.","démodé, suranné","soutenu","Général"],
+["agios","n. m. pl.","Frais et intérêts qu'une banque prélève, en particulier sur un compte à découvert.","Les agios du trimestre ont été débités du compte courant.","frais bancaires, intérêts débiteurs","technique","Finance"],
+["atermoyer","v. intr.","Remettre sans cesse à plus tard une décision ou un paiement pour gagner du temps.","Le débiteur atermoie depuis trois mois.","temporiser, différer","soutenu","Caractère"],
+["escompte","n. m.","Avance par la banque du montant d'un effet de commerce avant son échéance, contre une retenue ; aussi, remise accordée pour un paiement anticipé.","La PME recourt à l'escompte pour financer ses ventes à crédit.","remise, avance","technique","Finance"],
+["forclusion","n. f.","Perte du droit d'agir ou de réclamer parce que le délai prévu pour le faire est dépassé.","Faute d'avoir déclaré sa créance à temps, le fournisseur se heurte à la forclusion.","déchéance","juridique","Juridique"],
+["subrogation","n. f.","Remplacement d'une personne par une autre dans ses droits, par exemple la caution qui a payé et prend la place du créancier.","Ayant payé la dette, la caution bénéficie de la subrogation dans les droits de la banque.","substitution, remplacement","juridique","Juridique"],
+["usufruit","n. m.","Droit d'utiliser un bien et d'en toucher les revenus sans en être le propriétaire.","Elle garde l'usufruit de l'immeuble ; ses enfants en ont la nue-propriété.","jouissance","juridique","Juridique"],
+["émoluments","n. m. pl.","Rémunération attachée à une fonction ou à une charge, notamment celle d'un officier public comme le notaire.","Les émoluments du notaire sont à la charge de l'acquéreur.","rétribution, honoraires","soutenu","Finance"],
+["péremptoire","adj.","Qui tranche d'une manière qui n'admet ni discussion ni réplique.","Il a refusé d'un ton péremptoire.","catégorique, tranchant","soutenu","Communication"],
+["réfuter","v. tr.","Démontrer, arguments à l'appui, qu'une affirmation est fausse.","Le gérant a réfuté point par point les conclusions de l'audit.","contredire, démentir","soutenu","Communication"],
+["pondéré","adj.","Qui juge avec mesure et calme ; en calcul, dont chaque élément reçoit un coefficient selon son importance.","Le taux moyen pondéré du portefeuille s'établit à 9 %.","mesuré, modéré","courant","Caractère"],
+["velléitaire","adj.","Qui a des intentions mais ne va jamais jusqu'au bout pour les réaliser.","Un promoteur velléitaire inquiète le comité de crédit.","irrésolu, indécis","soutenu","Caractère"],
+["obvier","v. tr. ind.","Prendre à l'avance les mesures qui empêchent un inconvénient de se produire (obvier à).","Une assurance décès permet d'obvier à ce risque.","parer, prévenir","soutenu","Général"]
 ];
 
 /* Orthographe : [bonne graphie, [variantes fautives], astuce, [graphies aussi admises (facultatif)]] */
@@ -138,7 +150,11 @@ const ORTHO=[
 ["millionnaire",["millionaire","milionnaire"],"Deux l et deux n."],
 ["personnalité",["personalité","personnallité"],"Deux n, un l."],
 ["accéder",["accèder","acéder"],"Deux c, accents aigus."],
-["pécuniaire",["pécunier","pécunière"],"Toujours -aire, même au masculin : un avantage pécuniaire."]
+["pécuniaire",["pécunier","pécunière"],"Toujours -aire, même au masculin : un avantage pécuniaire."],
+["hypothécaire",["hypotécaire","hypothéquaire"],"Comme hypothèque pour le th, mais l'adjectif finit par -caire."],
+["nécessaire",["nécéssaire","néssessaire"],"Un c puis deux s, et un seul accent aigu : né-ces-saire."],
+["échelonner",["échellonner","échéloner"],"Comme échelon : un l, puis deux n."],
+["acquitter",["aquitter","acquiter"],"cq comme dans acquérir, puis deux t."]
 ];
 
 /* Paronymes : [phrase avec …, [choix], bonne, explication] */
@@ -156,5 +172,9 @@ const PARO=[
 ["Une … de 20 % a été appliquée au prix.",["réduction","déduction"],0,"Réduction = baisse de prix ; déduction = soustraction (ou raisonnement)."],
 ["Le client est … : il paie toujours à l'heure.",["solvable","soluble"],0,"Solvable = capable de payer ; soluble = qui se dissout."],
 ["Merci de nous faire parvenir un … de votre bilan.",["extrait","exploit"],0,"Extrait = partie d'un document ; exploit = acte d'huissier ou prouesse."],
-["Ce rapport est très … : il couvre tous les points.",["exhaustif","excessif"],0,"Exhaustif = complet ; excessif = exagéré."]
+["Ce rapport est très … : il couvre tous les points.",["exhaustif","excessif"],0,"Exhaustif = complet ; excessif = exagéré."],
+["Le directeur a prononcé une courte … devant le personnel.",["allocution","allocation"],0,"Allocution = bref discours ; allocation = somme versée."],
+["Le médecin lui a … trois jours de repos.",["prescrit","proscrit"],0,"Prescrire = ordonner, recommander ; proscrire = interdire."],
+["Les contrôleurs ont fait … dans l'agence sans prévenir.",["irruption","éruption"],0,"Irruption = entrée brusque ; éruption = jaillissement (volcan, boutons)."],
+["Quelle sera l'… de ces fonds dans le budget ?",["affectation","affection"],0,"Affectation = destination donnée à une chose ; affection = attachement ou maladie."]
 ];

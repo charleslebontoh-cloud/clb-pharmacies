@@ -40,7 +40,7 @@ const DEST=[
 {n:"Victoria Falls",p:"Zimbabwe / Zambie",f:"🇿🇼",w:"Chutes Victoria",c:"Afrique",a:"La « fumée qui gronde » : une des plus grandes chutes du monde.",act:["Vue sur les chutes","Devil's Pool (saison sèche)","Croisière sur le Zambèze","Safari à Chobe"],s:"Février–mai (débit), août–décembre (Devil's Pool)",b:[40,120,300],g:"Sadza, bream, braai"},
 {n:"Masai Mara",p:"Kenya",f:"🇰🇪",w:"Réserve nationale du Masai Mara",c:"Afrique",a:"Le safari ultime et la grande migration.",act:["Safari en 4x4","Grande migration (juillet–octobre)","Montgolfière au lever du soleil","Village masaï"],s:"Juillet–octobre",b:[60,180,500],g:"Nyama choma, ugali, chapati"},
 {n:"Montréal",p:"Canada",f:"🇨🇦",w:"Montréal",c:"Amériques",a:"Ambiance européenne, en français, au cœur de l'Amérique.",act:["Vieux-Montréal","Mont Royal","Marché Jean-Talon","Festival de jazz (été)"],s:"Juin–septembre",b:[70,140,280],g:"Poutine, bagels, sirop d'érable"},
-{n:"Seoul",p:"Corée du Sud",f:"🇰🇷",w:"Séoul",c:"Asie",a:"K-pop, palais royaux et street food.",act:["Palais Gyeongbokgung en hanbok","Myeongdong la nuit","Village Bukchon","Tour N Seoul"],s:"Avril–mai, septembre–novembre",b:[45,100,250],g:"Barbecue coréen, kimchi, tteokbokki"}
+{n:"Séoul",p:"Corée du Sud",f:"🇰🇷",w:"Séoul",c:"Asie",a:"K-pop, palais royaux et street food.",act:["Palais Gyeongbokgung en hanbok","Myeongdong la nuit","Village Bukchon","Tour N Seoul"],s:"Avril–mai, septembre–novembre",b:[45,100,250],g:"Barbecue coréen, kimchi, tteokbokki"}
 ];
 
 /* Culture générale : [domaine, question, [choix], index bonne réponse, explication] */
