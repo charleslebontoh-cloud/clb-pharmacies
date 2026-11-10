@@ -1,0 +1,22 @@
+name: probe
+on: workflow_dispatch
+jobs:
+  p:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126 Safari/537.36"
+          for u in "https://www.emploi.ci/recherche-jobs-cote-ivoire/conformite" "https://www.emploi.ci/recherche-jobs-cote-ivoire?k=compliance" "https://www.educarriere.ci/offres-d-emploi-en-cote-d-ivoire?recherche=conformite" "https://www.novojob.com/cote-d-ivoire/offres-d-emploi?q=conformit%C3%A9" "https://ci.indeed.com/jobs?q=conformit%C3%A9&l=Abidjan" "https://www.rmo-jobcenter.com/fr/offres-emploi.html?keywords=conformite" "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=compliance&location=C%C3%B4te%20d%27Ivoire&start=0"; do
+            echo "=== $u"; curl -sL -A "$UA" -m 40 "$u" -o x.html -w "%{http_code} %{size_download}\n"
+            python3 - <<'P'
+          import re,html
+          s=open('x.html',encoding='utf-8',errors='ignore').read()
+          A=re.findall(r'<a[^>]+href="([^"]+)"[^>]*>(.*?)</a>',s,re.S)
+          n=0
+          for h,t in A:
+            t=re.sub(r'<[^>]+>',' ',t);t=html.unescape(re.sub(r'\s+',' ',t)).strip()
+            if re.search(r'conformit|compliance|LBC|AML|KYC|risque',t,re.I) and len(t)<160:
+              print(' ',t[:110],'|',h[:110]);n+=1
+            if n>=8:break
+          P
+          done
