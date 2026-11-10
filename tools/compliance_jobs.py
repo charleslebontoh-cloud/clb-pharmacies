@@ -145,6 +145,12 @@ def detail(j):
         return
     body = re.sub(r"<(script|style|header|footer|nav)[^>]*>.*?</\1>", " ", s, flags=re.S | re.I)
     t = txt(body)
+    # ne garder que l'annonce elle-même (pas les offres voisines de la page)
+    k = t.lower().find(j["t"].lower()[:40])
+    t = t[k if k >= 0 else 0:]
+    e = re.search(r"Autres offres|Offres? (?:d.emploi )?similaires|Vous aimerez aussi|Offres? r[ée]centes|Derni[èe]res offres|Offres? qui pourraient", t, re.I)
+    if e and e.start() > 200:
+        t = t[:e.start()]
     t2 = re.sub(r"\s*[\[\(]\s*(?:at|arobase)\s*[\]\)]\s*", "@", t, flags=re.I)
     mails = []
     for e in re.findall(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}", t2 + " " + " ".join(re.findall(r'mailto:([^"?]+)', body))):
