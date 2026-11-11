@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>ARCHÉA — Architecte</title>
+<meta name="theme-color" content="#22303C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ARCHÉA">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<script type="importmap">{"imports":{"three":"./vendor/three.module.js","three/addons/":"./vendor/jsm/"}}</script>
+<style>
+:root{--iv:#F7F4EE;--card:#fff;--sl:#22303C;--sl2:#4A5966;--cu:#B8743D;--cu2:#E9D3BF;--ln:#E4DED3;--ok:#3E7C5A;--wa:#B4552D;--sa:env(safe-area-inset-bottom);--st:env(safe-area-inset-top)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--iv);color:var(--sl);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+header{position:sticky;top:0;z-index:5;background:rgba(247,244,238,.92);backdrop-filter:blur(12px);padding:calc(var(--st) + 10px) 18px 10px;border-bottom:1px solid var(--ln);display:flex;align-items:center;gap:10px}
+header h1{font:600 19px/1 Georgia,"Times New Roman",serif;letter-spacing:.18em;margin:0}
+header .sub{font-size:12px;color:var(--sl2);margin-left:auto;text-align:right}
+main{padding:14px 14px calc(90px + var(--sa))}
+section.scr{display:none}section.scr.on{display:block}
+.card{background:var(--card);border:1px solid var(--ln);border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 1px 2px rgba(34,48,60,.04)}
+h2{font:600 17px Georgia,serif;margin:4px 2px 10px}h3{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--sl2);margin:0 0 8px}
+label{display:block;font-size:13px;color:var(--sl2);margin:8px 0 4px}
+input,select,textarea{width:100%;font:inherit;color:var(--sl);background:#FBFAF7;border:1px solid var(--ln);border-radius:10px;padding:10px 11px}
+textarea{min-height:84px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.tg{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.chip{border:1px solid var(--ln);background:#FBFAF7;border-radius:99px;padding:8px 13px;font-size:14px;color:var(--sl);cursor:pointer;user-select:none}
+.chip.on{background:var(--sl);color:#fff;border-color:var(--sl)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:12px;padding:12px 16px;font:600 15px inherit;font-family:inherit;background:var(--sl);color:#fff;cursor:pointer}
+.btn.cu{background:var(--cu)}.btn.gh{background:transparent;color:var(--sl);border:1px solid var(--ln)}.btn.w{width:100%}
+.btn:active{transform:scale(.98)}
+.muted{color:var(--sl2);font-size:13px}
+.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.kpi div{background:#FBFAF7;border:1px solid var(--ln);border-radius:12px;padding:8px;text-align:center}.kpi b{display:block;font:600 17px Georgia,serif}.kpi span{font-size:11px;color:var(--sl2)}
+.warn{background:#FBF0E9;border:1px solid #EFD2BF;color:var(--wa);border-radius:12px;padding:10px 12px;font-size:13px;margin-top:10px}
+.planbox{background:#fff;border:1px solid var(--ln);border-radius:14px;overflow:hidden;touch-action:none;position:relative}
+.planbox svg{width:100%;height:auto;display:block;transform-origin:0 0}
+table{width:100%;border-collapse:collapse;font-size:13.5px}td{padding:6px 4px;border-bottom:1px solid var(--ln)}td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+#c3{width:100%;height:56vh;display:block;border-radius:14px;background:#cfd9e0;touch-action:none}
+.bar{display:flex;gap:8px;overflow-x:auto;padding:8px 0 2px;scrollbar-width:none}.bar::-webkit-scrollbar{display:none}.bar .chip{white-space:nowrap}
+.styles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sty{border:2px solid var(--ln);border-radius:14px;padding:10px;background:#fff;cursor:pointer}.sty.on{border-color:var(--cu)}
+.sty .sw{display:flex;height:34px;border-radius:8px;overflow:hidden;margin-bottom:8px}.sty .sw i{flex:1}
+.sty b{font-size:14px;display:block}.sty small{font-size:11.5px;color:var(--sl2);display:block;line-height:1.3}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:9;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border-top:1px solid var(--ln);display:grid;grid-template-columns:repeat(5,1fr);padding:6px 4px calc(6px + var(--sa))}
+nav button{background:none;border:0;font:500 11px inherit;font-family:inherit;color:var(--sl2);display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0;cursor:pointer}
+nav button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.6}
+nav button.on{color:var(--cu)}
+#splash{position:fixed;inset:0;z-index:50;background:radial-gradient(120% 80% at 50% 0%,#33465A 0%,#1A242E 70%);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;cursor:pointer;transition:opacity .5s}
+#splash h1{font:500 40px Georgia,serif;letter-spacing:.3em;margin:18px 0 6px;padding-left:.3em}
+#splash p{max-width:330px;opacity:.85;margin:6px 0}#splash .v{font-size:12px;opacity:.6;margin-top:26px;letter-spacing:.08em}
+#splash .tap{margin-top:30px;font-size:13px;border:1px solid rgba(255,255,255,.35);border-radius:99px;padding:8px 18px}
+.toast{position:fixed;left:50%;bottom:calc(84px + var(--sa));transform:translateX(-50%);background:var(--sl);color:#fff;border-radius:12px;padding:10px 16px;font-size:14px;z-index:60;opacity:0;transition:opacity .3s;pointer-events:none;max-width:90vw;text-align:center}.toast.on{opacity:1}
+.ov{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(247,244,238,.8);font-weight:600;border-radius:14px}
+.list .it{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--ln)}.list .it:last-child{border:0}.list .it div{flex:1}
+pre.pr{white-space:pre-wrap;font:12.5px/1.45 ui-monospace,Menlo,monospace;background:#FBFAF7;border:1px solid var(--ln);border-radius:10px;padding:10px;margin:8px 0}
+.leg{font-size:12px;color:var(--sl2);margin-top:6px}
+</style>
+</head>
+<body>
+<div id="splash">
+  <svg width="86" height="86" viewBox="0 0 100 100"><path d="M14 84V44L50 16l36 28v40" fill="none" stroke="#E9D3BF" stroke-width="4"/><path d="M30 84V56h22v28M58 60h14v12H58z" fill="none" stroke="#B8743D" stroke-width="4"/><path d="M8 84h84" stroke="#E9D3BF" stroke-width="4"/></svg>
+  <h1>ARCHÉA</h1>
+  <p id="hello">Bonjour Charles.</p>
+  <p>Votre architecte de poche : esquisses de plans cotés, maquette 3D réaliste, décor au choix et rendus 4K.</p>
+  <div class="tap">Touchez pour entrer</div>
+  <div class="v" id="sv"></div>
+</div>
+
+<header><svg width="26" height="26" viewBox="0 0 100 100"><path d="M14 84V44L50 16l36 28v40" fill="none" stroke="#22303C" stroke-width="7"/><path d="M34 84V58h20v26" fill="none" stroke="#B8743D" stroke-width="7"/></svg><h1>ARCHÉA</h1><div class="sub" id="hsub">Nouveau projet</div></header>
+
+<main>
+<!-- PROJET -->
+<section class="scr on" id="s-proj">
+  <div class="card">
+    <h3>✦ Assistant</h3>
+    <textarea id="ask" placeholder="Décrivez votre maison… ex : villa duplex de 220 m² avec 4 chambres dont 3 salles de bain, cuisine ouverte, bureau, garage et piscine sur un terrain de 20 x 30"></textarea>
+    <button class="btn cu w" id="bAsk" style="margin-top:10px">Comprendre ma demande</button>
+    <div class="muted" id="askR" style="margin-top:8px"></div>
+  </div>
+  <div class="card">
+    <h3>Programme</h3>
+    <label>Nom du projet</label><input id="f-name" value="Villa Cocody">
+    <div class="row"><div><label>Terrain : largeur (m)</label><input id="f-L" type="number" inputmode="decimal" value="20"></div><div><label>Profondeur (m)</label><input id="f-P" type="number" inputmode="decimal" value="25"></div></div>
+    <div class="row"><div><label>Surface habitable (m²)</label><input id="f-S" type="number" inputmode="numeric" value="140"></div><div><label>Niveaux</label><select id="f-lv"><option value="1">Plain-pied</option><option value="2">Duplex (R+1)</option></select></div></div>
+    <div class="row"><div><label>Chambres</label><select id="f-ch"></select></div><div><label>Salles de bain</label><select id="f-sdb"></select></div></div>
+    <label>Options</label>
+    <div class="tg" id="opts"></div>
+    <button class="btn w" id="bGen" style="margin-top:14px">Dessiner les plans</button>
+  </div>
+  <div class="card"><h3>Mes projets</h3><div class="list" id="saved"></div></div>
+</section>
+
+<!-- PLANS -->
+<section class="scr" id="s-plan">
+  <div class="card">
+    <h3>Variantes</h3><div class="tg" id="vars"></div>
+    <div class="tg" id="lvls" style="margin-top:8px"></div>
+  </div>
+  <div class="planbox" id="pbox"></div>
+  <div class="leg">Pincez pour zoomer, glissez pour déplacer. Double-tap : recadrer.</div>
+  <div class="card" style="margin-top:12px">
+    <div class="kpi" id="kpi"></div>
+    <div id="warns"></div>
+  </div>
+  <div class="card"><h3>Tableau des surfaces</h3><table id="tab"></table></div>
+  <div class="row"><button class="btn gh" id="bSvg">Exporter SVG</button><button class="btn" id="bPng">Image HD</button></div>
+  <button class="btn cu w" id="bSave" style="margin-top:10px">Enregistrer le projet</button>
+</section>
+
+<!-- 3D -->
+<section class="scr" id="s-3d">
+  <div style="position:relative"><canvas id="c3"></canvas><div class="ov" id="ov3">Rendu en cours…</div></div>
+  <div class="bar" id="views"></div>
+  <div class="bar" id="roomsBar"></div>
+  <div class="card" style="margin-top:8px">
+    <div class="tg"><span class="chip on" id="tRoof">Toiture</span><span class="chip on" id="tUp">Étage</span></div>
+    <label>Heure d'ensoleillement (Abidjan) : <b id="hv">15 h</b></label><input type="range" id="hour" min="6.5" max="18.3" step=".1" value="15" style="padding:0">
+  </div>
+  <button class="btn cu w" id="b4k">📸 Vision 4K (3840 × 2160)</button>
+  <div class="muted" style="margin:8px 2px">Le rendu 4K est calculé sur l'appareil puis partagé ou téléchargé.</div>
+</section>
+
+<!-- DÉCOR -->
+<section class="scr" id="s-deco">
+  <div class="card">
+    <h3>✦ Décor IA</h3>
+    <textarea id="dIA" placeholder="Décrivez l'ambiance… ex : chic africain, bois sombre, touches d'or, toit en tuiles"></textarea>
+    <button class="btn cu w" id="bDIA" style="margin-top:10px">Composer le décor</button>
+    <div class="muted" id="dIAr" style="margin-top:8px"></div>
+  </div>
+  <h2>Styles</h2>
+  <div class="styles" id="sty"></div>
+  <div class="card" style="margin-top:12px">
+    <h3>Prompt de rendu photoréaliste</h3>
+    <div class="muted">À coller dans un générateur d'images (avec une capture 4K en image de référence) pour un rendu « magazine ».</div>
+    <pre class="pr" id="prm"></pre>
+    <button class="btn gh w" id="bPrm">Copier le prompt</button>
+  </div>
+</section>
+
+<!-- RÉGLAGES -->
+<section class="scr" id="s-set">
+  <div class="card"><h3>Application</h3><div id="ver"></div><div class="muted">by CLB</div>
+    <div class="row" style="margin-top:12px"><button class="btn gh" id="bShare">Partager l'appli</button><button class="btn gh" id="bUpd">Mettre à jour</button></div></div>
+  <div class="card"><h3>Hypothèses de calcul</h3><div class="muted">Hauteur sous plafond 2,80 m · niveau 3,00 m · murs extérieurs 20 cm, cloisons 10 cm · couloir 1,20 m · reculs 5 m en façade et 3 m sur les côtés · orientation : façade principale au sud. Ensoleillement calculé pour Abidjan (5,35° N).</div></div>
+  <div class="card"><h3>Avertissement</h3><div class="muted">ARCHÉA produit des esquisses indicatives (avant-projet sommaire). Pour un permis de construire en Côte d'Ivoire, les plans doivent être établis et signés par un architecte inscrit à l'Ordre des Architectes de Côte d'Ivoire (OACI), avec l'étude de structure d'un bureau d'études. Vérifiez les règles d'urbanisme de votre lotissement (CES, reculs, hauteur).</div></div>
+  <button class="btn gh w" id="bReset" style="color:var(--wa)">Effacer les projets enregistrés</button>
+</section>
+</main>
+
+<nav id="nav">
+  <button data-s="proj" class="on"><svg viewBox="0 0 24 24"><path d="M4 20h16M6 20V9l6-5 6 5v11"/><path d="M10 20v-6h4v6"/></svg>Projet</button>
+  <button data-s="plan"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 12h9V3M12 12v9M16 12h5"/></svg>Plans</button>
+  <button data-s="3d"><svg viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg>3D</button>
+  <button data-s="deco"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18c1.5 0 2-1 2-2s-1-1.5-1-2.5S14 15 15.5 15H18a3 3 0 003-3c0-5-4-9-9-9z"/><circle cx="7.5" cy="11" r="1.2"/><circle cx="10" cy="7" r="1.2"/><circle cx="15" cy="7.5" r="1.2"/></svg>Décor</button>
+  <button data-s="set"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>Réglages</button>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { generate, svgPlan } from './plan.js';
+const VER = "1.0.0", K = "archea_";
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const LS = { get(k, d) { try { const v = localStorage.getItem(K + k); return v ? JSON.parse(v) : d; } catch { return d; } }, set(k, v) { try { localStorage.setItem(K + k, JSON.stringify(v)); } catch { } } };
+const toast = (t, ms = 2400) => { const e = $("#toast"); e.textContent = t; e.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => e.classList.remove("on"), ms); };
+const fr = (n, d = 0) => Number(n).toLocaleString("fr-FR", { maximumFractionDigits: d, minimumFractionDigits: d });
+
+// ---------- splash ----------
+const h = new Date().getHours(); $("#hello").textContent = (h < 18 ? "Bonjour" : "Bonsoir") + " Charles.";
+$("#sv").textContent = "Version " + VER + " · by CLB"; $("#ver").innerHTML = "<b>ARCHÉA</b> · version " + VER;
+$("#splash").onclick = () => { const s = $("#splash"); s.style.opacity = 0; setTimeout(() => s.remove(), 500); };
+
+// ---------- état ----------
+const OPTS = [["open", "Cuisine ouverte"], ["bureau", "Bureau"], ["buanderie", "Buanderie + magasin"], ["domestique", "Ch. domestique"], ["garage", "Garage"], ["piscine", "Piscine"]];
+let st = LS.get("cur", { name: "Villa Cocody", L: 20, P: 25, S: 140, levels: 1, ch: 3, sdb: 2, open: 1, bureau: 0, buanderie: 1, domestique: 0, garage: 1, piscine: 0, variant: 0, style: "tropical" });
+let plan = null, lvl = 0;
+for (let i = 1; i <= 7; i++) $("#f-ch").insertAdjacentHTML("beforeend", `<option>${i}</option>`);
+for (let i = 1; i <= 6; i++) $("#f-sdb").insertAdjacentHTML("beforeend", `<option>${i}</option>`);
+$("#opts").innerHTML = OPTS.map(([k, n]) => `<span class="chip" data-k="${k}">${n}</span>`).join("");
+$$("#opts .chip").forEach(c => c.onclick = () => { st[c.dataset.k] = st[c.dataset.k] ? 0 : 1; c.classList.toggle("on", !!st[c.dataset.k]); });
+function toForm() { $("#f-name").value = st.name; $("#f-L").value = st.L; $("#f-P").value = st.P; $("#f-S").value = st.S; $("#f-lv").value = st.levels; $("#f-ch").value = st.ch; $("#f-sdb").value = st.sdb; $$("#opts .chip").forEach(c => c.classList.toggle("on", !!st[c.dataset.k])); }
+function fromForm() { st.name = $("#f-name").value.trim() || "Projet"; st.L = +$("#f-L").value || 20; st.P = +$("#f-P").value || 25; st.S = +$("#f-S").value || 120; st.levels = +$("#f-lv").value; st.ch = +$("#f-ch").value; st.sdb = +$("#f-sdb").value; }
+toForm();
+
+// ---------- assistant (compréhension de la demande) ----------
+function parse(t) {
+  const s = t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, ""), got = [], num = w => ({ un: 1, une: 1, deux: 2, trois: 3, quatre: 4, cinq: 5, six: 6, sept: 7 })[w] ?? +w;
+  const N = "(\\d+|une?|deux|trois|quatre|cinq|six|sept)";
+  let m;
+  if (m = s.match(/(\d{2,3})\s*(?:x|×|\*|sur|par)\s*(\d{2,3})/)) { st.L = +m[1]; st.P = +m[2]; got.push(`terrain ${m[1]} × ${m[2]} m`); }
+  else if (m = s.match(/terrain\s*(?:de\s*)?(\d{3,4})\s*m/)) { const a = +m[1]; st.L = Math.round(Math.sqrt(a / 1.4)); st.P = Math.round(a / st.L); got.push(`terrain ≈ ${st.L} × ${st.P} m`); }
+  const sm = [...s.matchAll(/(\d{2,4})\s*(?:m2|m²|m\s?carres?|metres? carres?)/g)].map(x => +x[1]).filter(v => v >= 40 && v <= 900);
+  if (sm.length) { const terr = /terrain\s*(?:de\s*)?\d{3,4}/.test(s) ? sm.slice(1) : sm; if (terr.length) { st.S = terr[0]; got.push(`${st.S} m² habitables`); } }
+  if (/duplex|r\s*\+\s*1|etage|a etages/.test(s)) { st.levels = 2; got.push("duplex"); } else if (/plain[\s-]?pied|basse|rez de chaussee seul/.test(s)) { st.levels = 1; got.push("plain-pied"); }
+  if (m = s.match(new RegExp(N + "\\s*(?:chambres?|ch\\b|pieces? a coucher)"))) { st.ch = Math.min(7, Math.max(1, num(m[1]))); got.push(st.ch + " chambres"); }
+  else if (m = s.match(/\b(\d)\s*pieces?\b/)) { st.ch = Math.max(1, Math.min(7, +m[1] - 1)); got.push(`${m[1]} pièces → ${st.ch} chambres`); }
+  else if (/villa basse|f4/.test(s)) { st.ch = 3; }
+  if (m = s.match(new RegExp(N + "\\s*(?:salles? de bains?|sdb|salles? d'?eau|douches?)"))) { st.sdb = Math.min(6, Math.max(1, num(m[1]))); got.push(st.sdb + " salles de bain"); }
+  else if (/toutes? (?:les )?chambres? (?:sont )?autonomes?|chambres? autonomes?/.test(s)) { st.sdb = st.ch; got.push("chambres autonomes"); }
+  const flag = (k, re, n, neg) => { if (re.test(s)) { const no = neg && neg.test(s); st[k] = no ? 0 : 1; got.push((no ? "sans " : "") + n); } };
+  flag("open", /cuisine (?:ouverte|americaine)|open/, "cuisine ouverte"); if (/cuisine fermee/.test(s)) { st.open = 0; got.push("cuisine fermée"); }
+  flag("bureau", /bureau/, "bureau", /sans bureau/); flag("buanderie", /buanderie|magasin|cellier/, "buanderie", /sans buanderie/);
+  flag("domestique", /domestique|boy|gardien|personnel|nounou/, "ch. domestique", /sans (?:ch\w* )?domestique/);
+  flag("garage", /garage|parking couvert/, "garage", /sans garage/); flag("piscine", /piscine/, "piscine", /sans piscine/);
+  const nm = t.match(/(?:[Vv]illa|[Mm]aison|[Rr][ée]sidence)\s+([A-ZÉÈ][\wéèêàç'-]+(?:\s+[A-ZÉÈ][\wéèêàç'-]+)?)/); if (nm) st.name = nm[0];
+  return got;
+}
+$("#bAsk").onclick = () => { const t = $("#ask").value.trim(); if (!t) return toast("Décrivez d'abord votre projet"); const g = parse(t); toForm();
+  $("#askR").innerHTML = g.length ? "Compris : <b>" + g.join(" · ") + "</b>. Vérifiez puis dessinez." : "Je n'ai pas repéré de critère chiffré. Précisez surface, chambres ou terrain."; };
+
+// ---------- plans ----------
+$("#bGen").onclick = () => { fromForm(); st.variant = 0; LS.set("cur", st); draw(true); go("plan"); };
+function draw(rebuild3d) {
+  plan = generate({ S: st.S, levels: st.levels, ch: st.ch, sdb: st.sdb, open: st.open, bureau: st.bureau, buanderie: st.buanderie, domestique: st.domestique, garage: st.garage, piscine: st.piscine, L: st.L, P: st.P }, st.variant);
+  if (lvl >= plan.levels.length) lvl = 0;
+  $("#hsub").textContent = st.name;
+  $("#vars").innerHTML = ["A · Standard", "B · Inversée", "C · Compacte", "D · Allongée"].map((n, i) => `<span class="chip ${i === st.variant ? "on" : ""}" data-v="${i}">${n}</span>`).join("");
+  $$("#vars .chip").forEach(c => c.onclick = () => { st.variant = +c.dataset.v; LS.set("cur", st); draw(true); });
+  $("#lvls").innerHTML = plan.levels.map((L, i) => `<span class="chip ${i === lvl ? "on" : ""}" data-l="${i}">${L.name}</span>`).join("");
+  $$("#lvls .chip").forEach(c => c.onclick = () => { lvl = +c.dataset.l; draw(false); });
+  $("#pbox").innerHTML = svgPlan(plan, lvl, { title: st.name }); resetZoom();
+  $("#kpi").innerHTML = [[fr(plan.hab), "m² habitables"], [fr(plan.emprise), "m² d'emprise"], [fr(plan.ces * 100) + " %", "CES"], [fr(plan.W, 1) + "×" + fr(plan.D, 1), "gabarit (m)"]].map(([b, s]) => `<div><b>${b}</b><span>${s}</span></div>`).join("");
+  $("#warns").innerHTML = plan.warn.map(w => `<div class="warn">⚠︎ ${w}</div>`).join("");
+  let rows = "", tot = 0; plan.levels.forEach(L => { rows += `<tr><td colspan="2" style="font-weight:600;padding-top:10px">${L.name}</td></tr>`; L.rooms.forEach(r => { const a = r.w * r.h; tot += a; rows += `<tr><td>${r.n}</td><td>${fr(a, 2)} m²</td></tr>`; }); });
+  rows += `<tr><td><b>Total surfaces utiles</b></td><td><b>${fr(tot, 2)} m²</b></td></tr><tr><td>Surface hors œuvre (SHON)</td><td>${fr(plan.shon)} m²</td></tr>`; $("#tab").innerHTML = rows;
+  if (rebuild3d) need3d = true; if (cur === "3d") show3d();
+}
+// zoom / pan du plan
+let Z = { s: 1, x: 0, y: 0 };
+function resetZoom() { Z = { s: 1, x: 0, y: 0 }; applyZ(); }
+function applyZ() { const sv = $("#pbox svg"); if (sv) sv.style.transform = `translate(${Z.x}px,${Z.y}px) scale(${Z.s})`; }
+(() => { const b = $("#pbox"), pts = new Map(); let st0 = null, lastTap = 0;
+  b.addEventListener("pointerdown", e => { b.setPointerCapture(e.pointerId); pts.set(e.pointerId, { x: e.clientX, y: e.clientY }); st0 = null; const n = Date.now(); if (pts.size === 1 && n - lastTap < 300) resetZoom(); lastTap = n; });
+  b.addEventListener("pointermove", e => { if (!pts.has(e.pointerId)) return; const p0 = pts.get(e.pointerId), p = { x: e.clientX, y: e.clientY };
+    if (pts.size === 1) { Z.x += p.x - p0.x; Z.y += p.y - p0.y; }
+    else if (pts.size === 2) { const [a, c] = [...pts.values()], d0 = Math.hypot(a.x - c.x, a.y - c.y); pts.set(e.pointerId, p); const [a2, c2] = [...pts.values()], d1 = Math.hypot(a2.x - c2.x, a2.y - c2.y);
+      const r = b.getBoundingClientRect(), mx = (a2.x + c2.x) / 2 - r.left, my = (a2.y + c2.y) / 2 - r.top, k = Math.max(.6, Math.min(8, Z.s * d1 / d0)) / Z.s; Z.x = mx - (mx - Z.x) * k; Z.y = my - (my - Z.y) * k; Z.s *= k; }
+    pts.set(e.pointerId, p); applyZ(); });
+  const up = e => pts.delete(e.pointerId); b.addEventListener("pointerup", up); b.addEventListener("pointercancel", up);
+  b.addEventListener("wheel", e => { e.preventDefault(); const r = b.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top, k = Math.max(.6, Math.min(8, Z.s * (e.deltaY < 0 ? 1.15 : .87))) / Z.s; Z.x = mx - (mx - Z.x) * k; Z.y = my - (my - Z.y) * k; Z.s *= k; applyZ(); }, { passive: false });
+})();
+async function shareOrDownload(blob, name) {
+  const f = new File([blob], name, { type: blob.type });
+  if (navigator.canShare && navigator.canShare({ files: [f] })) { try { await navigator.share({ files: [f], title: name }); return; } catch (e) { if (e.name === "AbortError") return; } }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+}
+const slug = () => st.name.toLowerCase().normalize("NFD").replace(/[^\w]+/g, "-").replace(/^-|-$/g, "") || "projet";
+$("#bSvg").onclick = () => { if (!plan) return; shareOrDownload(new Blob([svgPlan(plan, lvl, { title: st.name })], { type: "image/svg+xml" }), `${slug()}-${plan.levels[lvl].name}.svg`); };
+$("#bPng").onclick = () => { if (!plan) return; const s = svgPlan(plan, lvl, { title: st.name }), vb = s.match(/viewBox="0 0 ([\d.]+) ([\d.]+)"/), w = +vb[1], hh = +vb[2], k = 3000 / Math.max(w, hh);
+  const img = new Image(); img.onload = () => { const c = document.createElement("canvas"); c.width = Math.round(w * k); c.height = Math.round(hh * k); const g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height); g.drawImage(img, 0, 0, c.width, c.height); c.toBlob(b => shareOrDownload(b, `${slug()}-${plan.levels[lvl].name}.png`), "image/png"); };
+  img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(s); };
+
+// ---------- projets ----------
+function renderSaved() { const L = LS.get("saved", []); $("#saved").innerHTML = L.length ? L.map((p, i) => `<div class="it"><div><b>${p.name}</b><div class="muted">${p.S} m² · ${p.ch} ch · ${p.levels === 2 ? "duplex" : "plain-pied"} · ${p.L}×${p.P} m · variante ${"ABCD"[p.variant || 0]}</div></div><button class="btn gh" data-o="${i}">Ouvrir</button><button class="btn gh" data-d="${i}" aria-label="Supprimer">✕</button></div>`).join("") : `<div class="muted">Aucun projet enregistré.</div>`;
+  $$("#saved [data-o]").forEach(b => b.onclick = () => { st = { ...LS.get("saved", [])[+b.dataset.o] }; LS.set("cur", st); toForm(); draw(true); go("plan"); });
+  $$("#saved [data-d]").forEach(b => b.onclick = () => { const L = LS.get("saved", []); L.splice(+b.dataset.d, 1); LS.set("saved", L); renderSaved(); }); }
+$("#bSave").onclick = () => { const L = LS.get("saved", []).filter(p => p.name !== st.name); L.unshift({ ...st, t: Date.now() }); LS.set("saved", L.slice(0, 30)); renderSaved(); toast("Projet enregistré sur l'appareil"); };
+renderSaved();
+
+// ---------- 3D ----------
+let viewer = null, need3d = true, V3 = null, STY = null;
+async function load3d() { if (!V3) { V3 = await import('./view3d.js'); STY = V3.STYLES; } return V3; }
+async function show3d() {
+  await load3d(); if (!plan) draw(false);
+  if (!viewer) { try { viewer = V3.createViewer($("#c3")); } catch (e) { $("#ov3").style.display = "flex"; $("#ov3").textContent = "La 3D n'est pas disponible sur cet appareil."; return; } }
+  viewer.resize(); viewer.pause(false);
+  if (need3d) { $("#ov3").style.display = "flex"; await new Promise(r => setTimeout(r, 30)); viewer.build(plan, styleObj()); need3d = false; $("#ov3").style.display = "none"; roomsBar(); }
+}
+function styleObj() { const b = STY[st.style] || STY.tropical; return st.custom ? { ...b, ...st.custom } : b; }
+function roomsBar() { $("#roomsBar").innerHTML = viewer.rooms.map((it, i) => it.r.k === "couloir" || it.r.k === "wc" ? "" : `<span class="chip" data-r="${i}">${it.r.n}${plan.levels.length > 1 ? (it.l ? " · ét." : " · rdc") : ""}</span>`).join("");
+  $$("#roomsBar .chip").forEach(c => c.onclick = () => { $$("#views .chip,#roomsBar .chip").forEach(x => x.classList.remove("on")); c.classList.add("on"); const it = viewer.rooms[+c.dataset.r]; viewer.roof = false; $("#tRoof").classList.remove("on"); if (it.l === 0 && plan.levels.length > 1) { viewer.upper = false; $("#tUp").classList.remove("on"); } viewer.view("room", +c.dataset.r); }); }
+$("#views").innerHTML = [["34", "Vue 3/4"], ["front", "Façade"], ["top", "Dessus"]].map(([k, n], i) => `<span class="chip ${i ? "" : "on"}" data-v="${k}">${n}</span>`).join("");
+$$("#views .chip").forEach(c => c.onclick = () => { $$("#views .chip,#roomsBar .chip").forEach(x => x.classList.remove("on")); c.classList.add("on"); if (c.dataset.v === "top") { viewer.roof = false; $("#tRoof").classList.remove("on"); } viewer?.view(c.dataset.v); });
+$("#tRoof").onclick = e => { const on = e.target.classList.toggle("on"); if (viewer) viewer.roof = on; };
+$("#tUp").onclick = e => { const on = e.target.classList.toggle("on"); if (viewer) viewer.upper = on; };
+$("#hour").oninput = e => { const v = +e.target.value; $("#hv").textContent = Math.floor(v) + " h " + String(Math.round((v % 1) * 60)).padStart(2, "0"); viewer?.setSun(v); };
+$("#b4k").onclick = async () => { if (!viewer) return; $("#ov3").style.display = "flex"; $("#ov3").textContent = "Calcul du rendu 4K…"; await new Promise(r => setTimeout(r, 50));
+  try { const b = await viewer.capture(3840, 2160); $("#ov3").style.display = "none"; if (!b) throw 0; toast("Rendu 4K prêt (" + fr(b.size / 1048576, 1) + " Mo)"); await shareOrDownload(b, `${slug()}-4K.jpg`); }
+  catch { $("#ov3").style.display = "none"; toast("Mémoire insuffisante pour la 4K sur cet appareil"); } };
+addEventListener("resize", () => viewer?.resize());
+
+// ---------- décor ----------
+async function renderStyles() { await load3d();
+  $("#sty").innerHTML = Object.entries(STY).map(([k, s]) => `<div class="sty ${k === st.style ? "on" : ""}" data-k="${k}"><div class="sw">${s.sw.map(c => `<i style="background:${c}"></i>`).join("")}</div><b>${s.n}</b><small>${s.d}</small></div>`).join("");
+  $$(".sty").forEach(c => c.onclick = () => { st.style = c.dataset.k; delete st.custom; LS.set("cur", st); $$(".sty").forEach(x => x.classList.toggle("on", x === c)); need3d = true; prompt(); toast("Décor « " + STY[st.style].n + " » appliqué à la 3D"); });
+  prompt(); }
+const COL = { vert: "#5f7f4a", "vert sapin": "#2f4a36", bleu: "#2f6fa3", "bleu nuit": "#1f2c44", rouge: "#9b3328", bordeaux: "#6a2232", jaune: "#d8a62e", moutarde: "#c4952b", orange: "#c9682e", noir: "#1b1b1b", gris: "#7d7f80", or: "#b8923a", dore: "#b8923a", cuivre: "#b8743d", rose: "#c98b8b", terracotta: "#b8673e", beige: "#e3d6bf", blanc: "#f6f4ef", creme: "#efe6d6", sable: "#d9c7a6" };
+$("#bDIA").onclick = async () => { await load3d(); const s = $("#dIA").value.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, ""); if (!s.trim()) return toast("Décrivez l'ambiance souhaitée");
+  const score = { tropical: /tropic|nature|vegetal|bambou|rotin|claustra|jardin|zen|bois clair/, contemporain: /contempor|modern|minimal|beton|epure|sobre|scandinave|japandi/, afro: /afri|bogolan|wax|kente|ethni|terre|baoule|kita|sahel|boho/, luxe: /luxe|chic|or\b|dore|marbre|classique|prestige|palace|royal|haussman/, medit: /mediterr|grec|santorin|plage|bord de mer|provenc|tuile|blanc et bleu/, indus: /industri|loft|brique|metal|acier|atelier|new york|cuir/ };
+  const wt = { afro: 2.5, medit: 2, indus: 2, tropical: 1.5, luxe: 1, contemporain: 1 }; let best = st.style, n = 0; for (const [k, re] of Object.entries(score)) { const c = (s.match(new RegExp(re.source, "g")) || []).length * wt[k]; if (c > n) { n = c; best = k; } }
+  st.style = best; const b = STY[best], cu = {}; const found = [];
+  for (const [w, c] of Object.entries(COL).sort((a, b) => b[0].length - a[0].length)) if (new RegExp("\\b" + w + "\\b").test(s) && !found.includes(w)) found.push(w);
+  if (found[0]) cu.accent = COL[found[0]]; if (found[1]) cu.fabric = COL[found[1]];
+  if (/parquet|bois/.test(s) && !/bois sombre/.test(s)) cu.floor = "wood", cu.floorC = "#a07a50"; if (/bois sombre|wenge|ebene/.test(s)) cu.wood = "#3b2a1e";
+  if (/marbre/.test(s)) cu.floor = "marble", cu.floorC = "#f1efea"; if (/beton/.test(s)) cu.floor = "concrete", cu.floorC = "#b9b8b3"; if (/carreau|carrelage/.test(s)) cu.floor = "tile";
+  if (/tuile|toit (?:en )?pente|quatre pans|4 pans/.test(s)) cu.roof = "hip", cu.roofC = cu.roofC || "#a4512c"; if (/toit plat|terrasse|toit-terrasse/.test(s)) cu.roof = "flat";
+  if (/ardoise/.test(s)) cu.roof = "hip", cu.roofC = "#4a4f55"; if (/brique/.test(s)) cu.brick = 1; if (/facade (\w+)/.test(s)) { const fw = s.match(/facade (\w+)/)[1]; if (COL[fw]) cu.facade = COL[fw]; }
+  st.custom = Object.keys(cu).length ? cu : undefined; LS.set("cur", st); need3d = true; renderStyles();
+  $("#dIAr").innerHTML = `Base <b>${b.n}</b>${found.length ? " · couleurs : " + found.join(", ") : ""}${cu.floor && cu.floor !== b.floor ? " · sol " + ({ wood: "parquet", marble: "marbre", concrete: "béton ciré", tile: "carrelage", terracotta: "terre cuite" })[cu.floor] : ""}${cu.roof && cu.roof !== b.roof ? " · toit " + (cu.roof === "hip" ? "à quatre pans" : "plat") : ""}. Ouvrez l'onglet 3D.`; };
+function prompt() { const s = styleObj(), fl = { wood: "oak parquet", marble: "white marble", concrete: "polished concrete", tile: "large light porcelain tiles", terracotta: "terracotta tiles" }[s.floor];
+  const p = `Photorealistic architectural exterior render, ${plan?.levels.length > 1 ? "two-storey" : "single-storey"} ${s.n} villa in Abidjan, Côte d'Ivoire, about ${st.S} m², ${s.roof === "flat" ? "flat roof with parapet" : "hip roof with " + (s.roofC === "#4a4f55" ? "slate" : "clay tiles")}, facade color ${s.facade}, accents ${s.accent}, ${s.brick ? "exposed brick, " : ""}large aluminium windows ${s.frame}, covered terrace, tropical garden with palm and mango trees${st.piscine ? ", swimming pool" : ""}${st.garage ? ", garage" : ""}, interior ${fl}, warm ${$("#hour")?.value > 17 ? "golden hour" : "afternoon"} sunlight, soft shadows, 24 mm lens, eye level, ultra detailed, 8k, V-Ray / Unreal Engine 5 quality, no text, no people.`;
+  $("#prm").textContent = p; }
+$("#bPrm").onclick = async () => { try { await navigator.clipboard.writeText($("#prm").textContent); toast("Prompt copié"); } catch { toast("Sélectionnez le texte pour le copier"); } };
+
+// ---------- navigation ----------
+let cur = "proj";
+function go(s) { cur = s; $$("section.scr").forEach(x => x.classList.toggle("on", x.id === "s-" + s)); $$("nav button").forEach(b => b.classList.toggle("on", b.dataset.s === s)); scrollTo(0, 0);
+  if (s === "plan" && !plan) draw(true); if (s === "3d") show3d(); else viewer?.pause(true); if (s === "deco") renderStyles(); }
+$$("nav button").forEach(b => b.onclick = () => go(b.dataset.s));
+
+// ---------- réglages / PWA ----------
+$("#bShare").onclick = async () => { const d = { title: "ARCHÉA", text: "ARCHÉA — plans de maison, 3D réaliste et rendus 4K, by CLB", url: location.href.split("?")[0] }; try { if (navigator.share) await navigator.share(d); else { await navigator.clipboard.writeText(d.url); toast("Lien copié"); } } catch { } };
+async function forceUpdate() { try { const r = await navigator.serviceWorker?.getRegistrations(); for (const x of r || []) await x.unregister(); const k = await caches.keys(); await Promise.all(k.map(c => caches.delete(c))); } catch { } location.replace(location.pathname + "?v=" + Date.now()); }
+$("#bUpd").onclick = forceUpdate;
+$("#bReset").onclick = () => { if (confirm("Effacer tous les projets enregistrés sur cet appareil ?")) { LS.set("saved", []); renderSaved(); toast("Projets effacés"); } };
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => { });
+fetch("version.json?_cb=" + Date.now(), { cache: "no-store" }).then(r => r.json()).then(j => { if (j.v && j.v !== VER && !sessionStorage.getItem(K + "upd")) { sessionStorage.setItem(K + "upd", 1); forceUpdate(); } }).catch(() => { });
+draw(true);
+</script>
+</body>
+</html>

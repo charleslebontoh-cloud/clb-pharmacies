@@ -27,6 +27,12 @@ Appli de veille boursière BRVM : résumé de séance, cours en direct (différ�
 - Moteur : `tools/bourse.py` (sources : brvm.org, sikafinance.com).
 - Alertes sur iPhone : appli ntfy, canal affiché dans l'onglet Signaux.
 
+## ARCHÉA · Architecte de poche (dossier `archi/`) — version 1.0.0
+
+Esquisses de maisons à partir de la surface, du terrain et des demandes (assistant en langage naturel) : plans cotés au 1/100 (plain-pied ou duplex, 4 variantes, couloir parallèle ou perpendiculaire à la rue selon la largeur du terrain), tableau des surfaces, CES, export SVG/PNG ; maquette 3D réaliste Three.js (ensoleillement d'Abidjan, vues façade, 3/4, dessus et pièces) ; 6 décors + « Décor IA » ; rendu 4K (3840 × 2160). Projets stockés sur le téléphone. Esquisses indicatives : un permis exige des plans signés par un architecte inscrit à l'OACI.
+
+https://charleslebontoh-cloud.github.io/clb-pharmacies/archi/
+
 ## VERITAS · Compliance Academy (dossier `compliance/`) — version 1.3.2
 
 Appli de formation au métier de compliance officer (Côte d'Ivoire, UEMOA, international) : 13 modules avec tests notés sur 20, jeux (quiz éclair, détecteur de soupçons, cartes mémoire, vrai/faux, révision ciblée, examen blanc), entretien d'embauche chronométré (écrit ou voix), veille quotidienne automatique, suivi des notes et badges. Progression stockée uniquement sur le téléphone.
