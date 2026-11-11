@@ -6,6 +6,8 @@ B2 = "https://site.api.espn.com/apis/v2/sports/soccer/"
 LG = ["esp.1", "eng.1", "uefa.champions", "fra.1", "ita.1", "ger.1", "uefa.europa", "esp.copa_del_rey"]
 TB = ["esp.1", "eng.1", "fra.1", "ita.1", "ger.1"]
 TEAMS = {"barca": 83, "real": 86}
+# Championnats secondaires : affichés par CLB World pendant les trêves internationales (scores et coupons)
+SEC = ["fra.2", "esp.2", "eng.2", "eng.3", "ita.2", "ger.2", "ger.3", "ned.1", "por.1", "bel.1", "sco.1", "tur.1", "ksa.1", "bra.1", "arg.1", "usa.1", "mex.1"]
 def get(u):
     for _ in range(3):
         try:
@@ -38,9 +40,18 @@ for code in LG:
         if "_error" in r: out["errors"].append(f"{code} {day}: {r['_error']}"); continue
         for e in r.get("events", []): evs[e.get("id")] = slim_ev(e, code)
     out["events"][code] = list(evs.values())
-for code in TB:
+out["sec_errors"] = []
+for code in SEC:  # fenêtre courte (-2 à +3 jours) pour limiter le nombre d'appels
+    evs = {}
+    for d in range(-2, 4):
+        day = (now + D.timedelta(days=d)).strftime("%Y%m%d")
+        r = get(f"{B}{code}/scoreboard?dates={day}")
+        if "_error" in r: out["sec_errors"].append(f"{code} {day}: {r['_error']}"); continue
+        for e in r.get("events", []): evs[e.get("id")] = slim_ev(e, code)
+    out["events"][code] = list(evs.values())
+for code in TB + SEC:
     r = get(f"{B2}{code}/standings")
-    if "_error" in r: out["errors"].append(f"standings {code}: {r['_error']}"); continue
+    if "_error" in r: (out["errors"] if code in TB else out["sec_errors"]).append(f"standings {code}: {r['_error']}"); continue
     rows = []
     for ch in (r.get("children") or [r]):
         for en in (ch.get("standings") or {}).get("entries", []):
