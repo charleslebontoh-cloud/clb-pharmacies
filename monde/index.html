@@ -231,7 +231,7 @@ nav button.on{color:#fff}nav button.on svg.i{transform:translateY(-1px) scale(1.
 
 <div id="splash" role="button" tabindex="0">
  <img class="bgp" id="spImg" alt=""><div class="shade"></div>
- <div class="c"><img src="icon-512.png" alt=""><div class="t">CLB World</div><div class="q">Culture, voyages, football. Le monde entier, chaque jour.</div><span class="tap">Embarquer <svg class="i"><use href="#i-arrow"/></svg></span><small style="display:block;margin-top:24px;opacity:.85;font-size:11px;font-weight:600">version 7.5.0 · 11 nov. 2026</small></div>
+ <div class="c"><img src="icon-512.png" alt=""><div class="t">CLB World</div><div class="q">Culture, voyages, football. Le monde entier, chaque jour.</div><span class="tap">Embarquer <svg class="i"><use href="#i-arrow"/></svg></span><small style="display:block;margin-top:24px;opacity:.85;font-size:11px;font-weight:600">version 7.6.0 · 11 nov. 2026</small></div>
  <div class="credit" id="spCred"></div>
 <div style="display:none"></div>
 </div>
@@ -520,16 +520,19 @@ async function loadOTD(){try{const f=await featured(),L=(f.onthisday||[]).slice(
 /* Football — données publiques ESPN (secours TheSportsDB) */
 const ESPN="https://site.api.espn.com/apis/site/v2/sports/soccer/",ESPN2="https://site.api.espn.com/apis/v2/sports/soccer/";
 const LIVE_LG=[["esp.1","Liga"],["eng.1","Premier League"],["uefa.champions","Ligue des champions"],["fra.1","Ligue 1"],["ita.1","Serie A"],["ger.1","Bundesliga"],["uefa.europa","Ligue Europa"],["esp.copa_del_rey","Coupe du Roi"]];
+/* championnats secondaires : affichés seulement pendant les trêves internationales */
+const SEC_LG=[["esp.2","🇪🇸 Liga 2"],["fra.2","🇫🇷 Ligue 2"],["eng.2","🏴󠁧󠁢󠁥󠁮󠁧󠁿 Championship"],["eng.3","🏴󠁧󠁢󠁥󠁮󠁧󠁿 League One"],["eng.4","🏴󠁧󠁢󠁥󠁮󠁧󠁿 League Two"],["ita.2","🇮🇹 Serie B"],["ger.2","🇩🇪 2. Bundesliga"],["ned.1","🇳🇱 Eredivisie"],["por.1","🇵🇹 Liga Portugal"],["bel.1","🇧🇪 Pro League"],["sco.1","🏴󠁧󠁢󠁳󠁣󠁴󠁿 Premiership"],["tur.1","🇹🇷 Süper Lig"],["ksa.1","🇸🇦 Saudi Pro League"],["bra.1","🇧🇷 Brasileirão"],["arg.1","🇦🇷 Liga argentine"],["usa.1","🇺🇸 MLS"],["mex.1","🇲🇽 Liga MX"]];
 const LGS=[["barca","🔵🔴 Barça"],["real","⚪ Real"],["esp.1","🇪🇸 Liga"],["eng.1","🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League"],["uefa.champions","⭐ C1"],["fra.1","🇫🇷 Ligue 1"],["ita.1","🇮🇹 Serie A"],["ger.1","🇩🇪 Bundesliga"]];
 const TEAMS={barca:{re:/barcelona|barça/i,not:/espanyol|sporting|guayaquil/i,espn:83,ts:133739,name:"Barcelona"},real:{re:/real madrid/i,not:/castilla/i,espn:86,ts:133738,name:"Real Madrid"}};
 let lg="barca";
-$("lgChips").innerHTML=LGS.map(([k,l])=>`<button class="chip ${k===lg?"on":""}" data-k="${k}">${l}</button>`).join("");
+function lgChips(extra){$("lgChips").innerHTML=[...LGS,...(extra||[])].map(([k,l])=>`<button class="chip ${k===lg?"on":""}" data-k="${k}">${l}</button>`).join("");}
+lgChips();setTimeout(async()=>{try{if(await isBreak()){const x=await secWith(-2,3);if(x.length)lgChips(x);}}catch(e){}},0);
 $("lgChips").onclick=e=>{const b=e.target.closest(".chip");if(!b)return;lg=b.dataset.k;$("lgChips").querySelectorAll(".chip").forEach(c=>c.classList.toggle("on",c===b));renderMatches();};
 function range(a,b){const d1=new Date(),d2=new Date();d1.setDate(d1.getDate()+a);d2.setDate(d2.getDate()+b);return YMD(d1)+"-"+YMD(d2);}
 const ST=e=>e.competitions[0].status.type.state;
 const SC=t=>t.score&&typeof t.score==="object"?(t.score.displayValue??t.score.value??""):(t.score??"");
 const tname=t=>t.team.shortDisplayName||t.team.displayName||t.team.name||"";
-const lgName=(code,r)=>(LIVE_LG.find(x=>x[0]===code)||[0,(r&&r.leagues&&r.leagues[0]&&r.leagues[0].name)||code])[1];
+const lgName=(code,r)=>(LIVE_LG.find(x=>x[0]===code)||SEC_LG.find(x=>x[0]===code)||[0,(r&&r.leagues&&r.leagues[0]&&r.leagues[0].name)||code])[1];
 /* Source principale : fichier préparé toutes les 5 min par un robot GitHub (données ESPN), même chemin pour tous */
 const RAW="https://raw.githubusercontent.com/charleslebontoh-cloud/clb-pharmacies/foot-data/foot.json";
 let FD=null,FDt=0;
@@ -567,7 +570,14 @@ async function renderMatches(silent){const box=$("matches");if(!silent)box.inner
  clearTimeout(matchTimer);if(live.length||up.some(e=>new Date(e.date)-Date.now()<3*36e5))matchTimer=setTimeout(()=>{if($("v-foot").classList.contains("on")&&!document.hidden)renderMatches(true);},15000);}
 /* résumé live */
 let liveTimer=null;
-async function allToday(fresh){const ls=await Promise.all(LIVE_LG.map(([c])=>events(c,0,0,fresh)));if(ls.every(x=>x===null))return null;return ls.filter(Boolean).flat();}
+/* trêve : aucun match des 5 grands championnats d'il y a 3 h jusqu'à la fin du 3e jour */
+async function isBreak(){const f=await foot();if(!f||!f.events)return false;const B5=["esp.1","eng.1","fra.1","ita.1","ger.1"];if(!B5.some(c=>f.events[c]))return false;
+ const d1=Date.now()-3*36e5,d2=new Date();d2.setDate(d2.getDate()+3);d2.setHours(23,59,59,999);return !B5.some(c=>(f.events[c]||[]).some(e=>{const t=+new Date(e.date);return t>=d1&&t<=+d2;}));}
+async function secWith(a,b){const f=await foot();if(!f||!f.events)return[];const d1=new Date(),d2=new Date();d1.setDate(d1.getDate()+a);d1.setHours(0,0,0,0);d2.setDate(d2.getDate()+b);d2.setHours(23,59,59,999);
+ return SEC_LG.filter(([c])=>(f.events[c]||[]).some(e=>{const t=new Date(e.date);return t>=d1&&t<=d2;}));}
+let BREAK=false;
+async function allToday(fresh){BREAK=await isBreak();const sec=BREAK?await secWith(0,0):[];
+ const ls=await Promise.all((BREAK&&sec.length?sec:LIVE_LG).map(([c])=>events(c,0,0,fresh)));if(ls.every(x=>x===null))return null;return ls.filter(Boolean).flat();}
 async function liveBox(){const box=$("liveBox");if(!box.dataset.init){box.dataset.init=1;box.innerHTML=`<div class="skel"></div><div class="skel"></div>`;}
  const L=await allToday(true);
  const head=n=>`<div class="row" style="justify-content:space-between;align-items:center;margin-bottom:4px"><div class="row" style="align-items:center;gap:10px">${T("bolt","berry")}<div><b style="font:800 17px var(--disp)">Scores en direct</b><br><small style="color:var(--mu);font-weight:600">${n} · ${new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit",second:"2-digit"})}</small></div></div><button class="btn ghost sm" id="lvR">${I("refresh")}</button></div><div class="note" style="margin:0 0 6px;font-weight:700">${srcTag()}</div>`;
@@ -575,7 +585,7 @@ async function liveBox(){const box=$("liveBox");if(!box.dataset.init){box.datase
  if(L===null){box.innerHTML=head("hors ligne")+`<p class="sub" style="margin:6px 0 0">Données indisponibles pour le moment.</p><p class="note">Détail : ${esc(lastErr)}</p>`;}
  else{live=L.filter(e=>ST(e)==="in");const today=L.filter(e=>ST(e)!=="in").sort((a,b)=>new Date(a.date)-new Date(b.date));
   const by=arr=>{const g={};arr.forEach(e=>(g[e._lg]=g[e._lg]||[]).push(e));return Object.entries(g).map(([k,v])=>`<div class="comp">${k}</div>`+v.map(mRow).join("")).join("");};
-  box.innerHTML=head(live.length?`${live.length} match${live.length>1?"s":""} en cours`:"aucun match en cours")+(live.length?by(live):"")+(today.length?`<div class="comp" style="color:var(--mu)">📅 Aujourd'hui</div>`+by(today):(live.length?"":`<p class="sub" style="margin:6px 0 0">Pas de match aujourd'hui dans les grands championnats.</p>`));}
+  box.innerHTML=head(live.length?`${live.length} match${live.length>1?"s":""} en cours`:"aucun match en cours")+(live.length?by(live):"")+(today.length?`<div class="comp" style="color:var(--mu)">📅 Aujourd'hui</div>`+by(today):(live.length?"":`<p class="sub" style="margin:6px 0 0">Pas de match aujourd'hui dans les ${BREAK?"championnats secondaires":"grands championnats"}.</p>`))+(BREAK?`<p class="note" style="margin-top:8px">⏸️ Trêve internationale : les championnats secondaires (Liga 2, Ligue 2, Championship…) sont affichés en attendant la reprise.</p>`:"");}
  const r=$("lvR");if(r)r.onclick=()=>{toast("Actualisation…");liveBox();renderMatches(true);};
  clearTimeout(liveTimer);liveTimer=setTimeout(()=>{if($("v-foot").classList.contains("on")&&!document.hidden)liveBox();},live.length?15000:45000);}
 async function homeTicker(){const L=await allToday(true),box=$("homeTick");if(!L){box.innerHTML="";return;}
@@ -629,13 +639,16 @@ async function renderBets(){renderBudget();const box=$("coupons");const{f}=calib
  const big={};res.forEach(r=>{if(r.tb)Object.assign(big,r.tb);});big._avg=1.4;
  const now=Date.now();let far=false;
  /* fenêtre normale : 3 jours ; pendant une trêve internationale, on prend la prochaine journée (14 jours max) */
- const collect=days=>{const out=[],dl=new Date();dl.setDate(dl.getDate()+days);dl.setHours(23,59,59,999);const lim=+dl;
+ const collect=(days,res)=>{const out=[],dl=new Date();dl.setDate(dl.getDate()+days);dl.setHours(23,59,59,999);const lim=+dl;
  for(const{c,n,ev:ev0,tb}of res){const ev=ev0.filter(e=>new Date(e.date)<=lim);const TB=tb||big;for(const e of ev){if(ST(e)!=="pre"||new Date(e.date)-now<15*60e3)continue;const[h,a]=sides(e),H=TB[h.team.displayName]||big[h.team.displayName],A=TB[a.team.displayName]||big[a.team.displayName];if(!H||!A)continue;
   const avg=TB._avg||1.4,lh=Math.max(.2,(H.gf*A.ga/avg))*1.12,la=Math.max(.2,(A.gf*H.ga/avg))*.9,m=model(lh,la),hn=tname(h),an=tname(a),F=k=>p=>Math.min(.9,(.85*p+.15*.5)*(f[k]||1));
   const opts=[["1",`Victoire ${hn}`,F("1")(m.p1)],["2",`Victoire ${an}`,F("2")(m.p2)],["1N",`${hn} ou nul`,F("1N")(m.p1+m.pn)],["N2",`${an} ou nul`,F("N2")(m.p2+m.pn)],["+2,5","Plus de 2,5 buts",F("+2,5")(m.o25)],["-2,5","Moins de 2,5 buts",F("-2,5")(1-m.o25)],["BTTS","Les deux équipes marquent",F("BTTS")(m.btts)]];
   out.push({e,n,c,m,h,a,hn,an,opts});}}return out;};
- let picks=collect(3);
- if(picks.length<2){const all=collect(14);if(all.length>=2){const first=Math.min(...all.map(p=>+new Date(p.e.date)));picks=all.filter(p=>+new Date(p.e.date)<=first+4*864e5);far=first;}}
+ let picks=collect(3,res),sec=false;
+ if(picks.length<2){/* trêve : d'abord les championnats secondaires des 3 prochains jours */
+  const sl=await secWith(0,3);const sres=await Promise.all(sl.map(async([c,n])=>{const[ev,tb]=await Promise.all([events(c,0,3),table(c)]);return{c,n:n.replace(/^\S+\s/,""),ev:ev||[],tb};}));
+  sres.forEach(r=>{if(r.tb)Object.assign(big,r.tb);});big._avg=1.4;const sp=collect(3,sres.filter(r=>r.tb));if(sp.length>=2){picks=sp;sec=true;}}
+ if(picks.length<2){const all=collect(14,res);if(all.length>=2){const first=Math.min(...all.map(p=>+new Date(p.e.date)));picks=all.filter(p=>+new Date(p.e.date)<=first+4*864e5);far=first;}}
  if(picks.length<2){box.innerHTML=`<div class="card"><p class="sub" style="margin:0 0 10px">Pas assez de matchs à venir pour composer des combinés (moins de 2 matchs dans les 14 prochains jours avec des statistiques disponibles).</p><p class="note">${lastErr?"Détail : "+esc(lastErr):""}</p><button class="btn ghost sm" onclick="renderBets()">${I("refresh")} Réessayer</button></div>`;return;}
  const K=x=>x.p.e.date+x.p.h.team.displayName,used=new Set();
  function build(k,minP,kinds,filt){const out=[],cand=[];picks.filter(filt||(()=>1)).forEach(p=>p.opts.filter(o=>kinds.includes(o[0])).forEach(o=>cand.push({p,o})));
@@ -647,7 +660,8 @@ async function renderBets(){renderBudget();const box=$("coupons");const{f}=calib
   for(const x of rest){if(out.length>=3)break;if(out.some(y=>K(y)===K(x)))continue;out.push(x);}if(out.length<2)return[];out.forEach(x=>used.add(K(x)+x.o[0]));return out;})();
  CUR=[["Spécial Barça / Real","⭐","sunset",starL],["Prudent","🛡️","palm",build(3,.7,["1N","N2","-2,5","+2,5"])],["Équilibré","⚖️","lagoon",build(4,.5,["1","2","+2,5","BTTS"])],["Audacieux","🚀","berry",build(5,.4,["1","2","+2,5","BTTS"])]].filter(x=>x[3].length>=2);
  saveToday();
- box.innerHTML=(far?`<div class="card" style="background:linear-gradient(135deg,#FFF4E0,#FDECF2)"><b style="font:800 15px var(--disp)">⏸️ Trêve internationale</b><p class="sub" style="margin:6px 0 0">Aucun match de championnat dans les 3 prochains jours. Voici des combinés pour la prochaine journée, à partir du ${new Date(far).toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"})}. Les compositions peuvent encore changer : vérifie avant de jouer.</p></div>`:"")+CUR.map(([nm,em,g,L],ci)=>{const p=L.reduce((s,x)=>s*x.o[2],1),odd=1/p;
+ const f5=sec?await (async()=>{const f=await foot(),B5=["esp.1","eng.1","fra.1","ita.1","ger.1"],t=[];B5.forEach(c=>(f.events[c]||[]).forEach(e=>{if(new Date(e.date)>now)t.push(+new Date(e.date));}));return t.length?Math.min(...t):null;})():null;
+ box.innerHTML=(sec?`<div class="card" style="background:linear-gradient(135deg,#FFF4E0,#FDECF2)"><b style="font:800 15px var(--disp)">⏸️ Trêve internationale</b><p class="sub" style="margin:6px 0 0">Les grands championnats sont à l'arrêt${f5?` jusqu'au ${new Date(f5).toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"})}`:""}. Voici des combinés sur les championnats secondaires qui jouent cette semaine (${[...new Set(picks.map(p=>p.n))].map(esc).join(", ")}).</p></div>`:"")+(far?`<div class="card" style="background:linear-gradient(135deg,#FFF4E0,#FDECF2)"><b style="font:800 15px var(--disp)">⏸️ Trêve internationale</b><p class="sub" style="margin:6px 0 0">Aucun match de championnat dans les 3 prochains jours. Voici des combinés pour la prochaine journée, à partir du ${new Date(far).toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"})}. Les compositions peuvent encore changer : vérifie avant de jouer.</p></div>`:"")+CUR.map(([nm,em,g,L],ci)=>{const p=L.reduce((s,x)=>s*x.o[2],1),odd=1/p;
   return `<div class="card coupon reveal"><div class="hd t-${g}"><div><b>${em} Combiné ${nm}</b><small>${L.length} matchs différents</small></div><div style="text-align:right"><small>Chance estimée</small><b>${Math.round(p*100)} %</b></div></div><div class="bd">`+
   L.map(({p:x,o})=>{const d=new Date(x.e.date);return `<div class="pick" data-team="${esc(x.hn)}" style="cursor:pointer"><div class="mt">${esc(x.hn)} – ${esc(x.an)}<small>${esc(x.n)} · ${d.toLocaleDateString("fr-FR",{weekday:"short",day:"numeric"})} ${d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}</small></div><div class="sel"><b>${esc(o[1])}</b><small>${Math.round(o[2]*100)} % · cote juste ${(1/o[2]).toFixed(2)}</small></div>
    <div class="prob"><i style="width:${x.m.p1*100}%;background:var(--palm)"></i><i style="width:${x.m.pn*100}%;background:#C9D6DC"></i><i style="width:${x.m.p2*100}%;background:var(--coral)"></i></div></div>`;}).join("")+
