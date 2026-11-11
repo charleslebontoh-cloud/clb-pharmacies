@@ -231,7 +231,7 @@ nav button.on{color:#fff}nav button.on svg.i{transform:translateY(-1px) scale(1.
 
 <div id="splash" role="button" tabindex="0">
  <img class="bgp" id="spImg" alt=""><div class="shade"></div>
- <div class="c"><img src="icon-512.png" alt=""><div class="t">CLB World</div><div class="q">Culture, voyages, football. Le monde entier, chaque jour.</div><span class="tap">Embarquer <svg class="i"><use href="#i-arrow"/></svg></span><small style="display:block;margin-top:24px;opacity:.85;font-size:11px;font-weight:600">version 7.4.0 · 11 nov. 2026</small></div>
+ <div class="c"><img src="icon-512.png" alt=""><div class="t">CLB World</div><div class="q">Culture, voyages, football. Le monde entier, chaque jour.</div><span class="tap">Embarquer <svg class="i"><use href="#i-arrow"/></svg></span><small style="display:block;margin-top:24px;opacity:.85;font-size:11px;font-weight:600">version 7.5.0 · 11 nov. 2026</small></div>
  <div class="credit" id="spCred"></div>
 <div style="display:none"></div>
 </div>
@@ -625,14 +625,18 @@ const MK={"1":"Victoire domicile","2":"Victoire extérieur","1N":"Domicile ou nu
 let CUR=[];
 async function renderBets(){renderBudget();const box=$("coupons");const{f}=calib();
  const lgs=[["esp.1","Liga"],["eng.1","Premier League"],["uefa.champions","Ligue des champions"],["fra.1","Ligue 1"],["ita.1","Serie A"],["ger.1","Bundesliga"],["uefa.europa","Ligue Europa"]];
- const res=await Promise.all(lgs.map(async([c,n])=>{const[ev,tb]=await Promise.all([events(c,0,3),table(c.startsWith("uefa")?null:c)]);return{c,n,ev:ev||[],tb};}));
+ const res=await Promise.all(lgs.map(async([c,n])=>{const[ev,tb]=await Promise.all([events(c,0,14),table(c.startsWith("uefa")?null:c)]);return{c,n,ev:ev||[],tb};}));
  const big={};res.forEach(r=>{if(r.tb)Object.assign(big,r.tb);});big._avg=1.4;
- const picks=[];const now=Date.now();
- for(const{c,n,ev,tb}of res){const TB=tb||big;for(const e of ev){if(ST(e)!=="pre"||new Date(e.date)-now<15*60e3)continue;const[h,a]=sides(e),H=TB[h.team.displayName]||big[h.team.displayName],A=TB[a.team.displayName]||big[a.team.displayName];if(!H||!A)continue;
+ const now=Date.now();let far=false;
+ /* fenêtre normale : 3 jours ; pendant une trêve internationale, on prend la prochaine journée (14 jours max) */
+ const collect=days=>{const out=[],dl=new Date();dl.setDate(dl.getDate()+days);dl.setHours(23,59,59,999);const lim=+dl;
+ for(const{c,n,ev:ev0,tb}of res){const ev=ev0.filter(e=>new Date(e.date)<=lim);const TB=tb||big;for(const e of ev){if(ST(e)!=="pre"||new Date(e.date)-now<15*60e3)continue;const[h,a]=sides(e),H=TB[h.team.displayName]||big[h.team.displayName],A=TB[a.team.displayName]||big[a.team.displayName];if(!H||!A)continue;
   const avg=TB._avg||1.4,lh=Math.max(.2,(H.gf*A.ga/avg))*1.12,la=Math.max(.2,(A.gf*H.ga/avg))*.9,m=model(lh,la),hn=tname(h),an=tname(a),F=k=>p=>Math.min(.9,(.85*p+.15*.5)*(f[k]||1));
   const opts=[["1",`Victoire ${hn}`,F("1")(m.p1)],["2",`Victoire ${an}`,F("2")(m.p2)],["1N",`${hn} ou nul`,F("1N")(m.p1+m.pn)],["N2",`${an} ou nul`,F("N2")(m.p2+m.pn)],["+2,5","Plus de 2,5 buts",F("+2,5")(m.o25)],["-2,5","Moins de 2,5 buts",F("-2,5")(1-m.o25)],["BTTS","Les deux équipes marquent",F("BTTS")(m.btts)]];
-  picks.push({e,n,c,m,h,a,hn,an,opts});}}
- if(picks.length<2){box.innerHTML=`<div class="card"><p class="sub" style="margin:0 0 10px">Pas assez de matchs à venir pour composer des combinés (moins de 2 matchs dans les 3 prochains jours avec des statistiques disponibles).</p><p class="note">${lastErr?"Détail : "+esc(lastErr):""}</p><button class="btn ghost sm" onclick="renderBets()">${I("refresh")} Réessayer</button></div>`;return;}
+  out.push({e,n,c,m,h,a,hn,an,opts});}}return out;};
+ let picks=collect(3);
+ if(picks.length<2){const all=collect(14);if(all.length>=2){const first=Math.min(...all.map(p=>+new Date(p.e.date)));picks=all.filter(p=>+new Date(p.e.date)<=first+4*864e5);far=first;}}
+ if(picks.length<2){box.innerHTML=`<div class="card"><p class="sub" style="margin:0 0 10px">Pas assez de matchs à venir pour composer des combinés (moins de 2 matchs dans les 14 prochains jours avec des statistiques disponibles).</p><p class="note">${lastErr?"Détail : "+esc(lastErr):""}</p><button class="btn ghost sm" onclick="renderBets()">${I("refresh")} Réessayer</button></div>`;return;}
  const K=x=>x.p.e.date+x.p.h.team.displayName,used=new Set();
  function build(k,minP,kinds,filt){const out=[],cand=[];picks.filter(filt||(()=>1)).forEach(p=>p.opts.filter(o=>kinds.includes(o[0])).forEach(o=>cand.push({p,o})));
   cand.sort((x,y)=>y.o[2]-x.o[2]);for(const x of cand){if(out.length>=k)break;if(out.some(y=>K(y)===K(x))||used.has(K(x)+x.o[0])||x.o[2]<minP)continue;out.push(x);}
@@ -643,7 +647,7 @@ async function renderBets(){renderBudget();const box=$("coupons");const{f}=calib
   for(const x of rest){if(out.length>=3)break;if(out.some(y=>K(y)===K(x)))continue;out.push(x);}if(out.length<2)return[];out.forEach(x=>used.add(K(x)+x.o[0]));return out;})();
  CUR=[["Spécial Barça / Real","⭐","sunset",starL],["Prudent","🛡️","palm",build(3,.7,["1N","N2","-2,5","+2,5"])],["Équilibré","⚖️","lagoon",build(4,.5,["1","2","+2,5","BTTS"])],["Audacieux","🚀","berry",build(5,.4,["1","2","+2,5","BTTS"])]].filter(x=>x[3].length>=2);
  saveToday();
- box.innerHTML=CUR.map(([nm,em,g,L],ci)=>{const p=L.reduce((s,x)=>s*x.o[2],1),odd=1/p;
+ box.innerHTML=(far?`<div class="card" style="background:linear-gradient(135deg,#FFF4E0,#FDECF2)"><b style="font:800 15px var(--disp)">⏸️ Trêve internationale</b><p class="sub" style="margin:6px 0 0">Aucun match de championnat dans les 3 prochains jours. Voici des combinés pour la prochaine journée, à partir du ${new Date(far).toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"})}. Les compositions peuvent encore changer : vérifie avant de jouer.</p></div>`:"")+CUR.map(([nm,em,g,L],ci)=>{const p=L.reduce((s,x)=>s*x.o[2],1),odd=1/p;
   return `<div class="card coupon reveal"><div class="hd t-${g}"><div><b>${em} Combiné ${nm}</b><small>${L.length} matchs différents</small></div><div style="text-align:right"><small>Chance estimée</small><b>${Math.round(p*100)} %</b></div></div><div class="bd">`+
   L.map(({p:x,o})=>{const d=new Date(x.e.date);return `<div class="pick" data-team="${esc(x.hn)}" style="cursor:pointer"><div class="mt">${esc(x.hn)} – ${esc(x.an)}<small>${esc(x.n)} · ${d.toLocaleDateString("fr-FR",{weekday:"short",day:"numeric"})} ${d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}</small></div><div class="sel"><b>${esc(o[1])}</b><small>${Math.round(o[2]*100)} % · cote juste ${(1/o[2]).toFixed(2)}</small></div>
    <div class="prob"><i style="width:${x.m.p1*100}%;background:var(--palm)"></i><i style="width:${x.m.pn*100}%;background:#C9D6DC"></i><i style="width:${x.m.p2*100}%;background:var(--coral)"></i></div></div>`;}).join("")+

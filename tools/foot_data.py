@@ -32,7 +32,7 @@ now = D.datetime.now(D.UTC)
 out = {"updated": now.isoformat(), "events": {}, "standings": {}, "teams": {}, "errors": []}
 for code in LG:
     evs = {}
-    for d in range(-3, 8):
+    for d in range(-3, 15):  # 2 semaines à venir : couvre les trêves internationales
         day = (now + D.timedelta(days=d)).strftime("%Y%m%d")
         r = get(f"{B}{code}/scoreboard?dates={day}")
         if "_error" in r: out["errors"].append(f"{code} {day}: {r['_error']}"); continue
