@@ -204,3 +204,15 @@ QZ.push(
 ["cin","Quel film de Christopher Nolan a reçu l'Oscar du meilleur film en 2024 ?",["Tenet","Interstellar","Oppenheimer","Dunkerque"],2,"Oppenheimer a remporté 7 Oscars, dont meilleur film et meilleur réalisateur."],
 ["cin","Qui est le chanteur leader du groupe ivoirien Magic System ?",["A'Salfo","Meiway","Alpha Blondy","Tiken Jah Fakoly"],0,"Salif Traoré, dit A'Salfo, en est le chanteur leader ; il a aussi créé le festival FEMUA."]
 );
+
+/* Ajout du 11 nov. 2026 — faits vérifiés */
+QZ.push(
+["his","Quel roi de France a fait du château de Versailles le siège du pouvoir ?",["Louis XIII","Louis XIV","Louis XV","Henri IV"],1,"Louis XIV, le « Roi-Soleil », y installe la cour et le gouvernement en 1682."],
+["geo","Quel canal relie la mer Méditerranée à la mer Rouge ?",["Canal de Panama","Canal de Suez","Canal de Corinthe","Canal de Kiel"],1,"Le canal de Suez, en Égypte, a été inauguré en 1869."],
+["sci","Quel métal est liquide à température ambiante ?",["Le plomb","Le mercure","L'étain","Le zinc"],1,"Le mercure (symbole Hg) fond à environ -39 °C."],
+["art","Qui a écrit « Les Soleils des indépendances » (1968) ?",["Bernard Dadié","Ahmadou Kourouma","Aminata Sow Fall","Ousmane Sembène"],1,"Premier roman de l'Ivoirien Ahmadou Kourouma, qui suit Fama, dernier prince malinké déchu après les indépendances."],
+["eco","Que signifie le sigle FMI ?",["Fonds monétaire international","Fédération mondiale de l'investissement","Fonds mutuel interbancaire","Financement des marchés internationaux"],0,"Le Fonds monétaire international, créé en 1944 aux accords de Bretton Woods, siège à Washington."],
+["afr","Sur quel fleuve ivoirien a été construit le barrage de Kossou ?",["Le Comoé","Le Bandama","Le Sassandra","La Bia"],1,"Mis en service au début des années 1970, il a créé le lac de Kossou, le plus grand lac artificiel du pays."],
+["spo","Quel pays a remporté la CAN 2023, disputée début 2024 ?",["Nigeria","Côte d'Ivoire","Afrique du Sud","Sénégal"],1,"À domicile, les Éléphants battent le Nigeria 2-1 en finale le 11 février 2024 (buts de Kessié et Haller) : 3e titre continental."],
+["cin","Quel réalisateur ivoirien a présenté « Run » au Festival de Cannes 2014 ?",["Philippe Lacôte","Henri Duparc","Roger Gnoan M'Bala","Owell Brown"],0,"Sélectionné à Un certain regard ; Philippe Lacôte a ensuite réalisé « La Nuit des rois » (2020)."]
+);
