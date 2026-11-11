@@ -7,7 +7,7 @@ LG = ["esp.1", "eng.1", "uefa.champions", "fra.1", "ita.1", "ger.1", "uefa.europ
 TB = ["esp.1", "eng.1", "fra.1", "ita.1", "ger.1"]
 TEAMS = {"barca": 83, "real": 86}
 # Championnats secondaires : affichés par CLB World pendant les trêves internationales (scores et coupons)
-SEC = ["fifa.friendly", "club.friendly", "uefa.nations", "caf.nations_qual", "concacaf.nations.league", "fra.2", "esp.2", "eng.2", "eng.3", "eng.4", "ita.2", "ger.2", "ned.1", "por.1", "bel.1", "sco.1", "tur.1", "ksa.1", "bra.1", "arg.1", "usa.1", "mex.1", "col.1", "chi.1", "per.1", "ecu.1", "uru.1", "par.1", "jpn.1", "kor.1", "chn.1", "aus.1"]
+SEC = ["fifa.friendly", "club.friendly", "uefa.nations", "caf.nations_qual", "concacaf.nations.league", "fra.2", "esp.2", "eng.2", "eng.3", "eng.4", "ita.2", "ger.2", "ned.1", "por.1", "bel.1", "sco.1", "tur.1", "ksa.1", "bra.1", "arg.1", "usa.1", "mex.1", "col.1", "chi.1", "per.1", "ecu.1", "uru.1", "par.1", "jpn.1", "chn.1", "aus.1"]
 def get(u):
     for _ in range(3):
         try:
