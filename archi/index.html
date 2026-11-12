@@ -98,6 +98,7 @@ table.tt{font-size:12.5px;min-width:520px}table.tt th{text-align:left;font-size:
     <h3>Programme</h3>
     <label>Type de bâtiment</label><div class="tg" id="ftype"></div>
     <label>Forme du bâtiment</label><div class="tg" id="fforme"></div>
+    <button class="btn gh w" id="bScan" type="button" style="margin-top:10px">📷 Scanner mon croquis papier</button><input id="fScan" type="file" accept="image/*" style="display:none"><div id="scanR"></div>
     <label>Nom du projet</label><input id="f-name" value="Villa Cocody">
     <div class="row"><div><label>Terrain : largeur (m)</label><input id="f-L" type="number" inputmode="decimal" value="20"></div><div><label>Profondeur (m)</label><input id="f-P" type="number" inputmode="decimal" value="25"></div></div>
     <div class="row"><div id="wS"><label id="lS">Surface habitable (m²)</label><input id="f-S" type="number" inputmode="numeric" value="140"></div><div><label>Niveaux</label><select id="f-lv"><option value="1">Plain-pied</option><option value="2">Duplex (R+1)</option></select></div></div>
@@ -196,8 +197,9 @@ table.tt{font-size:12.5px;min-width:520px}table.tt th{text-align:left;font-size:
 <script type="module">
 import { generate, generateFit, svgPlan, variantSpec } from './plan.js';
 import { generateBat, batVariants, isBat, TYPES, FORMES } from './batiment.js';
+import { scanSketch } from './scan.js';
 import * as TECH from './tech.js';
-const VER = "1.5.2", K = "archea_";
+const VER = "1.6.0", K = "archea_";
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const LS = { get(k, d) { try { const v = localStorage.getItem(K + k); return v ? JSON.parse(v) : d; } catch { return d; } }, set(k, v) { try { localStorage.setItem(K + k, JSON.stringify(v)); } catch { } } };
 const toast = (t, ms = 2400) => { const e = $("#toast"); e.textContent = t; e.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => e.classList.remove("on"), ms); };
@@ -207,7 +209,7 @@ const fr = (n, d = 0) => Number(n).toLocaleString("fr-FR", { maximumFractionDigi
 const h = new Date().getHours(); $("#hello").textContent = (h < 18 ? "Bonjour" : "Bonsoir") + " Charles.";
 $("#sv").textContent = "Version " + VER + " · by CLB"; $("#ver").innerHTML = "<b>ARCHÉA</b> · version " + VER;
 $("#splash").onclick = () => { const s = $("#splash"); s.style.opacity = 0; setTimeout(() => s.remove(), 500);
-  if (LS.get("seen", "") !== VER) { LS.set("seen", VER); setTimeout(() => toast("Nouveau en " + VER + " : U et L bien lisibles (ailes fines autour d'une cour aménagée), végétation qui ne traverse plus les murs.", 6500), 700); } };
+  if (LS.get("seen", "") !== VER) { LS.set("seen", VER); setTimeout(() => toast("Nouveau en " + VER + " : scanne ton croquis papier (onglet Projet) — l'appli reprend la forme et les proportions de ton dessin.", 6500), 700); } };
 
 // ---------- état ----------
 const OPTS_T = { hotel: [["resto", "Restaurant + cuisine"], ["bar", "Bar"], ["semi", "Salle de séminaire"], ["suites", "Suites au dernier étage"], ["piscine", "Piscine"], ["parking", "Parking"]],
@@ -226,7 +228,8 @@ function renderType() { const t = st.type;
   $("#ftype").innerHTML = TYPES.map(([k, n]) => `<span class="chip ${k === t ? "on" : ""}" data-ty="${k}">${n}</span>`).join("");
   $("#fforme").innerHTML = FORMES.map(([k, n]) => `<span class="chip ${k === st.forme ? "on" : ""}" data-fo="${k}">${k === "auto" && t === "maison" ? "Classique (rectangle)" : n}</span>`).join("");
   $$("#ftype .chip").forEach(c => c.onclick = () => { fromForm(); st.type = c.dataset.ty; st.name = defName(st.name, st.type); if (st.type === "hotel" && st.levels < 2) st.levels = 3; if (st.type === "maison" && st.levels > 2) st.levels = 2; if (st.type === "magasin" && !st.nb) st.nb = 4; st.variant = 12; renderType(); toForm(); });
-  $$("#fforme .chip").forEach(c => c.onclick = () => { st.forme = c.dataset.fo; st.variant = 12; renderType(); });
+  $$("#fforme .chip").forEach(c => c.onclick = () => { st.forme = c.dataset.fo; st.geo = null; st.variant = 12; renderType(); });
+  renderScan();
   const lv = $("#f-lv"); lv.innerHTML = t === "maison" ? `<option value="1">Plain-pied</option><option value="2">Duplex (R+1)</option>` : [1, 2, 3, 4, 5].map(i => `<option value="${i}">${i === 1 ? "Rez-de-chaussée seul" : "R+" + (i - 1) + " (" + i + " niveaux)"}</option>`).join("");
   lv.value = Math.min(st.levels || 1, t === "maison" ? 2 : 5);
   $("#rowH").style.display = t === "maison" ? "" : "none"; $("#rowB").style.display = t === "maison" ? "none" : ""; $("#wS").style.visibility = t === "hotel" ? "hidden" : "visible";
@@ -234,8 +237,22 @@ function renderType() { const t = st.type;
   $("#f-n").value = t === "hotel" ? (st.nch || 24) : (st.nb || 4);
   $("#ask").placeholder = t === "hotel" ? "Décrivez votre hôtel… ex : hôtel de 40 chambres en L, R+2, restaurant, bar, piscine, sur un terrain de 40 x 50" : t === "magasin" ? "Décrivez votre projet… ex : 6 magasins en bande de 240 m² sur un terrain d'angle 35 x 30, avec étage de bureaux et parking" : "Décrivez votre maison… ex : villa duplex de 220 m² avec 4 chambres dont 3 salles de bain, cuisine ouverte, bureau, garage et piscine sur un terrain de 20 x 30";
   renderOpts(); }
+// ---------- scan d'un croquis papier ----------
+const FN2 = { bande: "en bande", L: "en L", U: "en U" };
+function renderScan() { const g = st.geo, R = $("#scanR"); if (!g) { R.innerHTML = `<p class="muted" style="margin:6px 0 0">Dessine le contour du bâtiment au feutre foncé sur une feuille blanche, la rue en bas, puis prends la feuille entière en photo.</p>`; return; }
+  $$("#fforme .chip").forEach(c => c.classList.remove("on"));
+  R.innerHTML = `<div style="display:flex;gap:12px;align-items:flex-start;margin-top:10px">${g.prev ? `<img src="${g.prev}" alt="croquis" style="width:110px;border-radius:10px;border:1px solid var(--ln,#ddd)">` : ""}<div style="flex:1"><b>Forme reconnue : ${FN2[g.forme]}${g.forme === "L" ? " (aile à " + (g.side === "R" ? "droite" : "gauche") + ")" : g.forme === "bande" && g.tr ? " en profondeur" : ""}</b>
+    <div class="muted">Proportions du dessin : profondeur = ${fr(g.ar * 100)} % de la largeur.${g.note ? " " + g.note : ""}</div>
+    <label style="margin-top:6px">Largeur réelle de la façade sur rue (m)</label><input id="f-gw" type="number" inputmode="decimal" value="${g.W}">
+    <span class="chip" id="bScanX" style="margin-top:8px;display:inline-block">Retirer le croquis</span></div></div><p class="muted" style="margin:6px 0 0">La zone orangée est ce que j'ai compris comme bâti. Les noms de pièces écrits à la main ne sont pas lus : choisis le type et le programme ci-dessous.</p>`;
+  $("#bScanX").onclick = () => { st.geo = null; renderType(); }; }
+$("#bScan").onclick = () => $("#fScan").click();
+$("#fScan").onchange = async e => { const f = e.target.files[0]; e.target.value = ""; if (!f) return; fromForm(); toast("Lecture du croquis…");
+  try { const r = await scanSketch(f); st.geo = { ...r.geo, note: r.note, prev: r.prev, W: Math.max(8, Math.round((st.L - 6) * (r.geo.forme === "bande" && r.geo.tr ? .5 : 1))) }; st.forme = r.geo.forme; st.variant = 12; renderType(); toast("Croquis compris : bâtiment " + FN2[r.geo.forme] + ". Vérifie la largeur réelle puis dessine les plans.", 5000); }
+  catch (err) { toast(err.message || "Lecture impossible : réessaie avec une photo plus nette.", 6000); } };
 function toForm() { renderType(); $("#f-name").value = st.name; $("#f-L").value = st.L; $("#f-P").value = st.P; $("#f-S").value = st.S; $("#f-lv").value = st.levels; $("#f-ch").value = st.ch; $("#f-sdb").value = st.sdb; }
 function fromForm() { st.name = $("#f-name").value.trim() || "Projet"; st.L = +$("#f-L").value || 20; st.P = +$("#f-P").value || 25; st.S = +$("#f-S").value || 120; st.levels = +$("#f-lv").value; st.ch = +$("#f-ch").value; st.sdb = +$("#f-sdb").value;
+  if (st.geo && $("#f-gw")) st.geo.W = Math.max(6, +$("#f-gw").value || st.geo.W);
   const n = Math.max(1, Math.round(+$("#f-n").value || 0)); if (st.type === "hotel") st.nch = Math.min(240, Math.max(4, n || 24)); else if (st.type === "magasin") st.nb = Math.min(20, n || 1); }
 toForm();
 
@@ -368,7 +385,7 @@ $("#bGen").onclick = () => { fromForm(); st.variant = 12; LS.set("cur", st); dra
 $("#bGen2").onclick = () => $("#bGen").click();
 let gal = ""; const galKey = () => JSON.stringify(params());
 function params() { const t = st.type || "maison", o = { type: t, forme: st.forme || "auto", S: st.S, levels: t === "maison" ? Math.min(2, st.levels) : st.levels, ch: t === "hotel" ? (st.nch || 24) : st.ch, nb: st.nb || 1, sdb: st.sdb, L: st.L, P: st.P, baies: +((st.fin || {}).baies ?? 1) };
-  for (const [k] of curOpts()) o[k] = st[k] ? 1 : 0; if (t === "magasin") o.arriere = st.arriere ? 1 : 0; return o; }
+  for (const [k] of curOpts()) o[k] = st[k] ? 1 : 0; if (t === "magasin") o.arriere = st.arriere ? 1 : 0; if (st.geo) o.geo = { ...st.geo, prev: undefined, note: undefined }; return o; }
 const gen = (p, v) => isBat(p) ? generateBat(p, v) : generateFit(p, v);
 function draw(rebuild3d) {
   const P0 = params(), B = isBat(P0), VS = B ? batVariants(P0) : null; if (B && st.variant !== 12 && !(st.variant < VS.length)) st.variant = 12; if (!B && st.variant > 12) st.variant = 12;
@@ -377,11 +394,11 @@ function draw(rebuild3d) {
   $("#hsub").textContent = st.name;
   if (gal !== galKey()) { gal = galKey(); const order = [12, ...Array.from({ length: B ? VS.length : 12 }, (_, i) => i)], seen = new Set();
     $("#vars").innerHTML = order.map(v => { const pv = gen(P0, v), key = B && v !== 12 ? pv.W + "x" + pv.D + "x" + pv.hab + pv.forme : v; if (seen.has(key)) return ""; seen.add(key);
-      const sv = svgPlan(pv, 0, { furn: false, title: "" }).replace(/<text[^>]*>[^<]*<\/text>/g, ""), nm = v === 12 ? "Auto (recommandée)" : String.fromCharCode(65 + v) + " · " + (B ? VS[v].name : variantSpec(v).name.replace("Couloir parallèle", "Parallèle").replace("Plan en longueur", "En longueur"));
+      const sv = svgPlan(pv, 0, { furn: false, title: "" }).replace(/<text[^>]*>[^<]*<\/text>/g, ""), nm = v === 12 ? (st.geo ? "📷 Mon croquis" : "Auto (recommandée)") : String.fromCharCode(65 + v) + " · " + (B ? VS[v].name : variantSpec(v).name.replace("Couloir parallèle", "Parallèle").replace("Plan en longueur", "En longueur"));
       return `<div class="th" data-v="${v}">${pv.warn.length ? "<i>⚠︎</i>" : ""}${sv}<span>${nm}</span></div>`; }).join("");
     $$("#vars .th").forEach(c => c.onclick = () => { st.variant = +c.dataset.v; LS.set("cur", st); draw(true); }); }
   $$("#vars .th").forEach(c => c.classList.toggle("on", +c.dataset.v === st.variant));
-  $("#vname").textContent = (st.variant === 12 ? "Auto → " : "") + (plan.mode === "C" ? plan.vname.toLowerCase() : plan.mode === "B" ? "plan en longueur (couloir perpendiculaire à la rue)" : "couloir parallèle à la rue") + " · " + plan.W.toFixed(1).replace(".", ",") + " × " + plan.D.toFixed(1).replace(".", ",") + " m";
+  $("#vname").textContent = (st.variant === 12 ? (plan.sketch ? "📷 " : "Auto → ") : "") + (plan.mode === "C" ? plan.vname.toLowerCase() : plan.mode === "B" ? "plan en longueur (couloir perpendiculaire à la rue)" : "couloir parallèle à la rue") + " · " + plan.W.toFixed(1).replace(".", ",") + " × " + plan.D.toFixed(1).replace(".", ",") + " m";
   $("#lvls").innerHTML = plan.levels.map((L, i) => `<span class="chip ${i === lvl ? "on" : ""}" data-l="${i}">${L.name}</span>`).join("");
   $$("#lvls .chip").forEach(c => c.onclick = () => { lvl = +c.dataset.l; draw(false); });
   $("#pbox").innerHTML = svgPlan(plan, lvl, { title: st.name }); resetZoom();

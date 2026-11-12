@@ -7,7 +7,7 @@ const R2 = v => Math.round(v * 100) / 100, clamp = (v, a, b) => Math.max(a, Math
 
 export const TYPES = [["maison", "Maison"], ["magasin", "Magasin / boutiques"], ["hotel", "Hôtel"]];
 export const FORMES = [["auto", "Auto"], ["bande", "En bande"], ["L", "En L"], ["U", "En U"]];
-export const isBat = p => p.type === "hotel" || p.type === "magasin" || ["bande", "L", "U"].includes(p.forme);
+export const isBat = p => !!p.geo || p.type === "hotel" || p.type === "magasin" || ["bande", "L", "U"].includes(p.forme);
 
 // ---------- variantes ----------
 const VAR = [
@@ -45,7 +45,7 @@ const boutique = (i, arr) => (w, d) => { if (!arr) return [{ k: "vente", n: "Bou
 
 // ---------- programmes ----------
 function progHotel(p, V) {
-  const n = clamp(p.ch | 0 || 20, 4, 240), Lv = clamp(p.levels | 0 || 1, 1, 6), one = V.forme === "L" || V.forme === "U", d1 = 7.2, d2 = one ? 0 : 7.2, dB = 7.2, C = 1.6, lift = Lv >= 2, warn = []; // L / U : une seule rangée de chambres + galerie côté cour
+  const n = clamp(p.ch | 0 || 20, 4, 240), Lv = clamp(p.levels | 0 || 1, 1, 6), one = (V.forme === "L" || V.forme === "U") && !(V.geo && V.geo.tb * (V.geo.W || 0) >= 12), d1 = 7.2, d2 = one ? 0 : 7.2, dB = 7.2, C = 1.6, lift = Lv >= 2, warn = []; // L / U : une seule rangée de chambres + galerie côté cour
   const per = Lv === 1 ? [n] : [0, ...Array.from({ length: Lv - 1 }, (_, i) => Math.floor(n / (Lv - 1)) + (i < n % (Lv - 1) ? 1 : 0))];
   const levels = per.map((k, l) => { const cells = [], top = l === Lv - 1 && l > 0;
     let ns = top && p.suites ? Math.min(2, Math.floor(k / 4)) : 0, num = 1;
@@ -123,6 +123,8 @@ const facOf = s => ({ o: s.axis === "x" ? "h" : "v", out: s.dir });
 
 export function generateBat(p, v = 12) {
   const VS = batVariants(p);
+  if (p.geo && (v == null || v < 0 || v >= VS.length)) { // d'après le croquis scanné : forme, côté de l'aile et proportions imposés
+    const g = p.geo, pl = layout(p, { forme: g.forme, side: g.side || "R", rho: .7, hall: "centre", tr: g.forme === "bande" && g.tr ? 1 : 0, name: "D'après mon croquis", geo: g }, 12); pl.sketch = 1; pl.variant = 12; return pl; }
   if (v == null || v < 0 || v >= VS.length) { // automatique : la variante qui tient sur le terrain, puis la plus adaptée au programme
     const want = ["bande", "L", "U"].includes(p.forme) ? p.forme : null; let best = null;
     VS.forEach((V, i) => { if (want && V.forme !== want) return; const pl = layout(p, V, i); const pref = (p.type === "hotel" ? { bande: 0, L: 4, U: (p.ch || 0) >= 36 ? 2 : 9 } : p.type === "magasin" ? { bande: 0, L: 5, U: 9 } : { bande: 4, L: 0, U: 6 })[V.forme] + (V.tr ? 6 : 0) + (V.rho > 1 ? 2 : 0) + (V.hall === "bout" ? 1 : 0);
@@ -132,7 +134,7 @@ export function generateBat(p, v = 12) {
 }
 
 // calage sur la surface demandée (maison, magasin unique) : ±4 %
-function layout(p, V, vi) { if (p.type === "hotel" || (p.type === "magasin" && (p.nb | 0) > 1) || !p.S) return layout0(p, V, vi);
+function layout(p, V, vi) { if (V.geo || p.type === "hotel" || (p.type === "magasin" && (p.nb | 0) > 1) || !p.S) return layout0(p, V, vi);
   const shop = p.type === "magasin", met = pl => shop ? pl.levels[0].rooms.reduce((s, r) => s + r.w * r.h, 0) : pl.hab - (pl.gal || 0);
   const pl0 = layout0(p, V, vi); let q = { ...p }, pl = pl0; for (let i = 0; i < 6 && Math.abs(met(pl) - p.S) / p.S > .04; i++) { const nq = { ...q, S: Math.max(30, q.S * p.S / met(pl)) }; const np = layout0(nq, V, vi); if (Math.abs(met(np) - p.S) >= Math.abs(met(pl) - p.S) - .5) break; q = nq; pl = np; }
   // avertissements exprimés par rapport à la demande initiale
@@ -156,6 +158,7 @@ function layout0(p, V, vi) {
   let Lx = Math.max(need, Lmin), Ly = nA ? rho * Lx : 0;
   if (nA && need < Lmin) { const kk = P.levels.some(L => L.corr) && d2 > .5 ? 2 : 1; Ly = Math.max(3.7, need * (kk + kk * nA * rho) / (kk * nA) - Lx / nA); }
   Lx = Math.ceil(Lx * 10) / 10; Ly = nA ? Math.ceil(Math.max(cyMin, Ly) * 10) / 10 : 0;
+  if (V.geo && V.geo.W) { const g = V.geo; Lx = Math.max(nA ? nA * D + 4 : 6, hallW + coreW, R2(V.tr ? g.W * g.ar : g.W)); Ly = nA ? Math.max(3.7, R2(g.ar * Lx - D)) : 0; }
   const G = { Lx, Ly, D, d1, C, d2, arms }, a0 = d1 + C, al = Ly + d2;
   // éléments fixes (mêmes positions à tous les niveaux pour la structure verticale) ; ua = abscisse absolue le long de l'aile
   const fixed = [], R = arms.includes("R"), Lf = arms.includes("L"), bB0 = Lf ? D : 0, bB1 = Lx - (R ? D : 0);
