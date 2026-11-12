@@ -80,6 +80,10 @@ export const VARIANTS = Array.from({ length: 12 }, (_, i) => variantSpec(i));
 export function variantSpec(v) { v = v | 0; if (v < 0 || v > 11) return { mode: "auto", mirror: 0, prop: 0, name: "Auto" };
   const prop = v % 3, mirror = (v / 3 | 0) % 2, mode = v >= 6 ? "B" : "A";
   return { mode, mirror, prop, name: (mode === "A" ? "Couloir parallèle" : "Plan en longueur") + " · " + ["standard", "compact", "allongé"][prop] + (mirror ? " · inversé" : "") }; }
+// génération calée sur la surface demandée (±3 %)
+export function generateFit(p, variant = 0) { let q = { ...p }, pl = generate(q, variant);
+  for (let i = 0; i < 7 && Math.abs(pl.hab - p.S) / p.S > .03; i++) { q = { ...q, S: q.S * p.S / pl.hab }; pl = generate(q, variant); }
+  pl.Sreq = p.S; return pl; }
 export function generate(p, variant = 0) {
   const prog = buildProgram(p), duplex = prog.levels === 2, warn = prog.warn.slice();
   const lv = [0, 1].slice(0, prog.levels).map(l => prog.rooms.filter(r => r.lvl === l));
@@ -107,13 +111,20 @@ export function generate(p, variant = 0) {
   if (lenY > maxD + .05 || lenX > maxW + .05) warn.push(`Le bâtiment (${lenX.toFixed(1)} × ${lenY.toFixed(1)} m) dépasse la zone constructible du terrain (reculs 5 m devant, 3 m sur les côtés et au fond) : passe en duplex ou agrandis le terrain.`);
   W = Math.round(W * 10) / 10; D = Math.round(D * 10) / 10;
   const levels = lv.map((rs, l) => {
-    const F = rs.filter(r => r.strip === "f"), B = rs.filter(r => r.strip === "b"), C = rs.filter(r => r.strip === "c");
+    let F = rs.filter(r => r.strip === "f"), B = rs.filter(r => r.strip === "b"); const C = rs.filter(r => r.strip === "c");
     const aF = F.reduce((s, r) => s + r.a, 0), aB = B.reduce((s, r) => s + r.a, 0);
     let df = (D - CORR) * aF / (aF + aB); df = Math.min(Math.max(df, 3.6), D - CORR - 3.4); const db = D - CORR - df;
     const natW = (rs, dd) => columns(rs, x => x).reduce((s, g) => s + Math.max(g.reduce((t, r) => t + r.a, 0) / dd, Math.max(0, ...g.map(r => r.minW || 0))), 0);
+    // équilibrage des deux bandes selon la longueur réelle de façade occupée (évite les pièces étirées)
+    for (let it = 0; it < 6; it++) { const nf = natW(F, df), nb = natW(B, db), gap = Math.abs(nf - nb); if (gap < 2.2) break;
+      const [from, to, dFrom] = nf > nb ? [F, B, df] : [B, F, db]; const c = from.filter(r => r.k === "ch").pop(); if (!c) break;
+      const grp = from.filter(r => r === c || (c.col && r.col === c.col)), gw = grp.reduce((t, r) => t + r.a, 0) / dFrom; if (gw >= 2 * gap * .95) break;
+      for (const r of grp) { from.splice(from.indexOf(r), 1); to.push(r); r.strip = to === F ? "f" : "b"; } }
     for (const [S, dd, nm] of [[F, df, "f"], [B, db, "b"]]) { const left = W - natW(S, dd);
-      if (S.length && left >= 2.6) S.push({ k: "tv", n: l === 0 ? "Salon TV" : "Salon d'étage", a: left * dd, strip: nm, hab: 1, lvl: l });
-      else if (S.length && left >= 1.4) S.push({ k: "rgt", n: "Rangement", a: left * dd, strip: nm, lvl: l }); }
+      // reste de largeur : on agrandit les pièces existantes ; un rangement seulement si la bande compte peu de pièces
+      const ncol = columns(S, x => x).length;
+      if (l > 0 && S.length && left >= 2.8) S.push({ k: "tv", n: "Salon d'étage", a: left * dd, strip: nm, hab: 1, lvl: l, filler: 1 });
+      else if (S.length && left >= 1.4 && (ncol <= 2 || left > W * .45)) S.push({ k: "rgt", n: "Rangement", a: Math.min(left, 3) * dd, strip: nm, lvl: l, filler: 1 }); }
     let rooms = [...fillStrip(columns(F, x => orderFront(x, mode === "B")), 0, 0, W, df, true), ...fillStrip(columns(B, x => orderBack(x, l, mode === "B" ? "B" : duplex)), 0, df + CORR, W, db)];
     // couloir + WC en bout
     let cx = 0, cw = W; const wcs = C.map(r => { const w = 1.5; cw -= w; if (r.k === "wcv") { const o = Object.assign({}, r, { x: cx, y: df, w, h: CORR }); cx += w; return o; } return Object.assign({}, r, { x: cx + cw, y: df, w, h: CORR }); });
@@ -130,7 +141,7 @@ export function generate(p, variant = 0) {
     return { l, rooms, ...op, name: l === 0 ? (duplex ? "Rez-de-chaussée" : "Plain-pied") : "Étage" };
   });
   if (mode === "B") [W, D] = [D, W];
-  const hab = levels.flatMap(L => L.rooms).filter(r => !r.circ && !r.stair).reduce((s, r) => s + r.a, 0);
+  const hab = levels.flatMap(L => L.rooms).filter(r => !r.stair).reduce((s, r) => s + r.a, 0); // surface habitable : pièces + circulations, hors trémie d'escalier
   const emprise = W * D, ces = emprise / (p.L * p.P);
   if (ces > .6) warn.push(`Emprise au sol de ${Math.round(ces * 100)} % : au-delà de 60 %, la parcelle devient peu perméable et mal ventilée.`);
   return { p, W, D, levels, hab: Math.round(hab), emprise: Math.round(emprise), shon: Math.round(emprise * prog.levels), ces, warn, variant, duplex,

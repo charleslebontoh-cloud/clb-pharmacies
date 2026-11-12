@@ -27,7 +27,9 @@ Appli de veille boursière BRVM : résumé de séance, cours en direct (différ�
 - Moteur : `tools/bourse.py` (sources : brvm.org, sikafinance.com).
 - Alertes sur iPhone : appli ntfy, canal affiché dans l'onglet Signaux.
 
-## ARCHÉA · Architecte de poche (dossier `archi/`) — version 1.3.0
+## ARCHÉA · Architecte de poche (dossier `archi/`) — version 1.4.0
+
+Nouveautés 1.4.0 : vrai fichier PDF A3 généré sur le téléphone (sans impression) ; chaque demande repart d'un programme vierge (seul ce qui est demandé est dessiné, « villa » = plain-pied sauf mention d'étage) ; surface habitable calée à ±3 % sur la demande ; questions niveaux et couverture (dalle, tuiles ou bac alu) répercutées sur les plans, la 3D, la coupe et le métré.
 
 Nouveautés 1.3.0 : mobilier disposé selon les portes, fenêtres et circulations ; visite des pièces depuis des points de vue fixes (la caméra ne sort plus) ; onglet « Dossier » avec plans d'exécution indicatifs (plans cotés et repérés, fondations & structure, coupe A-A, 4 façades, électricité & plomberie, tableau des menuiseries, avant-métré, hypothèses) imprimables en PDF A3 ; rendu 3D plus chaud (rebond lumineux, plinthes, chambranles, rideaux, tableaux, plantes).
 
