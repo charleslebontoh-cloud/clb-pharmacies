@@ -8,8 +8,12 @@ export function buildProgram(p) {
   add("sejour", "Séjour", 22 + 3 * ch, { strip: "f", hab: 1 });
   if (p.open) add("cuisine", "Cuisine ouverte", 13, { strip: "f", hab: 1, wet: 1 });
   else { add("sam", "Salle à manger", 11 + ch, { strip: "f", hab: 1 }); add("cuisine", "Cuisine", 10, { strip: "b", hab: 1, wet: 1 }); }
+  if (p.salon) add("salon", "Salon VIP", 18, { strip: "f", hab: 1 });
   if (p.bureau) add("bureau", "Bureau", 10, { strip: "f", hab: 1 });
-  add("wc", "WC", 2, { strip: "c", wet: 1 });
+  add("wc", p.wcv ? "WC" : "WC", 2, { strip: "c", wet: 1 });
+  if (p.wcv) add("wc", "WC visiteurs", 2, { strip: "c", wet: 1 });
+  if (p.cellier) add("cellier", "Cellier", 4, { strip: "b", minW: 1.5 });
+  if (p.jeux) add("jeux", "Salle de jeux / sport", 14, { strip: "b", hab: 1 });
   if (p.buanderie) { add("buand", "Buanderie", 5, { strip: "b", col: "serv", wet: 1 }); add("mag", "Magasin", 3.5, { strip: "b", col: "serv", acc: "buand" }); }
   if (p.domestique) { add("chdom", "Ch. domestique", 9, { strip: "b", col: "dom", hab: 1 }); add("dch", "Douche", 3, { minW: 1.4, strip: "b", col: "dom", acc: "chdom", wet: 1 }); }
   // nuit
@@ -17,7 +21,7 @@ export function buildProgram(p) {
   add("chp", "Ch. parentale", 15, { strip: "b", hab: 1, lvl: lvlN, night: 1 });
   add("sdbp", "SdB parentale", 6, { minW: 1.8, strip: "b", col: "suite", acc: "chp", wet: 1, lvl: lvlN, night: 1 });
   add("dress", "Dressing", 4, { minW: 1.3, strip: "b", col: "suite", acc: "chp", lvl: lvlN, night: 1 });
-  const guest = duplex && ch >= 3;
+  const guest = duplex && (ch >= 3 || (p.chRdc && ch >= 2));
   const ens = sdb >= ch && ch > 1; // chambres autonomes : chaque chambre a sa salle d'eau
   for (let i = 2; i <= ch; i++) { const g = guest && i === ch, lv = g ? 0 : lvlN;
     if (ens) { add("ch", g ? "Ch. d'amis" : "Chambre " + i, 12, { id: "ch" + i, strip: "b", col: "e" + i, hab: 1, lvl: lv, night: 1 }); add("sdb", "Salle d'eau ch." + (g ? " d'amis" : " " + i), 4.5, { minW: 1.7, strip: "b", col: "e" + i, acc: "ch" + i, wet: 1, lvl: lv, night: 1 }); }
@@ -71,6 +75,11 @@ function fillStrip(cols, x0, y0, W, d, rev) {
 }
 
 // ---------- Plan complet ----------
+// 12 variantes : 3 proportions × miroir × 2 organisations (couloir parallèle A / perpendiculaire B à la rue) ; 12 = automatique
+export const VARIANTS = Array.from({ length: 12 }, (_, i) => variantSpec(i));
+export function variantSpec(v) { v = v | 0; if (v < 0 || v > 11) return { mode: "auto", mirror: 0, prop: 0, name: "Auto" };
+  const prop = v % 3, mirror = (v / 3 | 0) % 2, mode = v >= 6 ? "B" : "A";
+  return { mode, mirror, prop, name: (mode === "A" ? "Couloir parallèle" : "Plan en longueur") + " · " + ["standard", "compact", "allongé"][prop] + (mirror ? " · inversé" : "") }; }
 export function generate(p, variant = 0) {
   const prog = buildProgram(p), duplex = prog.levels === 2, warn = prog.warn.slice();
   const lv = [0, 1].slice(0, prog.levels).map(l => prog.rooms.filter(r => r.lvl === l));
@@ -86,11 +95,13 @@ export function generate(p, variant = 0) {
   const Amax = Math.max(...area);
   const setS = p.recul || 3, setF = p.reculAv || 5;
   const maxW = Math.max(6, p.L - 2 * setS), maxD = Math.max(6, p.P - setF - setS);
-  const vf = [1, 1, 1.15, .87][variant] || 1;
+  const V = variantSpec(variant), vf = [1, 1.15, .87][V.prop];
   let d = (-3.6 + Math.sqrt(12.96 + 24 * Amax)) / 12 * vf; d = Math.min(Math.max(d, 3.8), 5.6);
   let W = Amax / (2 * d), mode = "A";
   // terrain étroit : couloir perpendiculaire à la rue (plan « en longueur »)
-  if (W > maxW * 1.02) { const dB = Math.min(d, (maxW - CORR) / 2); if (dB >= 3.4) { mode = "B"; d = dB; W = Amax / (2 * d); } else { W = maxW; d = Amax / (2 * W); } }
+  if (V.mode === "B") { mode = "B"; d = Math.max(3.4, Math.min(d, (maxW - CORR) / 2)); W = Amax / (2 * d); }
+  else if (V.mode === "A") { if (W > maxW) { W = maxW; d = Amax / (2 * W); } }
+  else if (W > maxW * 1.02) { const dB = Math.min(d, (maxW - CORR) / 2); if (dB >= 3.4) { mode = "B"; d = dB; W = Amax / (2 * d); } else { W = maxW; d = Amax / (2 * W); } }
   let D = 2 * d + CORR;
   const [lenX, lenY] = mode === "B" ? [D, W] : [W, D];
   if (lenY > maxD + .05 || lenX > maxW + .05) warn.push(`Le bâtiment (${lenX.toFixed(1)} × ${lenY.toFixed(1)} m) dépasse la zone constructible du terrain (reculs 5 m devant, 3 m sur les côtés et au fond) : passe en duplex ou agrandis le terrain.`);
@@ -105,7 +116,7 @@ export function generate(p, variant = 0) {
       else if (S.length && left >= 1.4) S.push({ k: "rgt", n: "Rangement", a: left * dd, strip: nm, lvl: l }); }
     let rooms = [...fillStrip(columns(F, x => orderFront(x, mode === "B")), 0, 0, W, df, true), ...fillStrip(columns(B, x => orderBack(x, l, mode === "B" ? "B" : duplex)), 0, df + CORR, W, db)];
     // couloir + WC en bout
-    let cx = 0, cw = W; const wcs = C.map(r => { const w = 1.5; const o = Object.assign({}, r, { x: W - w, y: df, w, h: CORR }); cw -= w; return o; });
+    let cx = 0, cw = W; const wcs = C.map(r => { const w = 1.5; cw -= w; return Object.assign({}, r, { x: cw, y: df, w, h: CORR }); });
     const stair = rooms.find(r => r.stair);
     rooms.push({ k: "couloir", n: l === 1 ? "Palier / dégagement" : "Dégagement", x: cx, y: df, w: cw, h: CORR, circ: 1 }, ...wcs);
     rooms.forEach(r => { r.lvl = l; r.a = Math.round(r.w * r.h * 10) / 10; });
@@ -114,7 +125,7 @@ export function generate(p, variant = 0) {
       op.doors.forEach(o => { if (o.o === "h") { o.o = "v"; o.x = o.y; delete o.y; } else { o.o = "h"; o.y = o.x; delete o.x; } });
       op.wins.forEach(w => w.o = w.o === "h" ? "v" : "h"); }
     const PW = mode === "B" ? D : W;
-    if (variant === 1 || variant === 3) { rooms.forEach(r => r.x = PW - r.x - r.w);
+    if (V.mirror) { rooms.forEach(r => r.x = PW - r.x - r.w);
       op.doors.forEach(o => { if (o.o === "v") o.x = PW - o.x; else o.c = PW - o.c; }); op.wins.forEach(w => { if (w.o === "v") w.at = PW - w.at; else w.c = PW - w.c; }); }
     return { l, rooms, ...op, name: l === 0 ? (duplex ? "Rez-de-chaussée" : "Plain-pied") : "Étage" };
   });
@@ -182,6 +193,9 @@ export function furniture(r) {
     case "cuisine": { add("plan", .05, H - .65, W - .1, .6); if (W > 3) add("plan", W - .65, .3, .6, H - 1); if (r.strip === "f" && W > 3.2) add("ilot", W / 2 - .9, H / 2 - .5, 1.8, .9); break; }
     case "sdbp": case "sdb": case "dch": { add("douche", W - .95, H - .95, .9, .9); if (r.k !== "dch") { add("wc_cuv", .1, H - .75, .4, .65); add("vasque", .1, .1, Math.min(1.2, W - .2), .5); } break; }
     case "wc": add("wc_cuv", r.w / 2 - .2, .05, .4, .65); break;
+    case "salon": add("canape", W * .15, H * .6, Math.min(2.6, W * .5), .9); add("fauteuil", W * .7, H * .55, .85, .85); add("fauteuil", W * .7, H * .25, .85, .85); add("table_basse", W * .2 + .3, H * .35, 1.1, .6); break;
+    case "jeux": add("table", W / 2 - .7, H / 2 - .4, 1.4, .8); add("biblio", .05, .1, Math.min(1.8, W - .1), .35); break;
+    case "cellier": add("biblio", .05, .1, Math.max(.6, W - .1), .4); break;
     case "tv": add("canape", W * .2, H * .5, Math.min(2.2, W * .5), .85); add("meuble_tv", W * .2, .1, Math.min(1.6, W * .5), .4); break;
     case "bureau": add("bureau_t", W / 2 - .7, H - .8, 1.4, .7); add("biblio", .05, .1, Math.min(2, W - .1), .35); break;
     case "dress": add("armoire", .05, .05, W - .1, .55); break;

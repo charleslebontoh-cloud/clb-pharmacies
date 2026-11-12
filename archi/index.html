@@ -57,6 +57,10 @@ nav button.on{color:var(--cu)}
 .list .it{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--ln)}.list .it:last-child{border:0}.list .it div{flex:1}
 pre.pr{white-space:pre-wrap;font:12.5px/1.45 ui-monospace,Menlo,monospace;background:#FBFAF7;border:1px solid var(--ln);border-radius:10px;padding:10px;margin:8px 0}
 .leg{font-size:12px;color:var(--sl2);margin-top:6px}
+.gal{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-height:52vh;overflow-y:auto}
+.gal .th{border:2px solid var(--ln);border-radius:12px;padding:4px;background:#fff;cursor:pointer;position:relative}.gal .th.on{border-color:var(--cu)}
+.gal .th svg{width:100%;height:auto;display:block}.gal .th span{display:block;font-size:10.5px;line-height:1.2;color:var(--sl2);text-align:center;margin-top:2px}
+.gal .th i{position:absolute;top:4px;right:6px;font-style:normal;font-size:11px}
 </style>
 </head>
 <body>
@@ -96,7 +100,7 @@ pre.pr{white-space:pre-wrap;font:12.5px/1.45 ui-monospace,Menlo,monospace;backgr
 <!-- PLANS -->
 <section class="scr" id="s-plan">
   <div class="card">
-    <h3>Variantes</h3><div class="tg" id="vars"></div>
+    <h3>Variantes de plan</h3><div class="muted" id="vname" style="margin-bottom:8px"></div><div class="gal" id="vars"></div>
     <div class="tg" id="lvls" style="margin-top:8px"></div>
   </div>
   <div class="planbox" id="pbox"></div>
@@ -115,11 +119,11 @@ pre.pr{white-space:pre-wrap;font:12.5px/1.45 ui-monospace,Menlo,monospace;backgr
   <div style="position:relative"><canvas id="c3"></canvas><div class="ov" id="ov3">Rendu en cours…</div></div>
   <div class="bar" id="views"></div>
   <div class="bar" id="roomsBar"></div>
+  <button class="btn cu w" id="b4k" style="margin-top:8px">📸 Vision 4K (3840 × 2160)</button>
   <div class="card" style="margin-top:8px">
-    <div class="tg"><span class="chip on" id="tRoof">Toiture</span><span class="chip on" id="tUp">Étage</span></div>
-    <label>Heure d'ensoleillement (Abidjan) : <b id="hv">15 h</b></label><input type="range" id="hour" min="6.5" max="18.3" step=".1" value="15" style="padding:0">
+    <div class="tg"><span class="chip on" id="tRoof">Toiture</span><span class="chip on" id="tUp">Étage</span><span class="chip on" id="tQ">Rendu expert</span></div>
+    <label>Heure d'ensoleillement (Abidjan) : <b id="hv">15 h 30</b></label><input type="range" id="hour" min="6.3" max="21" step=".1" value="15.5" style="padding:0"><div class="muted">Après 18 h 30 : rendu de nuit, éclairages intérieurs et extérieurs allumés.</div>
   </div>
-  <button class="btn cu w" id="b4k">📸 Vision 4K (3840 × 2160)</button>
   <div class="muted" style="margin:8px 2px">Le rendu 4K est calculé sur l'appareil puis partagé ou téléchargé.</div>
 </section>
 
@@ -161,8 +165,8 @@ pre.pr{white-space:pre-wrap;font:12.5px/1.45 ui-monospace,Menlo,monospace;backgr
 <div class="toast" id="toast"></div>
 
 <script type="module">
-import { generate, svgPlan } from './plan.js';
-const VER = "1.0.0", K = "archea_";
+import { generate, svgPlan, variantSpec } from './plan.js';
+const VER = "1.1.0", K = "archea_";
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const LS = { get(k, d) { try { const v = localStorage.getItem(K + k); return v ? JSON.parse(v) : d; } catch { return d; } }, set(k, v) { try { localStorage.setItem(K + k, JSON.stringify(v)); } catch { } } };
 const toast = (t, ms = 2400) => { const e = $("#toast"); e.textContent = t; e.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => e.classList.remove("on"), ms); };
@@ -174,8 +178,8 @@ $("#sv").textContent = "Version " + VER + " · by CLB"; $("#ver").innerHTML = "<
 $("#splash").onclick = () => { const s = $("#splash"); s.style.opacity = 0; setTimeout(() => s.remove(), 500); };
 
 // ---------- état ----------
-const OPTS = [["open", "Cuisine ouverte"], ["bureau", "Bureau"], ["buanderie", "Buanderie + magasin"], ["domestique", "Ch. domestique"], ["garage", "Garage"], ["piscine", "Piscine"]];
-let st = LS.get("cur", { name: "Villa Cocody", L: 20, P: 25, S: 140, levels: 1, ch: 3, sdb: 2, open: 1, bureau: 0, buanderie: 1, domestique: 0, garage: 1, piscine: 0, variant: 0, style: "tropical" });
+const OPTS = [["open", "Cuisine ouverte"], ["salon", "Salon VIP"], ["bureau", "Bureau"], ["wcv", "WC visiteurs"], ["cellier", "Cellier"], ["buanderie", "Buanderie + magasin"], ["domestique", "Ch. domestique"], ["jeux", "Salle de jeux / sport"], ["chRdc", "Chambre au RDC (duplex)"], ["garage", "Garage"], ["piscine", "Piscine"]];
+let st = LS.get("cur", { name: "Villa Cocody", L: 20, P: 25, S: 140, levels: 1, ch: 3, sdb: 2, open: 1, bureau: 0, buanderie: 1, domestique: 0, garage: 1, piscine: 0, variant: 12, style: "tropical" });
 let plan = null, lvl = 0;
 for (let i = 1; i <= 7; i++) $("#f-ch").insertAdjacentHTML("beforeend", `<option>${i}</option>`);
 for (let i = 1; i <= 6; i++) $("#f-sdb").insertAdjacentHTML("beforeend", `<option>${i}</option>`);
@@ -204,6 +208,9 @@ function parse(t) {
   flag("open", /cuisine (?:ouverte|americaine)|open/, "cuisine ouverte"); if (/cuisine fermee/.test(s)) { st.open = 0; got.push("cuisine fermée"); }
   flag("bureau", /bureau/, "bureau", /sans bureau/); flag("buanderie", /buanderie|magasin|cellier/, "buanderie", /sans buanderie/);
   flag("domestique", /domestique|boy|gardien|personnel|nounou/, "ch. domestique", /sans (?:ch\w* )?domestique/);
+  flag("salon", /salon (?:vip|visiteurs?|separe|d'honneur)|deux salons|2 salons/, "salon VIP"); flag("wcv", /(?:wc|toilettes?) (?:visiteurs?|invites?)/, "WC visiteurs");
+  flag("cellier", /cellier|garde[- ]manger|reserve/, "cellier"); flag("jeux", /salle de (?:jeux|sport|gym)|home cinema|salle de cinema/, "salle de jeux");
+  flag("chRdc", /chambre (?:au|en) (?:rdc|rez)/, "chambre au RDC");
   flag("garage", /garage|parking couvert/, "garage", /sans garage/); flag("piscine", /piscine/, "piscine", /sans piscine/);
   const nm = t.match(/(?:[Vv]illa|[Mm]aison|[Rr][ée]sidence)\s+([A-ZÉÈ][\wéèêàç'-]+(?:\s+[A-ZÉÈ][\wéèêàç'-]+)?)/); if (nm) st.name = nm[0];
   return got;
@@ -212,13 +219,19 @@ $("#bAsk").onclick = () => { const t = $("#ask").value.trim(); if (!t) return to
   $("#askR").innerHTML = g.length ? "Compris : <b>" + g.join(" · ") + "</b>. Vérifiez puis dessinez." : "Je n'ai pas repéré de critère chiffré. Précisez surface, chambres ou terrain."; };
 
 // ---------- plans ----------
-$("#bGen").onclick = () => { fromForm(); st.variant = 0; LS.set("cur", st); draw(true); go("plan"); };
+$("#bGen").onclick = () => { fromForm(); st.variant = 12; LS.set("cur", st); draw(true); go("plan"); };
+let gal = ""; const galKey = () => JSON.stringify(params());
+function params() { const o = { S: st.S, levels: st.levels, ch: st.ch, sdb: st.sdb, L: st.L, P: st.P }; for (const [k] of OPTS) o[k] = st[k] ? 1 : 0; return o; }
 function draw(rebuild3d) {
-  plan = generate({ S: st.S, levels: st.levels, ch: st.ch, sdb: st.sdb, open: st.open, bureau: st.bureau, buanderie: st.buanderie, domestique: st.domestique, garage: st.garage, piscine: st.piscine, L: st.L, P: st.P }, st.variant);
+  plan = generate(params(), st.variant ?? 12);
   if (lvl >= plan.levels.length) lvl = 0;
   $("#hsub").textContent = st.name;
-  $("#vars").innerHTML = ["A · Standard", "B · Inversée", "C · Compacte", "D · Allongée"].map((n, i) => `<span class="chip ${i === st.variant ? "on" : ""}" data-v="${i}">${n}</span>`).join("");
-  $$("#vars .chip").forEach(c => c.onclick = () => { st.variant = +c.dataset.v; LS.set("cur", st); draw(true); });
+  if (gal !== galKey()) { gal = galKey(); const order = [12, ...Array.from({ length: 12 }, (_, i) => i)];
+    $("#vars").innerHTML = order.map(v => { const pv = generate(params(), v), sp = variantSpec(v), sv = svgPlan(pv, 0, { furn: false, title: "" }).replace(/<text[^>]*>[^<]*<\/text>/g, "");
+      return `<div class="th" data-v="${v}">${pv.warn.length ? "<i>⚠︎</i>" : ""}${sv}<span>${v === 12 ? "Auto (recommandée)" : String.fromCharCode(65 + v) + " · " + sp.name.replace("Couloir parallèle", "Parallèle").replace("Plan en longueur", "En longueur")}</span></div>`; }).join("");
+    $$("#vars .th").forEach(c => c.onclick = () => { st.variant = +c.dataset.v; LS.set("cur", st); draw(true); }); }
+  $$("#vars .th").forEach(c => c.classList.toggle("on", +c.dataset.v === st.variant));
+  $("#vname").textContent = (st.variant === 12 ? "Auto → " : "") + (plan.mode === "B" ? "plan en longueur (couloir perpendiculaire à la rue)" : "couloir parallèle à la rue") + " · " + plan.W.toFixed(1).replace(".", ",") + " × " + plan.D.toFixed(1).replace(".", ",") + " m";
   $("#lvls").innerHTML = plan.levels.map((L, i) => `<span class="chip ${i === lvl ? "on" : ""}" data-l="${i}">${L.name}</span>`).join("");
   $$("#lvls .chip").forEach(c => c.onclick = () => { lvl = +c.dataset.l; draw(false); });
   $("#pbox").innerHTML = svgPlan(plan, lvl, { title: st.name }); resetZoom();
@@ -254,7 +267,7 @@ $("#bPng").onclick = () => { if (!plan) return; const s = svgPlan(plan, lvl, { t
   img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(s); };
 
 // ---------- projets ----------
-function renderSaved() { const L = LS.get("saved", []); $("#saved").innerHTML = L.length ? L.map((p, i) => `<div class="it"><div><b>${p.name}</b><div class="muted">${p.S} m² · ${p.ch} ch · ${p.levels === 2 ? "duplex" : "plain-pied"} · ${p.L}×${p.P} m · variante ${"ABCD"[p.variant || 0]}</div></div><button class="btn gh" data-o="${i}">Ouvrir</button><button class="btn gh" data-d="${i}" aria-label="Supprimer">✕</button></div>`).join("") : `<div class="muted">Aucun projet enregistré.</div>`;
+function renderSaved() { const L = LS.get("saved", []); $("#saved").innerHTML = L.length ? L.map((p, i) => `<div class="it"><div><b>${p.name}</b><div class="muted">${p.S} m² · ${p.ch} ch · ${p.levels === 2 ? "duplex" : "plain-pied"} · ${p.L}×${p.P} m · ${(p.variant ?? 12) === 12 ? "variante auto" : "variante " + String.fromCharCode(65 + p.variant)}</div></div><button class="btn gh" data-o="${i}">Ouvrir</button><button class="btn gh" data-d="${i}" aria-label="Supprimer">✕</button></div>`).join("") : `<div class="muted">Aucun projet enregistré.</div>`;
   $$("#saved [data-o]").forEach(b => b.onclick = () => { st = { ...LS.get("saved", [])[+b.dataset.o] }; LS.set("cur", st); toForm(); draw(true); go("plan"); });
   $$("#saved [data-d]").forEach(b => b.onclick = () => { const L = LS.get("saved", []); L.splice(+b.dataset.d, 1); LS.set("saved", L); renderSaved(); }); }
 $("#bSave").onclick = () => { const L = LS.get("saved", []).filter(p => p.name !== st.name); L.unshift({ ...st, t: Date.now() }); LS.set("saved", L.slice(0, 30)); renderSaved(); toast("Projet enregistré sur l'appareil"); };
@@ -267,16 +280,17 @@ async function show3d() {
   await load3d(); if (!plan) draw(false);
   if (!viewer) { try { viewer = V3.createViewer($("#c3")); } catch (e) { $("#ov3").style.display = "flex"; $("#ov3").textContent = "La 3D n'est pas disponible sur cet appareil."; return; } }
   viewer.resize(); viewer.pause(false);
-  if (need3d) { $("#ov3").style.display = "flex"; await new Promise(r => setTimeout(r, 30)); viewer.build(plan, styleObj()); need3d = false; $("#ov3").style.display = "none"; roomsBar(); }
+  if (need3d) { $("#ov3").style.display = "flex"; await new Promise(r => setTimeout(r, 30)); viewer.build(plan, styleObj()); viewer.setSun(+$("#hour").value); need3d = false; $("#ov3").style.display = "none"; roomsBar(); }
 }
 function styleObj() { const b = STY[st.style] || STY.tropical; return st.custom ? { ...b, ...st.custom } : b; }
 function roomsBar() { $("#roomsBar").innerHTML = viewer.rooms.map((it, i) => it.r.k === "couloir" || it.r.k === "wc" ? "" : `<span class="chip" data-r="${i}">${it.r.n}${plan.levels.length > 1 ? (it.l ? " · ét." : " · rdc") : ""}</span>`).join("");
-  $$("#roomsBar .chip").forEach(c => c.onclick = () => { $$("#views .chip,#roomsBar .chip").forEach(x => x.classList.remove("on")); c.classList.add("on"); const it = viewer.rooms[+c.dataset.r]; viewer.roof = false; $("#tRoof").classList.remove("on"); if (it.l === 0 && plan.levels.length > 1) { viewer.upper = false; $("#tUp").classList.remove("on"); } viewer.view("room", +c.dataset.r); }); }
-$("#views").innerHTML = [["34", "Vue 3/4"], ["front", "Façade"], ["top", "Dessus"]].map(([k, n], i) => `<span class="chip ${i ? "" : "on"}" data-v="${k}">${n}</span>`).join("");
+  $$("#roomsBar .chip").forEach(c => c.onclick = () => { $$("#views .chip,#roomsBar .chip").forEach(x => x.classList.remove("on")); c.classList.add("on"); viewer.roof = true; viewer.upper = true; $("#tRoof").classList.add("on"); $("#tUp").classList.add("on"); viewer.view("room", +c.dataset.r); }); }
+$("#views").innerHTML = [["34", "Vue 3/4"], ["front", "Rue"], ["garden", "Jardin"], ["drone", "Drone"], ["top", "Dessus"]].map(([k, n], i) => `<span class="chip ${i ? "" : "on"}" data-v="${k}">${n}</span>`).join("");
 $$("#views .chip").forEach(c => c.onclick = () => { $$("#views .chip,#roomsBar .chip").forEach(x => x.classList.remove("on")); c.classList.add("on"); if (c.dataset.v === "top") { viewer.roof = false; $("#tRoof").classList.remove("on"); } viewer?.view(c.dataset.v); });
 $("#tRoof").onclick = e => { const on = e.target.classList.toggle("on"); if (viewer) viewer.roof = on; };
 $("#tUp").onclick = e => { const on = e.target.classList.toggle("on"); if (viewer) viewer.upper = on; };
-$("#hour").oninput = e => { const v = +e.target.value; $("#hv").textContent = Math.floor(v) + " h " + String(Math.round((v % 1) * 60)).padStart(2, "0"); viewer?.setSun(v); };
+$("#hour").oninput = e => { const v = +e.target.value; $("#hv").textContent = Math.floor(v) + " h " + String(Math.round((v % 1) * 60) % 60).padStart(2, "0") + (v > 18.5 ? " · nuit" : ""); viewer?.setSun(v); };
+$("#tQ").onclick = e => { const on = e.target.classList.toggle("on"); if (viewer) viewer.quality = on; toast(on ? "Rendu expert : occlusion ambiante et halos activés" : "Rendu rapide (plus fluide)"); };
 $("#b4k").onclick = async () => { if (!viewer) return; $("#ov3").style.display = "flex"; $("#ov3").textContent = "Calcul du rendu 4K…"; await new Promise(r => setTimeout(r, 50));
   try { const b = await viewer.capture(3840, 2160); $("#ov3").style.display = "none"; if (!b) throw 0; toast("Rendu 4K prêt (" + fr(b.size / 1048576, 1) + " Mo)"); await shareOrDownload(b, `${slug()}-4K.jpg`); }
   catch { $("#ov3").style.display = "none"; toast("Mémoire insuffisante pour la 4K sur cet appareil"); } };

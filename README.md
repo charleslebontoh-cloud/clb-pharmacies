@@ -27,9 +27,9 @@ Appli de veille boursière BRVM : résumé de séance, cours en direct (différ�
 - Moteur : `tools/bourse.py` (sources : brvm.org, sikafinance.com).
 - Alertes sur iPhone : appli ntfy, canal affiché dans l'onglet Signaux.
 
-## ARCHÉA · Architecte de poche (dossier `archi/`) — version 1.0.0
+## ARCHÉA · Architecte de poche (dossier `archi/`) — version 1.1.0
 
-Esquisses de maisons à partir de la surface, du terrain et des demandes (assistant en langage naturel) : plans cotés au 1/100 (plain-pied ou duplex, 4 variantes, couloir parallèle ou perpendiculaire à la rue selon la largeur du terrain), tableau des surfaces, CES, export SVG/PNG ; maquette 3D réaliste Three.js (ensoleillement d'Abidjan, vues façade, 3/4, dessus et pièces) ; 6 décors + « Décor IA » ; rendu 4K (3840 × 2160). Projets stockés sur le téléphone. Esquisses indicatives : un permis exige des plans signés par un architecte inscrit à l'OACI.
+Esquisses de maisons à partir de la surface, du terrain et des demandes (assistant en langage naturel) : plans cotés au 1/100 (plain-pied ou duplex), galerie de 12 variantes + choix automatique (couloir parallèle ou plan en longueur, proportions, miroir), options salon VIP, WC visiteurs, cellier, salle de jeux, chambre au RDC, chambres autonomes ; tableau des surfaces, CES, export SVG/PNG. Maquette 3D « rendu d'expert » (Three.js : PBR, ciel physique et éclairage d'environnement dynamique, ombres douces, occlusion ambiante GTAO, MSAA, végétation tropicale, piscine animée, panneaux solaires, mode nuit éclairé) ; vues rue, jardin, drone, 3/4, dessus et pièces ; 6 décors + « Décor IA » ; rendu 4K (3840 × 2160). Textures brique, parquet, gazon et eau issues des exemples three.js (licence MIT). Projets stockés sur le téléphone. Esquisses indicatives : un permis exige des plans signés par un architecte inscrit à l'OACI.
 
 https://charleslebontoh-cloud.github.io/clb-pharmacies/archi/
 
