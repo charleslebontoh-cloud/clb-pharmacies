@@ -1,5 +1,5 @@
 {
-"u": "2026-11-11T07:41Z",
+"u": "2026-11-12T07:44Z",
 "jobs": [
 {
 "t": "STAIGIAIRES AUDIT INTERNE ET RISQUES",
@@ -26,7 +26,9 @@
 "u": "https://ci.linkedin.com/jobs/view/senior-consultant-risque-op%C3%A9rationnel-f-h-at-deloitte-4478449940",
 "s": "LinkedIn",
 "g": "Risques & contrôle",
-"f": "2026-11-11"
+"f": "2026-11-12",
+"a": "plateforme",
+"k2": 1
 },
 {
 "t": "Agent d'Inspection & Conformité - Bilingue",
@@ -41,15 +43,28 @@
 "k2": 1
 },
 {
+"t": "Chargé(e) de Conformité – Sécurité Financière (KYC, LCB-FT et Surveillance)",
+"c": "Confidentiel",
+"l": "Abidjan",
+"k": "CDI",
+"d": "2026-10-13",
+"u": "https://africarrieres.com/cote-divoire/fr/emplois/chargee-de-conformite-securite-financiere-kyc-lcb-ft-et-surveillance",
+"s": "Africarrières",
+"g": "Conformité",
+"f": "2026-11-12",
+"a": "mail-cache",
+"k2": 1
+},
+{
 "t": "Responsable Conformité – Criminalité Financière (H/F)",
 "c": "AfricSearch",
 "l": "Abidjan",
 "k": "CDI",
-"d": "2026-10-14",
+"d": "2026-10-13",
 "u": "https://africarrieres.com/cote-divoire/fr/emplois/responsable-conformite-criminalite-financiere-hf",
 "s": "Africarrières",
 "g": "Conformité",
-"f": "2026-11-11",
+"f": "2026-11-12",
 "a": "mail-cache",
 "k2": 1
 },
@@ -58,11 +73,11 @@
 "c": "AMIFA CI",
 "l": "Abidjan",
 "k": "CDI",
-"d": "2026-10-14",
+"d": "2026-10-13",
 "u": "https://africarrieres.com/cote-divoire/fr/emplois/chef-de-departement-controle-permanent-et-gestion-des-risques",
 "s": "Africarrières",
 "g": "Risques & contrôle",
-"f": "2026-11-11",
+"f": "2026-11-12",
 "a": "mail-cache",
 "k2": 1
 },
@@ -71,24 +86,11 @@
 "c": "BDU-CI",
 "l": "Abidjan",
 "k": "Stage",
-"d": "2026-10-14",
+"d": "2026-10-13",
 "u": "https://africarrieres.com/cote-divoire/fr/emplois/stagiaire-audit-interne-hf",
 "s": "Africarrières",
 "g": "Risques & contrôle",
-"f": "2026-11-11",
-"a": "mail-cache",
-"k2": 1
-},
-{
-"t": "Chargé(e) de Conformité – Sécurité Financière (KYC, LCB-FT et Surveillance)",
-"c": "Confidentiel",
-"l": "Abidjan",
-"k": "CDI",
-"d": "2026-10-12",
-"u": "https://africarrieres.com/cote-divoire/fr/emplois/chargee-de-conformite-securite-financiere-kyc-lcb-ft-et-surveillance",
-"s": "Africarrières",
-"g": "Conformité",
-"f": "2026-11-11",
+"f": "2026-11-12",
 "a": "mail-cache",
 "k2": 1
 }
