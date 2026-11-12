@@ -134,7 +134,7 @@ table.tt{font-size:12.5px;min-width:520px}table.tt th{text-align:left;font-size:
 
 <!-- 3D -->
 <section class="scr" id="s-3d">
-  <div style="position:relative"><canvas id="c3"></canvas><div class="ov" id="ov3">Rendu en cours…</div></div>
+  <div style="position:relative"><canvas id="c3"></canvas><canvas id="c3o" style="position:absolute;left:0;top:0;width:100%;height:56vh;pointer-events:none;display:none;border-radius:14px"></canvas><div class="ov" id="ov3">Rendu en cours…</div></div>
   <div class="bar" id="views"></div>
   <div class="bar" id="roomsBar"></div>
   <div class="tg" id="roomCtl" style="display:none;margin-top:6px"><span class="chip" id="bNextVp">↻ Autre angle de la pièce</span><span class="muted" style="align-self:center">Glissez pour regarder autour, pincez pour élargir le champ.</span></div>
@@ -200,7 +200,7 @@ import { generate, generateFit, svgPlan, variantSpec } from './plan.js';
 import { generateBat, batVariants, isBat, TYPES, FORMES } from './batiment.js';
 import { scanSketch } from './scan.js';
 import * as TECH from './tech.js';
-const VER = "1.6.1", K = "archea_";
+const VER = "1.7.0", K = "archea_";
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const LS = { get(k, d) { try { const v = localStorage.getItem(K + k); return v ? JSON.parse(v) : d; } catch { return d; } }, set(k, v) { try { localStorage.setItem(K + k, JSON.stringify(v)); } catch { } } };
 const toast = (t, ms = 2400) => { const e = $("#toast"); e.textContent = t; e.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => e.classList.remove("on"), ms); };
@@ -454,10 +454,10 @@ var viewer = null, need3d = true, V3 = null, STY = null;
 async function load3d() { if (!V3) { V3 = await import('./view3d.js'); STY = V3.STYLES; } return V3; }
 async function show3d() {
   await load3d(); if (!plan) draw(false);
-  if (!viewer) { try { viewer = V3.createViewer($("#c3")); } catch (e) { $("#ov3").style.display = "flex"; $("#ov3").textContent = "La 3D n'est pas disponible sur cet appareil."; return; } }
+  if (!viewer) { try { viewer = V3.createViewer($("#c3"), $("#c3o")); } catch (e) { $("#ov3").style.display = "flex"; $("#ov3").textContent = "La 3D n'est pas disponible sur cet appareil."; return; } }
   viewer.resize(); viewer.pause(false);
   if (need3d) { $("#ov3").textContent = "Rendu en cours…"; $("#ov3").style.display = "flex"; await new Promise(r => setTimeout(r, 30)); viewer.fin = { light: (st.fin || {}).light || "spots", staff: +((st.fin || {}).staff ?? 0) }; viewer.bright = +$("#lum").value; reset3dUI(); try { viewer.build(plan, styleObj()); } catch (e) { console.error(e); $("#ov3").textContent = "La 3D de ce projet n'a pas pu être construite. Change de variante ou réessaie."; $("#roomsBar").innerHTML = ""; need3d = false; return; }
-    viewer.setSun(+$("#hour").value); need3d = false; $("#ov3").style.display = "none"; roomsBar(); }
+    viewer.setSun(+$("#hour").value); need3d = false; $("#ov3").style.display = "none"; roomsBar(); renderViews(); }
 }
 function styleObj() { const b = STY[st.style] || STY.tropical, o = st.custom ? { ...b, ...st.custom } : { ...b }, F = st.fin || {};
   if (F.sol && F.sol !== "auto") { o.floor = F.sol; o.floorC = { tile: "#e6ddcc", marble: "#f1efea", wood: "#a07a50", concrete: "#b9b8b3", terracotta: "#b8673e" }[F.sol]; }
@@ -466,9 +466,11 @@ function styleObj() { const b = STY[st.style] || STY.tropical, o = st.custom ? {
   return o; }
 function roomsBar() { $("#roomsBar").innerHTML = viewer.rooms.map((it, i) => /^(couloir|wc|sas|sdh|asc|gaine|local|sanH|sanF)$/.test(it.r.k) || !it.r.n || (plan.levels.length > 2 && it.l > 1) ? "" : `<span class="chip" data-r="${i}">${it.r.n}${plan.levels.length > 1 ? (it.l ? (plan.levels.length > 2 ? " · R+" + it.l : " · ét.") : " · rdc") : ""}</span>`).join("");
   $$("#roomsBar .chip").forEach(c => c.onclick = () => { $$("#views .chip,#roomsBar .chip").forEach(x => x.classList.remove("on")); c.classList.add("on"); viewer.roof = true; viewer.upper = true; $("#tRoof").classList.add("on"); $("#tUp").classList.add("on"); viewer.view("room", +c.dataset.r); $("#roomCtl").style.display = "flex"; }); }
-$("#views").innerHTML = [["34", "Vue 3/4"], ["front", "Rue"], ["garden", "Jardin"], ["drone", "Drone"], ["top", "Dessus"]].map(([k, n], i) => `<span class="chip ${i ? "" : "on"}" data-v="${k}">${n}</span>`).join("");
+function renderViews() { const lv = plan ? plan.levels : [{}], V = [["34", "Vue 3/4"], ...lv.map((L, i) => ["plan" + i, "🏠 Plan 3D" + (lv.length > 1 ? " " + (i === 0 ? "RDC" : i === 1 ? "étage" : "niv. " + i) : "")]), ["front", "Rue"], ["garden", "Jardin"], ["drone", "Drone"], ["top", "Dessus"]];
+  $("#views").innerHTML = V.map(([k, n], i) => `<span class="chip ${i ? "" : "on"}" data-v="${k}">${n}</span>`).join("");
+$$("#views .chip").forEach(c => c.onclick = () => { $("#roomCtl").style.display = "none"; $$("#views .chip,#roomsBar .chip").forEach(x => x.classList.remove("on")); c.classList.add("on"); if (c.dataset.v === "top") { viewer.roof = false; $("#tRoof").classList.remove("on"); } viewer?.view(c.dataset.v); }); }
+renderViews();
 $("#bNextVp").onclick = () => viewer?.nextView();
-$$("#views .chip").forEach(c => c.onclick = () => { $("#roomCtl").style.display = "none"; $$("#views .chip,#roomsBar .chip").forEach(x => x.classList.remove("on")); c.classList.add("on"); if (c.dataset.v === "top") { viewer.roof = false; $("#tRoof").classList.remove("on"); } viewer?.view(c.dataset.v); });
 $("#tRoof").onclick = e => { const on = e.target.classList.toggle("on"); if (viewer) viewer.roof = on; };
 $("#tUp").onclick = e => { const on = e.target.classList.toggle("on"); if (viewer) viewer.upper = on; };
 $("#hour").oninput = e => { const v = +e.target.value; $("#hv").textContent = Math.floor(v) + " h " + String(Math.round((v % 1) * 60) % 60).padStart(2, "0") + (v > 18.5 ? " · nuit" : ""); viewer?.setSun(v); };
