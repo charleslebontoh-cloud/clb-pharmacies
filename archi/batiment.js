@@ -45,7 +45,7 @@ const boutique = (i, arr) => (w, d) => { if (!arr) return [{ k: "vente", n: "Bou
 
 // ---------- programmes ----------
 function progHotel(p, V) {
-  const n = clamp(p.ch | 0 || 20, 4, 240), Lv = clamp(p.levels | 0 || 1, 1, 6), d1 = 7.2, d2 = 7.2, C = 1.6, lift = Lv >= 2, warn = [];
+  const n = clamp(p.ch | 0 || 20, 4, 240), Lv = clamp(p.levels | 0 || 1, 1, 6), one = V.forme === "L" || V.forme === "U", d1 = 7.2, d2 = one ? 0 : 7.2, dB = 7.2, C = 1.6, lift = Lv >= 2, warn = []; // L / U : une seule rangée de chambres + galerie côté cour
   const per = Lv === 1 ? [n] : [0, ...Array.from({ length: Lv - 1 }, (_, i) => Math.floor(n / (Lv - 1)) + (i < n % (Lv - 1) ? 1 : 0))];
   const levels = per.map((k, l) => { const cells = [], top = l === Lv - 1 && l > 0;
     let ns = top && p.suites ? Math.min(2, Math.floor(k / 4)) : 0, num = 1;
@@ -57,15 +57,15 @@ function progHotel(p, V) {
   pub.push(cell(a(24 + .45 * n, d1), full("lounge", "Salon · lounge", { hab: 1, open: 1 }), { zone: "street", min: 4 }));
   if (p.bar) pub.push(cell(a(18 + .25 * n, d1), full("bar", "Bar", { hab: 1, open: 1 }), { zone: "street", min: 3.5 }));
   if (p.resto) pub.push(cell(a(Math.max(36, 1.05 * n + 20), d1), full("resto", "Restaurant", { hab: 1, open: 1 }), { zone: "street", min: 5 }),
-    cell(a(Math.max(18, .42 * n + 10), d2), stack([{ k: "cuisinepro", n: "Cuisine", hab: 1, wet: 1 }, { k: "eco", n: "Économat · froid", h: 2.6, ext2: 1 }]), { min: 3.2 }));
+    cell(a(Math.max(18, .42 * n + 10), dB), stack([{ k: "cuisinepro", n: "Cuisine", hab: 1, wet: 1 }, { k: "eco", n: "Économat · froid", h: 2.6, ext2: 1 }]), { min: 3.2 }));
   if (p.semi) pub.push(cell(a(40 + .5 * n, d1), full("semi", "Salle de séminaire", { hab: 1, big: 1 }), { zone: "street", min: 5 }));
   pub.push(cell(3.4, stack([{ k: "bur", n: "Back-office", h: 3.4, hab: 1 }, { k: "dir", n: "Direction", hab: 1 }]), { min: 2.8 }),
     cell(2.4, full("sanH", "Sanitaires H", { wet: 1 }), { min: 2 }), cell(2.4, full("sanF", "Sanitaires F", { wet: 1 }), { min: 2 }),
-    cell(a(14 + .22 * n, d2), full("linge", "Lingerie · buanderie", { wet: 1, ext2: 1 }), { min: 2.4 }), cell(2.8, full("vest", "Vestiaires personnel", { wet: 1 }), { min: 2.4 }), cell(2.6, full("local", "Local technique"), { min: 2.2 }));
+    cell(a(14 + .22 * n, dB), full("linge", "Lingerie · buanderie", { wet: 1, ext2: 1 }), { min: 2.4 }), cell(2.8, full("vest", "Vestiaires personnel", { wet: 1 }), { min: 2.4 }), cell(2.6, full("local", "Local technique"), { min: 2.2 }));
   levels[0].cells = [...pub, ...L0]; let rn = levels[0].roomsAt;
   levels[0].fill = g => { const k = Math.floor(g / 3.7); if (Lv > 1 && k >= 1) return Array.from({ length: k }, () => cell(g / k, hotelRoom(++rn), { fix: 1, room: 1 })); return g >= 3.7 ? cell(g, full("tv", "Salon de lecture", { hab: 1 })) : null; };
   const wh = clamp(6 + n * .06, 6, 10);
-  return { d1, C, d2, levels, warn, hall: { w: wh, build: full("hall", "Hall · réception", { circ: 1, entry: 1, main: 1, hab: 1 }) }, core: { lift, stair: Lv >= 2 }, kind: "hotel", n };
+  return { gallery: one, d1, C, d2, levels, warn, hall: { w: wh, build: full("hall", "Hall · réception", { circ: 1, entry: 1, main: 1, hab: 1 }) }, core: { lift, stair: Lv >= 2 }, kind: "hotel", n };
 }
 function progShop(p, V) {
   const nb = clamp(p.nb | 0 || 1, 1, 20), S = Math.max(30, p.S || 120), Lv = clamp(p.levels | 0 || 1, 1, 6), arr = p.arriere !== 0, warn = [];
@@ -167,11 +167,12 @@ function layout0(p, V, vi) {
   const armCore = arms.length === 1 && !P.core.acces && (P.core.stair || P.core.lift), aS = arms[0];
   if (armCore) { // L : escalier (et ascenseur) à l'angle, au départ de l'aile
     if (P.core.stair) fixed.push({ strip: (aS === "R" ? "aR" : "aL") + (d2 > .5 ? "i" : "o"), ua: a0, w: 3.2, lv: (l, L) => L.corr, build: full("esc", "Escalier", { stair: 1 }) });
-    if (P.core.lift) fixed.push({ strip: aS === "R" ? "aRo" : "aLo", ua: a0, w: 2.6, lv: (l, L) => L.corr, build: stack([{ k: "asc", n: "Ascenseur", h: 2.4 }, { k: "local", n: "Gaine · local" }]) }); }
+    if (P.core.lift) fixed.push({ strip: aS === "R" ? "aRo" : "aLo", ua: a0 + (d2 > .5 ? 0 : 3.2), w: 2.6, lv: (l, L) => L.corr, build: stack([{ k: "asc", n: "Ascenseur", h: 2.4 }, { k: "local", n: "Gaine · local" }]) }); }
   let coreU = null;
   if (!armCore && (P.core.stair || P.core.lift)) {
     const w = P.kind === "hotel" || P.core.lift ? coreW : stairW;
     coreU = P.hall ? clamp(V.hall === "bout" && !V.tr ? hallU : V.tr ? bB0 : hallU + (hallW - w) / 2, bB0, bB1 - w) : V.hall === "bout" || (P.core.acces && arms.length === 1) ? (R || !arms.length ? bB0 : bB1 - w) : R2(bB0 + (bB1 - bB0 - w) / 2);
+    if (d2 < .5 && P.hall) coreU = hallU + hallW + w <= Lx - (R ? D : 0) ? hallU + hallW : hallU - w;
     if (coreU - bB0 < 1.6) coreU = bB0; if (bB1 - coreU - w < 1.6) coreU = bB1 - w;
     if (P.core.acces) fixed.push({ strip: "barB", ua: coreU, w, lv: () => true, place: L => L.corr ? null : "barX", build: (ww, dd, l, L) => L.corr ? coreB(P.core.lift, l)(ww, dd) : stack([{ k: "esc", n: "Escalier", stair: 1, h: d2, acc: "he" }, { k: "hallE", n: "Accès étages", id: "he", circ: 1, entry: 1, priv: 1 }])(ww, dd) });
     else fixed.push({ strip: "barB", ua: coreU, w, lv: () => true, build: (ww, dd, l) => coreB(P.core.lift, l)(ww, dd) }); }
@@ -188,7 +189,7 @@ function layout0(p, V, vi) {
   let over = 0;
   const levels = P.levels.map((L, l) => {
     const SS = strips(G, L.corr), byId = Object.fromEntries(SS.map(s => [s.id, s])), rooms = [], add = (s, rs, base, extra = {}) => { for (const r of rs) { const q = { ...r, ...mapRect(s, base + r.u0, base + r.u1, r.v0, r.v1), fac: facOf(s), ...extra }; delete q.u0; delete q.u1; delete q.v0; delete q.v1; q.lvl = l; rooms.push(q); } };
-    const fx = fixed.filter(f => f.lv(l, L)).map(f => { const sid = f.place ? (f.place(L) || f.strip) : (!L.corr && /^bar/.test(f.strip) ? "barX" : f.strip), s = byId[sid]; return { ...f, sid, u0: s ? f.ua - s.o : 0 }; });
+    const fx = fixed.filter(f => f.lv(l, L)).map(f => { const sid = f.place ? (f.place(L) || f.strip) : (!L.corr && /^bar/.test(f.strip) ? "barX" : f.strip), sid2 = byId[sid] ? sid : ({ barB: "barF", aRi: "aRo", aLi: "aLo" })[sid] || sid, s = byId[sid2]; return { ...f, sid: sid2, u0: s ? f.ua - s.o : 0 }; });
     for (const f of fx) { const s = byId[f.sid]; if (!s) continue; add(s, f.build(f.w, s.d, l, L), f.u0, f.entrySide ? { entrySide: f.entrySide } : {}); }
     // segments libres
     const segs = []; for (const s of SS) { const cut = fx.filter(f => f.sid === s.id).map(f => [f.u0, f.u0 + f.w]).sort((a, b) => a[0] - b[0]); let a = 0;

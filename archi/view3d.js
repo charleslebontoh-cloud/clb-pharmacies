@@ -284,6 +284,8 @@ export function createViewer(canvas) {
     groups.levels = []; groups.ceilings = []; state.rooms = []; nightLights.length = 0; anim.length = 0;
     mats(st);
     LIT = new Set(plan.levels.flatMap((L, l) => L.rooms.filter(r => r.hab && !r.stair).map(r => [r, r.w * r.h * (l ? .6 : 1)])).sort((a, b) => b[1] - a[1]).slice(0, 12).map(x => x[0]));
+    // terrain d'affichage : si le bâtiment déborde de la parcelle saisie, on l'agrandit pour garder clôture et végétation hors des murs
+    { const s0 = plan.site, Lg = Math.max(s0.L, plan.W + 6), Pg = Math.max(s0.P, s0.oy + plan.D + 3); if (Lg > s0.L + .01 || Pg > s0.P + .01) plan.site = { ...s0, L: Lg, P: Pg, ox: (Lg - plan.W) / 2, grown: 1 }; }
     const { W, D, site } = plan, Lp = site.L, Pp = site.P, p = plan.p, comp = !!plan.blocks, BL = plan.blocks || [{ x: 0, y: 0, w: W, h: D }], kind = plan.kind || "house";
     const ox = -Lp / 2 + site.ox, oz = Pp / 2 - site.oy; X = x => ox + x; Z = y => oz - y; // façade avant (y=0) vers +z (sud)
     const plane = (w, d, m, x, y, z) => { const pg = new THREE.PlaneGeometry(w, d), uv = pg.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * w, uv.getY(i) * d); const k = new THREE.Mesh(pg, m); k.rotation.x = -Math.PI / 2; k.position.set(x, y, z); k.receiveShadow = true; root.add(k); return k; };
@@ -326,13 +328,21 @@ export function createViewer(canvas) {
       if (Math.max(sideR, X(0) + Lp / 2 - .2) > gwd + .2) { box(gwd, 2.7, gd, M.facade, gxx, 1.35, gz); box(gwd + .4, .22, gd + .4, M.slab, gxx, 2.81, gz); box(gwd + .44, .08, gd + .44, M.accent, gxx, 2.95, gz);
         const door = box(gwd - .5, 2.2, .06, M.frame, gxx, 1.1, gz + gd / 2 + .01); for (let i = 1; i < 10; i++) box(gwd - .52, .015, .07, M.dark, gxx, i * .22, gz + gd / 2 + .02, root, false);
         box(gwd - .4, .08, site.oy, M.pave, gxx, .04, Pp / 2 - site.oy / 2, root, false); } }
+    const freeAt = (x, z, m) => !BL.some(b => x > X(b.x) - m && x < X(b.x + b.w) + m && z > Z(b.y + b.h) - m && z < Z(b.y) + m);
+    const palmS = (x, z, h) => freeAt(x, z, 2.8) && palm(x, z, h), treeS = (x, z, k) => freeAt(x, z, 2.4) && tree(x, z, k), bushS = (x, z, k, fl) => freeAt(x, z, .9) && bush(x, z, k, fl), potS = (x, z, y) => freeAt(x, z, .3) && pot(x, z, y);
     // végétation tropicale
-    palm(-Lp / 2 + 1.8, Pp / 2 - 2, rnd(6.5, 8)); palm(Lp / 2 - 1.6, -Pp / 2 + 1.8, rnd(7, 9)); if (Lp > 16) palm(Lp / 2 - 2.2, Pp / 2 - 2.6, rnd(5.5, 7));
-    tree(-Lp / 2 + 2.2, -Pp / 2 + 2.4, 1.15); if (Pp > 24) tree(X(W) + 2.4 < Lp / 2 - 1.5 ? X(W) + 2.4 : -Lp / 2 + 2, Z(D) - 2, .9);
-    for (let u = -Lp / 2 + 1; u < Lp / 2 - 1; u += rnd(1.6, 2.4)) if (Math.abs(u - gx) > gw / 2 + .8) bush(u, Pp / 2 - .8, rnd(.7, 1), Math.random() < .35);
-    for (let v = -Pp / 2 + 1.5; v < Pp / 2 - 3; v += rnd(1.8, 2.8)) { bush(-Lp / 2 + .8, v, rnd(.7, 1.1), Math.random() < .3); bush(Lp / 2 - .8, v, rnd(.7, 1.1), Math.random() < .3); }
-    pot(tcx - tw / 2 + .3, Z(0) + .4, .12); pot(tcx + tw / 2 - .3, Z(0) + .4, .12);
+    palmS(-Lp / 2 + 1.8, Pp / 2 - 2, rnd(6.5, 8)); palmS(Lp / 2 - 1.6, -Pp / 2 + 1.8, rnd(7, 9)); if (Lp > 16) palmS(Lp / 2 - 2.2, Pp / 2 - 2.6, rnd(5.5, 7));
+    treeS(-Lp / 2 + 2.2, -Pp / 2 + 2.4, 1.15); if (Pp > 24) treeS(X(W) + 2.4 < Lp / 2 - 1.5 ? X(W) + 2.4 : -Lp / 2 + 2, Z(D) - 2, .9);
+    for (let u = -Lp / 2 + 1; u < Lp / 2 - 1; u += rnd(1.6, 2.4)) if (Math.abs(u - gx) > gw / 2 + .8) bushS(u, Pp / 2 - .8, rnd(.7, 1), Math.random() < .35);
+    for (let v = -Pp / 2 + 1.5; v < Pp / 2 - 3; v += rnd(1.8, 2.8)) { bushS(-Lp / 2 + .8, v, rnd(.7, 1.1), Math.random() < .3); bushS(Lp / 2 - .8, v, rnd(.7, 1.1), Math.random() < .3); }
+    potS(tcx - tw / 2 + .3, Z(0) + .4, .12); potS(tcx + tw / 2 - .3, Z(0) + .4, .12);
 
+    // cour aménagée : jardin planté, massifs fleuris, salons d'extérieur sur la terrasse
+    { const G = (plan.outside || []).find(z => z.k === "jardin"), T = (plan.outside || []).find(z => z.k === "terr" && z.n);
+      if (G) { for (let u = G.x + .8; u < G.x + G.w - .5; u += 1.9) bushS(X(u), Z(G.y + G.h - .7), rnd(.6, .9), Math.random() < .5);
+        if (!p.piscine) { palmS(X(G.x + G.w * .25), Z(G.y + G.h * .55), rnd(5, 6.5)); if (G.w > 9) palmS(X(G.x + G.w * .75), Z(G.y + G.h * .45), rnd(5, 6.5)); treeS(X(G.x + G.w / 2), Z(G.y + G.h * .5), .8); } }
+      if (T && T.w > 5) for (let u = T.x + 2.2; u < T.x + T.w - 2; u += 4.2) { const cx = X(u), cz = Z(T.y + T.h / 2); const tp = shadowAll(new THREE.Mesh(new THREE.CylinderGeometry(.5, .5, .04, 24), M.wood)); tp.position.set(cx, .82, cz); root.add(tp); box(.08, .72, .08, M.metal, cx, .46, cz);
+          for (const [dx, dz] of [[.85, 0], [-.85, 0], [0, .85], [0, -.85]]) { box(.42, .05, .42, M.fabric, cx + dx, .52, cz + dz, root, true, .02); box(.05, .42, .05, M.dark, cx + dx, .31, cz + dz); } } }
     // niveaux
     plan.levels.forEach((L, l) => {
       const g = new THREE.Group(); root.add(g); groups.levels.push(g); const y0 = l * LEVEL_H, yb = y0 + .2; LITE = comp && l >= 2 && plan.levels.length > 2; // étages courants : sans mobilier (fluidité)

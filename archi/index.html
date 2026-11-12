@@ -197,7 +197,7 @@ table.tt{font-size:12.5px;min-width:520px}table.tt th{text-align:left;font-size:
 import { generate, generateFit, svgPlan, variantSpec } from './plan.js';
 import { generateBat, batVariants, isBat, TYPES, FORMES } from './batiment.js';
 import * as TECH from './tech.js';
-const VER = "1.5.1", K = "archea_";
+const VER = "1.5.2", K = "archea_";
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const LS = { get(k, d) { try { const v = localStorage.getItem(K + k); return v ? JSON.parse(v) : d; } catch { return d; } }, set(k, v) { try { localStorage.setItem(K + k, JSON.stringify(v)); } catch { } } };
 const toast = (t, ms = 2400) => { const e = $("#toast"); e.textContent = t; e.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => e.classList.remove("on"), ms); };
@@ -207,7 +207,7 @@ const fr = (n, d = 0) => Number(n).toLocaleString("fr-FR", { maximumFractionDigi
 const h = new Date().getHours(); $("#hello").textContent = (h < 18 ? "Bonjour" : "Bonsoir") + " Charles.";
 $("#sv").textContent = "Version " + VER + " · by CLB"; $("#ver").innerHTML = "<b>ARCHÉA</b> · version " + VER;
 $("#splash").onclick = () => { const s = $("#splash"); s.style.opacity = 0; setTimeout(() => s.remove(), 500);
-  if (LS.get("seen", "") !== VER) { LS.set("seen", VER); setTimeout(() => toast("Nouveau en " + VER + " : dans les formes en L et en U, la cour reste à ciel ouvert — terrasse dallée et jardin, avec baies des pièces de vie ouvrant dessus.", 6500), 700); } };
+  if (LS.get("seen", "") !== VER) { LS.set("seen", VER); setTimeout(() => toast("Nouveau en " + VER + " : U et L bien lisibles (ailes fines autour d'une cour aménagée), végétation qui ne traverse plus les murs.", 6500), 700); } };
 
 // ---------- état ----------
 const OPTS_T = { hotel: [["resto", "Restaurant + cuisine"], ["bar", "Bar"], ["semi", "Salle de séminaire"], ["suites", "Suites au dernier étage"], ["piscine", "Piscine"], ["parking", "Parking"]],
@@ -284,7 +284,7 @@ function notice(pl) { if (!pl) return ""; const F = st.fin || {}, S = STYN[st.st
   const def = k => F[k] == null ? " <i>(proposé par défaut, à confirmer)</i>" : "";
   const lst = L => L.rooms.filter(r => r.k !== "couloir").map(r => `${r.n.toLowerCase().replace(/^wc/, "WC").replace("vip", "VIP").replace("rdc", "RDC")} (${m2(r.w * r.h)}${r.filler ? ", espace restant de la trame" : ""})`).join(", ");
   const C = pl.mode === "C", FN = { bande: "en bande", L: "en L", U: "en U autour d'une cour" }[pl.forme] + (pl.tr ? " (perpendiculaire à la rue)" : ""), RN = pl.levels.length > 1 ? "R+" + (pl.levels.length - 1) : "de plain-pied", terr = `sur un terrain de ${fr(st.L)} × ${fr(st.P)} m (${fr(st.L * st.P)} m²). Emprise au sol ${fr(pl.emprise)} m², soit un CES de ${fr(pl.ces * 100)} %.`;
-  let h = C && pl.kind === "hotel" ? `<p><b>${st.name}</b> : hôtel ${RN}, plan ${FN}, de <b>${pl.nRooms} chambres</b>${pl.nRooms !== (st.nch || 24) ? ` (demandé : ${st.nch || 24})` : ""} chacune avec sa salle d'eau, ${fr(pl.hab)} m² utiles, ${terr} Hall-réception sur rue et espaces publics au rez-de-chaussée ; chambres desservies par un couloir central de 1,60 m ; ${pl.levels.length > 1 ? "escalier principal" + (pl.levels.length >= 2 ? " et ascenseur" : "") + ", escaliers de secours si les couloirs sont longs." : "circulations de plain-pied."}</p>`
+  let h = C && pl.kind === "hotel" ? `<p><b>${st.name}</b> : hôtel ${RN}, plan ${FN}, de <b>${pl.nRooms} chambres</b>${pl.nRooms !== (st.nch || 24) ? ` (demandé : ${st.nch || 24})` : ""} chacune avec sa salle d'eau, ${fr(pl.hab)} m² utiles, ${terr} Hall-réception sur rue et espaces publics au rez-de-chaussée ; chambres ${pl.gal ? "alignées le long d'une galerie de 1,60 m ouverte sur la cour" : "desservies par un couloir central de 1,60 m"} ; ${pl.levels.length > 1 ? "escalier principal" + (pl.levels.length >= 2 ? " et ascenseur" : "") + ", escaliers de secours si les couloirs sont longs." : "circulations de plain-pied."}</p>`
     : C && pl.kind === "shops" ? `<p><b>${st.name}</b> : ensemble de <b>${pl.nb} boutiques</b> ${FN}, ${RN}, ${fr(pl.levels[0].rooms.filter(r => r.k === "vente").reduce((a, r) => a + r.w * r.h, 0))} m² de surfaces de vente, ${terr} Chaque boutique ouvre directement sur la rue par un rideau métallique et une devanture vitrée${st.arriere !== 0 ? ", avec réserve et WC à l'arrière" : ""}.${pl.levels.length > 1 ? " Étage(s) de plateaux de bureaux desservis par un escalier indépendant depuis la rue." : ""}</p>`
     : C && pl.kind === "shop" ? `<p><b>${st.name}</b> : magasin ${RN}, plan ${FN}, ${fr(pl.levels[0].rooms.reduce((a, r) => a + r.w * r.h, 0))} m² au rez-de-chaussée${pl.Sreq ? ` (demandé : ${fr(pl.Sreq)} m²)` : ""}, ${terr} Grande surface de vente vitrée sur rue ; réserve, bureau, vestiaires et sanitaires à l'arrière, reliés par une circulation de service${st.livraison ? " qui débouche sur le quai de livraison" : ""}.${pl.levels.length > 1 ? " Plateaux de bureaux à l'étage." : ""}</p>`
     : C ? `<p><b>${st.name}</b> : maison ${FN}, ${lv ? "en duplex (R+1)" : "de plain-pied"}, de <b>${fr(pl.hab)} m² habitables</b>${pl.Sreq ? ` (demandé : ${fr(pl.Sreq)} m²)` : ""}, ${terr} Pièces de jour sur rue, chambres regroupées dans l'aile au calme, desservies par un couloir de 1,20 m.</p>`
