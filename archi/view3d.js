@@ -9,7 +9,7 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
-import { furniture, LEVEL_H, WALL_H, T_EXT, T_INT } from './plan.js';
+import { furniture, envelope, extSegs, intSegs, LEVEL_H, WALL_H, T_EXT, T_INT } from './plan.js';
 
 // ---------- Styles de décor ----------
 export const STYLES = {
@@ -201,15 +201,18 @@ export function createViewer(canvas) {
         const nM = Math.max(0, Math.round(L / 1.1) - 1); for (let i = 1; i <= nM; i++) B(.045, H, fd, M.frame, s + L * i / (nM + 1), cy);
         if (H > 1.6 && !h.baie) B(L, .045, fd, M.frame, c, y0 + h.head - .55);
         if (h.sill > 0 && out) B(L + .1, .04, t / 2 + .1, M.accent, c, y0 + h.sill - .02, out * (t / 4 + .05), true);
-        if (out && h.sill < 1.4) { const inn = -out * (t / 2 + .09), ch = Math.min(WALL_H - .05, h.head + .25); B(L + .7, .03, .03, M.metal, c, y0 + ch, inn);
+        if (out && h.sill < 1.4 && !h.vit && !LITE) { const inn = -out * (t / 2 + .09), ch = Math.min(WALL_H - .05, h.head + .25); B(L + .7, .03, .03, M.metal, c, y0 + ch, inn);
           for (const sd of [-1, 1]) { const cu = new THREE.Mesh(curtainGeo(.42, ch - .02), M.curtain); cu.position.set(axis === "x" ? c + sd * (L / 2 + .12) : fixed + inn, y0 + (ch - .02) / 2, axis === "x" ? fixed + inn : c + sd * (L / 2 + .12)); if (axis !== "x") cu.rotation.y = Math.PI / 2; cu.castShadow = true; cu.receiveShadow = true; (parent || root).add(cu); } } }
-      if (h.door && !h.open) { const H = h.head; const leaf = new THREE.Mesh(boxGeo(L - .04, H - .02, .045), h.main ? M.accent : M.door); leaf.castShadow = true; leaf.receiveShadow = true;
+      if (h.shop) { const H = h.head, gl = B(L - .1, H - .1, .012, M.glass, c, y0 + H / 2); gl.renderOrder = 2; gl.receiveShadow = false; const fd = .07, out = mOut ? (axis === "x" ? mOut.z : mOut.x) : 1;
+        B(L, .07, fd, M.frame, c, y0 + H - .035); B(.07, H, fd, M.frame, s + .035, y0 + H / 2); B(.07, H, fd, M.frame, e - .035, y0 + H / 2); B(.05, H, fd, M.frame, c, y0 + H / 2);
+        B(L + .1, .32, .3, M.metal, c, y0 + H + .2, out * (t / 2 + .12), true); B(L + .1, .02, .34, M.dark, c, y0 + H + .03, out * (t / 2 + .12)); }
+      else if (h.door && !h.open) { const H = h.head; const leaf = new THREE.Mesh(boxGeo(L - .04, H - .02, .045), h.main ? M.accent : M.door); leaf.castShadow = true; leaf.receiveShadow = true;
         const pv = new THREE.Group(); (parent || root).add(pv); leaf.position.set((L - .04) / 2, H / 2, 0); pv.add(leaf);
         if (h.main) for (let i = 0; i < 4; i++) { const p = new THREE.Mesh(boxGeo(L * .6, .02, .06), M.frame); p.position.set(L / 2, .45 + i * .45, 0); pv.add(p); }
         if (axis === "x") { pv.position.set(s + .02, y0, fixed); pv.rotation.y = -0.45; } else { pv.position.set(fixed, y0, s + .02); pv.rotation.y = Math.PI / 2 - .45; }
         const hd = new THREE.Mesh(new THREE.BoxGeometry(.14, .02, .03), M.metal); hd.position.set(L - .16, 1.05, .04); pv.add(hd);
         B(L, .06, t + .02, M.frame, c, y0 + H + .03); }
-      if (h.door && !h.main) { const cs = .07, hd = h.head; B(cs, hd + cs, t + .04, M.white, s - cs / 2 + .005, y0 + (hd + cs) / 2); B(cs, hd + cs, t + .04, M.white, e + cs / 2 - .005, y0 + (hd + cs) / 2); B(L + 2 * cs, cs, t + .04, M.white, c, y0 + hd + cs / 2); }
+      if (h.door && !h.main && !h.shop) { const cs = .07, hd = h.head; B(cs, hd + cs, t + .04, M.white, s - cs / 2 + .005, y0 + (hd + cs) / 2); B(cs, hd + cs, t + .04, M.white, e + cs / 2 - .005, y0 + (hd + cs) / 2); B(L + 2 * cs, cs, t + .04, M.white, c, y0 + hd + cs / 2); }
     }
     piece(cur, a1, 0, WALL_H);
   }
@@ -280,7 +283,8 @@ export function createViewer(canvas) {
     state.plan = plan; state.style = st; scene.remove(root); root.traverse(o => { if (o.geometry) o.geometry.dispose(); }); root = new THREE.Group(); scene.add(root);
     groups.levels = []; groups.ceilings = []; state.rooms = []; nightLights.length = 0; anim.length = 0;
     mats(st);
-    const { W, D, site } = plan, Lp = site.L, Pp = site.P, p = plan.p;
+    LIT = new Set(plan.levels.flatMap((L, l) => L.rooms.filter(r => r.hab && !r.stair).map(r => [r, r.w * r.h * (l ? .6 : 1)])).sort((a, b) => b[1] - a[1]).slice(0, 12).map(x => x[0]));
+    const { W, D, site } = plan, Lp = site.L, Pp = site.P, p = plan.p, comp = !!plan.blocks, BL = plan.blocks || [{ x: 0, y: 0, w: W, h: D }], kind = plan.kind || "house";
     const ox = -Lp / 2 + site.ox, oz = Pp / 2 - site.oy; X = x => ox + x; Z = y => oz - y; // façade avant (y=0) vers +z (sud)
     const plane = (w, d, m, x, y, z) => { const pg = new THREE.PlaneGeometry(w, d), uv = pg.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * w, uv.getY(i) * d); const k = new THREE.Mesh(pg, m); k.rotation.x = -Math.PI / 2; k.position.set(x, y, z); k.receiveShadow = true; root.add(k); return k; };
     // environnement : terre latéritique, rue goudronnée, trottoir
@@ -289,8 +293,11 @@ export function createViewer(canvas) {
     for (let i = -Lp / 2 - 18; i < Lp / 2 + 18; i += 4) plane(2, .12, M.white, i, 0, Pp / 2 + 5.2);
     plane(Lp, Pp, M.grass, 0, 0, 0);
     // allée, terrasse avant
-    const tw = Math.min(W, 8), tcx = X(W / 2);
-    box(tw + .6, .12, 3, M.pave, tcx, .06, Z(0) + 1.5, root, false);
+    const ent = comp && plan.entry && plan.entry.y < .05 ? plan.entry.x : W / 2, tw = Math.min(W, 8), tcx = X(Math.min(W - tw / 2, Math.max(tw / 2, ent)));
+    if (comp && kind !== "house") { // parvis minéral sur toute la façade (commerce, hôtel) + parking
+      box(W + 2, .1, site.oy - .2, M.pave, X(W / 2), .05, Z(0) + (site.oy - .2) / 2, root, false);
+      if (p.parking) { const n = Math.floor((W + 1) / 2.5); for (let i = 0; i <= n; i++) box(.1, .012, 4.6, M.white, X(-.5 + i * 2.5), .105, Z(0) + .9 + 2.3, root, false); box(W + 1, .012, .1, M.white, X(W / 2), .105, Z(0) + .9 + 4.6, root, false); } }
+    else box(tw + .6, .12, 3, M.pave, tcx, .06, Z(0) + 1.5, root, false);
     box(1.4, .08, site.oy - 3, M.pave, X(1.5), .04, Pp / 2 - (site.oy - 3) / 2, root, false);
     // clôture
     const fh = 2.2, ft = .2, gx = X(1.5), gw = 3.5;
@@ -303,8 +310,9 @@ export function createViewer(canvas) {
       const gt = new THREE.Mesh(new THREE.PlaneGeometry(gw, 1.95), M.grille.clone()); gt.material.map = M.grille.map.clone(); gt.material.map.repeat.set(gw / .6, 1); gt.material.map.needsUpdate = true; gt.position.set(gx, 1.0, z); gt.castShadow = true; root.add(gt);
       for (const s of [-1, 1]) { box(.4, 2.5, .4, M.fence, gx + s * (gw / 2 + .2), 1.25, z); box(.22, .3, .22, M.lamp, gx + s * (gw / 2 + .2), 2.66, z, root, false); const L = new THREE.PointLight(0xffc27a, 0, 9, 2); L.position.set(gx + s * (gw / 2 + .2), 2.6, z + .4); L.userData.on = 5; root.add(L); nightLights.push(L); } }
     // piscine
-    if (p.piscine) { const back = Pp - site.oy - D - 1, pw = Math.min(8, W * .7), pd = 4, inBack = back > pd + 2.5;
-      const pz = inBack ? Z(D + 1.6 + pd / 2) : Pp / 2 - site.oy / 2, px = inBack ? X(W / 2) : X(W - pw / 2 - .5);
+    const crt = plan.court && plan.court.w > 9 && plan.court.h > 7 ? plan.court : null;
+    if (p.piscine) { const back = Pp - site.oy - D - 1, pw = crt ? Math.min(12, crt.w - 4) : Math.min(8, W * .7), pd = crt ? Math.min(6, crt.h - 3.5) : 4, inBack = crt || back > pd + 2.5;
+      const pz = crt ? Z(crt.y + crt.h / 2 + .3) : inBack ? Z(D + 1.6 + pd / 2) : Pp / 2 - site.oy / 2, px = crt ? X(crt.x + crt.w / 2) : inBack ? X(W / 2) : X(W - pw / 2 - .5);
       if (inBack || site.oy > pd + 1.5) { const ringB = (w, d, t, m, y, h) => { box(w, h, t, m, px, y, pz - d / 2 + t / 2, root, false); box(w, h, t, m, px, y, pz + d / 2 - t / 2, root, false); box(t, h, d - 2 * t, m, px - w / 2 + t / 2, y, pz, root, false); box(t, h, d - 2 * t, m, px + w / 2 - t / 2, y, pz, root, false); };
         ringB(pw + 3, pd + 2.4, 1.2, M.pave, .04, .08); ringB(pw + .6, pd + .6, .3, M.coping, .07, .12);
         plane(pw, pd, M.poolTile, px, .05, pz);
@@ -324,58 +332,59 @@ export function createViewer(canvas) {
 
     // niveaux
     plan.levels.forEach((L, l) => {
-      const g = new THREE.Group(); root.add(g); groups.levels.push(g); const y0 = l * LEVEL_H, yb = y0 + .2;
-      box(W + 2 * T_EXT, .2, D + 2 * T_EXT, M.slab, X(W / 2), y0 + .1, Z(D / 2), g);
-      if (l === 0) { const pH = .45, e = T_EXT + .02; box(W + 2 * e, pH, .04, M.plinth, X(W / 2), pH / 2, Z(-e), g); box(W + 2 * e, pH, .04, M.plinth, X(W / 2), pH / 2, Z(D + e), g); box(.04, pH, D + 2 * e, M.plinth, X(-e), pH / 2, Z(D / 2), g); box(.04, pH, D + 2 * e, M.plinth, X(W + e), pH / 2, Z(D / 2), g); }
+      const g = new THREE.Group(); root.add(g); groups.levels.push(g); const y0 = l * LEVEL_H, yb = y0 + .2; LITE = comp && l >= 2 && plan.levels.length > 2; // étages courants : sans mobilier (fluidité)
+      const env = comp ? envelope(L.rooms) : null, xs = comp ? extSegs(L.rooms, env) : null;
+      const ends = (sg, e) => segEnds(L.rooms, sg, e);
+      if (comp) { for (const b of BL) box(b.w + 2 * T_EXT, .2, b.h + 2 * T_EXT, M.slab, X(b.x + b.w / 2), y0 + .1, Z(b.y + b.h / 2), g);
+        if (l === 0) { const pH = .45, e = T_EXT + .02; for (const sg of xs) { const [e0, e1] = ends(sg, e), len = sg.a1 - sg.a0 + e0 + e1, mid = (sg.a0 - e0 + sg.a1 + e1) / 2;
+          if (sg.o === "h") box(len, pH, .04, M.plinth, X(mid), pH / 2, Z(sg.at + sg.out * e), g); else box(.04, pH, len, M.plinth, X(sg.at + sg.out * e), pH / 2, Z(mid), g); } } }
+      else box(W + 2 * T_EXT, .2, D + 2 * T_EXT, M.slab, X(W / 2), y0 + .1, Z(D / 2), g);
+      if (l === 0 && !comp) { const pH = .45, e = T_EXT + .02; box(W + 2 * e, pH, .04, M.plinth, X(W / 2), pH / 2, Z(-e), g); box(W + 2 * e, pH, .04, M.plinth, X(W / 2), pH / 2, Z(D + e), g); box(.04, pH, D + 2 * e, M.plinth, X(-e), pH / 2, Z(D / 2), g); box(.04, pH, D + 2 * e, M.plinth, X(W + e), pH / 2, Z(D / 2), g); }
       for (const r of L.rooms) { state.rooms.push({ r, l });
-        const wet = /sdb|wc|dch|buand/.test(r.k);
+        const wet = /sdb|wc|dch|buand|sdh|san|vest|kit|cuisinepro|linge/.test(r.k);
         const pg = new THREE.PlaneGeometry(r.w, r.h), uv = pg.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * r.w, uv.getY(i) * r.h);
         const fl = new THREE.Mesh(pg, wet ? M.wet : M.floor); fl.rotation.x = -Math.PI / 2; fl.position.set(X(r.x + r.w / 2), yb + .002, Z(r.y + r.h / 2)); fl.receiveShadow = true; g.add(fl);
-        for (const f of furniture(r, L)) furn3d(f, yb, g, r.k);
+        if (!LITE) for (const f of furniture(r, L)) furn3d(f, yb, g, r.k);
         if (r.stair) { const n = 16, run = r.h - .4, sw = Math.min(1.1, r.w * .45); for (let i = 0; i < n; i++) box(sw, .04, run / n + .02, M.wood, X(r.x + .1 + sw / 2), yb + .175 * (i + 1), Z(r.y + .2 + run * (i + .5) / n), g); for (let i = 0; i < n; i++) box(sw, .175 * (i + 1) - .04, run / n, M.white, X(r.x + .1 + sw / 2), yb + .175 * (i + 1) / 2 - .02, Z(r.y + .2 + run * (i + .5) / n), g);
           box(.04, .9, run, M.metal, X(r.x + .1 + sw), yb + 1.6, Z(r.y + .2 + run / 2), g); }
-        if (r.hab && !r.stair) { const lt = new THREE.PointLight(0xffc98a, 0, Math.max(r.w, r.h) * 1.8, 2); lt.position.set(X(r.x + r.w / 2), yb + WALL_H - .35, Z(r.y + r.h / 2)); lt.userData.on = 2.2 + r.w * r.h * .12; g.add(lt); nightLights.push(lt);
+        if (r.hab && !r.stair && (!comp || lightOK(r, l))) { const lt = new THREE.PointLight(0xffc98a, 0, Math.max(r.w, r.h) * 1.8, 2); lt.position.set(X(r.x + r.w / 2), yb + WALL_H - .35, Z(r.y + r.h / 2)); lt.userData.on = 2.2 + r.w * r.h * .12; g.add(lt); nightLights.push(lt);
         }
       }
       // plafond (masqué avec la toiture)
       const cg = new THREE.Group(); g.add(cg); groups.ceilings.push(cg);
-      const cp = new THREE.Mesh(new THREE.PlaneGeometry(W, D), M.ceil); cp.rotation.x = Math.PI / 2; cp.position.set(X(W / 2), yb + WALL_H - .001, Z(D / 2)); cp.receiveShadow = true; cg.add(cp);
-      for (const r of L.rooms) if ((r.hab || r.k === "couloir") && !r.stair) ceilingRoom(r, yb, cg);
+      for (const b of BL) { const cp = new THREE.Mesh(new THREE.PlaneGeometry(b.w, b.h), M.ceil); cp.rotation.x = Math.PI / 2; cp.position.set(X(b.x + b.w / 2), yb + WALL_H - .001, Z(b.y + b.h / 2)); cp.receiveShadow = true; cg.add(cp); }
+      for (const r of L.rooms) if ((r.hab || r.k === "couloir") && !r.stair && !LITE) ceilingRoom(r, yb, cg);
       // ouvertures
       const near = (a, b) => Math.abs(a - b) < 1e-3;
-      const holesH = Y => [...L.wins.filter(w => w.o === "h" && near(w.at, Y)).map(w => ({ c: w.c, w: w.w, sill: w.sill, head: w.head, win: 1, baie: w.baie })), ...L.doors.filter(d => d.o === "h" && near(d.y, Y)).map(d => ({ c: d.c, w: d.w, sill: 0, head: d.open ? 2.4 : 2.1, door: 1, open: d.open, main: d.main }))];
-      const holesV = Xv => [...L.wins.filter(w => w.o === "v" && near(w.at, Xv)).map(w => ({ c: w.c, w: w.w, sill: w.sill, head: w.head, win: 1, baie: w.baie })), ...L.doors.filter(d => d.o === "v" && near(d.x, Xv)).map(d => ({ c: d.c, w: d.w, sill: 0, head: d.open ? 2.4 : 2.1, door: 1, open: d.open, main: d.main }))];
+      const dh = d => ({ c: d.c, w: d.w, sill: 0, head: d.shop ? 2.6 : d.open ? 2.4 : 2.1, door: 1, open: d.open, main: d.main, shop: d.shop });
+      const holesH = Y => [...L.wins.filter(w => w.o === "h" && near(w.at, Y)).map(w => ({ c: w.c, w: w.w, sill: w.sill, head: w.head, win: 1, baie: w.baie, vit: w.vit })), ...L.doors.filter(d => d.o === "h" && near(d.y, Y)).map(dh)];
+      const holesV = Xv => [...L.wins.filter(w => w.o === "v" && near(w.at, Xv)).map(w => ({ c: w.c, w: w.w, sill: w.sill, head: w.head, win: 1, baie: w.baie, vit: w.vit })), ...L.doors.filter(d => d.o === "v" && near(d.x, Xv)).map(dh)];
       const hx = Y => holesH(Y).map(h => ({ ...h, c: X(h.c) })), hz = Xv => holesV(Xv).map(h => ({ ...h, c: Z(h.c) }));
-      wall("x", X(0) - T_EXT, X(W) + T_EXT, Z(0) + T_EXT / 2, yb, T_EXT, M.wallIn, hx(0), g, { m: M.facade, z: 1 });
+      if (comp) for (const sg of xs) { if (sg.o === "h") { const [e0, e1] = ends(sg, T_EXT); wall("x", X(sg.a0 - e0), X(sg.a1 + e1), Z(sg.at) - sg.out * T_EXT / 2, yb, T_EXT, M.wallIn, hx(sg.at), g, { m: M.facade, z: -sg.out }); }
+        else wall("z", Z(sg.a1), Z(sg.a0), X(sg.at) + sg.out * T_EXT / 2, yb, T_EXT, M.wallIn, hz(sg.at), g, { m: M.facade, x: sg.out }); }
+      else { wall("x", X(0) - T_EXT, X(W) + T_EXT, Z(0) + T_EXT / 2, yb, T_EXT, M.wallIn, hx(0), g, { m: M.facade, z: 1 });
       wall("x", X(0) - T_EXT, X(W) + T_EXT, Z(D) - T_EXT / 2, yb, T_EXT, M.wallIn, hx(D), g, { m: M.facade, z: -1 });
       wall("z", Z(D), Z(0), X(0) - T_EXT / 2, yb, T_EXT, M.wallIn, hz(0), g, { m: M.facade, x: -1 });
-      wall("z", Z(D), Z(0), X(W) + T_EXT / 2, yb, T_EXT, M.wallIn, hz(W), g, { m: M.facade, x: 1 });
+      wall("z", Z(D), Z(0), X(W) + T_EXT / 2, yb, T_EXT, M.wallIn, hz(W), g, { m: M.facade, x: 1 }); }
       // cloisons (dédoublonnées), faïence côté pièces d'eau
-      const seen = new Set(), wetAt = (x, y) => L.rooms.some(r => /sdb|dch|wc/.test(r.k) && x > r.x && x < r.x + r.w && y > r.y && y < r.y + r.h);
-      for (const r of L.rooms) for (const s of [[r.x, r.y, r.x + r.w, r.y], [r.x, r.y + r.h, r.x + r.w, r.y + r.h], [r.x, r.y, r.x, r.y + r.h], [r.x + r.w, r.y, r.x + r.w, r.y + r.h]]) {
-        const hzl = near(s[1], s[3]); if (hzl && (near(s[1], 0) || near(s[1], D))) continue; if (!hzl && (near(s[0], 0) || near(s[0], W))) continue;
+      const seen = new Set(), wetAt = (x, y) => L.rooms.some(r => /sdb|dch|wc|sdh|san/.test(r.k) && x > r.x && x < r.x + r.w && y > r.y && y < r.y + r.h);
+      const parts = comp ? intSegs(L.rooms, env).map(p => p.o === "h" ? [p.a0, p.at, p.a1, p.at] : [p.at, p.a0, p.at, p.a1]) : L.rooms.flatMap(r => [[r.x, r.y, r.x + r.w, r.y], [r.x, r.y + r.h, r.x + r.w, r.y + r.h], [r.x, r.y, r.x, r.y + r.h], [r.x + r.w, r.y, r.x + r.w, r.y + r.h]]);
+      for (const s of parts) {
+        const hzl = near(s[1], s[3]); if (!comp && hzl && (near(s[1], 0) || near(s[1], D))) continue; if (!comp && !hzl && (near(s[0], 0) || near(s[0], W))) continue;
         const key = s.map(v => v.toFixed(2)).join(","); if (seen.has(key)) continue; seen.add(key);
         if (hzl) { const mx = (s[0] + s[2]) / 2, a = wetAt(mx, s[1] + .05), b = wetAt(mx, s[1] - .05); // a : côté y+ (monde -z)
           wall("x", X(s[0]), X(s[2]), Z(s[1]), yb, T_INT, M.wallIn, holesH(s[1]).map(h => ({ ...h, c: X(h.c) })), g, null, a || b ? { m: M.wetWall, z: a ? -1 : 1 } : null); }
         else { const my = (s[1] + s[3]) / 2, a = wetAt(s[0] + .05, my), b = wetAt(s[0] - .05, my);
           wall("z", Z(s[3]), Z(s[1]), X(s[0]), yb, T_INT, M.wallIn, holesV(s[0]).map(h => ({ ...h, c: Z(h.c) })), g, null, a || b ? { m: M.wetWall, x: a ? 1 : -1 } : null); }
       }
-      ring(W, D, .2, .16, M.accent, yb + WALL_H + .1, g);
+      if (comp) ringSegs(xs, L.rooms, .2, .16, M.accent, yb + WALL_H + .1, g); else ring(W, D, .2, .16, M.accent, yb + WALL_H + .1, g);
       // appliques extérieures près de l'entrée
-      if (l === 0) { const md = L.doors.find(d => d.main); if (md) { const mx = md.o === "h" ? X(md.c) : X(0), mz = md.o === "h" ? Z(0) : Z(md.c); for (const s of [-1, 1]) { const ax = md.o === "h" ? mx + s * (md.w / 2 + .35) : mx, az = md.o === "h" ? mz + .13 : mz + s * (md.w / 2 + .35); box(.1, .28, .1, M.lamp, ax, 2.2, az, g, false); const lt = new THREE.PointLight(0xffc27a, 0, 7, 2); lt.position.set(ax, 2.1, az + .3); lt.userData.on = 4; g.add(lt); nightLights.push(lt); } } }
+      if (l === 0) { const md = L.doors.find(d => d.main); if (md) { const mo = md.out ?? -1, mx = md.o === "h" ? X(md.c) : X(md.x), mz = md.o === "h" ? Z(md.y) : Z(md.c); for (const s of [-1, 1]) { const ax = md.o === "h" ? mx + s * (md.w / 2 + .35) : mx + (comp ? mo * .13 : 0), az = md.o === "h" ? mz - mo * .13 : mz + s * (md.w / 2 + .35); box(.1, .28, .1, M.lamp, ax, 2.2, az, g, false); const lt = new THREE.PointLight(0xffc27a, 0, 7, 2); lt.position.set(ax + (md.o === "v" && comp ? mo * .3 : 0), 2.1, az + (md.o === "h" ? -mo * .3 : 0)); lt.userData.on = 4; g.add(lt); nightLights.push(lt); } } }
     });
     // toiture
     const top = plan.levels.length * LEVEL_H + .2, rg = new THREE.Group(); root.add(rg); groups.roof = rg;
-    if (st.roof === "flat") { box(W + 2 * T_EXT, .25, D + 2 * T_EXT, M.roof, X(W / 2), top + .1, Z(D / 2), rg); const h = .75, t = .2;
-      box(W + 2 * T_EXT, h, t, M.facade, X(W / 2), top + h / 2 + .2, Z(0) + T_EXT - t / 2, rg); box(W + 2 * T_EXT, h, t, M.facade, X(W / 2), top + h / 2 + .2, Z(D) - T_EXT + t / 2, rg);
-      box(t, h, D + 2 * T_EXT, M.facade, X(0) - T_EXT + t / 2, top + h / 2 + .2, Z(D / 2), rg); box(t, h, D + 2 * T_EXT, M.facade, X(W) + T_EXT - t / 2, top + h / 2 + .2, Z(D / 2), rg);
-      ring(W, D, .07, .3, M.accent, top + .98, rg);
-      // panneaux photovoltaïques orientés plein sud + réservoir d'eau (polytank)
-      const pvM = new THREE.MeshPhysicalMaterial({ color: "#16233a", roughness: .15, metalness: .4, clearcoat: 1, map: ctex("pv", 64, 128, (g, w, h) => { g.fillStyle = "#1b2b48"; g.fillRect(0, 0, w, h); g.strokeStyle = "#8fa3c0"; g.lineWidth = 1; for (let x = 0; x <= w; x += 16) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, h); g.stroke(); } for (let y = 0; y <= h; y += 16) { g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke(); } }) });
-      const nP = Math.max(2, Math.min(8, Math.floor((W - 2) / 1.1))); for (let row = 0; row < 2; row++) for (let i = 0; i < nP; i++) { const pnl = shadowAll(new THREE.Mesh(new THREE.BoxGeometry(1.0, .04, 1.7), pvM)); pnl.position.set(X(1 + i * 1.1 + .5), top + .7, Z(D * .25 + row * 2.6)); pnl.rotation.x = .26; rg.add(pnl); box(.05, .45, .05, M.metal, pnl.position.x, top + .45, pnl.position.z + .6, rg); }
-      const tk = shadowAll(new THREE.Mesh(new THREE.CylinderGeometry(.7, .7, 1.5, 24), new THREE.MeshStandardMaterial({ color: "#1d1d1f", roughness: .5 }))); tk.position.set(X(W - 1.2), top + 1.0, Z(D - 1.2)); rg.add(tk); }
-    else { const ov = .8, a = W + 2 * ov, b = D + 2 * ov, hgt = Math.min(a, b) * .3, x0 = X(-ov), x1 = X(W + ov), z0 = Z(-ov), z1 = Z(D + ov), cz = (z0 + z1) / 2, rl = Math.max(0, (a - b) / 2), rw = Math.max(0, (b - a) / 2);
-      const yb = top + .12, r0 = a >= b ? [X(W / 2) - rl, yb + hgt, cz] : [X(W / 2), yb + hgt, cz + rw], r1 = a >= b ? [X(W / 2) + rl, yb + hgt, cz] : [X(W / 2), yb + hgt, cz - rw];
+    const hipRoof = (bx, by, W, D) => { const ov = .8, a = W + 2 * ov, b = D + 2 * ov, hgt = Math.min(a, b) * .3, x0 = X(bx - ov), x1 = X(bx + W + ov), z0 = Z(by - ov), z1 = Z(by + D + ov), cz = (z0 + z1) / 2, rl = Math.max(0, (a - b) / 2), rw = Math.max(0, (b - a) / 2);
+      const yb = top + .12, r0 = a >= b ? [X(bx + W / 2) - rl, yb + hgt, cz] : [X(bx + W / 2), yb + hgt, cz + rw], r1 = a >= b ? [X(bx + W / 2) + rl, yb + hgt, cz] : [X(bx + W / 2), yb + hgt, cz - rw];
       const v = [x0, yb, z0, x1, yb, z0, x1, yb, z1, x0, yb, z1, ...r0, ...r1];
       const tri = a >= b ? [0, 1, 5, 0, 5, 4, 2, 3, 4, 2, 4, 5, 3, 0, 4, 1, 2, 5] : [0, 1, 4, 1, 2, 5, 1, 5, 4, 2, 3, 5, 3, 0, 4, 3, 4, 5];
       // géométrie non indexée + UV planaires par pan (le long de la pente)
@@ -384,15 +393,35 @@ export function createViewer(canvas) {
         for (const q of P) { pos.push(q.x, q.y, q.z); const slope = Math.hypot(n.x, n.z) > 1e-3 ? -(q.x * hz2.x + q.z * hz2.z) / Math.cos(Math.asin(Math.hypot(n.x, n.z))) : q.z; const sp = Math.sqrt(Math.max(1e-4, 1 - n.y * n.y)); uv.push(q.x * side.x + q.z * side.z, (q.y - yb) / sp); } }
       const geo = new THREE.BufferGeometry(); geo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3)); geo.setAttribute("uv", new THREE.Float32BufferAttribute(uv, 2)); geo.computeVertexNormals();
       const rm = shadowAll(new THREE.Mesh(geo, M.roof)); rg.add(rm); M.roof.side = THREE.DoubleSide;
-      box(a, .12, b, M.white, X(W / 2), yb - .06, cz, rg); // sous-face (débord)
+      box(a, .12, b, M.white, X(bx + W / 2), yb - .06, cz, rg); // sous-face (débord)
       const fz = (len, x, z) => box(len, .22, .05, M.accent, x, yb - .02, z, rg), fx = (len, x, z) => box(.05, .22, len, M.accent, x, yb - .02, z, rg);
-      fz(a, X(W / 2), z0); fz(a, X(W / 2), z1); fx(b, x0, cz); fx(b, x1, cz); }
+      fz(a, X(bx + W / 2), z0); fz(a, X(bx + W / 2), z1); fx(b, x0, cz); fx(b, x1, cz); };
+    if (st.roof === "flat" && comp) { for (const b of BL) box(b.w + 2 * T_EXT, .25, b.h + 2 * T_EXT, M.roof, X(b.x + b.w / 2), top + .1, Z(b.y + b.h / 2), rg);
+      const LT = plan.levels[plan.levels.length - 1], xsT = extSegs(LT.rooms); parapetSegs(xsT, LT.rooms, .75, .2, M.facade, top + .575, rg); ringSegs(xsT, LT.rooms, .07, .3, M.accent, top + .98, rg);
+      const bb = plan.bar, pvM = new THREE.MeshPhysicalMaterial({ color: "#16233a", roughness: .15, metalness: .4, clearcoat: 1 }), nP = Math.max(2, Math.min(14, Math.floor((bb.w - 2) / 1.1))), nR = Math.max(1, Math.min(3, Math.floor((bb.h - 2) / 2.6)));
+      for (let row = 0; row < nR; row++) for (let i = 0; i < nP; i++) { const pnl = shadowAll(new THREE.Mesh(new THREE.BoxGeometry(1.0, .04, 1.7), pvM)); pnl.position.set(X(bb.x + 1 + i * 1.1 + .5), top + .7, Z(bb.y + 1.6 + row * 2.6)); pnl.rotation.x = .26; rg.add(pnl); }
+      const tk = shadowAll(new THREE.Mesh(new THREE.CylinderGeometry(.7, .7, 1.5, 24), new THREE.MeshStandardMaterial({ color: "#1d1d1f", roughness: .5 }))); tk.position.set(X(bb.x + bb.w - 1.2), top + 1.0, Z(bb.y + bb.h - 1.2)); rg.add(tk); }
+    else if (st.roof === "flat") { box(W + 2 * T_EXT, .25, D + 2 * T_EXT, M.roof, X(W / 2), top + .1, Z(D / 2), rg); const h = .75, t = .2;
+      box(W + 2 * T_EXT, h, t, M.facade, X(W / 2), top + h / 2 + .2, Z(0) + T_EXT - t / 2, rg); box(W + 2 * T_EXT, h, t, M.facade, X(W / 2), top + h / 2 + .2, Z(D) - T_EXT + t / 2, rg);
+      box(t, h, D + 2 * T_EXT, M.facade, X(0) - T_EXT + t / 2, top + h / 2 + .2, Z(D / 2), rg); box(t, h, D + 2 * T_EXT, M.facade, X(W) + T_EXT - t / 2, top + h / 2 + .2, Z(D / 2), rg);
+      ring(W, D, .07, .3, M.accent, top + .98, rg);
+      // panneaux photovoltaïques orientés plein sud + réservoir d'eau (polytank)
+      const pvM = new THREE.MeshPhysicalMaterial({ color: "#16233a", roughness: .15, metalness: .4, clearcoat: 1, map: ctex("pv", 64, 128, (g, w, h) => { g.fillStyle = "#1b2b48"; g.fillRect(0, 0, w, h); g.strokeStyle = "#8fa3c0"; g.lineWidth = 1; for (let x = 0; x <= w; x += 16) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, h); g.stroke(); } for (let y = 0; y <= h; y += 16) { g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke(); } }) });
+      const nP = Math.max(2, Math.min(8, Math.floor((W - 2) / 1.1))); for (let row = 0; row < 2; row++) for (let i = 0; i < nP; i++) { const pnl = shadowAll(new THREE.Mesh(new THREE.BoxGeometry(1.0, .04, 1.7), pvM)); pnl.position.set(X(1 + i * 1.1 + .5), top + .7, Z(D * .25 + row * 2.6)); pnl.rotation.x = .26; rg.add(pnl); box(.05, .45, .05, M.metal, pnl.position.x, top + .45, pnl.position.z + .6, rg); }
+      const tk = shadowAll(new THREE.Mesh(new THREE.CylinderGeometry(.7, .7, 1.5, 24), new THREE.MeshStandardMaterial({ color: "#1d1d1f", roughness: .5 }))); tk.position.set(X(W - 1.2), top + 1.0, Z(D - 1.2)); rg.add(tk); }
+    else if (comp) for (const b of plan.roofBlocks) hipRoof(b.x, b.y, b.w, b.h);
+    else hipRoof(0, 0, W, D);
     // auvent / pergola de terrasse
     const pz = Z(0) + 1.4, ph = WALL_H + .2;
-    if (st.pergola) { box(tw + .4, .2, .12, M.accent, tcx, ph, Z(0) + 2.85, rg); for (let u = -tw / 2; u <= tw / 2 + .01; u += .32) box(.08, .22, 2.9, M.slat, tcx + u, ph + .2, pz, rg); }
+    if (comp && kind !== "house") { const L0 = plan.levels[0], md = L0.doors.find(d => d.main && d.ext && d.o === "h" && d.out < 0);
+      if (kind === "hotel" && md) { const cx = X(md.c), cz = Z(md.y); box(4.2, .2, 2.6, M.roof, cx, 3.05, cz + 1.3, rg); box(4.3, .26, .08, M.accent, cx, 3.05, cz + 2.6, rg); for (const sx of [-1, 1]) box(.16, 3.0, .16, M.metal, cx + sx * 1.95, 1.5, cz + 2.45);
+        const lt = new THREE.PointLight(0xffc27a, 0, 9, 2); lt.position.set(cx, 2.7, cz + 1.3); lt.userData.on = 6; root.add(lt); nightLights.push(lt); }
+      if (p.auvent || kind === "shops") for (const sg of extSegs(L0.rooms).filter(g => g.o === "h" && g.out < 0)) { const len = sg.a1 - sg.a0 + .4, cx = X((sg.a0 + sg.a1) / 2), cz = Z(sg.at) + T_EXT;
+        box(len, .14, 1.9, M.roof, cx, 3.0, cz + .95, rg); box(len, .3, .06, M.accent, cx, 3.0, cz + 1.9, rg); for (let u = sg.a0 + .6; u < sg.a1; u += 3.2) { const rod = box(.03, .03, 2.1, M.metal, X(u), 3.55, cz + .9, rg, false); rod.rotation.x = -.5; } } }
+    else if (st.pergola) { box(tw + .4, .2, .12, M.accent, tcx, ph, Z(0) + 2.85, rg); for (let u = -tw / 2; u <= tw / 2 + .01; u += .32) box(.08, .22, 2.9, M.slat, tcx + u, ph + .2, pz, rg); }
     else box(tw + .4, .16, 3, M.roof, tcx, ph + .08, pz, rg);
-    for (const sx of [-1, 1]) box(.2, ph, .2, M.accent, tcx + sx * (tw / 2), ph / 2, Z(0) + 2.8);
-    { const lt = new THREE.PointLight(0xffc27a, 0, 8, 2); lt.position.set(tcx, ph - .3, pz); lt.userData.on = 6; root.add(lt); nightLights.push(lt); }
+    if (!comp || kind === "house") { for (const sx of [-1, 1]) box(.2, ph, .2, M.accent, tcx + sx * (tw / 2), ph / 2, Z(0) + 2.8);
+    { const lt = new THREE.PointLight(0xffc27a, 0, 8, 2); lt.position.set(tcx, ph - .3, pz); lt.userData.on = 6; root.add(lt); nightLights.push(lt); } }
     // ombres : cadrage serré sur la parcelle
     const s = Math.max(Lp, Pp) * .62; Object.assign(sun.shadow.camera, { left: -s, right: s, top: s, bottom: -s, near: 1, far: 220 }); sun.shadow.camera.updateProjectionMatrix();
     setSun(state.hour); applyVis(); view("34");
@@ -426,6 +455,15 @@ export function createViewer(canvas) {
     if (lt === "led" && !sk) for (const [w, d, x, z] of [[r.w - .1, .02, cx, Z(r.y) - .06], [r.w - .1, .02, cx, Z(r.y + r.h) + .06]]) b(w, .02, d, M.led, x, top - .04, z);
     if (lt === "appl") for (const [x, z] of [[X(r.x) + .07, cz], [X(r.x + r.w) - .07, cz]]) { b(.06, .22, .14, M.lamp, x, yb + 1.85, z); }
   }
+  // bâtiments composés : prolongement des façades aux angles saillants (pas aux angles rentrants)
+  function segEnds(rooms, sg, e) { const inAny = (x, y) => rooms.some(r => x > r.x + .001 && x < r.x + r.w - .001 && y > r.y + .001 && y < r.y + r.h - .001), o = sg.out * e / 2;
+    const p0 = sg.o === "h" ? inAny(sg.a0 - e / 2, sg.at + o) : inAny(sg.at + o, sg.a0 - e / 2), p1 = sg.o === "h" ? inAny(sg.a1 + e / 2, sg.at + o) : inAny(sg.at + o, sg.a1 + e / 2); return [p0 ? 0 : e, p1 ? 0 : e]; }
+  function ringSegs(xs, rooms, h, t, m, y, parent, inset = 0) { const e = T_EXT + .05 - inset;
+    for (const sg of xs) { const [e0, e1] = segEnds(rooms, sg, e), len = sg.a1 - sg.a0 + e0 + e1, mid = (sg.a0 - e0 + sg.a1 + e1) / 2, off = sg.at + sg.out * (e - t / 2);
+      if (sg.o === "h") box(len, h, t, m, X(mid), y, Z(off), parent); else box(t, h, len, m, X(off), y, Z(mid), parent); } }
+  function parapetSegs(xs, rooms, h, t, m, y, parent) { for (const sg of xs) { const [e0, e1] = segEnds(rooms, sg, T_EXT), len = sg.a1 - sg.a0 + e0 + e1, mid = (sg.a0 - e0 + sg.a1 + e1) / 2, off = sg.at + sg.out * (T_EXT - t / 2);
+      if (sg.o === "h") box(len, h, t, m, X(mid), y, Z(off), parent); else box(t, h, len, m, X(off), y, Z(mid), parent); } }
+  let LIT = new Set(), LITE = false; const lightOK = r => LIT.has(r);
   // bandeau périphérique (4 lisses)
   function ring(W, D, h, t, m, y, parent, inset = 0) { const e = T_EXT + .05 - inset, a = W + 2 * e, b = D + 2 * e;
     box(a, h, t, m, X(W / 2), y, Z(-e) + t / 2, parent); box(a, h, t, m, X(W / 2), y, Z(D + e) - t / 2, parent);
@@ -452,9 +490,10 @@ export function createViewer(canvas) {
     if (!state.plan) return; const c = camera.position;
     if (state.mode === "room" && state.room) { const { r, l } = state.room, m = .15, y = l * LEVEL_H + .2;
       c.x = THREE.MathUtils.clamp(c.x, X(r.x) + m, X(r.x + r.w) - m); c.z = THREE.MathUtils.clamp(c.z, Z(r.y + r.h) + m, Z(r.y) - m); c.y = THREE.MathUtils.clamp(c.y, y + .5, y + WALL_H - .35); return; }
-    const { W, D } = state.plan, e = T_EXT + .45, x0 = X(0) - e, x1 = X(W) + e, z0 = Z(D) - e, z1 = Z(0) + e, top = (state.upper ? state.plan.levels.length : 1) * LEVEL_H + (state.roof ? 2.6 : .6);
+    const { W, D } = state.plan, e = T_EXT + .45, top = (state.upper ? state.plan.levels.length : 1) * LEVEL_H + (state.roof ? 2.6 : .6);
+    for (const b of state.plan.blocks || [{ x: 0, y: 0, w: W, h: D }]) { const x0 = X(b.x) - e, x1 = X(b.x + b.w) + e, z0 = Z(b.y + b.h) - e, z1 = Z(b.y) + e;
     if (c.y < top && c.x > x0 && c.x < x1 && c.z > z0 && c.z < z1) { const d = [c.x - x0, x1 - c.x, c.z - z0, z1 - c.z, top - c.y], k = d.indexOf(Math.min(...d));
-      if (k === 0) c.x = x0; else if (k === 1) c.x = x1; else if (k === 2) c.z = z0; else if (k === 3) c.z = z1; else c.y = top; }
+      if (k === 0) c.x = x0; else if (k === 1) c.x = x1; else if (k === 2) c.z = z0; else if (k === 3) c.z = z1; else c.y = top; } }
     if (c.y < .4) c.y = .4;
   }
   function view(kind, roomIdx) {

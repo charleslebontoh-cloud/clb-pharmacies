@@ -96,10 +96,13 @@ table.tt{font-size:12.5px;min-width:520px}table.tt th{text-align:left;font-size:
   </div>
   <div class="card">
     <h3>Programme</h3>
+    <label>Type de bâtiment</label><div class="tg" id="ftype"></div>
+    <label>Forme du bâtiment</label><div class="tg" id="fforme"></div>
     <label>Nom du projet</label><input id="f-name" value="Villa Cocody">
     <div class="row"><div><label>Terrain : largeur (m)</label><input id="f-L" type="number" inputmode="decimal" value="20"></div><div><label>Profondeur (m)</label><input id="f-P" type="number" inputmode="decimal" value="25"></div></div>
-    <div class="row"><div><label>Surface habitable (m²)</label><input id="f-S" type="number" inputmode="numeric" value="140"></div><div><label>Niveaux</label><select id="f-lv"><option value="1">Plain-pied</option><option value="2">Duplex (R+1)</option></select></div></div>
-    <div class="row"><div><label>Chambres</label><select id="f-ch"></select></div><div><label>Salles de bain</label><select id="f-sdb"></select></div></div>
+    <div class="row"><div id="wS"><label id="lS">Surface habitable (m²)</label><input id="f-S" type="number" inputmode="numeric" value="140"></div><div><label>Niveaux</label><select id="f-lv"><option value="1">Plain-pied</option><option value="2">Duplex (R+1)</option></select></div></div>
+    <div class="row" id="rowH"><div><label>Chambres</label><select id="f-ch"></select></div><div><label>Salles de bain</label><select id="f-sdb"></select></div></div>
+    <div class="row" id="rowB" style="display:none"><div><label id="lN">Chambres d'hôtel</label><input id="f-n" type="number" inputmode="numeric" value="24"></div><div></div></div>
     <label>Options</label>
     <div class="tg" id="opts"></div>
     <button class="btn w" id="bGen" style="margin-top:14px">Dessiner les plans</button>
@@ -192,8 +195,9 @@ table.tt{font-size:12.5px;min-width:520px}table.tt th{text-align:left;font-size:
 
 <script type="module">
 import { generate, generateFit, svgPlan, variantSpec } from './plan.js';
+import { generateBat, batVariants, isBat, TYPES, FORMES } from './batiment.js';
 import * as TECH from './tech.js';
-const VER = "1.4.0", K = "archea_";
+const VER = "1.5.0", K = "archea_";
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const LS = { get(k, d) { try { const v = localStorage.getItem(K + k); return v ? JSON.parse(v) : d; } catch { return d; } }, set(k, v) { try { localStorage.setItem(K + k, JSON.stringify(v)); } catch { } } };
 const toast = (t, ms = 2400) => { const e = $("#toast"); e.textContent = t; e.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => e.classList.remove("on"), ms); };
@@ -202,18 +206,37 @@ const fr = (n, d = 0) => Number(n).toLocaleString("fr-FR", { maximumFractionDigi
 // ---------- splash ----------
 const h = new Date().getHours(); $("#hello").textContent = (h < 18 ? "Bonjour" : "Bonsoir") + " Charles.";
 $("#sv").textContent = "Version " + VER + " · by CLB"; $("#ver").innerHTML = "<b>ARCHÉA</b> · version " + VER;
-$("#splash").onclick = () => { const s = $("#splash"); s.style.opacity = 0; setTimeout(() => s.remove(), 500); };
+$("#splash").onclick = () => { const s = $("#splash"); s.style.opacity = 0; setTimeout(() => s.remove(), 500);
+  if (LS.get("seen", "") !== VER) { LS.set("seen", VER); setTimeout(() => toast("Nouveau en " + VER + " : hôtels, magasins et boutiques, formes en bande, en L et en U — plusieurs variantes à comparer.", 6500), 700); } };
 
 // ---------- état ----------
+const OPTS_T = { hotel: [["resto", "Restaurant + cuisine"], ["bar", "Bar"], ["semi", "Salle de séminaire"], ["suites", "Suites au dernier étage"], ["piscine", "Piscine"], ["parking", "Parking"]],
+  magasin: [["arriere", "Arrière-boutique + WC"], ["auvent", "Auvent / marquise"], ["parking", "Parking clients"], ["livraison", "Quai de livraison (magasin unique)"]] };
 const OPTS = [["open", "Cuisine ouverte"], ["salon", "Salon VIP"], ["bureau", "Bureau"], ["wcv", "WC visiteurs"], ["cellier", "Cellier"], ["buanderie", "Buanderie + magasin"], ["domestique", "Ch. domestique"], ["jeux", "Salle de jeux / sport"], ["chRdc", "Chambre au RDC (duplex)"], ["garage", "Garage"], ["piscine", "Piscine"]];
-let st = LS.get("cur", { name: "Villa Cocody", L: 20, P: 25, S: 140, levels: 1, ch: 3, sdb: 2, open: 1, bureau: 0, buanderie: 1, domestique: 0, garage: 1, piscine: 0, variant: 12, style: "tropical" });
+let st = LS.get("cur", { type: "maison", forme: "auto", name: "Villa Cocody", L: 20, P: 25, S: 140, levels: 1, ch: 3, sdb: 2, open: 1, bureau: 0, buanderie: 1, domestique: 0, garage: 1, piscine: 0, variant: 12, style: "tropical" });
 let plan = null, lvl = 0;
 for (let i = 1; i <= 7; i++) $("#f-ch").insertAdjacentHTML("beforeend", `<option>${i}</option>`);
 for (let i = 1; i <= 6; i++) $("#f-sdb").insertAdjacentHTML("beforeend", `<option>${i}</option>`);
-$("#opts").innerHTML = OPTS.map(([k, n]) => `<span class="chip" data-k="${k}">${n}</span>`).join("");
-$$("#opts .chip").forEach(c => c.onclick = () => { st[c.dataset.k] = st[c.dataset.k] ? 0 : 1; c.classList.toggle("on", !!st[c.dataset.k]); });
-function toForm() { $("#f-name").value = st.name; $("#f-L").value = st.L; $("#f-P").value = st.P; $("#f-S").value = st.S; $("#f-lv").value = st.levels; $("#f-ch").value = st.ch; $("#f-sdb").value = st.sdb; $$("#opts .chip").forEach(c => c.classList.toggle("on", !!st[c.dataset.k])); }
-function fromForm() { st.name = $("#f-name").value.trim() || "Projet"; st.L = +$("#f-L").value || 20; st.P = +$("#f-P").value || 25; st.S = +$("#f-S").value || 120; st.levels = +$("#f-lv").value; st.ch = +$("#f-ch").value; st.sdb = +$("#f-sdb").value; }
+const curOpts = () => OPTS_T[st.type] || OPTS;
+const defName = (n, t) => /^(villa cocody|mon hôtel|mes boutiques|projet)$/i.test(n || "") ? ({ hotel: "Mon hôtel", magasin: "Mes boutiques", maison: "Villa Cocody" })[t] : n;
+if (!st.type) st.type = "maison"; if (!st.forme) st.forme = "auto"; if (st.arriere == null) st.arriere = 1;
+function renderOpts() { $("#opts").innerHTML = curOpts().map(([k, n]) => `<span class="chip ${st[k] ? "on" : ""}" data-k="${k}">${n}</span>`).join("");
+  $$("#opts .chip").forEach(c => c.onclick = () => { st[c.dataset.k] = st[c.dataset.k] ? 0 : 1; c.classList.toggle("on", !!st[c.dataset.k]); }); }
+function renderType() { const t = st.type;
+  $("#ftype").innerHTML = TYPES.map(([k, n]) => `<span class="chip ${k === t ? "on" : ""}" data-ty="${k}">${n}</span>`).join("");
+  $("#fforme").innerHTML = FORMES.map(([k, n]) => `<span class="chip ${k === st.forme ? "on" : ""}" data-fo="${k}">${k === "auto" && t === "maison" ? "Classique (rectangle)" : n}</span>`).join("");
+  $$("#ftype .chip").forEach(c => c.onclick = () => { fromForm(); st.type = c.dataset.ty; st.name = defName(st.name, st.type); if (st.type === "hotel" && st.levels < 2) st.levels = 3; if (st.type === "maison" && st.levels > 2) st.levels = 2; if (st.type === "magasin" && !st.nb) st.nb = 4; st.variant = 12; renderType(); toForm(); });
+  $$("#fforme .chip").forEach(c => c.onclick = () => { st.forme = c.dataset.fo; st.variant = 12; renderType(); });
+  const lv = $("#f-lv"); lv.innerHTML = t === "maison" ? `<option value="1">Plain-pied</option><option value="2">Duplex (R+1)</option>` : [1, 2, 3, 4, 5].map(i => `<option value="${i}">${i === 1 ? "Rez-de-chaussée seul" : "R+" + (i - 1) + " (" + i + " niveaux)"}</option>`).join("");
+  lv.value = Math.min(st.levels || 1, t === "maison" ? 2 : 5);
+  $("#rowH").style.display = t === "maison" ? "" : "none"; $("#rowB").style.display = t === "maison" ? "none" : ""; $("#wS").style.visibility = t === "hotel" ? "hidden" : "visible";
+  $("#lS").textContent = t === "magasin" ? "Surface commerciale RDC (m²)" : "Surface habitable (m²)"; $("#lN").textContent = t === "hotel" ? "Chambres d'hôtel" : "Nombre de boutiques (1 = magasin unique)";
+  $("#f-n").value = t === "hotel" ? (st.nch || 24) : (st.nb || 4);
+  $("#ask").placeholder = t === "hotel" ? "Décrivez votre hôtel… ex : hôtel de 40 chambres en L, R+2, restaurant, bar, piscine, sur un terrain de 40 x 50" : t === "magasin" ? "Décrivez votre projet… ex : 6 magasins en bande de 240 m² sur un terrain d'angle 35 x 30, avec étage de bureaux et parking" : "Décrivez votre maison… ex : villa duplex de 220 m² avec 4 chambres dont 3 salles de bain, cuisine ouverte, bureau, garage et piscine sur un terrain de 20 x 30";
+  renderOpts(); }
+function toForm() { renderType(); $("#f-name").value = st.name; $("#f-L").value = st.L; $("#f-P").value = st.P; $("#f-S").value = st.S; $("#f-lv").value = st.levels; $("#f-ch").value = st.ch; $("#f-sdb").value = st.sdb; }
+function fromForm() { st.name = $("#f-name").value.trim() || "Projet"; st.L = +$("#f-L").value || 20; st.P = +$("#f-P").value || 25; st.S = +$("#f-S").value || 120; st.levels = +$("#f-lv").value; st.ch = +$("#f-ch").value; st.sdb = +$("#f-sdb").value;
+  const n = Math.max(1, Math.round(+$("#f-n").value || 0)); if (st.type === "hotel") st.nch = Math.min(240, Math.max(4, n || 24)); else if (st.type === "magasin") st.nb = Math.min(20, n || 1); }
 toForm();
 
 // ---------- finitions ----------
@@ -231,11 +254,11 @@ const finVal = k => k === "style" ? st.style : k === "niv" ? (st.levelsSet ? Str
 function setFin(k, v) { if (k === "niv") { st.levels = +v; st.levelsSet = 1; toForm(); } else if (k === "style") { st.style = v; delete st.custom; } else { st.fin = st.fin || {}; st.fin[k] = v; } LS.set("cur", st); need3d = true; gal = ""; renderFins(); if (plan) draw(true); }
 const finChips = k => `<div class="tg">${FIN[k][2].map(([v, n]) => `<span class="chip ${String(finVal(k)) === v ? "on" : ""}" data-fk="${k}" data-fv="${v}">${n}</span>`).join("")}</div>`;
 function renderFins() { $("#fins").innerHTML = Object.keys(FIN).map(k => `<div class="fin"><label>${FIN[k][0]}</label>${finChips(k)}</div>`).join("");
-  const q = $("#askQ"); if (q) q.innerHTML = qHTML(); const pn = $("#askR .prop .notice"); if (pn) pn.innerHTML = notice(generateFit(params(), st.variant ?? 12)); }
+  const q = $("#askQ"); if (q) q.innerHTML = qHTML(); const pn = $("#askR .prop .notice"); if (pn) pn.innerHTML = notice(gen(params(), st.variant ?? 12)); }
 const missing = () => ["niv", "toit", "style", "light", "staff", "baies"].filter(k => k === "style" ? !st.styleSet : k === "niv" ? !st.levelsSet : (st.fin || {})[k] == null);
 const qHTML = () => missing().map(k => `<div class="q"><div>${FIN[k][1]}</div>${finChips(k)}</div>`).join("");
 document.addEventListener("click", e => { const c = e.target.closest("[data-fk]"); if (!c) return; if (c.dataset.fk === "style") st.styleSet = 1; setFin(c.dataset.fk, c.dataset.fv); });
-const SUGG = ["Duplex", "Plain-pied", "4 chambres autonomes", "Suite parentale avec dressing", "Salon VIP", "Cuisine ouverte", "Cuisine fermée", "Bureau", "WC visiteurs", "Cellier", "Buanderie", "Chambre domestique", "Salle de jeux", "Chambre au RDC", "Garage", "Piscine", "Staff avec gorge lumineuse", "Staff décoratif avec lustre", "Corniche en staff", "Spots LED", "Suspensions design", "Éclairage LED indirect", "Grandes baies coulissantes", "Baies toute hauteur à galandage", "Parquet", "Marbre", "Béton ciré", "Menuiseries alu noir", "Déco afro-chic", "Style contemporain", "Style luxe néo-classique", "Style méditerranéen", "Style industriel", "Moderne tropical", "Terrain 20 x 30", "200 m²"];
+const SUGG = ["Hôtel de 40 chambres", "Magasins en bande", "Forme en L", "Forme en U", "Terrain d'angle", "R+2", "Restaurant", "Parking", "Duplex", "Plain-pied", "4 chambres autonomes", "Suite parentale avec dressing", "Salon VIP", "Cuisine ouverte", "Cuisine fermée", "Bureau", "WC visiteurs", "Cellier", "Buanderie", "Chambre domestique", "Salle de jeux", "Chambre au RDC", "Garage", "Piscine", "Staff avec gorge lumineuse", "Staff décoratif avec lustre", "Corniche en staff", "Spots LED", "Suspensions design", "Éclairage LED indirect", "Grandes baies coulissantes", "Baies toute hauteur à galandage", "Parquet", "Marbre", "Béton ciré", "Menuiseries alu noir", "Déco afro-chic", "Style contemporain", "Style luxe néo-classique", "Style méditerranéen", "Style industriel", "Moderne tropical", "Terrain 20 x 30", "200 m²"];
 $("#askS").innerHTML = SUGG.map(t => `<span>${t}</span>`).join("");
 $$("#askS span").forEach(c => c.onclick = () => { const a = $("#ask"); a.value = (a.value.trim() ? a.value.trim().replace(/[,.]$/, "") + ", " : "") + c.textContent.toLowerCase().replace(/^(\d)/, "$1"); c.style.opacity = .45; });
 function parseFin(s, got) {
@@ -260,14 +283,20 @@ const m2 = a => fr(a, a < 10 ? 1 : 0) + " m²";
 function notice(pl) { if (!pl) return ""; const F = st.fin || {}, S = STYN[st.style] || STYN.tropical, lv = pl.levels.length > 1;
   const def = k => F[k] == null ? " <i>(proposé par défaut, à confirmer)</i>" : "";
   const lst = L => L.rooms.filter(r => r.k !== "couloir").map(r => `${r.n.toLowerCase().replace(/^wc/, "WC").replace("vip", "VIP").replace("rdc", "RDC")} (${m2(r.w * r.h)}${r.filler ? ", espace restant de la trame" : ""})`).join(", ");
-  let h = `<p><b>${st.name}</b> : villa ${lv ? "en duplex (R+1)" : "de plain-pied"}${st.levelsSet ? "" : " <i>(à confirmer)</i>"} de <b>${fr(pl.hab)} m² habitables</b>${pl.Sreq ? ` (demandé : ${fr(pl.Sreq)} m²)` : ""}, sur un terrain de ${fr(st.L)} × ${fr(st.P)} m (${fr(st.L * st.P)} m²). Emprise au sol ${fr(pl.emprise)} m², soit un CES de ${fr(pl.ces * 100)} %. ${pl.mode === "B" ? "La maison se développe en longueur, couloir perpendiculaire à la rue, pour s'adapter à la largeur du terrain." : "Les pièces s'organisent de part et d'autre d'un dégagement parallèle à la rue : pièces de jour côté entrée, pièces de nuit au calme à l'arrière."}</p>`;
-  pl.levels.forEach(L => { h += `<p><b>${L.name}</b> : ${lst(L)}.</p>`; });
+  const C = pl.mode === "C", FN = { bande: "en bande", L: "en L", U: "en U autour d'une cour" }[pl.forme] + (pl.tr ? " (perpendiculaire à la rue)" : ""), RN = pl.levels.length > 1 ? "R+" + (pl.levels.length - 1) : "de plain-pied", terr = `sur un terrain de ${fr(st.L)} × ${fr(st.P)} m (${fr(st.L * st.P)} m²). Emprise au sol ${fr(pl.emprise)} m², soit un CES de ${fr(pl.ces * 100)} %.`;
+  let h = C && pl.kind === "hotel" ? `<p><b>${st.name}</b> : hôtel ${RN}, plan ${FN}, de <b>${pl.nRooms} chambres</b>${pl.nRooms !== (st.nch || 24) ? ` (demandé : ${st.nch || 24})` : ""} chacune avec sa salle d'eau, ${fr(pl.hab)} m² utiles, ${terr} Hall-réception sur rue et espaces publics au rez-de-chaussée ; chambres desservies par un couloir central de 1,60 m ; ${pl.levels.length > 1 ? "escalier principal" + (pl.levels.length >= 2 ? " et ascenseur" : "") + ", escaliers de secours si les couloirs sont longs." : "circulations de plain-pied."}</p>`
+    : C && pl.kind === "shops" ? `<p><b>${st.name}</b> : ensemble de <b>${pl.nb} boutiques</b> ${FN}, ${RN}, ${fr(pl.levels[0].rooms.filter(r => r.k === "vente").reduce((a, r) => a + r.w * r.h, 0))} m² de surfaces de vente, ${terr} Chaque boutique ouvre directement sur la rue par un rideau métallique et une devanture vitrée${st.arriere !== 0 ? ", avec réserve et WC à l'arrière" : ""}.${pl.levels.length > 1 ? " Étage(s) de plateaux de bureaux desservis par un escalier indépendant depuis la rue." : ""}</p>`
+    : C && pl.kind === "shop" ? `<p><b>${st.name}</b> : magasin ${RN}, plan ${FN}, ${fr(pl.levels[0].rooms.reduce((a, r) => a + r.w * r.h, 0))} m² au rez-de-chaussée${pl.Sreq ? ` (demandé : ${fr(pl.Sreq)} m²)` : ""}, ${terr} Grande surface de vente vitrée sur rue ; réserve, bureau, vestiaires et sanitaires à l'arrière, reliés par une circulation de service${st.livraison ? " qui débouche sur le quai de livraison" : ""}.${pl.levels.length > 1 ? " Plateaux de bureaux à l'étage." : ""}</p>`
+    : C ? `<p><b>${st.name}</b> : maison ${FN}, ${lv ? "en duplex (R+1)" : "de plain-pied"}, de <b>${fr(pl.hab)} m² habitables</b>${pl.Sreq ? ` (demandé : ${fr(pl.Sreq)} m²)` : ""}, ${terr} Pièces de jour sur rue, chambres regroupées dans l'aile au calme, desservies par un couloir de 1,20 m.</p>`
+    : `<p><b>${st.name}</b> : villa ${lv ? "en duplex (R+1)" : "de plain-pied"}${st.levelsSet ? "" : " <i>(à confirmer)</i>"} de <b>${fr(pl.hab)} m² habitables</b>${pl.Sreq ? ` (demandé : ${fr(pl.Sreq)} m²)` : ""}, sur un terrain de ${fr(st.L)} × ${fr(st.P)} m (${fr(st.L * st.P)} m²). Emprise au sol ${fr(pl.emprise)} m², soit un CES de ${fr(pl.ces * 100)} %. ${pl.mode === "B" ? "La maison se développe en longueur, couloir perpendiculaire à la rue, pour s'adapter à la largeur du terrain." : "Les pièces s'organisent de part et d'autre d'un dégagement parallèle à la rue : pièces de jour côté entrée, pièces de nuit au calme à l'arrière."}</p>`;
+  const lstH = L => { const n = L.rooms.filter(r => r.k === "chh").length, o = [...new Set(L.rooms.filter(r => !/^(chh|sdh|sas|couloir|dress)$/.test(r.k) && !/suite/.test(r.n) && r.n).map(r => r.n.toLowerCase().replace(/^wc/, "WC")))]; const nb = L.rooms.filter(r => r.k === "vente").length; return [n ? n + " chambres" + (L.rooms.some(r => /suite/.test(r.n)) ? " dont " + L.rooms.filter(r => r.k === "salon").length + " suites" : "") : "", nb ? nb + " boutiques" + (L.rooms.some(r => r.k === "res") ? " avec réserve et WC" : "") : "", ...o.filter(x => !nb || !/^(boutique|réserve)/.test(x))].filter(Boolean).join(", "); };
+  pl.levels.forEach(L => { h += `<p><b>${L.name}</b> : ${pl.kind === "hotel" || pl.kind === "shops" ? lstH(L) : lst(L)}.</p>`; });
   const sol = F.sol && F.sol !== "auto" ? T.sol[F.sol] : ({ tile: "grand carrelage", marble: "marbre poli", wood: "parquet chêne", concrete: "béton ciré", terracotta: "terre cuite" })[S.floor];
   h += `<p><b>Ambiance ${S.n.toLowerCase()}</b>${st.styleSet ? "" : " <i>(proposée par défaut, à confirmer)</i>"} : ${S.txt}. Sols en ${sol} dans les pièces de vie, faïence et grès dans les pièces d'eau.</p>`;
   const toitT = { dalle: "dalle en béton armé formant toit-terrasse (étanchéité multicouche, acrotère de 0,80 m)", tuiles: "toiture à quatre pans en tuiles sur charpente, débords de 0,80 m", bac: "toiture à quatre pans en bac aluminium sur charpente métallique, débords de 0,80 m" };
   h += `<p><b>Couverture</b> : ${toitT[F.toit] || (S.roof === "flat" ? toitT.dalle : toitT.tuiles)}${F.toit == null ? " <i>(proposée par défaut, à confirmer)</i>" : ""}.</p>`;
   h += `<p><b>Plafonds</b> : ${T.staff[F.staff ?? 0]}${def("staff")}. <b>Éclairage</b> : ${T.light[F.light || "spots"]}${def("light")}. <b>Ouvertures</b> : ${T.baies[F.baies ?? 1]}${def("baies")}, menuiseries en ${F.menu && F.menu !== "auto" ? T.menu[F.menu] : S.menu}.</p>`;
-  const ext = ["terrasse couverte " + (S.pergola ? "sous pergola à lames" : "sous auvent") + " devant le séjour", "jardin tropical (palmiers, manguier, bougainvilliers)", "clôture avec muret et grille sur rue, portail coulissant"]; if (st.piscine) ext.push("piscine d'environ 8 × 4 m avec plage"); if (st.garage) ext.push("garage couvert d'une voiture"); if (S.roof === "flat") ext.push("toit-terrasse avec emplacement pour panneaux solaires et réservoir d'eau");
+  const ext = C && pl.kind !== "house" ? ["parvis minéral sur rue", ...(pl.kind === "hotel" ? ["marquise d'accueil devant le hall"] : []), ...(st.auvent || pl.kind === "shops" ? ["auvent continu au-dessus des devantures"] : []), ...(st.parking ? ["parking en façade"] : []), "clôture avec muret et grille sur rue"] : ["terrasse couverte " + (S.pergola ? "sous pergola à lames" : "sous auvent") + " devant le séjour", "jardin tropical (palmiers, manguier, bougainvilliers)", "clôture avec muret et grille sur rue, portail coulissant"]; if (st.piscine) ext.push(pl.court && pl.court.w > 9 ? "piscine dans la cour intérieure" : "piscine d'environ 8 × 4 m avec plage"); if (st.garage && !(C && pl.kind !== "house")) ext.push("garage couvert d'une voiture"); if (S.roof === "flat") ext.push("toit-terrasse avec emplacement pour panneaux solaires et réservoir d'eau");
   h += `<p><b>Extérieurs</b> : ${ext.join(", ")}.</p>`;
   if (pl.warn.length) h += `<p><b>Points de vigilance</b> : ${pl.warn.join(" ")}</p>`;
   h += `<p class="muted">Esquisse indicative à faire valider et signer par un architecte inscrit à l'OACI avant toute demande de permis de construire.</p>`;
@@ -285,14 +314,25 @@ function parse(t) {
   const s = t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, ""), got = [], num = w => ({ un: 1, une: 1, deux: 2, trois: 3, quatre: 4, cinq: 5, six: 6, sept: 7 })[w] ?? +w;
   const N = "(\\d+|une?|deux|trois|quatre|cinq|six|sept)";
   // nouvelle demande : on repart d'un programme vierge (seul ce qui est demandé est dessiné)
-  const keep = { name: st.name, L: st.L, P: st.P, variant: 12 }; st = { ...keep, S: 0, levels: 1, ch: 3, sdb: 0, style: "tropical", fin: {} }; for (const [k] of OPTS) st[k] = 0;
+  const ty = /h[oô]tel|motel|auberge|residence hoteliere/.test(s) ? "hotel" : /magasins?|boutiques?|commerces?|commercial|supermarche|superette|showroom|galerie marchande/.test(s) ? "magasin" : /villa|maison|duplex|chambres? a coucher/.test(s) ? "maison" : st.type || "maison";
+  const fo = /\ben l(?![\w'])|forme en l\b|en equerre|terrain d'angle/.test(s) ? "L" : /\ben u(?![\w'])|forme en u\b|autour d'une cour|cour interieure/.test(s) ? "U" : /en bande|en barre|en longueur|lineaire/.test(s) ? "bande" : "auto";
+  const keep = { name: defName(st.name, ty), L: st.L, P: st.P, variant: 12, type: ty, forme: fo, nch: st.nch || 24, nb: st.nb || 4 }; st = { ...keep, S: 0, levels: 1, ch: 3, sdb: 0, style: "tropical", fin: {} }; for (const [k] of [...OPTS, ...OPTS_T.hotel, ...OPTS_T.magasin]) st[k] = 0; st.arriere = 1;
+  got.push(({ hotel: "hôtel", magasin: "commerce", maison: "maison" })[ty] + (fo !== "auto" ? " " + ({ L: "en L", U: "en U", bande: "en bande" })[fo] : ""));
   let m;
   if (m = s.match(/(\d{2,3})\s*(?:x|×|\*|sur|par)\s*(\d{2,3})/)) { st.L = +m[1]; st.P = +m[2]; got.push(`terrain ${m[1]} × ${m[2]} m`); }
   else if (m = s.match(/terrain\s*(?:de\s*)?(\d{3,4})\s*m/)) { const a = +m[1]; st.L = Math.round(Math.sqrt(a / 1.4)); st.P = Math.round(a / st.L); got.push(`terrain ≈ ${st.L} × ${st.P} m`); }
   const sm = [...s.matchAll(/(\d{2,4})\s*(?:m2|m²|m\s?carres?|metres? carres?)/g)].map(x => +x[1]).filter(v => v >= 40 && v <= 900);
-  if (sm.length) { const terr = /terrain\s*(?:de\s*)?\d{3,4}/.test(s) ? sm.slice(1) : sm; if (terr.length) { st.S = terr[0]; got.push(`${st.S} m² habitables`); } }
+  if (sm.length) { const terr = /terrain\s*(?:de\s*)?\d{3,4}/.test(s) ? sm.slice(1) : sm; if (terr.length) { st.S = terr[0]; got.push(`${st.S} m² ${ty === "magasin" ? "commerciaux" : "habitables"}`); } }
   if (/duplex|r\s*\+\s*1|a etages?|(?:un|1) etage|chambres? (?:a|en) l'?etage/.test(s)) { st.levels = 2; st.levelsSet = 1; got.push("duplex (R+1)"); } else if (/plain[\s-]?pied|villa basse|maison basse|rez[- ]de[- ]chaussee seul|sans etage/.test(s)) { st.levels = 1; st.levelsSet = 1; got.push("plain-pied"); }
   if (/dalle|toit[- ]terrasse|toit plat|terrasse accessible/.test(s)) { st.fin.toit = "dalle"; got.push("dalle (toit-terrasse)"); } else if (/tuile/.test(s)) { st.fin.toit = "tuiles"; got.push("toiture en tuiles"); } else if (/\bbac\b|tole|toiture metallique|alu(?:minium)? (?:pour|en) toiture/.test(s)) { st.fin.toit = "bac"; got.push("toiture en bac alu"); } else if (/toiture|toit en pente|charpente/.test(s)) { st.fin.toit = "tuiles"; got.push("toiture (tuiles)"); }
+  if (ty !== "maison") { const flag2 = (k, re, n) => { if (re.test(s)) { st[k] = 1; got.push(n); } };
+    if (m = s.match(/r\s*\+\s*(\d)/)) st.levels = Math.min(5, +m[1] + 1); else if (m = s.match(/(\d)\s*etages?/)) st.levels = Math.min(5, +m[1] + 1); else if (m = s.match(/(\d)\s*niveaux/)) st.levels = Math.min(5, +m[1]); else if (/etage|duplex/.test(s)) st.levels = 2; else if (ty === "hotel") st.levels = 3;
+    st.levelsSet = 1; got.push(st.levels > 1 ? "R+" + (st.levels - 1) : "rez-de-chaussée seul");
+    if (ty === "hotel") { if (m = s.match(/(\d{1,3})\s*(?:chambres?|clefs?|cles|unites)/)) { st.nch = Math.min(240, Math.max(4, +m[1])); } got.push(st.nch + " chambres");
+      flag2("resto", /restaurant|resto/, "restaurant"); flag2("bar", /\bbar\b|lounge/, "bar"); flag2("semi", /seminaire|conference|reunion/, "salle de séminaire"); flag2("suites", /suites?/, "suites"); }
+    else { if (m = s.match(/(\d{1,2})\s*(?:magasins|boutiques|locaux|commerces)/)) st.nb = Math.min(20, +m[1]); else if (/supermarche|superette|showroom|un magasin|grand magasin/.test(s)) st.nb = 1; got.push(st.nb > 1 ? st.nb + " boutiques" : "magasin unique");
+      if (!st.S) st.S = st.nb > 1 ? st.nb * 35 : 200; flag2("auvent", /auvent|marquise|casquette/, "auvent"); flag2("livraison", /livraison|quai/, "quai de livraison"); if (/sans (?:reserve|arriere)/.test(s)) st.arriere = 0; }
+    flag2("piscine", /piscine/, "piscine"); flag2("parking", /parking|stationnement/, "parking"); parseFin(s, got); const nm2 = t.match(/(?:[Hh][ôo]tel|[Gg]alerie|[Mm]agasins?|[Rr][ée]sidence)\s+([A-ZÉÈ][\wéèêàç'-]+(?:\s+[A-ZÉÈ][\wéèêàç'-]+)?)/); if (nm2) st.name = nm2[0]; return got; }
   if (m = s.match(new RegExp(N + "\\s*(?:chambres?|ch\\b|pieces? a coucher)"))) { st.ch = Math.min(7, Math.max(1, num(m[1]))); got.push(st.ch + " chambres"); }
   else if (m = s.match(/\b(\d)\s*pieces?\b/)) { st.ch = Math.max(1, Math.min(7, +m[1] - 1)); got.push(`${m[1]} pièces → ${st.ch} chambres`); }
   else if (/villa basse|f4/.test(s)) { st.ch = 3; }
@@ -309,11 +349,11 @@ function parse(t) {
   parseFin(s, got);
   if (!st.sdb) st.sdb = Math.max(1, Math.min(st.ch, st.ch >= 3 ? st.ch - 1 : 1));
   if (!st.S) { st.S = Math.round((45 + st.ch * 24 + (st.salon ? 20 : 0) + (st.bureau ? 10 : 0) + (st.jeux ? 15 : 0) + (st.domestique ? 12 : 0)) / 5) * 5; got.push(`surface estimée ${st.S} m² (précisez-la si besoin)`); }
-  const nm = t.match(/(?:[Vv]illa|[Mm]aison|[Rr][ée]sidence)\s+([A-ZÉÈ][\wéèêàç'-]+(?:\s+[A-ZÉÈ][\wéèêàç'-]+)?)/); if (nm) st.name = nm[0];
+  const nm = t.match(/(?:[Vv]illa|[Mm]aison|[Rr][ée]sidence|[Hh][ôo]tel|[Gg]alerie|[Mm]agasins?)\s+([A-ZÉÈ][\wéèêàç'-]+(?:\s+[A-ZÉÈ][\wéèêàç'-]+)?)/); if (nm) st.name = nm[0];
   return got;
 }
 $("#bAsk").onclick = () => { const t = $("#ask").value.trim(); if (!t) return toast("Décrivez d'abord votre projet"); const g = parse(t); toForm(); renderFins();
-  const pv = generateFit(params(), st.variant ?? 12);
+  const pv = gen(params(), st.variant ?? 12);
   $("#askR").innerHTML = (g.length ? `<div class="muted">Compris : <b>${g.join(" · ")}</b></div>` : `<div class="muted">Je n'ai pas repéré de critère chiffré : je pars des valeurs du formulaire.</div>`)
     + `<div class="prop"><h4>Ma proposition</h4><div class="notice">${notice(pv)}</div></div>`
     + (missing().length ? `<div class="prop"><h4>Pour affiner, dites-moi :</h4><div id="askQ">${qHTML()}</div></div>` : "")
@@ -325,21 +365,25 @@ $("#f-lv").onchange = () => { st.levelsSet = 1; };
 $("#bGen").onclick = () => { fromForm(); st.variant = 12; LS.set("cur", st); draw(true); go("plan"); };
 $("#bGen2").onclick = () => $("#bGen").click();
 let gal = ""; const galKey = () => JSON.stringify(params());
-function params() { const o = { S: st.S, levels: st.levels, ch: st.ch, sdb: st.sdb, L: st.L, P: st.P, baies: +((st.fin || {}).baies ?? 1) }; for (const [k] of OPTS) o[k] = st[k] ? 1 : 0; return o; }
+function params() { const t = st.type || "maison", o = { type: t, forme: st.forme || "auto", S: st.S, levels: t === "maison" ? Math.min(2, st.levels) : st.levels, ch: t === "hotel" ? (st.nch || 24) : st.ch, nb: st.nb || 1, sdb: st.sdb, L: st.L, P: st.P, baies: +((st.fin || {}).baies ?? 1) };
+  for (const [k] of curOpts()) o[k] = st[k] ? 1 : 0; if (t === "magasin") o.arriere = st.arriere ? 1 : 0; return o; }
+const gen = (p, v) => isBat(p) ? generateBat(p, v) : generateFit(p, v);
 function draw(rebuild3d) {
-  plan = generateFit(params(), st.variant ?? 12);
+  const P0 = params(), B = isBat(P0), VS = B ? batVariants(P0) : null; if (B && st.variant !== 12 && !(st.variant < VS.length)) st.variant = 12; if (!B && st.variant > 12) st.variant = 12;
+  plan = gen(P0, st.variant ?? 12);
   if (lvl >= plan.levels.length) lvl = 0;
   $("#hsub").textContent = st.name;
-  if (gal !== galKey()) { gal = galKey(); const order = [12, ...Array.from({ length: 12 }, (_, i) => i)];
-    $("#vars").innerHTML = order.map(v => { const pv = generateFit(params(), v), sp = variantSpec(v), sv = svgPlan(pv, 0, { furn: false, title: "" }).replace(/<text[^>]*>[^<]*<\/text>/g, "");
-      return `<div class="th" data-v="${v}">${pv.warn.length ? "<i>⚠︎</i>" : ""}${sv}<span>${v === 12 ? "Auto (recommandée)" : String.fromCharCode(65 + v) + " · " + sp.name.replace("Couloir parallèle", "Parallèle").replace("Plan en longueur", "En longueur")}</span></div>`; }).join("");
+  if (gal !== galKey()) { gal = galKey(); const order = [12, ...Array.from({ length: B ? VS.length : 12 }, (_, i) => i)], seen = new Set();
+    $("#vars").innerHTML = order.map(v => { const pv = gen(P0, v), key = B && v !== 12 ? pv.W + "x" + pv.D + "x" + pv.hab + pv.forme : v; if (seen.has(key)) return ""; seen.add(key);
+      const sv = svgPlan(pv, 0, { furn: false, title: "" }).replace(/<text[^>]*>[^<]*<\/text>/g, ""), nm = v === 12 ? "Auto (recommandée)" : String.fromCharCode(65 + v) + " · " + (B ? VS[v].name : variantSpec(v).name.replace("Couloir parallèle", "Parallèle").replace("Plan en longueur", "En longueur"));
+      return `<div class="th" data-v="${v}">${pv.warn.length ? "<i>⚠︎</i>" : ""}${sv}<span>${nm}</span></div>`; }).join("");
     $$("#vars .th").forEach(c => c.onclick = () => { st.variant = +c.dataset.v; LS.set("cur", st); draw(true); }); }
   $$("#vars .th").forEach(c => c.classList.toggle("on", +c.dataset.v === st.variant));
-  $("#vname").textContent = (st.variant === 12 ? "Auto → " : "") + (plan.mode === "B" ? "plan en longueur (couloir perpendiculaire à la rue)" : "couloir parallèle à la rue") + " · " + plan.W.toFixed(1).replace(".", ",") + " × " + plan.D.toFixed(1).replace(".", ",") + " m";
+  $("#vname").textContent = (st.variant === 12 ? "Auto → " : "") + (plan.mode === "C" ? plan.vname.toLowerCase() : plan.mode === "B" ? "plan en longueur (couloir perpendiculaire à la rue)" : "couloir parallèle à la rue") + " · " + plan.W.toFixed(1).replace(".", ",") + " × " + plan.D.toFixed(1).replace(".", ",") + " m";
   $("#lvls").innerHTML = plan.levels.map((L, i) => `<span class="chip ${i === lvl ? "on" : ""}" data-l="${i}">${L.name}</span>`).join("");
   $$("#lvls .chip").forEach(c => c.onclick = () => { lvl = +c.dataset.l; draw(false); });
   $("#pbox").innerHTML = svgPlan(plan, lvl, { title: st.name }); resetZoom();
-  $("#kpi").innerHTML = [[fr(plan.hab), "m² habitables"], [fr(plan.emprise), "m² d'emprise"], [fr(plan.ces * 100) + " %", "CES"], [fr(plan.W, 1) + "×" + fr(plan.D, 1), "gabarit (m)"]].map(([b, s]) => `<div><b>${b}</b><span>${s}</span></div>`).join("");
+  $("#kpi").innerHTML = [plan.kind === "hotel" ? [fr(plan.nRooms), "chambres"] : plan.kind === "shops" ? [fr(plan.nb), "boutiques"] : null, [fr(plan.hab), plan.kind && plan.kind !== "house" ? "m² utiles" : "m² habitables"], [fr(plan.emprise), "m² d'emprise"], [fr(plan.ces * 100) + " %", "CES"], [fr(plan.W, 1) + "×" + fr(plan.D, 1), "gabarit (m)"]].filter(Boolean).map(([b, s]) => `<div><b>${b}</b><span>${s}</span></div>`).join("");
   $("#notice").innerHTML = notice(plan);
   $("#warns").innerHTML = plan.warn.map(w => `<div class="warn">⚠︎ ${w}</div>`).join("");
   let rows = "", tot = 0; plan.levels.forEach(L => { rows += `<tr><td colspan="2" style="font-weight:600;padding-top:10px">${L.name}</td></tr>`; L.rooms.forEach(r => { const a = r.w * r.h; tot += a; rows += `<tr><td>${r.n}</td><td>${fr(a, 2)} m²</td></tr>`; }); });
@@ -373,7 +417,7 @@ $("#bPng").onclick = () => { if (!plan) return; const s = svgPlan(plan, lvl, { t
   img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(s); };
 
 // ---------- projets ----------
-function renderSaved() { const L = LS.get("saved", []); $("#saved").innerHTML = L.length ? L.map((p, i) => `<div class="it"><div><b>${p.name}</b><div class="muted">${p.S} m² · ${p.ch} ch · ${p.levels === 2 ? "duplex" : "plain-pied"} · ${p.L}×${p.P} m · ${(p.variant ?? 12) === 12 ? "variante auto" : "variante " + String.fromCharCode(65 + p.variant)}</div></div><button class="btn gh" data-o="${i}">Ouvrir</button><button class="btn gh" data-d="${i}" aria-label="Supprimer">✕</button></div>`).join("") : `<div class="muted">Aucun projet enregistré.</div>`;
+function renderSaved() { const L = LS.get("saved", []); $("#saved").innerHTML = L.length ? L.map((p, i) => `<div class="it"><div><b>${p.name}</b><div class="muted">${p.type === "hotel" ? "Hôtel · " + (p.nch || 24) + " ch · " + (p.levels > 1 ? "R+" + (p.levels - 1) : "RDC") : p.type === "magasin" ? (p.nb > 1 ? p.nb + " boutiques" : "Magasin") + " · " + p.S + " m²" : p.S + " m² · " + p.ch + " ch · " + (p.levels === 2 ? "duplex" : "plain-pied")}${p.forme && p.forme !== "auto" ? " · en " + (p.forme === "bande" ? "bande" : p.forme) : ""} · ${p.L}×${p.P} m · ${(p.variant ?? 12) === 12 ? "variante auto" : "variante " + String.fromCharCode(65 + p.variant)}</div></div><button class="btn gh" data-o="${i}">Ouvrir</button><button class="btn gh" data-d="${i}" aria-label="Supprimer">✕</button></div>`).join("") : `<div class="muted">Aucun projet enregistré.</div>`;
   $$("#saved [data-o]").forEach(b => b.onclick = () => { st = { ...LS.get("saved", [])[+b.dataset.o] }; LS.set("cur", st); toForm(); draw(true); go("plan"); });
   $$("#saved [data-d]").forEach(b => b.onclick = () => { const L = LS.get("saved", []); L.splice(+b.dataset.d, 1); LS.set("saved", L); renderSaved(); }); }
 $("#bSave").onclick = () => { const L = LS.get("saved", []).filter(p => p.name !== st.name); L.unshift({ ...st, t: Date.now() }); LS.set("saved", L.slice(0, 30)); renderSaved(); toast("Projet enregistré sur l'appareil"); };
@@ -393,7 +437,7 @@ function styleObj() { const b = STY[st.style] || STY.tropical, o = st.custom ? {
   if (F.toit === "dalle") o.roof = "flat"; else if (F.toit === "tuiles") { o.roof = "hip"; o.roofMat = "tuiles"; if (o.roofC === "#4a4f55" || !/^#[ab]/.test(o.roofC)) o.roofC = "#a4512c"; } else if (F.toit === "bac") { o.roof = "hip"; o.roofMat = "bac"; o.roofC = "#7f8a90"; }
   if (F.menu && F.menu !== "auto") o.frame = { noir: "#1b1b1b", blanc: "#f2f2f0", champ: "#b9a27a", bois: "#6b4a2e" }[F.menu];
   return o; }
-function roomsBar() { $("#roomsBar").innerHTML = viewer.rooms.map((it, i) => it.r.k === "couloir" || it.r.k === "wc" ? "" : `<span class="chip" data-r="${i}">${it.r.n}${plan.levels.length > 1 ? (it.l ? " · ét." : " · rdc") : ""}</span>`).join("");
+function roomsBar() { $("#roomsBar").innerHTML = viewer.rooms.map((it, i) => /^(couloir|wc|sas|sdh|asc|gaine|local|sanH|sanF)$/.test(it.r.k) || !it.r.n || (plan.levels.length > 2 && it.l > 1) ? "" : `<span class="chip" data-r="${i}">${it.r.n}${plan.levels.length > 1 ? (it.l ? (plan.levels.length > 2 ? " · R+" + it.l : " · ét.") : " · rdc") : ""}</span>`).join("");
   $$("#roomsBar .chip").forEach(c => c.onclick = () => { $$("#views .chip,#roomsBar .chip").forEach(x => x.classList.remove("on")); c.classList.add("on"); viewer.roof = true; viewer.upper = true; $("#tRoof").classList.add("on"); $("#tUp").classList.add("on"); viewer.view("room", +c.dataset.r); $("#roomCtl").style.display = "flex"; }); }
 $("#views").innerHTML = [["34", "Vue 3/4"], ["front", "Rue"], ["garden", "Jardin"], ["drone", "Drone"], ["top", "Dessus"]].map(([k, n], i) => `<span class="chip ${i ? "" : "on"}" data-v="${k}">${n}</span>`).join("");
 $("#bNextVp").onclick = () => viewer?.nextView();
@@ -430,7 +474,8 @@ const EN = { tropical: "modern tropical villa with crisp white rendered walls, w
 const EN2 = { staff: { 0: "smooth white ceilings", 1: "elegant moulded plaster cornices", 2: "suspended plaster ceilings with hidden warm LED cove lighting", 3: "ornate plaster ceilings with mouldings, ceiling rose and crystal chandelier" }, light: { spots: "recessed warm LED downlights", susp: "designer pendant lights", led: "indirect LED strip lighting", appl: "wall sconces and ambient lamps" }, baies: { 0: "classic aluminium windows", 1: "large sliding glass doors opening onto the terrace", 2: "floor-to-ceiling pocket sliding glass walls" } };
 function prompt() { const s = styleObj(), fl = { wood: "oak parquet", marble: "white marble", concrete: "polished concrete", tile: "large light porcelain tiles", terracotta: "terracotta tiles" }[s.floor];
   const F = st.fin || {}, fr2 = { noir: "black", blanc: "white", champ: "champagne", bois: "wooden" }[F.menu] || (/1b1b1b|141414|2b2b2b|3b2a1e/.test(s.frame) ? "black" : "dark");
-  const p = `Photorealistic architectural exterior render of a ${plan?.levels.length > 1 ? "two-storey" : "single-storey"} ${EN[st.style] || EN.tropical} in Abidjan, Côte d'Ivoire, about ${st.S} m², ${s.roof === "flat" ? "flat roof with parapet" : "hip roof"}, ${EN2.baies[F.baies ?? 1]} with ${fr2} aluminium frames, interior glimpsed through the glass with ${fl} floors, ${EN2.staff[F.staff ?? 0]} and ${EN2.light[F.light || "spots"]}, covered terrace, lush tropical garden with coconut palms, mango tree and bougainvillea${st.piscine ? ", rectangular swimming pool with turquoise water" : ""}${st.garage ? ", integrated garage" : ""}, bright clear ${+$("#hour")?.value > 17 ? "golden hour" : "late morning"} sunlight, soft shadows, eye-level three-quarter view, 24 mm lens, ultra detailed, high-end architectural visualization, V-Ray / Unreal Engine 5 quality, no text, no people, no watermark.`;
+  const nL = plan?.levels.length || 1, kw = plan?.kind === "hotel" ? "boutique hotel" : plan?.kind === "shops" ? "commercial building with a row of shops at street level" : plan?.kind === "shop" ? "retail store with large glass shopfront" : "villa", shp = plan?.forme ? { bande: "linear", L: "L-shaped", U: "U-shaped" }[plan.forme] + " " : "";
+  const p = `Photorealistic architectural exterior render of a ${["single", "two", "three", "four", "five", "six"][nL - 1] || nL}-storey ${shp}${(EN[st.style] || EN.tropical).replace(/villa/g, kw)} in Abidjan, Côte d'Ivoire, about ${plan?.hab || st.S} m², ${s.roof === "flat" ? "flat roof with parapet" : "hip roof"}, ${EN2.baies[F.baies ?? 1]} with ${fr2} aluminium frames, interior glimpsed through the glass with ${fl} floors, ${EN2.staff[F.staff ?? 0]} and ${EN2.light[F.light || "spots"]}, covered terrace, lush tropical garden with coconut palms, mango tree and bougainvillea${st.piscine ? ", rectangular swimming pool with turquoise water" : ""}${st.garage ? ", integrated garage" : ""}, bright clear ${+$("#hour")?.value > 17 ? "golden hour" : "late morning"} sunlight, soft shadows, eye-level three-quarter view, 24 mm lens, ultra detailed, high-end architectural visualization, V-Ray / Unreal Engine 5 quality, no text, no people, no watermark.`;
   $("#prm").textContent = p; }
 $("#bPrm").onclick = async () => { try { await navigator.clipboard.writeText($("#prm").textContent); toast("Prompt copié"); } catch { toast("Sélectionnez le texte pour le copier"); } };
 

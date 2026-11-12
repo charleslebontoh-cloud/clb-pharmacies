@@ -148,6 +148,31 @@ export function generate(p, variant = 0) {
     mode, site: { L: p.L, P: p.P, ox: (p.L - W) / 2, oy: setF } };
 }
 
+// ---------- Enveloppe générique (bâtiments en L, en U, en bande) ----------
+// Découpe chaque bord de pièce aux jonctions des autres pièces ; un tronçon est « extérieur » si aucune pièce ne le borde de l'autre côté.
+export function envelope(rooms) {
+  const E = 1e-3, out = [];
+  const inRoom = (x, y) => rooms.findIndex(r => x > r.x + E && x < r.x + r.w - E && y > r.y + E && y < r.y + r.h - E);
+  rooms.forEach((r, ri) => {
+    for (const [o, at, a0, a1, s] of [["h", r.y, r.x, r.x + r.w, -1], ["h", r.y + r.h, r.x, r.x + r.w, 1], ["v", r.x, r.y, r.y + r.h, -1], ["v", r.x + r.w, r.y, r.y + r.h, 1]]) {
+      const bp = new Set([a0, a1]);
+      for (const q of rooms) for (const v of o === "h" ? [q.x, q.x + q.w] : [q.y, q.y + q.h]) if (v > a0 + E && v < a1 - E) bp.add(v);
+      const b = [...bp].sort((p, q) => p - q);
+      for (let i = 1; i < b.length; i++) { if (b[i] - b[i - 1] < .02) continue; const m = (b[i - 1] + b[i]) / 2, nb = o === "h" ? inRoom(m, at + s * .05) : inRoom(at + s * .05, m);
+        out.push({ o, at, a0: b[i - 1], a1: b[i], out: s, ri, nb, ext: nb < 0 }); } } });
+  return out;
+}
+// tronçons extérieurs fusionnés (murs de façade continus)
+export function extSegs(rooms, env = envelope(rooms)) {
+  const g = new Map(); for (const p of env) if (p.ext) { const k = p.o + "|" + p.at.toFixed(3) + "|" + p.out; if (!g.has(k)) g.set(k, []); g.get(k).push([p.a0, p.a1]); }
+  const segs = []; for (const [k, iv] of g) { const [o, at, out] = k.split("|"); iv.sort((a, b) => a[0] - b[0]); let [a, b] = iv[0];
+    for (const [c, d] of iv.slice(1)) { if (c <= b + .02) b = Math.max(b, d); else { segs.push({ o, at: +at, a0: a, a1: b, out: +out }); a = c; b = d; } } segs.push({ o, at: +at, a0: a, a1: b, out: +out }); }
+  return segs;
+}
+// tronçons intérieurs (cloisons), dédoublonnés
+export function intSegs(rooms, env = envelope(rooms)) { const seen = new Set(), o = [];
+  for (const p of env) if (!p.ext) { const k = p.o + (p.at.toFixed(2)) + "|" + p.a0.toFixed(2) + "|" + p.a1.toFixed(2); if (seen.has(k)) continue; seen.add(k); o.push(p); } return o; }
+
 // ---------- Ouvertures ----------
 const near = (a, b) => Math.abs(a - b) < 1e-3;
 function openings(rooms, W, D, lvl, p, mode) {
@@ -237,7 +262,7 @@ export function furniture(r, L) {
   const opp = { N: "S", S: "N", W: "E", E: "W" }, mainDoor = doors[0] ? doors[0].s : "S";
   const rank = (f) => sides.slice().sort((a, b) => f(b) - f(a));
   const k = r.k;
-  if (/^(chp|ch|chdom)$/.test(k)) {
+  if (/^(chp|ch|chdom|chh)$/.test(k)) {
     const bw = k === "chdom" ? .9 : k === "chp" ? (W > 3.4 && H > 3.4 ? 1.8 : 1.6) : (Math.min(W, H) > 3 ? 1.6 : 1.4), bl = 2.05;
     let bedQ = null;
     for (const [bwx, nw] of [[bw, true], [Math.min(bw, 1.4), true], [bw, false], [Math.min(bw, 1.4), false], [1.2, false], [.9, false]]) {
@@ -253,9 +278,9 @@ export function furniture(r, L) {
     if (k !== "chdom" && W * H > 11) for (const s of rank(s => (lowWin(s) ? 0 : winOn(s) ? 2 : 0))) if (put(k === "chp" ? "coiffeuse" : "bureau_t", s, 1.1, .55, { at: "start" })) break;
     if (k === "chp" && W * H > 15) put("fauteuil", rank(s => winOn(s) ? 2 : 0)[0], .8, .8, { at: "end" });
   }
-  else if (k === "sejour" || k === "tv" || k === "salon") {
+  else if (k === "sejour" || k === "tv" || k === "salon" || k === "lounge") {
     const tvS = rank(s => (!doorOn(s) ? 3 : 0) + (!lowWin(s) ? 3 : 0) + (dep(s) >= 3.2 ? 2 : 0) + len(s) / 10)[0];
-    if (k !== "salon") put("meuble_tv", tvS, Math.min(2, len(tvS) - .4), .45, { noWin: false });
+    if (k !== "salon" && k !== "lounge") put("meuble_tv", tvS, Math.min(2, len(tvS) - .4), .45, { noWin: false });
     const D0 = dep(tvS), L0 = len(tvS), dist = Math.min(3.1, D0 - 1.05), sofaL = Math.min(k === "salon" ? 2.8 : 2.6, L0 - 1.2);
     // canapé face au mur TV, centré, dos vers le mur opposé
     const along = tvS === "N" || tvS === "S"; let placed = null;
@@ -263,8 +288,8 @@ export function furniture(r, L) {
       const pos = tvS === "N" ? { x: u, y: H - .45 - dist - .9, rot: 180 } : tvS === "S" ? { x: W - u - sofaL, y: .45 + dist, rot: 0 } : tvS === "W" ? { x: .45 + dist, y: H - u - sofaL, rot: 270 } : { x: W - .45 - dist - .9, y: u, rot: 90 };
       placed = free("canape", pos.x, pos.y, sofaL, .9, pos.rot); if (placed) break; }
     if (!placed) placed = put("canape", opp[tvS], sofaL, .9, {}) || rank(s => (!lowWin(s) ? 2 : 0) + (!doorOn(s) ? 1 : 0) + len(s) / 5).reduce((q, s) => q || put("canape", s, Math.min(sofaL, len(s) - .6), .9, { shrink: 1.6 }), null);
-    if (!placed || k === "salon") { free("table_basse", W / 2 - .55, H / 2 - .3, 1.1, .6, 0); for (const s of rank(s => !doorOn(s) && !lowWin(s) ? 1 : 0)) if (s !== tvS && put("fauteuil", s, .8, .8, { at: "start" })) break; for (const s of rank(s => !doorOn(s) ? 1 : 0)) if (s !== tvS && put("fauteuil", s, .8, .8, { at: "end" })) break; }
-    if (placed && k !== "salon") { // table basse entre canapé et TV, fauteuils latéraux
+    if (!placed || k === "salon" || k === "lounge") { free("table_basse", W / 2 - .55, H / 2 - .3, 1.1, .6, 0); for (const s of rank(s => !doorOn(s) && !lowWin(s) ? 1 : 0)) if (s !== tvS && put("fauteuil", s, .8, .8, { at: "start" })) break; for (const s of rank(s => !doorOn(s) ? 1 : 0)) if (s !== tvS && put("fauteuil", s, .8, .8, { at: "end" })) break; }
+    if (placed && k !== "salon" && k !== "lounge") { // table basse entre canapé et TV, fauteuils latéraux
       const cxm = placed.x + placed.w / 2, cym = placed.y + placed.h / 2, tb = 1.1, gap = .45;
       if (along) { const ty = tvS === "N" ? placed.y + placed.h + gap : placed.y - gap - .6; free("table_basse", cxm - tb / 2, ty, tb, .6, 0); free("tapis", cxm - 1.3, Math.min(ty, placed.y) - .1, 2.6, Math.abs(ty - placed.y) + .9, 0); 
         for (const sd of [-1, 1]) free("fauteuil", sd < 0 ? placed.x - .95 : placed.x + placed.w + .15, (ty + cym) / 2 - .4, .8, .8, sd < 0 ? 90 : 270); }
@@ -288,7 +313,7 @@ export function furniture(r, L) {
     if (!done) put("plan", rank(s => len(s))[0], len(rank(s => len(s))[0]) - .2, .62, { shrink: 1 });
     if (r.strip === "f" && W > 3.4 && H > 3.4) free("ilot", W / 2 - .9, H / 2 - .45, 1.8, .9, W > H ? 0 : 90);
   }
-  else if (/^(sdbp|sdb|dch)$/.test(k)) {
+  else if (/^(sdbp|sdb|dch|sdh)$/.test(k)) {
     // douche dans l'angle le plus éloigné de la porte, vasque et WC sur les murs libres
     const far = opp[mainDoor]; const cs = far === "N" || far === "S" ? ["E", "W"] : ["N", "S"];
     put("douche", far, Math.min(1.2, len(far) * .45), Math.min(.9, dep(far) * .45), { at: "end", m: 0 }) || put("douche", far, .8, .8, { at: "start", m: 0 });
@@ -300,6 +325,21 @@ export function furniture(r, L) {
   else if (k === "jeux") { free("table", W / 2 - .7, H / 2 - .4, 1.4, .8, W > H ? 0 : 90); for (const s of rank(s => !winOn(s) ? 1 : 0)) if (put("biblio", s, Math.min(1.8, len(s) - .3), .35, { shrink: .8 })) break; }
   else if (k === "dress") { for (const s of rank(s => len(s) - (doorOn(s) ? 9 : 0))) put("armoire", s, len(s) - .1, .55, { shrink: .8 }); }
   else if (k === "buand") { const s = rank(s => (!doorOn(s) ? 2 : 0) + len(s))[0]; put("machine", s, .6, .6, { at: "start" }); put("machine", s, .6, .6, { at: "start" }); put("plan", s, Math.min(1.2, len(s) - 1.4), .6, { shrink: .6, at: "end" }); }
+  else if (k === "hall") { const back = rank(s => (!doorOn(s) ? 3 : 0) + (!lowWin(s) ? 2 : 0) + len(s) / 10)[0]; put("buffet", back, Math.min(3, len(back) - 1.2), .6, {});
+    for (const s of rank(s => !doorOn(s) && !lowWin(s) ? 1 : 0)) if (s !== back && put("canape", s, Math.min(2.4, len(s) - 1), .85, { at: "end" })) break; free("table_basse", W / 2 - .5, H / 2 - .3, 1, .6, 0); put("plante", rank(s => !doorOn(s) ? 1 : 0)[0], .5, .5, { at: "start" }); }
+  else if (k === "vente") { let n = 0; for (const s of rank(s => (!doorOn(s) ? 3 : 0) + (!lowWin(s) ? 2 : 0) + len(s) / 10)) { if (n >= 2) break; if (put("biblio", s, len(s) - .5, .45, { shrink: 1.2 })) n++; }
+    const ent = doors.find(d => d.w > 1.2) || doors[0]; if (ent) put("buffet", ent.s === "S" || ent.s === "N" ? (ent.u < W / 2 ? "E" : "W") : (ent.u < H / 2 ? "N" : "S"), 1.6, .6, { at: "start" });
+    if (W * H > 30) { const lg = W >= H, A = lg ? W : H, B = lg ? H : W; for (let v = 2.1; v < B - 2; v += 2.2) free("biblio", lg ? 1.6 : v, lg ? v : 1.6, A - 3.2, .5, lg ? 0 : 90, .1); } }
+  else if (k === "resto" || k === "bar") { if (k === "bar") { const s = rank(s => (!doorOn(s) ? 3 : 0) + (!lowWin(s) ? 2 : 0))[0]; put("ilot", s, Math.min(4, len(s) - 1.2), .7, {}); }
+    for (let y = 1.2; y < H - 1.2; y += 2.1) for (let x = 1.2; x < W - 1.1; x += 2.1) free("table", x, y, .8, .8, 0); }
+  else if (k === "semi") { for (let y = 1.4; y < H - 1.6; y += 1.6) free("table", 1, y, Math.max(1.2, W - 2), .5, 0); }
+  else if (k === "plateau" || k === "reu") { if (k === "reu" || W * H < 14) free("table", W / 2 - Math.min(1.6, W * .3), H / 2 - .5, Math.min(3.2, W * .6), 1, 0);
+    else for (let y = 1; y < H - 1.4; y += 2) for (let x = .8; x < W - 1.6; x += 1.8) free("bureau_t", x, y, 1.4, .7, 180, .05); }
+  else if (k === "bur" || k === "dir") { const s = rank(s => (winOn(s) && !lowWin(s) ? 2 : 0) + (!doorOn(s) ? 1 : 0))[0]; put("bureau_t", s, 1.4, .7, {}); for (const b of rank(s => (!winOn(s) ? 2 : 0) + (!doorOn(s) ? 1 : 0))) if (b !== s && put("biblio", b, Math.min(2, len(b) - .3), .35, { shrink: .8 })) break; }
+  else if (k === "cuisinepro" || k === "kit") { for (const s of rank(s => (!doorOn(s) ? 2 : 0) + len(s) / 10).slice(0, k === "kit" ? 1 : 2)) put("plan", s, len(s) - .3, .65, { shrink: 1 }); if (k === "cuisinepro" && W > 3.4 && H > 3.4) free("ilot", W / 2 - 1, H / 2 - .45, 2, .9, W > H ? 0 : 90); put("frigo", rank(s => !doorOn(s) ? 1 : 0)[0], .7, .68, { at: "end" }); }
+  else if (k === "sanH" || k === "sanF") { const s = rank(s => (!doorOn(s) ? 2 : 0) + len(s) / 10)[0], n = Math.max(1, Math.floor((len(s) - .3) / .9)); for (let i = 0; i < n; i++) put("wc_cuv", s, .4, .65, { at: "start" }); put("lave_mains", rank(s => doorOn(s) ? 0 : 1)[1] || s, .4, .25, {}); }
+  else if (k === "vest") { put("biblio", rank(s => !doorOn(s) ? 1 : 0)[0], 2, .45, { shrink: 1 }); put("douche", rank(s => !doorOn(s) ? 1 : 0)[1], .9, .9, { at: "end" }); }
+  else if (/^(res|eco|linge|local|office|arch|bag|quai)$/.test(k)) { for (const s of rank(s => len(s) - (doorOn(s) ? 9 : 0)).slice(0, 2)) put("biblio", s, len(s) - .2, .45, { shrink: .6 }); }
   else if (k === "cellier" || k === "mag" || k === "rgt") { for (const s of rank(s => len(s) - (doorOn(s) ? 9 : 0)).slice(0, 2)) put("biblio", s, len(s) - .2, .4, { shrink: .6 }); }
   return F;
 }
@@ -349,46 +389,56 @@ export function svgPlan(plan, l, opt = {}) {
     for (let i = 0; i <= n; i++) { const y = y0 + (y1 - y0) * i / n; o.push(`<line x1="${x0}" y1="${y}" x2="${mid - 6}" y2="${y}" stroke="#555" stroke-width="2"/>`); }
     o.push(`<line x1="${mid}" y1="${y0}" x2="${mid}" y2="${y1}" stroke="#555" stroke-width="2"/><path d="M${(x0 + mid) / 2} ${y1 - 10} l-12 30 h24 z" fill="#555"/>`); }
   // murs (poché) : cloisons puis enveloppe
-  const segs = [];
-  for (const r of L.rooms) segs.push([r.x, r.y, r.x + r.w, r.y], [r.x, r.y + r.h, r.x + r.w, r.y + r.h], [r.x, r.y, r.x, r.y + r.h], [r.x + r.w, r.y, r.x + r.w, r.y + r.h]);
-  for (const s of segs) { const ext = (near(s[1], 0) && near(s[3], 0)) || (near(s[1], D) && near(s[3], D)) || (near(s[0], 0) && near(s[2], 0)) || (near(s[0], W) && near(s[2], W)); if (ext) continue;
+  const segs = [], comp = !!plan.blocks, env = comp ? envelope(L.rooms) : null;
+  if (comp) for (const p of intSegs(L.rooms, env)) segs.push(p.o === "h" ? [p.a0, p.at, p.a1, p.at] : [p.at, p.a0, p.at, p.a1]);
+  else for (const r of L.rooms) segs.push([r.x, r.y, r.x + r.w, r.y], [r.x, r.y + r.h, r.x + r.w, r.y + r.h], [r.x, r.y, r.x, r.y + r.h], [r.x + r.w, r.y, r.x + r.w, r.y + r.h]);
+  for (const s of segs) { const ext = !comp && ((near(s[1], 0) && near(s[3], 0)) || (near(s[1], D) && near(s[3], D)) || (near(s[0], 0) && near(s[2], 0)) || (near(s[0], W) && near(s[2], W))); if (ext) continue;
     const t = T_INT * S; if (near(s[1], s[3])) o.push(`<rect x="${X(s[0]) - t / 2}" y="${Yf(s[1]) - t / 2}" width="${(s[2] - s[0]) * S + t}" height="${t}" fill="#2b2b2b"/>`);
     else o.push(`<rect x="${X(s[0]) - t / 2}" y="${Yf(s[3]) - t / 2}" width="${t}" height="${(s[3] - s[1]) * S + t}" fill="#2b2b2b"/>`); }
   const te = T_EXT * S;
-  o.push(`<rect x="${X(0) - te / 2}" y="${Yf(D) - te / 2}" width="${W * S + te}" height="${D * S + te}" fill="none" stroke="#1a1a1a" stroke-width="${te}"/>`);
+  const xsegs = comp ? extSegs(L.rooms, env) : null;
+  if (comp) for (const g of xsegs) { if (g.o === "h") { const y = g.out < 0 ? Yf(g.at) : Yf(g.at) - te; o.push(`<rect x="${X(g.a0) - te}" y="${y}" width="${(g.a1 - g.a0) * S + 2 * te}" height="${te}" fill="#1a1a1a"/>`); }
+    else { const x = g.out < 0 ? X(g.at) - te : X(g.at); o.push(`<rect x="${x}" y="${Yf(g.a1)}" width="${te}" height="${(g.a1 - g.a0) * S}" fill="#1a1a1a"/>`); } }
+  else o.push(`<rect x="${X(0) - te / 2}" y="${Yf(D) - te / 2}" width="${W * S + te}" height="${D * S + te}" fill="none" stroke="#1a1a1a" stroke-width="${te}"/>`);
   // fenêtres
   for (const w of L.wins) { const half = w.w * S / 2;
-    if (w.o === "h") { const cx = X(w.c), y = Yf(w.at), y0 = y - (w.at === 0 ? -te : te) * 1, yy = w.at === 0 ? y : y - te; const top = Math.min(y, w.at === 0 ? y + te : y - te);
+    const wo = w.out ?? (w.at === 0 ? -1 : 1);
+    if (w.o === "h") { const cx = X(w.c), y = Yf(w.at); const top = wo < 0 ? y : y - te;
       o.push(`<rect x="${cx - half}" y="${top - 1}" width="${2 * half}" height="${te + 2}" fill="#fff"/>`);
       for (const f of [0, .5, 1]) o.push(`<line x1="${cx - half}" y1="${top + te * f}" x2="${cx + half}" y2="${top + te * f}" stroke="#1a1a1a" stroke-width="${f === .5 ? 3 : 2}"/>`);
       o.push(`<line x1="${cx - half}" y1="${top}" x2="${cx - half}" y2="${top + te}" stroke="#1a1a1a" stroke-width="3"/><line x1="${cx + half}" y1="${top}" x2="${cx + half}" y2="${top + te}" stroke="#1a1a1a" stroke-width="3"/>`); }
-    else { const cy = Yf(w.c), x = X(w.at), left = w.at === 0 ? x - te : x;
+    else { const cy = Yf(w.c), x = X(w.at), left = wo < 0 ? x - te : x;
       o.push(`<rect x="${left - 1}" y="${cy - half}" width="${te + 2}" height="${2 * half}" fill="#fff"/>`);
       for (const f of [0, .5, 1]) o.push(`<line x1="${left + te * f}" y1="${cy - half}" x2="${left + te * f}" y2="${cy + half}" stroke="#1a1a1a" stroke-width="${f === .5 ? 3 : 2}"/>`);
       o.push(`<line x1="${left}" y1="${cy - half}" x2="${left + te}" y2="${cy - half}" stroke="#1a1a1a" stroke-width="3"/><line x1="${left}" y1="${cy + half}" x2="${left + te}" y2="${cy + half}" stroke="#1a1a1a" stroke-width="3"/>`); } }
   // portes (vantail + arc)
   for (const d of L.doors) { const t = (d.ext ? te : T_INT * S) + 4, w = d.w * S, into = d.ir != null ? L.rooms[d.ir] : L.rooms.find(r => r.k === d.into);
     if (d.o === "h") { const cx = X(d.c), y = Yf(d.y); const ry = into ? (Yf(into.y + into.h / 2) < y ? -1 : 1) : -1;
-      const yc = d.ext ? (d.y === 0 ? y + te / 2 : y - te / 2) : y;
+      const yc = d.ext ? ((d.out ?? (d.y === 0 ? -1 : 1)) < 0 ? y + te / 2 : y - te / 2) : y;
       o.push(`<rect x="${cx - w / 2}" y="${yc - t / 2}" width="${w}" height="${t}" fill="#fff"/>`);
-      if (!d.open) { const hx = cx - w / 2, sy = ry * w; o.push(`<line x1="${hx}" y1="${yc}" x2="${hx}" y2="${yc + sy}" stroke="#1a1a1a" stroke-width="3"/><path d="M${hx} ${yc + sy} A${w} ${w} 0 0 ${ry > 0 ? 0 : 1} ${hx + w} ${yc}" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="${d.main ? "0" : "8 6"}"/>`); } }
-    else { const cy = Yf(d.c), x = X(d.x), rx = into ? (X(into.x + into.w / 2) < x ? -1 : 1) : 1;
+      if (d.shop) o.push(`<line x1="${cx - w / 2}" y1="${yc}" x2="${cx + w / 2}" y2="${yc}" stroke="#1a1a1a" stroke-width="3" stroke-dasharray="10 7"/>`);
+      else if (!d.open) { const hx = cx - w / 2, sy = ry * w; o.push(`<line x1="${hx}" y1="${yc}" x2="${hx}" y2="${yc + sy}" stroke="#1a1a1a" stroke-width="3"/><path d="M${hx} ${yc + sy} A${w} ${w} 0 0 ${ry > 0 ? 0 : 1} ${hx + w} ${yc}" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="${d.main ? "0" : "8 6"}"/>`); } }
+    else { const cy = Yf(d.c), x0 = X(d.x), x = d.ext && d.out != null ? x0 + (d.out < 0 ? -te / 2 : te / 2) : x0, rx = into ? (X(into.x + into.w / 2) < x ? -1 : 1) : 1;
       o.push(`<rect x="${x - t / 2}" y="${cy - w / 2}" width="${t}" height="${w}" fill="#fff"/>`);
-      if (!d.open) { const hy = cy - w / 2, sx = rx * w; o.push(`<line x1="${x}" y1="${hy}" x2="${x + sx}" y2="${hy}" stroke="#1a1a1a" stroke-width="3"/><path d="M${x + sx} ${hy} A${w} ${w} 0 0 ${rx > 0 ? 1 : 0} ${x} ${hy + w}" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="8 6"/>`); } } }
+      if (d.shop) o.push(`<line x1="${x}" y1="${cy - w / 2}" x2="${x}" y2="${cy + w / 2}" stroke="#1a1a1a" stroke-width="3" stroke-dasharray="10 7"/>`);
+      else if (!d.open) { const hy = cy - w / 2, sx = rx * w; o.push(`<line x1="${x}" y1="${hy}" x2="${x + sx}" y2="${hy}" stroke="#1a1a1a" stroke-width="3"/><path d="M${x + sx} ${hy} A${w} ${w} 0 0 ${rx > 0 ? 1 : 0} ${x} ${hy + w}" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="8 6"/>`); } } }
   // étiquettes
-  for (const r of L.rooms) { if (r.k === "wc" && r.w < 1.6) { o.push(`<text x="${X(r.x + r.w / 2)}" y="${Yf(r.y + r.h / 2) + 10}" font-size="30" text-anchor="middle" fill="#333">WC</text>`); continue; }
-    const fs = Math.max(26, Math.min(44, r.w * 11)); const cx = X(r.x + r.w / 2), cy = Yf(r.y + r.h / 2);
+  for (const r of L.rooms) { if (comp && (!r.n || Math.min(r.w, r.h) < 1.25)) continue; if (r.k === "wc" && r.w < 1.6) { o.push(`<text x="${X(r.x + r.w / 2)}" y="${Yf(r.y + r.h / 2) + 10}" font-size="30" text-anchor="middle" fill="#333">WC</text>`); continue; }
+    const fs = comp ? Math.max(18, Math.min(40, r.w * 9, 1.6 * r.w * S / Math.max(4, r.n.length))) : Math.max(26, Math.min(44, r.w * 11)); const cx = X(r.x + r.w / 2), cy = Yf(r.y + r.h / 2);
     o.push(`<text x="${cx}" y="${cy - 6}" font-size="${fs}" font-weight="700" text-anchor="middle" fill="#1d2a36">${r.n}</text>`);
     o.push(`<text x="${cx}" y="${cy + fs}" font-size="${fs * .78}" text-anchor="middle" fill="#7a5a32">${r.a.toFixed(1).replace(".", ",")} m²</text>`); }
   // cotation : chaînes extérieures (bas = façade avant) + hors-tout
   const dim = (a, b, y, txt, side = 1) => { const x0 = X(a), x1 = X(b); o.push(`<line x1="${x0}" y1="${y}" x2="${x1}" y2="${y}" stroke="#333" stroke-width="1.5"/><line x1="${x0 - 9}" y1="${y + 9}" x2="${x0 + 9}" y2="${y - 9}" stroke="#333" stroke-width="3"/><line x1="${x1 - 9}" y1="${y + 9}" x2="${x1 + 9}" y2="${y - 9}" stroke="#333" stroke-width="3"/><text x="${(x0 + x1) / 2}" y="${y - 10 * side}" font-size="26" text-anchor="middle" fill="#333">${txt}</text>`); };
   const dimV = (a, b, x, txt) => { const y0 = Yf(a), y1 = Yf(b); o.push(`<line x1="${x}" y1="${y0}" x2="${x}" y2="${y1}" stroke="#333" stroke-width="1.5"/><line x1="${x - 9}" y1="${y0 + 9}" x2="${x + 9}" y2="${y0 - 9}" stroke="#333" stroke-width="3"/><line x1="${x - 9}" y1="${y1 + 9}" x2="${x + 9}" y2="${y1 - 9}" stroke="#333" stroke-width="3"/><text x="${x - 12}" y="${(y0 + y1) / 2}" font-size="26" text-anchor="middle" fill="#333" transform="rotate(-90 ${x - 12} ${(y0 + y1) / 2})">${txt}</text>`); };
   const cm = v => Math.round(v * 100);
-  const front = L.rooms.filter(r => near(r.y, 0)).sort((a, b) => a.x - b.x);
+  if (comp) { for (const g of xsegs) { if (g.a1 - g.a0 < .8) continue; if (g.o === "h" && g.out < 0) dim(g.a0, g.a1, Yf(g.at) + 90, cm(g.a1 - g.a0)); else if (g.o === "h") dim(g.a0, g.a1, Yf(g.at) - 70, cm(g.a1 - g.a0), -1);
+      else if (g.out < 0) dimV(g.a0, g.a1, X(g.at) - 90, cm(g.a1 - g.a0)); else dimV(g.a0, g.a1, X(g.at) + 110, cm(g.a1 - g.a0)); }
+    dim(0, W, Yf(0) + 170, cm(W) + " (hors tout)"); dimV(0, D, X(0) - 170, cm(D)); }
+  const front = comp ? [] : L.rooms.filter(r => near(r.y, 0)).sort((a, b) => a.x - b.x);
   front.forEach(r => dim(r.x, r.x + r.w, Yf(0) + 90, cm(r.w)));
-  dim(0, W, Yf(0) + 170, cm(W) + " (hors œuvre " + cm(W + 2 * T_EXT) + ")");
+  if (!comp) { dim(0, W, Yf(0) + 170, cm(W) + " (hors œuvre " + cm(W + 2 * T_EXT) + ")");
   const left = L.rooms.filter(r => near(r.x, 0)).sort((a, b) => a.y - b.y); left.forEach(r => dimV(r.y, r.y + r.h, X(0) - 90, cm(r.h)));
-  dimV(0, D, X(0) - 170, cm(D));
+  dimV(0, D, X(0) - 170, cm(D)); }
   // nord + échelle + cartouche
   const nx = vw - 120, ny = 120;
   o.push(`<circle cx="${nx}" cy="${ny}" r="52" fill="none" stroke="#1d2a36" stroke-width="3"/><path d="M${nx} ${ny - 62} L${nx + 22} ${ny + 30} L${nx} ${ny + 14} L${nx - 22} ${ny + 30} Z" fill="#1d2a36"/><text x="${nx}" y="${ny - 72}" font-size="34" font-weight="700" text-anchor="middle" fill="#1d2a36">N</text>`);
@@ -396,7 +446,7 @@ export function svgPlan(plan, l, opt = {}) {
   for (let i = 0; i < 5; i++) o.push(`<rect x="${m + i * S}" y="${sy - 16}" width="${S}" height="16" fill="${i % 2 ? "#fff" : "#1d2a36"}" stroke="#1d2a36" stroke-width="2"/><text x="${m + i * S}" y="${sy + 24}" font-size="22" fill="#333">${i}</text>`);
   o.push(`<text x="${m + 5 * S}" y="${sy + 24}" font-size="22" fill="#333">5</text>`);
   const cw = 760, cx0 = vw - m - cw + 200, cy0 = vh - 120;
-  o.push(`<rect x="${cx0}" y="${cy0}" width="${cw - 200 + m - 20}" height="100" fill="#fff" stroke="#1d2a36" stroke-width="3"/><text x="${cx0 + 20}" y="${cy0 + 38}" font-size="30" font-weight="700" fill="#1d2a36">${(opt.title || "Projet ARCHÉA").replace(/[<&]/g, "")} — ${opt.sheet || L.name}</text><text x="${cx0 + 20}" y="${cy0 + 78}" font-size="24" fill="#555">${opt.phase || "Esquisse · 1/100"} · surface habitable ${plan.hab} m² · by CLB</text>`);
+  o.push(`<rect x="${cx0}" y="${cy0}" width="${cw - 200 + m - 20}" height="100" fill="#fff" stroke="#1d2a36" stroke-width="3"/><text x="${cx0 + 20}" y="${cy0 + 38}" font-size="30" font-weight="700" fill="#1d2a36">${(opt.title || "Projet ARCHÉA").replace(/[<&]/g, "")} — ${opt.sheet || L.name}</text><text x="${cx0 + 20}" y="${cy0 + 78}" font-size="24" fill="#555">${opt.phase || "Esquisse · 1/100"} · surface ${plan.kind && plan.kind !== "house" ? "utile" : "habitable"} ${plan.hab} m² · by CLB</text>`);
   if (opt.extra) o.push(opt.extra({ X, Yf, S, m, vw, vh }));
   o.push(`</svg>`);
   return o.join("");
