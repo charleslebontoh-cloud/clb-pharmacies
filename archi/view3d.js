@@ -281,7 +281,7 @@ export function createViewer(canvas) {
   let X = x => x, Z = y => y;
   function build(plan, st = state.style) {
     state.plan = plan; state.style = st; scene.remove(root); root.traverse(o => { if (o.geometry) o.geometry.dispose(); }); root = new THREE.Group(); scene.add(root);
-    groups.levels = []; groups.ceilings = []; state.rooms = []; nightLights.length = 0; anim.length = 0;
+    groups.levels = []; groups.ceilings = []; groups.roof = null; state.rooms = []; state.room = null; state.vp = 0; state.roof = true; state.upper = true; nightLights.length = 0; anim.length = 0;
     mats(st);
     LIT = new Set(plan.levels.flatMap((L, l) => L.rooms.filter(r => r.hab && !r.stair).map(r => [r, r.w * r.h * (l ? .6 : 1)])).sort((a, b) => b[1] - a[1]).slice(0, 12).map(x => x[0]));
     // terrain d'affichage : si le bâtiment déborde de la parcelle saisie, on l'agrandit pour garder clôture et végétation hors des murs
