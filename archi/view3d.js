@@ -101,7 +101,7 @@ export function createViewer(canvas) {
   const rt = new THREE.WebGLRenderTarget(16, 16, { type: THREE.HalfFloatType, samples: 4 });
   const composer = new EffectComposer(renderer, rt);
   composer.addPass(new RenderPass(scene, camera));
-  const gtao = new GTAOPass(scene, camera, 16, 16); gtao.output = GTAOPass.OUTPUT.Default; gtao.blendIntensity = .9;
+  const gtao = new GTAOPass(scene, camera, 16, 16); gtao.output = GTAOPass.OUTPUT.Default; gtao.blendIntensity = .75;
   gtao.updateGtaoMaterial({ radius: .45, distanceExponent: 1.6, thickness: 1.2, scale: 1.1, samples: 16 }); gtao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 6, rings: 2, samples: 16 });
   composer.addPass(gtao);
   const bloom = new UnrealBloomPass(new THREE.Vector2(16, 16), .18, .5, .92); composer.addPass(bloom);
@@ -109,7 +109,7 @@ export function createViewer(canvas) {
   let quality = true;
 
   let root = new THREE.Group(); scene.add(root);
-  const state = { plan: null, style: STYLES.tropical, roof: true, upper: true, hour: 15.5, rooms: [], night: false };
+  const state = { plan: null, style: STYLES.tropical, roof: true, upper: true, hour: 11, rooms: [], night: false, bright: 1, mode: "ext", room: null, fin: {} };
   const groups = { levels: [], roof: null, ceilings: [] }, nightLights = [], anim = [];
 
   function resize() { const r = canvas.getBoundingClientRect(); const w = Math.max(100, r.width), h = Math.max(100, r.height), pr = Math.min(devicePixelRatio || 1, 2);
@@ -128,16 +128,16 @@ export function createViewer(canvas) {
     sun.position.copy(dir).multiplyScalar(80); sun.target.position.set(0, 0, 0);
     const lowK = THREE.MathUtils.clamp(el / .45, 0, 1); state.night = el < -.02;
     sun.intensity = el > 0 ? 3.6 * (.45 + .55 * lowK) : 0; sun.color.setHSL(.085 - .035 * (1 - lowK), .55 * (1 - lowK) + .25, .6 + .22 * lowK);
-    hemi.intensity = state.night ? .06 : .18 + .25 * lowK; scene.environmentIntensity = (state.night ? .03 : .2 + .06 * lowK) * ENVK;
-    renderer.toneMappingExposure = state.night ? 1.25 : EXPO + .35 * (1 - lowK); scene.fog.color.setHSL(.58, .25, state.night ? .05 : .55 + .25 * lowK);
+    hemi.intensity = state.night ? .08 : .3 + .15 * lowK; scene.environmentIntensity = (state.night ? .04 : .26 + .06 * lowK) * ENVK;
+    renderer.toneMappingExposure = (state.night ? 1.3 : EXPO + .35 * (1 - lowK)) * state.bright; scene.fog.color.setHSL(.58, .25, state.night ? .05 : .55 + .25 * lowK);
     bloom.enabled = state.night; bloom.strength = .55; bloom.threshold = .6;
     for (const L of nightLights) { L.intensity = L.userData.on; L.visible = state.night; }
-    if (M.glass) M.glass.emissiveIntensity = state.night ? 1.1 : 0; if (M.lamp) M.lamp.emissiveIntensity = state.night ? 6 : 0;
+    if (M.glass) M.glass.emissiveIntensity = state.night ? 1.1 : 0; if (M.lamp) M.lamp.emissiveIntensity = state.night ? 6 : .6; if (M.led) M.led.emissiveIntensity = state.night ? 8 : 1.2;
     clearTimeout(envTimer); envTimer = setTimeout(updateEnv, 60);
   }
   function updateEnv() { const old = envRT; envRT = pmrem.fromScene(envScene, 0, .1, 5000); scene.environment = envRT.texture; if (old) old.dispose(); }
 
-  let ENVK = +(new URLSearchParams(location.search).get("envk") || 1), EXPO = +(new URLSearchParams(location.search).get("expo") || .8);
+  let ENVK = +(new URLSearchParams(location.search).get("envk") || 1), EXPO = +(new URLSearchParams(location.search).get("expo") || .9);
   const M = {};
   function mats(st) {
     const std = o => new THREE.MeshStandardMaterial(o), phy = o => new THREE.MeshPhysicalMaterial(o);
@@ -174,7 +174,7 @@ export function createViewer(canvas) {
     M.fence = sizeTex(std({ map: plasterMap("#e6e0d5"), normalMap: pn, normalScale: new THREE.Vector2(.4, .4), roughness: .95 }), 2);
     const gm = grilleMap(); M.grille = std({ color: st.frame, roughness: .4, metalness: .6, alphaTest: .5, side: THREE.DoubleSide, map: gm });
     M.bed = std({ color: "#f3f1ec", roughness: .95, normalMap: fabricN(), normalScale: new THREE.Vector2(.3, .3) }); M.rug = std({ color: shade(st.fabric, .8), roughness: 1, normalMap: fabricN() });
-    M.lamp = std({ color: "#fff3dc", emissive: "#ffcf8a", emissiveIntensity: 0 }); M.pot = std({ color: "#b5714a", roughness: .9 });
+    M.lamp = std({ color: "#fff3dc", emissive: "#ffcf8a", emissiveIntensity: 0 }); M.led = std({ color: "#fff6e6", emissive: "#ffd9a0", emissiveIntensity: 1 }); M.staff = std({ color: "#fbfaf6", roughness: .9 }); M.gold = std({ color: "#c9a14a", roughness: .3, metalness: 1 }); M.pot = std({ color: "#b5714a", roughness: .9 });
     M.slat = st.wood ? M.wood : M.accent;
   }
 
@@ -316,10 +316,12 @@ export function createViewer(canvas) {
         if (r.stair) { const n = 16, run = r.h - .4, sw = Math.min(1.1, r.w * .45); for (let i = 0; i < n; i++) box(sw, .04, run / n + .02, M.wood, X(r.x + .1 + sw / 2), yb + .175 * (i + 1), Z(r.y + .2 + run * (i + .5) / n), g); for (let i = 0; i < n; i++) box(sw, .175 * (i + 1) - .04, run / n, M.white, X(r.x + .1 + sw / 2), yb + .175 * (i + 1) / 2 - .02, Z(r.y + .2 + run * (i + .5) / n), g);
           box(.04, .9, run, M.metal, X(r.x + .1 + sw), yb + 1.6, Z(r.y + .2 + run / 2), g); }
         if (r.hab && !r.stair) { const lt = new THREE.PointLight(0xffc98a, 0, Math.max(r.w, r.h) * 1.8, 2); lt.position.set(X(r.x + r.w / 2), yb + WALL_H - .35, Z(r.y + r.h / 2)); lt.userData.on = 2.2 + r.w * r.h * .12; g.add(lt); nightLights.push(lt);
-          const pl = new THREE.Mesh(new THREE.CylinderGeometry(.22, .22, .05, 20), M.lamp); pl.position.set(lt.position.x, yb + WALL_H - .03, lt.position.z); g.add(pl); }
+        }
       }
       // plafond (masqué avec la toiture)
-      const cg = new THREE.Mesh(new THREE.PlaneGeometry(W, D), M.ceil); cg.rotation.x = Math.PI / 2; cg.position.set(X(W / 2), yb + WALL_H - .001, Z(D / 2)); cg.receiveShadow = true; groups.ceilings.push(cg); g.add(cg);
+      const cg = new THREE.Group(); g.add(cg); groups.ceilings.push(cg);
+      const cp = new THREE.Mesh(new THREE.PlaneGeometry(W, D), M.ceil); cp.rotation.x = Math.PI / 2; cp.position.set(X(W / 2), yb + WALL_H - .001, Z(D / 2)); cp.receiveShadow = true; cg.add(cp);
+      for (const r of L.rooms) if ((r.hab || r.k === "couloir") && !r.stair) ceilingRoom(r, yb, cg);
       // ouvertures
       const near = (a, b) => Math.abs(a - b) < 1e-3;
       const holesH = Y => [...L.wins.filter(w => w.o === "h" && near(w.at, Y)).map(w => ({ c: w.c, w: w.w, sill: w.sill, head: w.head, win: 1, baie: w.baie })), ...L.doors.filter(d => d.o === "h" && near(d.y, Y)).map(d => ({ c: d.c, w: d.w, sill: 0, head: d.open ? 2.4 : 2.1, door: 1, open: d.open, main: d.main }))];
@@ -376,6 +378,35 @@ export function createViewer(canvas) {
     const s = Math.max(Lp, Pp) * .62; Object.assign(sun.shadow.camera, { left: -s, right: s, top: s, bottom: -s, near: 1, far: 220 }); sun.shadow.camera.updateProjectionMatrix();
     setSun(state.hour); applyVis(); view("34");
   }
+  // ---------- Staff (faux plafond) et luminaires ----------
+  function ceilingRoom(r, yb, cg) {
+    const F = state.fin, sk = +F.staff || 0, lt = F.light || "spots", top = yb + WALL_H, cx = X(r.x + r.w / 2), cz = Z(r.y + r.h / 2), big = r.w > 2.4 && r.h > 2.4;
+    const b = (w, h, d, m, x, y, z) => { const k = new THREE.Mesh(boxGeo(w, h, d), m); k.position.set(x, y, z); k.receiveShadow = true; cg.add(k); return k; };
+    let ceilY = top, inner = null;
+    if (sk === 1 || (sk && !big)) { // corniche moulurée
+      for (const [w, d, x, z] of [[r.w, .09, cx, Z(r.y) - .045], [r.w, .09, cx, Z(r.y + r.h) + .045], [.09, r.h, X(r.x) + .045, cz], [.09, r.h, X(r.x + r.w) - .045, cz]]) { b(w, .1, d, M.staff, x, top - .05, z); b(w, .03, d * 1.4, M.staff, x, top - .115, z); } }
+    else if (sk >= 2) { // faux plafond périphérique + caisson central (gorge lumineuse)
+      const bw = Math.min(.7, Math.min(r.w, r.h) * .22), hh = .28, y = top - .22; ceilY = top; inner = [r.w - 2 * bw, r.h - 2 * bw];
+      for (const [w, d, x, z] of [[r.w, bw, cx, Z(r.y) - bw / 2], [r.w, bw, cx, Z(r.y + r.h) + bw / 2], [bw, r.h - 2 * bw, X(r.x) + bw / 2, cz], [bw, r.h - 2 * bw, X(r.x + r.w) - bw / 2, cz]]) b(w, hh, d, M.staff, x, y, z);
+      // ruban LED caché dans la gorge
+      for (const [w, d, x, z] of [[inner[0], .03, cx, Z(r.y + bw) + .02], [inner[0], .03, cx, Z(r.y + r.h - bw) - .02], [.03, inner[1], X(r.x + bw) + .02, cz], [.03, inner[1], X(r.x + r.w - bw) - .02, cz]]) b(w, .02, d, M.led, x, y + hh / 2 + .01, z);
+      if (sk === 3) { // staff décoratif : moulures + rosace
+        for (const [w, d, x, z] of [[inner[0] + .1, .05, cx, Z(r.y + bw) + .03], [inner[0] + .1, .05, cx, Z(r.y + r.h - bw) - .03], [.05, inner[1], X(r.x + bw) + .03, cz], [.05, inner[1], X(r.x + r.w - bw) - .03, cz]]) b(w, .05, d, M.staff, x, y - hh / 2 - .03, z);
+        const ro = new THREE.Mesh(new THREE.TorusGeometry(Math.min(.45, inner[0] * .2), .045, 10, 40), M.staff); ro.rotation.x = Math.PI / 2; ro.position.set(cx, top - .03, cz); cg.add(ro);
+        const ro2 = new THREE.Mesh(new THREE.CylinderGeometry(.18, .22, .05, 24), M.staff); ro2.position.set(cx, top - .03, cz); cg.add(ro2); } }
+    // luminaires
+    const spot = (x, z, y) => { const k = new THREE.Mesh(new THREE.CylinderGeometry(.045, .045, .015, 16), M.lamp); k.position.set(x, y, z); cg.add(k); const rr = new THREE.Mesh(new THREE.TorusGeometry(.05, .008, 6, 18), M.metal); rr.rotation.x = Math.PI / 2; rr.position.set(x, y - .005, z); cg.add(rr); };
+    if (lt === "spots" || lt === "led" && !sk) { const yS = sk >= 2 ? top - .37 : top - .01, nx = Math.max(1, Math.round(r.w / 1.3)), nz = Math.max(1, Math.round(r.h / 1.3));
+      if (sk >= 2) { for (let i = 0; i < nx; i++) for (const zz of [r.y + .35, r.y + r.h - .35]) spot(X(r.x + r.w * (i + .5) / nx), Z(zz), yS); }
+      else for (let i = 0; i < nx; i++) for (let j = 0; j < nz; j++) spot(X(r.x + r.w * (i + .5) / nx), Z(r.y + r.h * (j + .5) / nz), yS); }
+    if (lt === "susp" || (sk === 3 && /sejour|sam|salon|chp/.test(r.k))) { const n = r.k === "sam" || r.k === "cuisine" ? 3 : 1, drop = sk === 3 ? .9 : .75;
+      for (let i = 0; i < n; i++) { const x = n === 1 ? cx : X(r.x + r.w * (i + 1) / (n + 1)), y = top - drop;
+        const cord = new THREE.Mesh(new THREE.CylinderGeometry(.006, .006, drop, 6), M.dark); cord.position.set(x, top - drop / 2, cz); cg.add(cord);
+        if (sk === 3 && n === 1) { const ch = new THREE.Group(); ch.position.set(x, y, cz); cg.add(ch); const ringG = new THREE.Mesh(new THREE.TorusGeometry(.35, .02, 8, 40), M.gold); ringG.rotation.x = Math.PI / 2; ch.add(ringG); for (let k = 0; k < 8; k++) { const c = new THREE.Mesh(new THREE.SphereGeometry(.05, 10, 8), M.lamp); c.position.set(Math.cos(k * .785) * .35, .04, Math.sin(k * .785) * .35); ch.add(c); } }
+        else { const sh = new THREE.Mesh(new THREE.CylinderGeometry(.08, .26, .28, 24, 1, true), M.frame); sh.material.side = THREE.DoubleSide; sh.position.set(x, y, cz); cg.add(sh); const bl = new THREE.Mesh(new THREE.SphereGeometry(.06, 12, 8), M.lamp); bl.position.set(x, y - .06, cz); cg.add(bl); } } }
+    if (lt === "led" && !sk) for (const [w, d, x, z] of [[r.w - .1, .02, cx, Z(r.y) - .06], [r.w - .1, .02, cx, Z(r.y + r.h) + .06]]) b(w, .02, d, M.led, x, top - .04, z);
+    if (lt === "appl") for (const [x, z] of [[X(r.x) + .07, cz], [X(r.x + r.w) - .07, cz]]) { b(.06, .22, .14, M.lamp, x, yb + 1.85, z); }
+  }
   // bandeau périphérique (4 lisses)
   function ring(W, D, h, t, m, y, parent, inset = 0) { const e = T_EXT + .05 - inset, a = W + 2 * e, b = D + 2 * e;
     box(a, h, t, m, X(W / 2), y, Z(-e) + t / 2, parent); box(a, h, t, m, X(W / 2), y, Z(D + e) - t / 2, parent);
@@ -384,22 +415,36 @@ export function createViewer(canvas) {
     const n = groups.levels.length; groups.levels.forEach((g, i) => g.visible = i === 0 || state.upper);
     groups.ceilings.forEach((c, i) => c.visible = (i < n - 1 && state.upper) || rv); }
 
+  function setMode(m) { state.mode = m; if (m === "room") { controls.enablePan = false; controls.minPolarAngle = Math.PI * .3; controls.maxPolarAngle = Math.PI * .66; controls.minDistance = .15; controls.rotateSpeed = .55; }
+    else { controls.enablePan = true; controls.minPolarAngle = 0; controls.maxPolarAngle = Math.PI * .495; controls.minDistance = 1.5; controls.maxDistance = 160; controls.rotateSpeed = 1; state.room = null; } }
+  // contraintes caméra : rester dans la pièce, ne jamais traverser les murs de l'extérieur
+  function constrain() {
+    if (!state.plan) return; const c = camera.position;
+    if (state.mode === "room" && state.room) { const { r, l } = state.room, m = .22, y = l * LEVEL_H + .2;
+      c.x = THREE.MathUtils.clamp(c.x, X(r.x) + m, X(r.x + r.w) - m); c.z = THREE.MathUtils.clamp(c.z, Z(r.y + r.h) + m, Z(r.y) - m); c.y = THREE.MathUtils.clamp(c.y, y + .5, y + WALL_H - .35); return; }
+    const { W, D } = state.plan, e = T_EXT + .45, x0 = X(0) - e, x1 = X(W) + e, z0 = Z(D) - e, z1 = Z(0) + e, top = (state.upper ? state.plan.levels.length : 1) * LEVEL_H + (state.roof ? 2.6 : .6);
+    if (c.y < top && c.x > x0 && c.x < x1 && c.z > z0 && c.z < z1) { const d = [c.x - x0, x1 - c.x, c.z - z0, z1 - c.z, top - c.y], k = d.indexOf(Math.min(...d));
+      if (k === 0) c.x = x0; else if (k === 1) c.x = x1; else if (k === 2) c.z = z0; else if (k === 3) c.z = z1; else c.y = top; }
+    if (c.y < .4) c.y = .4;
+  }
   function view(kind, roomIdx) {
-    if (!state.plan) return; const { W, D } = state.plan, cx = X(W / 2), cz = Z(D / 2), H = state.plan.levels.length * LEVEL_H, P = state.plan.site.P, Lp = state.plan.site.L;
+    if (!state.plan) return; setMode(kind === "room" ? "room" : "ext"); const { W, D } = state.plan, cx = X(W / 2), cz = Z(D / 2), H = state.plan.levels.length * LEVEL_H, P = state.plan.site.P, Lp = state.plan.site.L;
     camera.fov = kind === "room" ? 70 : kind === "front" ? 52 : kind === "garden" ? 68 : 42; camera.updateProjectionMatrix();
-    if (kind === "front") { camera.position.set(cx + W * .2, 1.65, P / 2 + 6.2); controls.target.set(cx, H * .5, Z(D * .3)); }
+    if (kind === "front") { camera.position.set(cx + W * .2, 2.2, P / 2 + 6.2); controls.target.set(cx, H * .5, Z(D * .3)); }
     else if (kind === "34") { camera.position.set(cx + W * .9 + 7, H + 8, Z(0) + D * .7 + 10); controls.target.set(cx, H * .35, cz); }
     else if (kind === "garden") { const Lp2 = state.plan.site.L / 2; camera.position.set(Math.min(Lp2 - 4, Math.max(-Lp2 + 4, cx + W * .25)), 1.7, -P / 2 + 1.3); controls.target.set(cx - W * .1, H * .5, cz); }
     else if (kind === "drone") { camera.position.set(cx - Lp * .55, Math.max(Lp, P) * .9, P / 2 + P * .35); controls.target.set(cx, 0, cz); }
     else if (kind === "top") { camera.position.set(cx + .01, Math.max(W, D) * 1.9 + 8, cz + .01); controls.target.set(cx, 0, cz); }
-    else if (kind === "room") { const it = state.rooms[roomIdx]; if (!it) return; const r = it.r, y = it.l * LEVEL_H + .2 + 1.55;
-      camera.position.set(X(r.x + Math.min(.45, r.w * .12)), y, Z(r.y + Math.min(.45, r.h * .12))); controls.target.set(X(r.x + r.w * .75), y - .3, Z(r.y + r.h * .8)); }
+    else if (kind === "room") { const it = state.rooms[roomIdx]; if (!it) return; state.room = it; const r = it.r, y = it.l * LEVEL_H + .2 + 1.5;
+      // on tourne autour du centre de la pièce, sans pouvoir en sortir
+      const md = Math.max(.3, Math.hypot(r.w, r.h) / 2 - .35); controls.maxDistance = md;
+      controls.target.set(X(r.x + r.w / 2), y - .15, Z(r.y + r.h / 2)); camera.position.set(X(r.x + r.w / 2 - r.w * .38), y, Z(r.y + r.h / 2 - r.h * .38)); }
     controls.update();
   }
 
   let running = true; const t0 = performance.now();
   function frame() { const t = (performance.now() - t0) / 1000; for (const f of anim) f(t); if (quality) composer.render(); else renderer.render(scene, camera); }
-  function loop() { requestAnimationFrame(loop); if (!running) return; controls.update(); frame(); }
+  function loop() { requestAnimationFrame(loop); if (!running) return; controls.update(); constrain(); frame(); }
   requestAnimationFrame(loop);
 
   async function capture(w = 3840, h = 2160) {
@@ -413,5 +458,5 @@ export function createViewer(canvas) {
   }
 
   return { build, resize, setSun, view, capture, set roof(v) { state.roof = v; applyVis(); }, set upper(v) { state.upper = v; applyVis(); }, set quality(v) { quality = v; },
-    get rooms() { return state.rooms; }, setStyle(st) { if (state.plan) build(state.plan, st); else state.style = st; }, pause(v) { running = !v; } };
+    get rooms() { return state.rooms; }, set bright(v) { state.bright = v; setSun(state.hour); }, set fin(v) { state.fin = v || {}; }, setStyle(st) { if (state.plan) build(state.plan, st); else state.style = st; }, pause(v) { running = !v; } };
 }

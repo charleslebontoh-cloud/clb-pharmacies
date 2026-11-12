@@ -172,11 +172,14 @@ function openings(rooms, W, D, lvl, p, mode) {
     for (const [o, at, a0, a1] of exts) {
       const len = a1 - a0; if (len < 1) continue;
       let w = r.wet ? .6 : r.k === "sejour" ? Math.min(3.2, len * .55) : r.stair ? .8 : Math.min(1.6, Math.max(1, len * .45)), sill = r.wet ? 1.6 : (r.k === "sejour" && at === 0 && o === (mode === "B" ? "v" : "h")) ? 0 : .9;
-      if (r.k === "dress" || r.k === "mag") { w = .6; sill = 1.6; }
+      let head = 2.2; const B = +p.baies || 0, liv = /sejour|sam|salon|tv|jeux/.test(r.k), night = /chp|^ch$|bureau/.test(r.k);
+      if (B && liv) { w = B === 2 ? Math.max(1.2, len - .8) : Math.min(4.2, len * .7); sill = 0; head = B === 2 ? 2.6 : 2.4; }
+      else if (B && night) { w = B === 2 ? Math.min(2.6, len * .6) : Math.min(2.0, len * .5); sill = B === 2 ? 0 : .5; head = B === 2 ? 2.6 : 2.4; }
+      if (r.k === "dress" || r.k === "mag") { w = .6; sill = 1.6; head = 2.2; }
       let c = (a0 + a1) / 2;
       const md = doors.find(d => d.main && d.o === o && near(d.o === "h" ? d.y : d.x, at) && d.c > a0 && d.c < a1);
-      if (md) c = Math.min(a1 - w / 2 - .3, Math.max(md.c + md.w / 2 + .4 + w / 2, c));
-      wins.push({ o, at, c, w, sill, head: 2.2, k: r.k, baie: sill === 0 });
+      if (md) { const free = a1 - (md.c + md.w / 2 + .4) - .3; if (free < 1) continue; w = Math.min(w, free); c = Math.min(a1 - w / 2 - .3, Math.max(md.c + md.w / 2 + .4 + w / 2, c)); }
+      wins.push({ o, at, c, w, sill, head, k: r.k, baie: sill === 0 });
     }
   }
   return { doors, wins };

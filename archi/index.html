@@ -57,6 +57,11 @@ nav button.on{color:var(--cu)}
 .list .it{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--ln)}.list .it:last-child{border:0}.list .it div{flex:1}
 pre.pr{white-space:pre-wrap;font:12.5px/1.45 ui-monospace,Menlo,monospace;background:#FBFAF7;border:1px solid var(--ln);border-radius:10px;padding:10px;margin:8px 0}
 .leg{font-size:12px;color:var(--sl2);margin-top:6px}
+.sug{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;max-height:132px;overflow-y:auto}.sug span{font-size:12.5px;border:1px dashed var(--cu);color:var(--cu);border-radius:99px;padding:5px 10px;cursor:pointer;background:#fffaf5}
+.notice{font-size:14px;line-height:1.55}.notice p{margin:0 0 9px}.notice b{color:var(--sl)}
+.prop{background:#FBF7F1;border:1px solid var(--cu2);border-radius:12px;padding:12px;margin-top:8px}.prop h4{margin:0 0 6px;font:600 14px Georgia,serif;color:var(--cu)}
+.q{margin-top:10px}.q > div:first-child{font-weight:600;font-size:13.5px;margin-bottom:4px}
+.fin label{margin-top:12px}
 .gal{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-height:52vh;overflow-y:auto}
 .gal .th{border:2px solid var(--ln);border-radius:12px;padding:4px;background:#fff;cursor:pointer;position:relative}.gal .th.on{border-color:var(--cu)}
 .gal .th svg{width:100%;height:auto;display:block}.gal .th span{display:block;font-size:10.5px;line-height:1.2;color:var(--sl2);text-align:center;margin-top:2px}
@@ -81,8 +86,10 @@ pre.pr{white-space:pre-wrap;font:12.5px/1.45 ui-monospace,Menlo,monospace;backgr
   <div class="card">
     <h3>✦ Assistant</h3>
     <textarea id="ask" placeholder="Décrivez votre maison… ex : villa duplex de 220 m² avec 4 chambres dont 3 salles de bain, cuisine ouverte, bureau, garage et piscine sur un terrain de 20 x 30"></textarea>
+    <div class="muted" style="margin-top:8px">Touchez une idée pour l'ajouter à votre description :</div>
+    <div class="sug" id="askS"></div>
     <button class="btn cu w" id="bAsk" style="margin-top:10px">Comprendre ma demande</button>
-    <div class="muted" id="askR" style="margin-top:8px"></div>
+    <div id="askR" style="margin-top:10px"></div>
   </div>
   <div class="card">
     <h3>Programme</h3>
@@ -94,6 +101,8 @@ pre.pr{white-space:pre-wrap;font:12.5px/1.45 ui-monospace,Menlo,monospace;backgr
     <div class="tg" id="opts"></div>
     <button class="btn w" id="bGen" style="margin-top:14px">Dessiner les plans</button>
   </div>
+  <div class="card" id="finCard"><h3>Finitions &amp; ambiance</h3><div id="fins"></div>
+    <button class="btn w" id="bGen2" style="margin-top:14px">Dessiner les plans</button></div>
   <div class="card"><h3>Mes projets</h3><div class="list" id="saved"></div></div>
 </section>
 
@@ -109,6 +118,7 @@ pre.pr{white-space:pre-wrap;font:12.5px/1.45 ui-monospace,Menlo,monospace;backgr
     <div class="kpi" id="kpi"></div>
     <div id="warns"></div>
   </div>
+  <div class="card"><h3>Notice descriptive de l'architecte</h3><div class="notice" id="notice"></div><button class="btn gh w" id="bNot" style="margin-top:10px">Copier la notice</button></div>
   <div class="card"><h3>Tableau des surfaces</h3><table id="tab"></table></div>
   <div class="row"><button class="btn gh" id="bSvg">Exporter SVG</button><button class="btn" id="bPng">Image HD</button></div>
   <button class="btn cu w" id="bSave" style="margin-top:10px">Enregistrer le projet</button>
@@ -122,7 +132,8 @@ pre.pr{white-space:pre-wrap;font:12.5px/1.45 ui-monospace,Menlo,monospace;backgr
   <button class="btn cu w" id="b4k" style="margin-top:8px">📸 Vision 4K (3840 × 2160)</button>
   <div class="card" style="margin-top:8px">
     <div class="tg"><span class="chip on" id="tRoof">Toiture</span><span class="chip on" id="tUp">Étage</span><span class="chip on" id="tQ">Rendu expert</span></div>
-    <label>Heure d'ensoleillement (Abidjan) : <b id="hv">15 h 30</b></label><input type="range" id="hour" min="6.3" max="21" step=".1" value="15.5" style="padding:0"><div class="muted">Après 18 h 30 : rendu de nuit, éclairages intérieurs et extérieurs allumés.</div>
+    <label>Luminosité de l'image</label><input type="range" id="lum" min=".6" max="1.8" step=".05" value="1" style="padding:0">
+    <label>Heure d'ensoleillement (Abidjan) : <b id="hv">11 h 00</b></label><input type="range" id="hour" min="6.3" max="21" step=".1" value="11" style="padding:0"><div class="muted">Après 18 h 30 : rendu de nuit, éclairages intérieurs et extérieurs allumés.</div>
   </div>
   <div class="muted" style="margin:8px 2px">Le rendu 4K est calculé sur l'appareil puis partagé ou téléchargé.</div>
 </section>
@@ -166,7 +177,7 @@ pre.pr{white-space:pre-wrap;font:12.5px/1.45 ui-monospace,Menlo,monospace;backgr
 
 <script type="module">
 import { generate, svgPlan, variantSpec } from './plan.js';
-const VER = "1.1.0", K = "archea_";
+const VER = "1.2.0", K = "archea_";
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const LS = { get(k, d) { try { const v = localStorage.getItem(K + k); return v ? JSON.parse(v) : d; } catch { return d; } }, set(k, v) { try { localStorage.setItem(K + k, JSON.stringify(v)); } catch { } } };
 const toast = (t, ms = 2400) => { const e = $("#toast"); e.textContent = t; e.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => e.classList.remove("on"), ms); };
@@ -188,6 +199,66 @@ $$("#opts .chip").forEach(c => c.onclick = () => { st[c.dataset.k] = st[c.datase
 function toForm() { $("#f-name").value = st.name; $("#f-L").value = st.L; $("#f-P").value = st.P; $("#f-S").value = st.S; $("#f-lv").value = st.levels; $("#f-ch").value = st.ch; $("#f-sdb").value = st.sdb; $$("#opts .chip").forEach(c => c.classList.toggle("on", !!st[c.dataset.k])); }
 function fromForm() { st.name = $("#f-name").value.trim() || "Projet"; st.L = +$("#f-L").value || 20; st.P = +$("#f-P").value || 25; st.S = +$("#f-S").value || 120; st.levels = +$("#f-lv").value; st.ch = +$("#f-ch").value; st.sdb = +$("#f-sdb").value; }
 toForm();
+
+// ---------- finitions ----------
+const FIN = {
+  style: ["Décoration", "Quel type de décoration souhaitez-vous ?", [["tropical", "Moderne tropical"], ["contemporain", "Contemporain minimaliste"], ["afro", "Afro-chic"], ["luxe", "Luxe néo-classique"], ["medit", "Méditerranéen"], ["indus", "Industriel"]]],
+  light: ["Éclairage", "Quel éclairage voulez-vous ?", [["spots", "Spots LED encastrés"], ["susp", "Suspensions design"], ["led", "LED indirectes"], ["appl", "Appliques murales"]]],
+  staff: ["Plafonds en staff", "Voulez-vous du staff au plafond ?", [["0", "Sans staff"], ["1", "Corniche moulurée"], ["2", "Faux plafond + gorge lumineuse"], ["3", "Staff décoratif (moulures, rosace, lustre)"]]],
+  baies: ["Baies vitrées", "Quel type d'ouvertures vitrées ?", [["0", "Fenêtres classiques"], ["1", "Grandes baies coulissantes"], ["2", "Baies toute hauteur à galandage"]]],
+  sol: ["Sols", "Quel revêtement de sol ?", [["auto", "Selon le style"], ["tile", "Grand carrelage"], ["marble", "Marbre"], ["wood", "Parquet"], ["concrete", "Béton ciré"], ["terracotta", "Terre cuite"]]],
+  menu: ["Menuiseries", "Quelles menuiseries ?", [["auto", "Selon le style"], ["noir", "Aluminium noir"], ["blanc", "Aluminium blanc"], ["champ", "Aluminium champagne"], ["bois", "Bois"]]],
+};
+const finVal = k => k === "style" ? st.style : (st.fin || {})[k];
+function setFin(k, v) { if (k === "style") { st.style = v; delete st.custom; } else { st.fin = st.fin || {}; st.fin[k] = v; } LS.set("cur", st); need3d = true; gal = ""; renderFins(); if (plan) draw(true); }
+const finChips = k => `<div class="tg">${FIN[k][2].map(([v, n]) => `<span class="chip ${String(finVal(k)) === v ? "on" : ""}" data-fk="${k}" data-fv="${v}">${n}</span>`).join("")}</div>`;
+function renderFins() { $("#fins").innerHTML = Object.keys(FIN).map(k => `<div class="fin"><label>${FIN[k][0]}</label>${finChips(k)}</div>`).join("");
+  const q = $("#askQ"); if (q) q.innerHTML = qHTML(); }
+const missing = () => ["style", "light", "staff", "baies"].filter(k => k === "style" ? !st.styleSet : (st.fin || {})[k] == null);
+const qHTML = () => missing().map(k => `<div class="q"><div>${FIN[k][1]}</div>${finChips(k)}</div>`).join("");
+document.addEventListener("click", e => { const c = e.target.closest("[data-fk]"); if (!c) return; if (c.dataset.fk === "style") st.styleSet = 1; setFin(c.dataset.fk, c.dataset.fv); });
+const SUGG = ["Duplex", "Plain-pied", "4 chambres autonomes", "Suite parentale avec dressing", "Salon VIP", "Cuisine ouverte", "Cuisine fermée", "Bureau", "WC visiteurs", "Cellier", "Buanderie", "Chambre domestique", "Salle de jeux", "Chambre au RDC", "Garage", "Piscine", "Staff avec gorge lumineuse", "Staff décoratif avec lustre", "Corniche en staff", "Spots LED", "Suspensions design", "Éclairage LED indirect", "Grandes baies coulissantes", "Baies toute hauteur à galandage", "Parquet", "Marbre", "Béton ciré", "Menuiseries alu noir", "Déco afro-chic", "Style contemporain", "Style luxe néo-classique", "Style méditerranéen", "Style industriel", "Moderne tropical", "Terrain 20 x 30", "200 m²"];
+$("#askS").innerHTML = SUGG.map(t => `<span>${t}</span>`).join("");
+$$("#askS span").forEach(c => c.onclick = () => { const a = $("#ask"); a.value = (a.value.trim() ? a.value.trim().replace(/[,.]$/, "") + ", " : "") + c.textContent.toLowerCase().replace(/^(\d)/, "$1"); c.style.opacity = .45; });
+function parseFin(s, got) {
+  const sty = [[/afro|africain|bogolan|ethnique|wax/, "afro"], [/industriel|loft|brique/, "indus"], [/mediterran|santorin|grec/, "medit"], [/luxe|neo-?classique|prestige|haussman/, "luxe"], [/contemporain|minimalis|epure/, "contemporain"], [/tropical/, "tropical"]];
+  for (const [re, v] of sty) if (re.test(s)) { st.style = v; st.styleSet = 1; delete st.custom; got.push("déco " + FIN.style[2].find(x => x[0] === v)[1].toLowerCase()); break; }
+  st.fin = st.fin || {}; const F = st.fin, set = (k, v) => { F[k] = v; got.push(FIN[k][2].find(x => x[0] === v)[1].toLowerCase()); };
+  if (/sans staff|pas de staff/.test(s)) set("staff", "0"); else if (/staff decoratif|moulure|rosace|lustre/.test(s)) set("staff", "3"); else if (/gorge|faux[- ]plafond|staff lumineux/.test(s)) set("staff", "2"); else if (/corniche/.test(s)) set("staff", "1"); else if (/staff/.test(s)) set("staff", "2");
+  if (/suspension|luminaire design/.test(s)) set("light", "susp"); else if (/led indirect|eclairage indirect|ruban led|bandeau led/.test(s)) set("light", "led"); else if (/applique/.test(s)) set("light", "appl"); else if (/spot/.test(s)) set("light", "spots");
+  if (/galandage|toute hauteur|mur rideau|panoramique/.test(s)) set("baies", "2"); else if (/baies?|coulissant/.test(s)) set("baies", "1"); else if (/fenetres? classiques?/.test(s)) set("baies", "0");
+  if (/parquet/.test(s)) set("sol", "wood"); else if (/marbre/.test(s)) set("sol", "marble"); else if (/beton cire/.test(s)) set("sol", "concrete"); else if (/terre cuite|tomette/.test(s)) set("sol", "terracotta"); else if (/carrelage|grand format/.test(s)) set("sol", "tile");
+  if (/alu(?:minium)? noir|menuiseries? noires?/.test(s)) set("menu", "noir"); else if (/alu(?:minium)? blanc|menuiseries? blanches?/.test(s)) set("menu", "blanc"); else if (/champagne/.test(s)) set("menu", "champ"); else if (/(?:menuiseries?|fenetres?) (?:en )?bois/.test(s)) set("menu", "bois");
+}
+// ---------- notice descriptive (texte de l'architecte) ----------
+const T = {
+  light: { spots: "spots LED encastrés en lumière chaude (3 000 K)", susp: "suspensions design au-dessus des tables et dans le séjour", led: "éclairage indirect par rubans LED", appl: "appliques murales et lampes d'ambiance" },
+  staff: { 0: "plafonds lisses peints en blanc mat", 1: "corniches moulurées en staff sur le pourtour des pièces", 2: "faux plafonds en staff avec gorge lumineuse LED périphérique", 3: "staff décoratif : caissons, moulures, rosace et lustre dans le séjour et la suite parentale" },
+  baies: { 0: "fenêtres aluminium classiques (allège à 90 cm)", 1: "grandes baies vitrées coulissantes (2,40 m de haut) vers la terrasse et le jardin, fenêtres élargies dans les chambres", 2: "baies toute hauteur à galandage (2,60 m) qui ouvrent entièrement le séjour sur l'extérieur" },
+  sol: { tile: "grand carrelage", marble: "marbre poli", wood: "parquet chêne", concrete: "béton ciré", terracotta: "terre cuite" },
+  menu: { noir: "aluminium noir", blanc: "aluminium blanc", champ: "aluminium champagne", bois: "bois" },
+};
+const m2 = a => fr(a, a < 10 ? 1 : 0) + " m²";
+function notice(pl) { if (!pl) return ""; const F = st.fin || {}, S = STYN[st.style] || STYN.tropical, lv = pl.levels.length > 1;
+  const def = k => F[k] == null ? " <i>(proposé par défaut, à confirmer)</i>" : "";
+  const lst = L => L.rooms.filter(r => r.k !== "couloir").map(r => `${r.n.toLowerCase().replace(/^wc/, "WC").replace("vip", "VIP").replace("rdc", "RDC")} (${m2(r.w * r.h)})`).join(", ");
+  let h = `<p><b>${st.name}</b> : villa ${lv ? "en duplex (R+1)" : "de plain-pied"} d'environ <b>${fr(pl.hab)} m² habitables</b>, sur un terrain de ${fr(st.L)} × ${fr(st.P)} m (${fr(st.L * st.P)} m²). Emprise au sol ${fr(pl.emprise)} m², soit un CES de ${fr(pl.ces * 100)} %. ${pl.mode === "B" ? "La maison se développe en longueur, couloir perpendiculaire à la rue, pour s'adapter à la largeur du terrain." : "Les pièces s'organisent de part et d'autre d'un dégagement parallèle à la rue : pièces de jour côté entrée, pièces de nuit au calme à l'arrière."}</p>`;
+  pl.levels.forEach(L => { h += `<p><b>${L.name}</b> : ${lst(L)}.</p>`; });
+  const sol = F.sol && F.sol !== "auto" ? T.sol[F.sol] : ({ tile: "grand carrelage", marble: "marbre poli", wood: "parquet chêne", concrete: "béton ciré", terracotta: "terre cuite" })[S.floor];
+  h += `<p><b>Ambiance ${S.n.toLowerCase()}</b>${st.styleSet ? "" : " <i>(proposée par défaut, à confirmer)</i>"} : ${S.txt}. Sols en ${sol} dans les pièces de vie, faïence et grès dans les pièces d'eau.</p>`;
+  h += `<p><b>Plafonds</b> : ${T.staff[F.staff ?? 0]}${def("staff")}. <b>Éclairage</b> : ${T.light[F.light || "spots"]}${def("light")}. <b>Ouvertures</b> : ${T.baies[F.baies ?? 1]}${def("baies")}, menuiseries en ${F.menu && F.menu !== "auto" ? T.menu[F.menu] : S.menu}.</p>`;
+  const ext = ["terrasse couverte " + (S.pergola ? "sous pergola à lames" : "sous auvent") + " devant le séjour", "jardin tropical (palmiers, manguier, bougainvilliers)", "clôture avec muret et grille sur rue, portail coulissant"]; if (st.piscine) ext.push("piscine d'environ 8 × 4 m avec plage"); if (st.garage) ext.push("garage couvert d'une voiture"); if (S.roof === "flat") ext.push("toit-terrasse avec emplacement pour panneaux solaires et réservoir d'eau");
+  h += `<p><b>Extérieurs</b> : ${ext.join(", ")}.</p>`;
+  if (pl.warn.length) h += `<p><b>Points de vigilance</b> : ${pl.warn.join(" ")}</p>`;
+  h += `<p class="muted">Esquisse indicative à faire valider et signer par un architecte inscrit à l'OACI avant toute demande de permis de construire.</p>`;
+  return h; }
+const STYN = { tropical: { n: "Moderne tropical", floor: "tile", roof: "flat", pergola: 1, menu: "aluminium noir", txt: "façades enduites blanches, bois chaud, pergola à lames et grandes ouvertures sur la végétation" },
+  contemporain: { n: "Contemporain minimaliste", floor: "concrete", roof: "flat", pergola: 1, menu: "aluminium noir", txt: "volumes épurés gris clair, acier noir, lignes horizontales et peu d'ornement" },
+  afro: { n: "Afro-chic", floor: "terracotta", roof: "hip", menu: "bois sombre", txt: "teintes terre cuite, bois sombre, motifs bogolan sur les tissus et toiture à quatre pans en tuiles" },
+  luxe: { n: "Luxe néo-classique", floor: "marble", roof: "hip", menu: "aluminium champagne", txt: "façades crème, détails dorés, marbre blanc et toiture en ardoise" },
+  medit: { n: "Méditerranéen", floor: "terracotta", roof: "hip", menu: "aluminium bleu", txt: "murs blanc éclatant, touches de bleu, tuiles en terre cuite" },
+  indus: { n: "Industriel", floor: "wood", roof: "flat", pergola: 1, menu: "acier noir", txt: "brique apparente, acier noir, parquet chêne et cuir" } };
+$("#bNot").onclick = async () => { const t = $("#notice").innerText; try { await navigator.clipboard.writeText(t); toast("Notice copiée"); } catch { toast("Sélectionnez le texte pour le copier"); } };
 
 // ---------- assistant (compréhension de la demande) ----------
 function parse(t) {
@@ -212,16 +283,23 @@ function parse(t) {
   flag("cellier", /cellier|garde[- ]manger|reserve/, "cellier"); flag("jeux", /salle de (?:jeux|sport|gym)|home cinema|salle de cinema/, "salle de jeux");
   flag("chRdc", /chambre (?:au|en) (?:rdc|rez)/, "chambre au RDC");
   flag("garage", /garage|parking couvert/, "garage", /sans garage/); flag("piscine", /piscine/, "piscine", /sans piscine/);
+  parseFin(s, got);
   const nm = t.match(/(?:[Vv]illa|[Mm]aison|[Rr][ée]sidence)\s+([A-ZÉÈ][\wéèêàç'-]+(?:\s+[A-ZÉÈ][\wéèêàç'-]+)?)/); if (nm) st.name = nm[0];
   return got;
 }
-$("#bAsk").onclick = () => { const t = $("#ask").value.trim(); if (!t) return toast("Décrivez d'abord votre projet"); const g = parse(t); toForm();
-  $("#askR").innerHTML = g.length ? "Compris : <b>" + g.join(" · ") + "</b>. Vérifiez puis dessinez." : "Je n'ai pas repéré de critère chiffré. Précisez surface, chambres ou terrain."; };
+$("#bAsk").onclick = () => { const t = $("#ask").value.trim(); if (!t) return toast("Décrivez d'abord votre projet"); const g = parse(t); toForm(); renderFins();
+  const pv = generate(params(), st.variant ?? 12);
+  $("#askR").innerHTML = (g.length ? `<div class="muted">Compris : <b>${g.join(" · ")}</b></div>` : `<div class="muted">Je n'ai pas repéré de critère chiffré : je pars des valeurs du formulaire.</div>`)
+    + `<div class="prop"><h4>Ma proposition</h4><div class="notice">${notice(pv)}</div></div>`
+    + (missing().length ? `<div class="prop"><h4>Pour affiner, dites-moi :</h4><div id="askQ">${qHTML()}</div></div>` : "")
+    + `<button class="btn w" id="bGen3" style="margin-top:12px">Dessiner les plans</button>`;
+  $("#bGen3").onclick = () => $("#bGen").click(); };
 
 // ---------- plans ----------
 $("#bGen").onclick = () => { fromForm(); st.variant = 12; LS.set("cur", st); draw(true); go("plan"); };
+$("#bGen2").onclick = () => $("#bGen").click();
 let gal = ""; const galKey = () => JSON.stringify(params());
-function params() { const o = { S: st.S, levels: st.levels, ch: st.ch, sdb: st.sdb, L: st.L, P: st.P }; for (const [k] of OPTS) o[k] = st[k] ? 1 : 0; return o; }
+function params() { const o = { S: st.S, levels: st.levels, ch: st.ch, sdb: st.sdb, L: st.L, P: st.P, baies: +((st.fin || {}).baies ?? 1) }; for (const [k] of OPTS) o[k] = st[k] ? 1 : 0; return o; }
 function draw(rebuild3d) {
   plan = generate(params(), st.variant ?? 12);
   if (lvl >= plan.levels.length) lvl = 0;
@@ -236,6 +314,7 @@ function draw(rebuild3d) {
   $$("#lvls .chip").forEach(c => c.onclick = () => { lvl = +c.dataset.l; draw(false); });
   $("#pbox").innerHTML = svgPlan(plan, lvl, { title: st.name }); resetZoom();
   $("#kpi").innerHTML = [[fr(plan.hab), "m² habitables"], [fr(plan.emprise), "m² d'emprise"], [fr(plan.ces * 100) + " %", "CES"], [fr(plan.W, 1) + "×" + fr(plan.D, 1), "gabarit (m)"]].map(([b, s]) => `<div><b>${b}</b><span>${s}</span></div>`).join("");
+  $("#notice").innerHTML = notice(plan);
   $("#warns").innerHTML = plan.warn.map(w => `<div class="warn">⚠︎ ${w}</div>`).join("");
   let rows = "", tot = 0; plan.levels.forEach(L => { rows += `<tr><td colspan="2" style="font-weight:600;padding-top:10px">${L.name}</td></tr>`; L.rooms.forEach(r => { const a = r.w * r.h; tot += a; rows += `<tr><td>${r.n}</td><td>${fr(a, 2)} m²</td></tr>`; }); });
   rows += `<tr><td><b>Total surfaces utiles</b></td><td><b>${fr(tot, 2)} m²</b></td></tr><tr><td>Surface hors œuvre (SHON)</td><td>${fr(plan.shon)} m²</td></tr>`; $("#tab").innerHTML = rows;
@@ -280,9 +359,12 @@ async function show3d() {
   await load3d(); if (!plan) draw(false);
   if (!viewer) { try { viewer = V3.createViewer($("#c3")); } catch (e) { $("#ov3").style.display = "flex"; $("#ov3").textContent = "La 3D n'est pas disponible sur cet appareil."; return; } }
   viewer.resize(); viewer.pause(false);
-  if (need3d) { $("#ov3").style.display = "flex"; await new Promise(r => setTimeout(r, 30)); viewer.build(plan, styleObj()); viewer.setSun(+$("#hour").value); need3d = false; $("#ov3").style.display = "none"; roomsBar(); }
+  if (need3d) { $("#ov3").style.display = "flex"; await new Promise(r => setTimeout(r, 30)); viewer.fin = { light: (st.fin || {}).light || "spots", staff: +((st.fin || {}).staff ?? 0) }; viewer.bright = +$("#lum").value; viewer.build(plan, styleObj()); viewer.setSun(+$("#hour").value); need3d = false; $("#ov3").style.display = "none"; roomsBar(); }
 }
-function styleObj() { const b = STY[st.style] || STY.tropical; return st.custom ? { ...b, ...st.custom } : b; }
+function styleObj() { const b = STY[st.style] || STY.tropical, o = st.custom ? { ...b, ...st.custom } : { ...b }, F = st.fin || {};
+  if (F.sol && F.sol !== "auto") { o.floor = F.sol; o.floorC = { tile: "#e6ddcc", marble: "#f1efea", wood: "#a07a50", concrete: "#b9b8b3", terracotta: "#b8673e" }[F.sol]; }
+  if (F.menu && F.menu !== "auto") o.frame = { noir: "#1b1b1b", blanc: "#f2f2f0", champ: "#b9a27a", bois: "#6b4a2e" }[F.menu];
+  return o; }
 function roomsBar() { $("#roomsBar").innerHTML = viewer.rooms.map((it, i) => it.r.k === "couloir" || it.r.k === "wc" ? "" : `<span class="chip" data-r="${i}">${it.r.n}${plan.levels.length > 1 ? (it.l ? " · ét." : " · rdc") : ""}</span>`).join("");
   $$("#roomsBar .chip").forEach(c => c.onclick = () => { $$("#views .chip,#roomsBar .chip").forEach(x => x.classList.remove("on")); c.classList.add("on"); viewer.roof = true; viewer.upper = true; $("#tRoof").classList.add("on"); $("#tUp").classList.add("on"); viewer.view("room", +c.dataset.r); }); }
 $("#views").innerHTML = [["34", "Vue 3/4"], ["front", "Rue"], ["garden", "Jardin"], ["drone", "Drone"], ["top", "Dessus"]].map(([k, n], i) => `<span class="chip ${i ? "" : "on"}" data-v="${k}">${n}</span>`).join("");
@@ -290,6 +372,7 @@ $$("#views .chip").forEach(c => c.onclick = () => { $$("#views .chip,#roomsBar .
 $("#tRoof").onclick = e => { const on = e.target.classList.toggle("on"); if (viewer) viewer.roof = on; };
 $("#tUp").onclick = e => { const on = e.target.classList.toggle("on"); if (viewer) viewer.upper = on; };
 $("#hour").oninput = e => { const v = +e.target.value; $("#hv").textContent = Math.floor(v) + " h " + String(Math.round((v % 1) * 60) % 60).padStart(2, "0") + (v > 18.5 ? " · nuit" : ""); viewer?.setSun(v); };
+$("#lum").oninput = e => { if (viewer) viewer.bright = +e.target.value; };
 $("#tQ").onclick = e => { const on = e.target.classList.toggle("on"); if (viewer) viewer.quality = on; toast(on ? "Rendu expert : occlusion ambiante et halos activés" : "Rendu rapide (plus fluide)"); };
 $("#b4k").onclick = async () => { if (!viewer) return; $("#ov3").style.display = "flex"; $("#ov3").textContent = "Calcul du rendu 4K…"; await new Promise(r => setTimeout(r, 50));
   try { const b = await viewer.capture(3840, 2160); $("#ov3").style.display = "none"; if (!b) throw 0; toast("Rendu 4K prêt (" + fr(b.size / 1048576, 1) + " Mo)"); await shareOrDownload(b, `${slug()}-4K.jpg`); }
@@ -299,7 +382,7 @@ addEventListener("resize", () => viewer?.resize());
 // ---------- décor ----------
 async function renderStyles() { await load3d();
   $("#sty").innerHTML = Object.entries(STY).map(([k, s]) => `<div class="sty ${k === st.style ? "on" : ""}" data-k="${k}"><div class="sw">${s.sw.map(c => `<i style="background:${c}"></i>`).join("")}</div><b>${s.n}</b><small>${s.d}</small></div>`).join("");
-  $$(".sty").forEach(c => c.onclick = () => { st.style = c.dataset.k; delete st.custom; LS.set("cur", st); $$(".sty").forEach(x => x.classList.toggle("on", x === c)); need3d = true; prompt(); toast("Décor « " + STY[st.style].n + " » appliqué à la 3D"); });
+  $$(".sty").forEach(c => c.onclick = () => { st.style = c.dataset.k; st.styleSet = 1; delete st.custom; LS.set("cur", st); $$(".sty").forEach(x => x.classList.toggle("on", x === c)); need3d = true; prompt(); toast("Décor « " + STY[st.style].n + " » appliqué à la 3D"); });
   prompt(); }
 const COL = { vert: "#5f7f4a", "vert sapin": "#2f4a36", bleu: "#2f6fa3", "bleu nuit": "#1f2c44", rouge: "#9b3328", bordeaux: "#6a2232", jaune: "#d8a62e", moutarde: "#c4952b", orange: "#c9682e", noir: "#1b1b1b", gris: "#7d7f80", or: "#b8923a", dore: "#b8923a", cuivre: "#b8743d", rose: "#c98b8b", terracotta: "#b8673e", beige: "#e3d6bf", blanc: "#f6f4ef", creme: "#efe6d6", sable: "#d9c7a6" };
 $("#bDIA").onclick = async () => { await load3d(); const s = $("#dIA").value.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, ""); if (!s.trim()) return toast("Décrivez l'ambiance souhaitée");
@@ -314,8 +397,11 @@ $("#bDIA").onclick = async () => { await load3d(); const s = $("#dIA").value.toL
   if (/ardoise/.test(s)) cu.roof = "hip", cu.roofC = "#4a4f55"; if (/brique/.test(s)) cu.brick = 1; if (/facade (\w+)/.test(s)) { const fw = s.match(/facade (\w+)/)[1]; if (COL[fw]) cu.facade = COL[fw]; }
   st.custom = Object.keys(cu).length ? cu : undefined; LS.set("cur", st); need3d = true; renderStyles();
   $("#dIAr").innerHTML = `Base <b>${b.n}</b>${found.length ? " · couleurs : " + found.join(", ") : ""}${cu.floor && cu.floor !== b.floor ? " · sol " + ({ wood: "parquet", marble: "marbre", concrete: "béton ciré", tile: "carrelage", terracotta: "terre cuite" })[cu.floor] : ""}${cu.roof && cu.roof !== b.roof ? " · toit " + (cu.roof === "hip" ? "à quatre pans" : "plat") : ""}. Ouvrez l'onglet 3D.`; };
+const EN = { tropical: "modern tropical villa with crisp white rendered walls, warm teak wood accents and a wooden slatted pergola", contemporain: "minimalist contemporary villa with light grey render, matte black steel details and clean horizontal lines", afro: "Afro-chic villa with warm terracotta-toned render, dark hardwood, bogolan-inspired patterns and a clay tile hip roof", luxe: "neoclassical luxury villa in cream render with gold accents, white marble and a slate hip roof", medit: "Mediterranean villa with bright white walls, blue shutters and a terracotta tile roof", indus: "industrial villa with red-brown exposed brick facades and matte black steel" };
+const EN2 = { staff: { 0: "smooth white ceilings", 1: "elegant moulded plaster cornices", 2: "suspended plaster ceilings with hidden warm LED cove lighting", 3: "ornate plaster ceilings with mouldings, ceiling rose and crystal chandelier" }, light: { spots: "recessed warm LED downlights", susp: "designer pendant lights", led: "indirect LED strip lighting", appl: "wall sconces and ambient lamps" }, baies: { 0: "classic aluminium windows", 1: "large sliding glass doors opening onto the terrace", 2: "floor-to-ceiling pocket sliding glass walls" } };
 function prompt() { const s = styleObj(), fl = { wood: "oak parquet", marble: "white marble", concrete: "polished concrete", tile: "large light porcelain tiles", terracotta: "terracotta tiles" }[s.floor];
-  const p = `Photorealistic architectural exterior render, ${plan?.levels.length > 1 ? "two-storey" : "single-storey"} ${s.n} villa in Abidjan, Côte d'Ivoire, about ${st.S} m², ${s.roof === "flat" ? "flat roof with parapet" : "hip roof with " + (s.roofC === "#4a4f55" ? "slate" : "clay tiles")}, facade color ${s.facade}, accents ${s.accent}, ${s.brick ? "exposed brick, " : ""}large aluminium windows ${s.frame}, covered terrace, tropical garden with palm and mango trees${st.piscine ? ", swimming pool" : ""}${st.garage ? ", garage" : ""}, interior ${fl}, warm ${$("#hour")?.value > 17 ? "golden hour" : "afternoon"} sunlight, soft shadows, 24 mm lens, eye level, ultra detailed, 8k, V-Ray / Unreal Engine 5 quality, no text, no people.`;
+  const F = st.fin || {}, fr2 = { noir: "black", blanc: "white", champ: "champagne", bois: "wooden" }[F.menu] || (/1b1b1b|141414|2b2b2b|3b2a1e/.test(s.frame) ? "black" : "dark");
+  const p = `Photorealistic architectural exterior render of a ${plan?.levels.length > 1 ? "two-storey" : "single-storey"} ${EN[st.style] || EN.tropical} in Abidjan, Côte d'Ivoire, about ${st.S} m², ${s.roof === "flat" ? "flat roof with parapet" : "hip roof"}, ${EN2.baies[F.baies ?? 1]} with ${fr2} aluminium frames, interior glimpsed through the glass with ${fl} floors, ${EN2.staff[F.staff ?? 0]} and ${EN2.light[F.light || "spots"]}, covered terrace, lush tropical garden with coconut palms, mango tree and bougainvillea${st.piscine ? ", rectangular swimming pool with turquoise water" : ""}${st.garage ? ", integrated garage" : ""}, bright clear ${+$("#hour")?.value > 17 ? "golden hour" : "late morning"} sunlight, soft shadows, eye-level three-quarter view, 24 mm lens, ultra detailed, high-end architectural visualization, V-Ray / Unreal Engine 5 quality, no text, no people, no watermark.`;
   $("#prm").textContent = p; }
 $("#bPrm").onclick = async () => { try { await navigator.clipboard.writeText($("#prm").textContent); toast("Prompt copié"); } catch { toast("Sélectionnez le texte pour le copier"); } };
 
@@ -332,6 +418,7 @@ $("#bUpd").onclick = forceUpdate;
 $("#bReset").onclick = () => { if (confirm("Effacer tous les projets enregistrés sur cet appareil ?")) { LS.set("saved", []); renderSaved(); toast("Projets effacés"); } };
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => { });
 fetch("version.json?_cb=" + Date.now(), { cache: "no-store" }).then(r => r.json()).then(j => { if (j.v && j.v !== VER && !sessionStorage.getItem(K + "upd")) { sessionStorage.setItem(K + "upd", 1); forceUpdate(); } }).catch(() => { });
+renderFins();
 draw(true);
 </script>
 </body>

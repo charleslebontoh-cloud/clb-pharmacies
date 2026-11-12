@@ -27,7 +27,9 @@ Appli de veille boursière BRVM : résumé de séance, cours en direct (différ�
 - Moteur : `tools/bourse.py` (sources : brvm.org, sikafinance.com).
 - Alertes sur iPhone : appli ntfy, canal affiché dans l'onglet Signaux.
 
-## ARCHÉA · Architecte de poche (dossier `archi/`) — version 1.1.0
+## ARCHÉA · Architecte de poche (dossier `archi/`) — version 1.2.0
+
+Nouveautés 1.2.0 : idées à toucher pour composer la description, proposition écrite de l'architecte (notice descriptive) et questions sur la déco, l'éclairage, le staff, les baies vitrées, les sols et les menuiseries ; staff (corniche, faux plafond à gorge LED, staff décoratif avec rosace et lustre) et luminaires visibles en 3D ; images 3D plus claires avec réglage de luminosité ; caméra qui ne traverse plus les murs et reste dans la pièce visitée.
 
 Esquisses de maisons à partir de la surface, du terrain et des demandes (assistant en langage naturel) : plans cotés au 1/100 (plain-pied ou duplex), galerie de 12 variantes + choix automatique (couloir parallèle ou plan en longueur, proportions, miroir), options salon VIP, WC visiteurs, cellier, salle de jeux, chambre au RDC, chambres autonomes ; tableau des surfaces, CES, export SVG/PNG. Maquette 3D « rendu d'expert » (Three.js : PBR, ciel physique et éclairage d'environnement dynamique, ombres douces, occlusion ambiante GTAO, MSAA, végétation tropicale, piscine animée, panneaux solaires, mode nuit éclairé) ; vues rue, jardin, drone, 3/4, dessus et pièces ; 6 décors + « Décor IA » ; rendu 4K (3840 × 2160). Textures brique, parquet, gazon et eau issues des exemples three.js (licence MIT). Projets stockés sur le téléphone. Esquisses indicatives : un permis exige des plans signés par un architecte inscrit à l'OACI.
 
