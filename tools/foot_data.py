@@ -8,10 +8,16 @@ TB = ["esp.1", "eng.1", "fra.1", "ita.1", "ger.1"]
 TEAMS = {"barca": 83, "real": 86}
 # Championnats secondaires : affichés par CLB World pendant les trêves internationales (scores et coupons)
 SEC = ["fifa.friendly", "club.friendly", "uefa.nations", "caf.nations_qual", "concacaf.nations.league", "fra.2", "esp.2", "eng.2", "eng.3", "eng.4", "ita.2", "ger.2", "ned.1", "por.1", "bel.1", "sco.1", "tur.1", "ksa.1", "bra.1", "arg.1", "usa.1", "mex.1", "col.1", "chi.1", "per.1", "ecu.1", "uru.1", "par.1", "jpn.1", "chn.1", "aus.1"]
+T0 = time.monotonic()
 def get(u):
-    for _ in range(3):
+    # Budget de temps : si ESPN est lent, on réduit les essais puis on s'arrête pour publier quand même
+    el = time.monotonic() - T0
+    if el > 420: return {"_error": "budget de temps dépassé"}
+    tries, to = (3, 20) if el < 240 else (1, 8)
+    err = ""
+    for _ in range(tries):
         try:
-            r = urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0 CLB-World"}), timeout=20)
+            r = urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0 CLB-World"}), timeout=to)
             return json.loads(r.read().decode())
         except Exception as e:
             err = str(e); time.sleep(2)

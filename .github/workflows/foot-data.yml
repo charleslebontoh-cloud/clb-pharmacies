@@ -11,6 +11,7 @@ concurrency:
 jobs:
   data:
     runs-on: ubuntu-latest
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - name: Récupérer les données ESPN

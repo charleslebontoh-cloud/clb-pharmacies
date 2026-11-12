@@ -116,7 +116,7 @@ const QZ=[
 ["afr","Quelle basilique de Yamoussoukro est l'une des plus grandes églises du monde ?",["Notre-Dame de la Paix","Sacré-Cœur","Saint-Paul","Sainte-Anne"],0,"La basilique Notre-Dame-de-la-Paix a été consacrée en 1990."],
 ["afr","Quel parc ivoirien est inscrit au patrimoine mondial de l'UNESCO ?",["Parc national de Taï","Parc du Banco seulement","Parc de la Pendjari","Parc de Yankari"],0,"Le parc national de Taï, une des dernières forêts primaires d'Afrique de l'Ouest (aussi la Comoé)."],
 ["afr","Quelle est la langue la plus parlée en Afrique de l'Est ?",["Amharique","Swahili","Somali","Haoussa"],1,"Le swahili est langue officielle ou nationale dans plusieurs pays (Tanzanie, Kenya…)."],
-["afr","Quel pays africain n'a jamais été durablement colonisé ?",["Liberia et Éthiopie","Ghana","Kenya","Mali"],0,"L'Éthiopie (occupée par l'Italie 1936-1941) et le Liberia sont généralement cités."],
+["afr","Quels pays africains n'ont jamais été durablement colonisés ?",["Liberia et Éthiopie","Ghana","Kenya","Mali"],0,"L'Éthiopie (occupée par l'Italie 1936-1941) et le Liberia sont généralement cités."],
 ["afr","Quelle ville ivoirienne est surnommée « Abidjan la perle des lagunes » ?",["Bouaké","Abidjan","Daloa","Man"],1,"Abidjan est bâtie autour de la lagune Ébrié."],
 ["afr","Quel musicien ivoirien est une star du reggae ?",["Alpha Blondy","Magic System","DJ Arafat","Meiway"],0,"Alpha Blondy, auteur de « Brigadier Sabari » et « Jerusalem »."],
 ["afr","Quel groupe ivoirien a popularisé « Premier Gaou » ?",["Magic System","Espoir 2000","Kassav'","Les Garagistes"],0,"Magic System, à la fin des années 1990."],
@@ -154,7 +154,7 @@ QZ.push(
 ["his","Qui était le premier empereur romain ?",["Jules César","Auguste","Néron","Constantin"],1,"Octave prend le titre d'Auguste en 27 av. J.-C. ; Jules César n'a jamais été empereur."],
 ["his","En quelle année Christophe Colomb atteint-il les Amériques ?",["1453","1492","1515","1520"],1,"Il débarque aux Bahamas le 12 octobre 1492."],
 ["his","Quelle reine a régné sur l'Égypte et s'est alliée à Marc Antoine ?",["Néfertiti","Cléopâtre VII","Hatchepsout","Nefertari"],1,"Cléopâtre VII, dernière souveraine de la dynastie des Ptolémées."],
-["his","Quel mur sépara Berlin de 1961 à 1989 ?",["Mur d'Hadrien","Mur de Berlin","Mur de l'Atlantique","Grande Muraille"],1,"Construit par la RDA en août 1961."],
+["his","Quel État a construit le mur de Berlin en 1961 ?",["La RFA","La RDA","La Pologne","L'Autriche"],1,"Construit par la RDA en août 1961."],
 ["geo","Quelle est la capitale du Japon ?",["Osaka","Kyoto","Tokyo","Hiroshima"],2,"Tokyo est la capitale depuis 1868."],
 ["geo","Quel pays a la forme d'une botte ?",["Grèce","Italie","Portugal","Croatie"],1,"La péninsule italienne ressemble à une botte."],
 ["geo","Quelle ville est surnommée « la Grosse Pomme » ?",["Chicago","Los Angeles","New York","Boston"],2,"« The Big Apple » désigne New York."],
@@ -172,7 +172,7 @@ QZ.push(
 ["eco","Qu'est-ce qu'une action en bourse ?",["Un prêt à l'État","Une part du capital d'une société","Un compte d'épargne","Une assurance"],1,"Elle donne droit à des dividendes et au vote en assemblée."],
 ["eco","Quelle crise financière mondiale a éclaté en 2008 ?",["Crise des subprimes","Krach de 1929","Bulle Internet","Crise de la dette grecque"],0,"Partie des crédits immobiliers à risque aux États-Unis."],
 ["afr","Quelle est la capitale du Nigeria ?",["Lagos","Abuja","Kano","Ibadan"],1,"Abuja a remplacé Lagos en 1991."],
-["afr","Quel ivoirien a remporté le Ballon d'or africain en 2006 et 2009 ?",["Yaya Touré","Didier Drogba","Kolo Touré","Emmanuel Eboué"],1,"Didier Drogba ; Yaya Touré l'a gagné quatre fois de suite (2011-2014)."],
+["afr","Quel Ivoirien a remporté le Ballon d'or africain en 2006 et 2009 ?",["Yaya Touré","Didier Drogba","Kolo Touré","Emmanuel Eboué"],1,"Didier Drogba ; Yaya Touré l'a gagné quatre fois de suite (2011-2014)."],
 ["afr","Quel plat ivoirien est fait de semoule de manioc ?",["Foutou","Attiéké","Garba seul","Placali"],1,"L'attiéké accompagne souvent le poisson braisé ; le garba = attiéké + thon frit."],
 ["afr","Dans quel pays se trouve la ville de Zanzibar ?",["Kenya","Tanzanie","Mozambique","Madagascar"],1,"L'archipel de Zanzibar est semi-autonome au sein de la Tanzanie."],
 ["spo","Combien de joueurs compte une équipe de basket sur le terrain ?",["4","5","6","7"],1,"Cinq joueurs par équipe."],
@@ -215,4 +215,16 @@ QZ.push(
 ["afr","Sur quel fleuve ivoirien a été construit le barrage de Kossou ?",["Le Comoé","Le Bandama","Le Sassandra","La Bia"],1,"Mis en service au début des années 1970, il a créé le lac de Kossou, le plus grand lac artificiel du pays."],
 ["spo","Quel pays a remporté la CAN 2023, disputée début 2024 ?",["Nigeria","Côte d'Ivoire","Afrique du Sud","Sénégal"],1,"À domicile, les Éléphants battent le Nigeria 2-1 en finale le 11 février 2024 (buts de Kessié et Haller) : 3e titre continental."],
 ["cin","Quel réalisateur ivoirien a présenté « Run » au Festival de Cannes 2014 ?",["Philippe Lacôte","Henri Duparc","Roger Gnoan M'Bala","Owell Brown"],0,"Sélectionné à Un certain regard ; Philippe Lacôte a ensuite réalisé « La Nuit des rois » (2020)."]
+);
+
+/* Ajout du 12 nov. 2026 — faits vérifiés */
+QZ.push(
+["his","En quelle année la Côte d'Ivoire a-t-elle organisé sa première Coupe d'Afrique des nations ?",["1972","1984","1992","2006"],1,"La CAN 1984 s'est jouée à Abidjan et Bouaké ; le Cameroun l'a remportée. Le pays a de nouveau accueilli la CAN début 2024."],
+["geo","Quel est le lac le plus profond du monde ?",["Lac Tanganyika","Lac Baïkal","Lac Supérieur","Lac Victoria"],1,"Le lac Baïkal, en Sibérie (Russie), dépasse 1 600 m de profondeur ; le Tanganyika est deuxième."],
+["sci","Quel est l'os le plus long du corps humain ?",["Le tibia","L'humérus","Le fémur","Le radius"],2,"Le fémur, l'os de la cuisse, est aussi l'un des plus solides du squelette."],
+["art","Qui a écrit « L'Étranger » (1942) ?",["Jean-Paul Sartre","Albert Camus","André Malraux","Marcel Proust"],1,"Premier roman publié d'Albert Camus, chez Gallimard ; Camus reçoit le prix Nobel de littérature en 1957."],
+["eco","En quelle année les billets et pièces en euros sont-ils entrés en circulation ?",["1999","2002","2004","2008"],1,"L'euro existe depuis 1999 sur les marchés ; les billets et pièces arrivent le 1er janvier 2002."],
+["afr","Quel grand lac artificiel a été créé par le barrage d'Akosombo, au Ghana ?",["Lac Kariba","Lac Volta","Lac Nasser","Lac de Kossou"],1,"Le lac Volta, mis en eau dans les années 1960, est l'un des plus grands lacs de barrage du monde par sa superficie."],
+["spo","Combien d'équipes ont disputé la phase finale de la Coupe du monde 2026 ?",["32","40","48","64"],2,"Première édition à 48 équipes, organisée par les États-Unis, le Canada et le Mexique ; l'Espagne l'a remportée."],
+["cin","Quel cinéaste iranien a reçu la Palme d'or à Cannes en 2025 pour « Un simple accident » ?",["Asghar Farhadi","Jafar Panahi","Abbas Kiarostami","Mohammad Rasoulof"],1,"Jafar Panahi a tourné ce film malgré les interdictions qui le visaient en Iran."]
 );
