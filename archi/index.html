@@ -197,7 +197,7 @@ table.tt{font-size:12.5px;min-width:520px}table.tt th{text-align:left;font-size:
 import { generate, generateFit, svgPlan, variantSpec } from './plan.js';
 import { generateBat, batVariants, isBat, TYPES, FORMES } from './batiment.js';
 import * as TECH from './tech.js';
-const VER = "1.5.0", K = "archea_";
+const VER = "1.5.1", K = "archea_";
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const LS = { get(k, d) { try { const v = localStorage.getItem(K + k); return v ? JSON.parse(v) : d; } catch { return d; } }, set(k, v) { try { localStorage.setItem(K + k, JSON.stringify(v)); } catch { } } };
 const toast = (t, ms = 2400) => { const e = $("#toast"); e.textContent = t; e.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => e.classList.remove("on"), ms); };
@@ -207,7 +207,7 @@ const fr = (n, d = 0) => Number(n).toLocaleString("fr-FR", { maximumFractionDigi
 const h = new Date().getHours(); $("#hello").textContent = (h < 18 ? "Bonjour" : "Bonsoir") + " Charles.";
 $("#sv").textContent = "Version " + VER + " · by CLB"; $("#ver").innerHTML = "<b>ARCHÉA</b> · version " + VER;
 $("#splash").onclick = () => { const s = $("#splash"); s.style.opacity = 0; setTimeout(() => s.remove(), 500);
-  if (LS.get("seen", "") !== VER) { LS.set("seen", VER); setTimeout(() => toast("Nouveau en " + VER + " : hôtels, magasins et boutiques, formes en bande, en L et en U — plusieurs variantes à comparer.", 6500), 700); } };
+  if (LS.get("seen", "") !== VER) { LS.set("seen", VER); setTimeout(() => toast("Nouveau en " + VER + " : dans les formes en L et en U, la cour reste à ciel ouvert — terrasse dallée et jardin, avec baies des pièces de vie ouvrant dessus.", 6500), 700); } };
 
 // ---------- état ----------
 const OPTS_T = { hotel: [["resto", "Restaurant + cuisine"], ["bar", "Bar"], ["semi", "Salle de séminaire"], ["suites", "Suites au dernier étage"], ["piscine", "Piscine"], ["parking", "Parking"]],
@@ -290,6 +290,8 @@ function notice(pl) { if (!pl) return ""; const F = st.fin || {}, S = STYN[st.st
     : C ? `<p><b>${st.name}</b> : maison ${FN}, ${lv ? "en duplex (R+1)" : "de plain-pied"}, de <b>${fr(pl.hab)} m² habitables</b>${pl.Sreq ? ` (demandé : ${fr(pl.Sreq)} m²)` : ""}, ${terr} Pièces de jour sur rue, chambres regroupées dans l'aile au calme, desservies par un couloir de 1,20 m.</p>`
     : `<p><b>${st.name}</b> : villa ${lv ? "en duplex (R+1)" : "de plain-pied"}${st.levelsSet ? "" : " <i>(à confirmer)</i>"} de <b>${fr(pl.hab)} m² habitables</b>${pl.Sreq ? ` (demandé : ${fr(pl.Sreq)} m²)` : ""}, sur un terrain de ${fr(st.L)} × ${fr(st.P)} m (${fr(st.L * st.P)} m²). Emprise au sol ${fr(pl.emprise)} m², soit un CES de ${fr(pl.ces * 100)} %. ${pl.mode === "B" ? "La maison se développe en longueur, couloir perpendiculaire à la rue, pour s'adapter à la largeur du terrain." : "Les pièces s'organisent de part et d'autre d'un dégagement parallèle à la rue : pièces de jour côté entrée, pièces de nuit au calme à l'arrière."}</p>`;
   const lstH = L => { const n = L.rooms.filter(r => r.k === "chh").length, o = [...new Set(L.rooms.filter(r => !/^(chh|sdh|sas|couloir|dress)$/.test(r.k) && !/suite/.test(r.n) && r.n).map(r => r.n.toLowerCase().replace(/^wc/, "WC")))]; const nb = L.rooms.filter(r => r.k === "vente").length; return [n ? n + " chambres" + (L.rooms.some(r => /suite/.test(r.n)) ? " dont " + L.rooms.filter(r => r.k === "salon").length + " suites" : "") : "", nb ? nb + " boutiques" + (L.rooms.some(r => r.k === "res") ? " avec réserve et WC" : "") : "", ...o.filter(x => !nb || !/^(boutique|réserve)/.test(x))].filter(Boolean).join(", "); };
+  if (pl.outside && pl.outside.length) { const ta = pl.outside.filter(z => z.k === "terr").reduce((a, z) => a + z.a, 0), j = pl.outside.find(z => z.k === "jardin"), c = pl.outside.find(z => z.k === "cour");
+    h += `<p><b>Cour non couverte</b> : seul le bâti forme le ${pl.forme} ; l'espace qu'il enserre reste à ciel ouvert, ${c ? `en cour de service de ${m2(c.a)}` : `avec une terrasse dallée de ${m2(ta)} au pied des façades intérieures${j ? ` et un jardin de ${m2(j.a)}${st.piscine ? " accueillant la piscine" : ""}` : ""} ; les pièces de vie y ouvrent par de grandes baies`}. Ces surfaces ne comptent ni dans l'emprise bâtie ni dans la surface ${pl.kind === "house" ? "habitable" : "utile"}.</p>`; }
   pl.levels.forEach(L => { h += `<p><b>${L.name}</b> : ${pl.kind === "hotel" || pl.kind === "shops" ? lstH(L) : lst(L)}.</p>`; });
   const sol = F.sol && F.sol !== "auto" ? T.sol[F.sol] : ({ tile: "grand carrelage", marble: "marbre poli", wood: "parquet chêne", concrete: "béton ciré", terracotta: "terre cuite" })[S.floor];
   h += `<p><b>Ambiance ${S.n.toLowerCase()}</b>${st.styleSet ? "" : " <i>(proposée par défaut, à confirmer)</i>"} : ${S.txt}. Sols en ${sol} dans les pièces de vie, faïence et grès dans les pièces d'eau.</p>`;
@@ -387,7 +389,8 @@ function draw(rebuild3d) {
   $("#notice").innerHTML = notice(plan);
   $("#warns").innerHTML = plan.warn.map(w => `<div class="warn">⚠︎ ${w}</div>`).join("");
   let rows = "", tot = 0; plan.levels.forEach(L => { rows += `<tr><td colspan="2" style="font-weight:600;padding-top:10px">${L.name}</td></tr>`; L.rooms.forEach(r => { const a = r.w * r.h; tot += a; rows += `<tr><td>${r.n}</td><td>${fr(a, 2)} m²</td></tr>`; }); });
-  rows += `<tr><td><b>Total surfaces utiles</b></td><td><b>${fr(tot, 2)} m²</b></td></tr><tr><td>Surface hors œuvre (SHON)</td><td>${fr(plan.shon)} m²</td></tr>`; $("#tab").innerHTML = rows;
+  rows += `<tr><td><b>Total surfaces utiles</b></td><td><b>${fr(tot, 2)} m²</b></td></tr><tr><td>Surface hors œuvre (SHON)</td><td>${fr(plan.shon)} m²</td></tr>`;
+  if (plan.outside && plan.outside.length) { rows += `<tr><td colspan="2" style="font-weight:600;padding-top:10px">Extérieurs non couverts (hors emprise bâtie)</td></tr>`; const g = {}; plan.outside.forEach(z => { const n = z.k === "terr" ? "Terrasse" : z.n; g[n] = (g[n] || 0) + z.a; }); for (const [n, a] of Object.entries(g)) rows += `<tr><td>${n}</td><td>${fr(a, 2)} m²</td></tr>`; } $("#tab").innerHTML = rows;
   if (rebuild3d) need3d = true; if (cur === "3d") show3d();
 }
 // zoom / pan du plan

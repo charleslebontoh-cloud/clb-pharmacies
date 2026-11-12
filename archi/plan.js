@@ -356,6 +356,11 @@ export function svgPlan(plan, l, opt = {}) {
   o.push(`<rect width="${vw}" height="${vh}" fill="#fff"/>`);
   // sols
   const floorCol = k => ({ sejour: "#f6efe3", sam: "#f6efe3", cuisine: "#eef3f4", sdbp: "#e9f1f5", sdb: "#e9f1f5", dch: "#e9f1f5", wc: "#e9f1f5", couloir: "#f4f4f2", esc: "#eeeeea" })[k] || "#fbf8f2";
+  // espaces extérieurs non couverts (cour d'un L / d'un U) : terrasse dallée, jardin
+  if (plan.outside && l === 0) { o.push(`<defs><pattern id="dal" width="50" height="50" patternUnits="userSpaceOnUse"><rect width="50" height="50" fill="#efe9de"/><path d="M50 0H0V50" fill="none" stroke="#d6cdbd" stroke-width="2"/></pattern><pattern id="gaz" width="24" height="24" patternUnits="userSpaceOnUse"><rect width="24" height="24" fill="#e3efd8"/><path d="M6 14l3-6 3 6M15 22l3-6 3 6" fill="none" stroke="#9fc285" stroke-width="1.6"/></pattern></defs>`);
+    for (const z of plan.outside) o.push(`<rect x="${X(z.x)}" y="${Yf(z.y + z.h)}" width="${z.w * S}" height="${z.h * S}" fill="url(#${z.k === "jardin" ? "gaz" : "dal"})" stroke="#b9ad97" stroke-width="2" stroke-dasharray="14 8"/>`);
+    const ta = plan.outside.filter(z => z.k === "terr").reduce((a, z) => a + z.a, 0);
+    for (const z of plan.outside) if (z.n) { const cx = X(z.x + z.w / 2), cy = Yf(z.y + z.h / 2), fs = Math.max(24, Math.min(40, z.w * 6)); o.push(`<text x="${cx}" y="${cy - 4}" font-size="${fs}" font-weight="700" text-anchor="middle" fill="${z.k === "jardin" ? "#4f7a3a" : "#7a6a52"}" font-style="italic">${z.n}</text><text x="${cx}" y="${cy + fs}" font-size="${fs * .75}" text-anchor="middle" fill="#7a6a52">${(z.k === "terr" ? ta : z.a).toFixed(1).replace(".", ",")} m²</text>`); } }
   for (const r of L.rooms) o.push(`<rect x="${X(r.x)}" y="${Yf(r.y + r.h)}" width="${r.w * S}" height="${r.h * S}" fill="${floorCol(r.k)}"/>`);
   // mobilier (trait fin)
   if (opt.furn !== false) for (const r of L.rooms) for (const f of furniture(r, L)) {

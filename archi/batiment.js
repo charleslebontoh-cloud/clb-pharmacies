@@ -86,20 +86,22 @@ function progShop(p, V) {
 function progHouse(p, V) {
   const prog = buildProgram({ ...p, levels: p.levels === 2 ? 2 : 1 }), Lv = prog.levels, rooms = prog.rooms.filter(r => !r.stair);
   const Amax = Math.max(...[0, 1].slice(0, Lv).map(l => rooms.filter(r => r.lvl === l).reduce((s, r) => s + r.a, 0)));
-  const d = clamp(Math.sqrt(Amax) / 2.6, 3.8, 5.0), C = 1.2;
+  // en L / en U : ailes simples (une rangée de pièces + galerie couverte côté cour) pour garder une vraie cour à ciel ouvert
+  const one = V.forme === "L" || V.forme === "U", d = one ? clamp(Math.sqrt(Amax) / 2.4, 3.8, 5.0) : clamp(Math.sqrt(Amax) / 2.6, 3.8, 5.0), C = one ? 1.5 : 1.2;
   const levels = [0, 1].slice(0, Lv).map(l => { const rs = rooms.filter(r => r.lvl === l), cells = [], seen = new Set();
-    for (const r of rs) { if (seen.has(r)) continue; const grp = r.col ? rs.filter(x => x.col === r.col) : [r]; grp.forEach(x => seen.add(x));
-      const zone = r.night ? "quiet" : r.strip === "f" ? "street" : "any", id = x => x.id || x.k;
-      const main = grp.find(x => x.hab) || grp[0], sec = grp.filter(x => x !== main);
+    const id = x => x.id || x.k, hostOf = x => x.acc ? rs.find(y => y !== x && id(y) === x.acc) : null;
+    for (const r of rs) { if (seen.has(r) || hostOf(r)) continue; // les pièces annexes suivent leur pièce principale
+      const main = r, sec = rs.filter(x => hostOf(x) === main); [main, ...sec].forEach(x => seen.add(x));
+      const zone = r.night ? "quiet" : r.strip === "f" ? "street" : (one ? "street" : "any");
       const mk = x => ({ k: x.k, n: x.n, id: id(x), acc: x.acc, hab: x.hab, wet: x.wet, entry: x.k === "sejour" ? 1 : 0, main: x.k === "sejour" ? 1 : 0, ext2: x.k === "buand" || (x.k === "cuisine" && !p.buanderie) ? 1 : 0, open: x.k === "sejour" || x.k === "sam" || (x.k === "cuisine" && p.open) ? 1 : 0 });
       if (main.k === "wc" || main.k === "wcv") { cells.push(cell(1.5, stack([{ ...mk(main), h: 1.9 }, { k: "rgt", n: "Placard" }]), { zone, fix: 1 })); continue; }
-      const wm = Math.max(main.a / d, main.minW || 2.4), bm = full(main.k, main.n, mk(main));
-      if (!sec.length) { cells.push(cell(wm, bm, { zone, min: main.minW || 2.4 })); continue; }
+      const mn = Math.max(main.minW || 2.4, /^(ch|chp|chdom)$/.test(main.k) ? 3 : /^(sejour|salon|jeux)$/.test(main.k) ? 3.8 : /^(sam|cuisine|bureau)$/.test(main.k) ? 2.8 : 0), wm = Math.max(main.a / d, mn), bm = full(main.k, main.n, mk(main));
+      if (!sec.length) { cells.push(cell(wm, bm, { zone, min: mn })); continue; }
       // pièces annexes (salle d'eau, dressing) collées à leur chambre
       const A = sec.reduce((s, x) => s + x.a, 0), ws = Math.max(A / d, ...sec.map(x => x.minW || 1.5)), bs = sec.length > 1 && d > 3.6 ? stack(sec.map((x, i) => ({ ...mk(x), h: i < sec.length - 1 ? d * x.a / A : 0 }))) : full(sec[0].k, sec[0].n, mk(sec[0]));
-      cells.push(cell(wm + ws, (w, dd) => row([{ w: Math.max(1.5, w * ws / (wm + ws)), b: bs }, { b: bm }])(w, dd), { zone, min: (main.minW || 2.4) + 1.5 })); }
+      cells.push(cell(wm + ws, (w, dd) => row([{ w: Math.max(1.5, w * ws / (wm + ws)), b: bs }, { b: bm }])(w, dd), { zone, min: mn + 1.5 })); }
     return { corr: 1, cells, fill: g => l ? (g >= 2.8 ? cell(g, full("tv", "Salon d'étage", { hab: 1 })) : null) : (g >= 2.2 && g <= 3.6 ? cell(g, full("rgt", "Rangement")) : null) }; });
-  return { d1: d, C, d2: d, levels, warn: prog.warn.slice(), core: { stair: Lv > 1 }, kind: "house" };
+  return { d1: d, C, d2: one ? 0 : d, levels, warn: prog.warn.slice(), core: { stair: Lv > 1 }, kind: "house", gallery: one };
 }
 
 // ---------- géométrie ----------
@@ -112,7 +114,7 @@ function strips(G, corr) {
   else { S.push({ id: "barX", axis: "x", o: 0, len: Lx, c: D, dir: -1, d: D, kind: "X" });
     if (R) S.push({ id: "aRx", axis: "y", o: D, len: Ly, c: Lx - D, dir: 1, d: D, kind: "AX" });
     if (Lf) S.push({ id: "aLx", axis: "y", o: D, len: Ly, c: D, dir: -1, d: D, kind: "AX" }); }
-  return S;
+  return S.filter(x => x.d > .5 && x.len > .3);
 }
 const RANK = { street: { F: 0, X: 0, AO: 1, AX: 1, B: 3, AI: 4 }, quiet: { AO: 0, AX: 0, AI: 1, B: 2, F: 3, X: 1 }, any: { B: 0, AI: 1, AO: 2, AX: 1, F: 3, X: 0 } };
 function mapRect(s, u0, u1, v0, v1) { const ua = R2(s.o + u0), ub = R2(s.o + u1), va = R2(s.c + s.dir * v0), vb = R2(s.c + s.dir * v1), lo = Math.min(va, vb), hi = Math.max(va, vb);
@@ -131,7 +133,7 @@ export function generateBat(p, v = 12) {
 
 // calage sur la surface demandée (maison, magasin unique) : ±4 %
 function layout(p, V, vi) { if (p.type === "hotel" || (p.type === "magasin" && (p.nb | 0) > 1) || !p.S) return layout0(p, V, vi);
-  const shop = p.type === "magasin", met = pl => shop ? pl.levels[0].rooms.reduce((s, r) => s + r.w * r.h, 0) : pl.hab;
+  const shop = p.type === "magasin", met = pl => shop ? pl.levels[0].rooms.reduce((s, r) => s + r.w * r.h, 0) : pl.hab - (pl.gal || 0);
   const pl0 = layout0(p, V, vi); let q = { ...p }, pl = pl0; for (let i = 0; i < 6 && Math.abs(met(pl) - p.S) / p.S > .04; i++) { const nq = { ...q, S: Math.max(30, q.S * p.S / met(pl)) }; const np = layout0(nq, V, vi); if (Math.abs(met(np) - p.S) >= Math.abs(met(pl) - p.S) - .5) break; q = nq; pl = np; }
   // avertissements exprimés par rapport à la demande initiale
   pl.warn = [...pl0.warn.filter(w => /^La surface de/.test(w)), ...pl.warn.filter(w => !/^La surface de/.test(w))];
@@ -145,13 +147,15 @@ function layout0(p, V, vi) {
   const stairW = 3.0, liftW = P.core.lift ? 2.4 : 0, coreW = stairW + liftW, hallW = P.hall ? P.hall.w : 0;
   let need = 0;
   P.levels.forEach((L, l) => { const T = L.cells.reduce((s, c) => s + c.w, 0) + (l === 0 ? hallW : 0) + (P.core.stair || P.hall ? coreW : 0);
-    const k = L.corr ? 2 + 2 * arms.length * rho : 1 + arms.length * rho; need = Math.max(need, T / k);
+    const ns = d2 > .5 ? 2 : 1, k = L.corr ? ns * (1 + arms.length * rho) : 1 + arms.length * rho; need = Math.max(need, T / k);
     const st = L.cells.filter(c => c.zone === "street").reduce((s, c) => s + c.w, 0) + (l === 0 ? hallW : 0); need = Math.max(need, st / (L.corr ? 1 + arms.length * rho * .5 : 1 + arms.length * rho) * .9); });
   // need = longueur équivalente de barre ; pour un L / U on garde la proportion des ailes sauf si la barre devient trop courte
-  const nA = arms.length, Lmin = Math.max(nA === 2 ? 2 * D + 6 : nA ? D + 3 : 6, hallW + coreW + (nA ? 3 : 0));
+  // une vraie cour : largeur et profondeur minimales selon le programme
+  const nA0 = arms.length, cw = P.kind === "hotel" ? (nA0 === 2 ? 12 : 10) : P.kind === "house" ? (nA0 === 2 ? 7 : 6) : 8, cyMin = P.kind === "hotel" ? 10 : P.kind === "house" ? 6 : 7;
+  const nA = arms.length, Lmin = Math.max(nA ? nA * D + cw : 6, hallW + coreW + (nA ? 3 : 0));
   let Lx = Math.max(need, Lmin), Ly = nA ? rho * Lx : 0;
-  if (nA && need < Lmin) { const kk = P.levels.some(L => L.corr) ? 2 : 1; Ly = Math.max(3.7, need * (kk + kk * nA * rho) / (kk * nA) - Lx / nA); }
-  Lx = Math.ceil(Lx * 10) / 10; Ly = nA ? Math.ceil(Math.max(3.7, Ly) * 10) / 10 : 0;
+  if (nA && need < Lmin) { const kk = P.levels.some(L => L.corr) && d2 > .5 ? 2 : 1; Ly = Math.max(3.7, need * (kk + kk * nA * rho) / (kk * nA) - Lx / nA); }
+  Lx = Math.ceil(Lx * 10) / 10; Ly = nA ? Math.ceil(Math.max(cyMin, Ly) * 10) / 10 : 0;
   const G = { Lx, Ly, D, d1, C, d2, arms }, a0 = d1 + C, al = Ly + d2;
   // éléments fixes (mêmes positions à tous les niveaux pour la structure verticale) ; ua = abscisse absolue le long de l'aile
   const fixed = [], R = arms.includes("R"), Lf = arms.includes("L"), bB0 = Lf ? D : 0, bB1 = Lx - (R ? D : 0);
@@ -162,7 +166,7 @@ function layout0(p, V, vi) {
     fixed.push({ strip: "barF", ua: hallU, w: hallW, lv: l => l === 0, build: P.hall.build, hall: 1, entrySide: V.tr ? "W" : null }); }
   const armCore = arms.length === 1 && !P.core.acces && (P.core.stair || P.core.lift), aS = arms[0];
   if (armCore) { // L : escalier (et ascenseur) à l'angle, au départ de l'aile
-    if (P.core.stair) fixed.push({ strip: aS === "R" ? "aRi" : "aLi", ua: a0, w: 3.2, lv: (l, L) => L.corr, build: full("esc", "Escalier", { stair: 1 }) });
+    if (P.core.stair) fixed.push({ strip: (aS === "R" ? "aR" : "aL") + (d2 > .5 ? "i" : "o"), ua: a0, w: 3.2, lv: (l, L) => L.corr, build: full("esc", "Escalier", { stair: 1 }) });
     if (P.core.lift) fixed.push({ strip: aS === "R" ? "aRo" : "aLo", ua: a0, w: 2.6, lv: (l, L) => L.corr, build: stack([{ k: "asc", n: "Ascenseur", h: 2.4 }, { k: "local", n: "Gaine · local" }]) }); }
   let coreU = null;
   if (!armCore && (P.core.stair || P.core.lift)) {
@@ -178,6 +182,8 @@ function layout0(p, V, vi) {
     if (!R && far(Lx) > 25) fixed.push({ strip: "barB", ua: Lx - stairW, w: stairW, lv: (l, L) => L.corr, build: sec });
     for (const a of arms) if (al + (a === "R" ? far(Lx) : far(0)) > 25) fixed.push({ strip: a === "R" ? "aRi" : "aLi", ua: a0 + al - stairW, w: stairW, lv: (l, L) => L.corr, build: sec }); }
 
+  // cour non couverte (L / U) : seul le bâti forme le L ou le U
+  const court0 = arms.length ? { x: Lf ? D : 0, y: D, w: R2(Lx - (Lf ? D : 0) - (R ? D : 0)), h: Ly } : null;
   // ---------- niveaux ----------
   let over = 0;
   const levels = P.levels.map((L, l) => {
@@ -207,14 +213,14 @@ function layout0(p, V, vi) {
       for (const c of list) { add(sg.s, c.build(c.w, sg.s.d, l, L), u); u += c.w; } }
     // couloirs (interrompus par les éléments traversants)
     if (L.corr) { const band = (x, y, w, h, n) => { if (w > .3 && h > .3) rooms.push({ k: "couloir", n, x: R2(x), y: R2(y), w: R2(w), h: R2(h), circ: 1, lvl: l }); };
-      band(0, d1, Lx, C, l ? "Couloir d'étage" : "Couloir");
-      if (R) band(Lx - d1 - C, a0, C, al, "Couloir"); if (Lf) band(d1, a0, C, al, "Couloir"); }
+      const cn = P.gallery ? "Galerie" : "Couloir"; band(0, d1, Lx, C, P.gallery ? cn : l ? "Couloir d'étage" : "Couloir");
+      if (R) band(Lx - d1 - C, a0, C, al, cn); if (Lf) band(d1, a0, C, al, cn); }
     rooms.forEach(r => { r.a = R2(r.w * r.h); });
     if (P.kind === "hotel") { // numérotation continue le long du couloir
       const t = r => { const cx = r.x + r.w / 2, cy = r.y + r.h / 2; if (cy > D && R && cx > Lx - D) return Lx + cy; if (cy > D && Lf && cx < D) return -cy; return cx; };
       const units = rooms.filter(r => r.k === "chh" && !/suite/.test(r.n)).concat(rooms.filter(r => r.k === "salon" && /suite/.test(r.n))).sort((a, b) => t(a) - t(b) || a.y - b.y); let k = 0;
       for (const u of units) { k++; const num = l ? l * 100 + k : k; if (u.k === "salon") u.n = "Salon suite " + num; else u.n = "Chambre " + num; } }
-    const op = openings(rooms, p, P, V);
+    const op = openings(rooms, p, P, V, court0, l);
     return { l, rooms, ...op, name: Lv === 1 ? (P.kind === "house" ? "Plain-pied" : "Rez-de-chaussée") : l === 0 ? "Rez-de-chaussée" : Lv === 2 ? "Étage" : (l === 1 ? "1er" : l + "e") + " étage" };
   });
   // capacité réelle
@@ -225,7 +231,13 @@ function layout0(p, V, vi) {
   let blocks = [{ x: 0, y: 0, w: Lx, h: D, axis: "x" }], roofBlocks = [{ x: 0, y: 0, w: Lx, h: D }], court = null;
   if (R) { blocks.push({ x: R2(Lx - D), y: D, w: D, h: Ly, axis: "y" }); roofBlocks.push({ x: R2(Lx - D), y: 0, w: D, h: R2(D + Ly) }); }
   if (Lf) { blocks.push({ x: 0, y: D, w: D, h: Ly, axis: "y" }); roofBlocks.push({ x: 0, y: 0, w: D, h: R2(D + Ly) }); }
-  if (arms.length) court = { x: Lf ? D : 0, y: D, w: R2(Lx - (Lf ? D : 0) - (R ? D : 0)), h: Ly };
+  let outside = [];
+  if (arms.length) { court = court0; const c = court, td = P.kind === "hotel" ? 4 : 3;
+    if (P.kind === "shops" || P.kind === "shop") outside.push({ k: "cour", n: "Cour de service (non couverte)", x: c.x, y: c.y, w: c.w, h: c.h });
+    else { const th = Math.min(td, c.h); outside.push({ k: "terr", n: "Terrasse (non couverte)", x: c.x, y: c.y, w: c.w, h: th });
+      if (c.h > td) { if (R) outside.push({ k: "terr", n: "", x: R2(c.x + c.w - td), y: R2(c.y + td), w: td, h: R2(c.h - td) }); if (Lf) outside.push({ k: "terr", n: "", x: c.x, y: R2(c.y + td), w: td, h: R2(c.h - td) });
+        const gx = c.x + (Lf ? td : 0), gw = c.w - (Lf ? td : 0) - (R ? td : 0); if (gw > 1.5 && c.h - td > 1.5) outside.push({ k: "jardin", n: p.piscine ? "Jardin · piscine" : "Jardin", x: R2(gx), y: R2(c.y + td), w: R2(gw), h: R2(c.h - td) }); } }
+    outside.forEach(z => z.a = R2(z.w * z.h)); }
   let W = Lx, Dt = R2(D + Ly);
   if (V.tr) { const sw = o => { [o.x, o.y, o.w, o.h] = [o.y, o.x, o.h, o.w]; };
     levels.forEach(L => { L.rooms.forEach(r => { sw(r); if (r.fac) r.fac = { o: r.fac.o === "h" ? "v" : "h", out: r.fac.out }; if (r.entrySide) r.entrySide = "S"; });
@@ -240,13 +252,13 @@ function layout0(p, V, vi) {
   if (ces > .6 && P.kind !== "shops") warn.push(`Emprise au sol de ${Math.round(ces * 100)} % : au-delà de 60 %, la parcelle devient peu perméable et mal ventilée.`);
   const lvl0 = levels[0]; const md = lvl0.doors.find(d => d.main) || lvl0.doors.find(d => d.ext);
   return { p, W: R2(W), D: R2(Dt), levels, hab: Math.round(hab), emprise: Math.round(emprise), shon: Math.round(emprise * Lv), ces, warn, variant: vi, duplex: Lv > 1, over: over + ovr,
-    mode: "C", forme: V.forme, vname: V.name, strip: { d1, C, d2 }, tr: !!V.tr, kind: P.kind, nRooms, nb: P.nb, blocks, roofBlocks, court, depth: D, bar: V.tr ? { x: 0, y: 0, w: D, h: Lx } : { x: 0, y: 0, w: Lx, h: D },
+    mode: "C", gal: P.gallery ? Math.round(levels.flatMap(L => L.rooms).filter(r => r.k === "couloir").reduce((s, r) => s + r.w * r.h, 0)) : 0, forme: V.forme, vname: V.name, strip: { d1, C, d2 }, tr: !!V.tr, kind: P.kind, nRooms, nb: P.nb, blocks, roofBlocks, court, outside, depth: D, bar: V.tr ? { x: 0, y: 0, w: D, h: Lx } : { x: 0, y: 0, w: Lx, h: D },
     entry: md ? (md.o === "h" ? { x: md.c, y: md.y } : { x: md.x, y: md.c }) : null, site: { L: p.L, P: p.P, ox: (p.L - W) / 2, oy: setF } };
 }
 
 // ---------- portes et fenêtres (génériques) ----------
 const STDW = [.6, .8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.4], STDB = [1.2, 1.5, 1.8, 2.1, 2.4, 3.0, 3.6, 4.2, 4.8, 5.4];
-function openings(rooms, p, P, V) {
+function openings(rooms, p, P, V, court, lvl = 0) {
   const doors = [], wins = [], env = envelope(rooms), idx = new Map(rooms.map((r, i) => [r, i]));
   const shared = (i, j) => { const ps = env.filter(e => e.ri === i && e.nb === j).sort((a, b) => a.a0 - b.a0); const out = []; for (const e of ps) { const l = out[out.length - 1]; if (l && l.o === e.o && Math.abs(l.at - e.at) < E && e.a0 <= l.a1 + .02) l.a1 = e.a1; else out.push({ ...e }); } return out.sort((a, b) => (b.a1 - b.a0) - (a.a1 - a.a0)); };
   const door = (e, r, w, o = {}) => { const len = e.a1 - e.a0; w = Math.min(w, len - .15); if (w < .6) return; let c = (e.a0 + e.a1) / 2; if (o.side && len > w + 1.4) c = e.a0 + .45 + w / 2;
@@ -282,13 +294,17 @@ function openings(rooms, p, P, V) {
     if (r.wet || /^(sdh|sdb|sdbp|dch|wc|wcv|sanH|sanF|vest|kit)$/.test(k)) s = { w: .6, sill: 1.6, head: 2.2 };
     else if (/^(sas|asc|gaine|bag|res|local|mag|cellier|rgt|eco|linge|office|arch|dress)$/.test(k)) s = len > 1.8 ? { w: .6, sill: 1.6, head: 2.2 } : null;
     else if (r.stair) s = { w: .8, sill: 1.2, head: 2.2 };
-    else if (k === "couloir") s = len < 2.2 ? { w: Math.min(1, len - .5), sill: .9, head: 2.2 } : null;
+    else if (k === "couloir") { if (len >= 2.2 && court && P.gallery) { for (let u = e.a0 + 1.6; u < e.a1 - 1.2; u += 3.2) { const ww = Math.min(2.4, e.a1 - u - .4); if (ww > .9) wins.push({ o: e.o, at: e.at, c: u + ww / 2 - .2, w: ww > 2 ? 2.4 : 1.2, sill: lvl ? .9 : 0, head: 2.4, k, baie: !lvl, out: e.out, terr: lvl ? 0 : 1 }); } continue; }
+      s = len < 2.2 ? { w: Math.min(1, len - .5), sill: .9, head: 2.2 } : null; }
     else if (k === "vente") s = { w: len - .8, sill: .3, head: 2.6, vit: 1 };
     else if (k === "quai") s = null;
     else if (/^(hall|lounge|resto|bar|semi|plateau|reu)$/.test(k)) s = { w: Math.min(k === "plateau" ? len - 1 : 4.8, len * .7), sill: k === "plateau" || k === "reu" ? .9 : 0, head: 2.4, baie: k !== "plateau" && k !== "reu" ? 1 : 0, vit: k === "plateau" ? 1 : 0 };
     else if (/^(sejour|salon|sam|tv)$/.test(k)) { s = { w: Math.min(3.2, len * .55), sill: e.out === -1 && e.o === "h" ? 0 : .9, head: 2.2 }; if (B) s = { w: B === 2 ? Math.max(1.2, len - .8) : Math.min(4.2, len * .7), sill: 0, head: B === 2 ? 2.6 : 2.4 }; }
     else if (/^(cuisinepro|cuisine)$/.test(k)) s = { w: Math.min(1.6, len * .4), sill: 1.1, head: 2.2 };
     else { s = { w: Math.min(1.6, Math.max(1, len * .45)), sill: .9, head: 2.2 }; if (B && /^(chh|chp|ch|bureau|bur|dir)$/.test(k)) s = { w: B === 2 ? Math.min(2.6, len * .6) : Math.min(2.0, len * .5), sill: B === 2 ? 0 : .5, head: B === 2 ? 2.6 : 2.4 }; }
+    // façade donnant sur la cour : les pièces de vie s'ouvrent largement sur la terrasse
+    const mid = (e.a0 + e.a1) / 2, px = e.o === "h" ? mid : e.at + e.out * .5, py = e.o === "h" ? e.at + e.out * .5 : mid;
+    if (lvl === 0 && court && px > court.x && px < court.x + court.w && py > court.y && py < court.y + court.h && /^(sejour|salon|sam|tv|lounge|resto|bar|semi|hall)$/.test(k) && len >= 2) s = { w: Math.min(3.6, len * .6), sill: 0, head: 2.4, baie: 1, terr: 1 };
     if (!s) continue;
     // évite les portes posées sur le même mur
     const ds = doors.filter(d => d.o === e.o && Math.abs((d.o === "h" ? d.y : d.x) - e.at) < E && d.c > e.a0 - d.w && d.c < e.a1 + d.w).map(d => [d.c - d.w / 2 - .3, d.c + d.w / 2 + .3]).sort((a, b) => a[0] - b[0]);
@@ -297,6 +313,6 @@ function openings(rooms, p, P, V) {
     if (!best) continue; const free = best[1] - best[0]; let w = Math.min(s.w, free); if (w < .55) continue;
     if (!s.vit) { const L = s.sill === 0 ? STDB : STDW, f = L.filter(x => x <= w + E); w = f.length ? f[f.length - 1] : 0; if (!w) continue; } else w = Math.floor(w * 10) / 10;
     const c = ds.length ? (best[0] + best[1]) / 2 : Math.min(best[1] - w / 2, Math.max(best[0] + w / 2, (e.a0 + e.a1) / 2));
-    wins.push({ o: e.o, at: e.at, c, w, sill: s.sill, head: s.head, k, baie: s.sill === 0, out: e.out, vit: s.vit ? 1 : 0 }); } });
+    wins.push({ o: e.o, at: e.at, c, w, sill: s.sill, head: s.head, k, baie: s.sill === 0, out: e.out, vit: s.vit ? 1 : 0, terr: s.terr ? 1 : 0 }); } });
   return { doors, wins };
 }

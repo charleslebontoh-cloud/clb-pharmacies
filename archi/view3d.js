@@ -310,9 +310,12 @@ export function createViewer(canvas) {
       const gt = new THREE.Mesh(new THREE.PlaneGeometry(gw, 1.95), M.grille.clone()); gt.material.map = M.grille.map.clone(); gt.material.map.repeat.set(gw / .6, 1); gt.material.map.needsUpdate = true; gt.position.set(gx, 1.0, z); gt.castShadow = true; root.add(gt);
       for (const s of [-1, 1]) { box(.4, 2.5, .4, M.fence, gx + s * (gw / 2 + .2), 1.25, z); box(.22, .3, .22, M.lamp, gx + s * (gw / 2 + .2), 2.66, z, root, false); const L = new THREE.PointLight(0xffc27a, 0, 9, 2); L.position.set(gx + s * (gw / 2 + .2), 2.6, z + .4); L.userData.on = 5; root.add(L); nightLights.push(L); } }
     // piscine
-    const crt = plan.court && plan.court.w > 9 && plan.court.h > 7 ? plan.court : null;
-    if (p.piscine) { const back = Pp - site.oy - D - 1, pw = crt ? Math.min(12, crt.w - 4) : Math.min(8, W * .7), pd = crt ? Math.min(6, crt.h - 3.5) : 4, inBack = crt || back > pd + 2.5;
-      const pz = crt ? Z(crt.y + crt.h / 2 + .3) : inBack ? Z(D + 1.6 + pd / 2) : Pp / 2 - site.oy / 2, px = crt ? X(crt.x + crt.w / 2) : inBack ? X(W / 2) : X(W - pw / 2 - .5);
+    // cour non couverte : terrasse dallée le long des façades intérieures, jardin au-delà
+    for (const z of plan.outside || []) if (z.k !== "jardin") box(z.w, .1, z.h, M.pave, X(z.x + z.w / 2), .05, Z(z.y + z.h / 2), root, false);
+    { const T = (plan.outside || []).find(z => z.k === "terr" && z.n); if (T) for (let u = T.x + 1.2; u < T.x + T.w - .8; u += 4.5) pot(X(u), Z(T.y + T.h - .5), .1); }
+    const gz = (plan.outside || []).find(z => z.k === "jardin"), crt = gz && gz.w > 7 && gz.h > 6 ? gz : null;
+    if (p.piscine) { const back = Pp - site.oy - D - 1, pw = crt ? Math.min(12, crt.w - 3) : Math.min(8, W * .7), pd = crt ? Math.min(6, crt.h - 2.5) : 4, inBack = crt || back > pd + 2.5;
+      const pz = crt ? Z(crt.y + crt.h / 2) : inBack ? Z(D + 1.6 + pd / 2) : Pp / 2 - site.oy / 2, px = crt ? X(crt.x + crt.w / 2) : inBack ? X(W / 2) : X(W - pw / 2 - .5);
       if (inBack || site.oy > pd + 1.5) { const ringB = (w, d, t, m, y, h) => { box(w, h, t, m, px, y, pz - d / 2 + t / 2, root, false); box(w, h, t, m, px, y, pz + d / 2 - t / 2, root, false); box(t, h, d - 2 * t, m, px - w / 2 + t / 2, y, pz, root, false); box(t, h, d - 2 * t, m, px + w / 2 - t / 2, y, pz, root, false); };
         ringB(pw + 3, pd + 2.4, 1.2, M.pave, .04, .08); ringB(pw + .6, pd + .6, .3, M.coping, .07, .12);
         plane(pw, pd, M.poolTile, px, .05, pz);
