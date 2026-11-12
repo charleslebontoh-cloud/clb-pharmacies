@@ -44,7 +44,7 @@ table{width:100%;border-collapse:collapse;font-size:13.5px}td{padding:6px 4px;bo
 .sty{border:2px solid var(--ln);border-radius:14px;padding:10px;background:#fff;cursor:pointer}.sty.on{border-color:var(--cu)}
 .sty .sw{display:flex;height:34px;border-radius:8px;overflow:hidden;margin-bottom:8px}.sty .sw i{flex:1}
 .sty b{font-size:14px;display:block}.sty small{font-size:11.5px;color:var(--sl2);display:block;line-height:1.3}
-nav{position:fixed;left:0;right:0;bottom:0;z-index:9;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border-top:1px solid var(--ln);display:grid;grid-template-columns:repeat(5,1fr);padding:6px 4px calc(6px + var(--sa))}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:9;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border-top:1px solid var(--ln);display:grid;grid-template-columns:repeat(6,1fr);padding:6px 4px calc(6px + var(--sa))}
 nav button{background:none;border:0;font:500 11px inherit;font-family:inherit;color:var(--sl2);display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0;cursor:pointer}
 nav button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.6}
 nav button.on{color:var(--cu)}
@@ -57,6 +57,9 @@ nav button.on{color:var(--cu)}
 .list .it{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--ln)}.list .it:last-child{border:0}.list .it div{flex:1}
 pre.pr{white-space:pre-wrap;font:12.5px/1.45 ui-monospace,Menlo,monospace;background:#FBFAF7;border:1px solid var(--ln);border-radius:10px;padding:10px;margin:8px 0}
 .leg{font-size:12px;color:var(--sl2);margin-top:6px}
+table.tt{font-size:12.5px;min-width:520px}table.tt th{text-align:left;font-size:11.5px;color:var(--sl2);border-bottom:2px solid var(--sl);padding:6px 4px}table.tt td{vertical-align:top}table.tt tr.h td{font-weight:700;background:#F4EFE7}
+#print{display:none}
+@media print{@page{size:A3 landscape;margin:10mm}body>*:not(#print){display:none!important}#print{display:block}#print .pg{page-break-after:always;break-after:page;height:270mm;display:flex;flex-direction:column;justify-content:center}#print .pg svg{width:100%;height:100%;max-height:270mm}#print table{font-size:11pt;width:100%;border-collapse:collapse}#print td,#print th{border-bottom:1px solid #ccc;padding:4px}#print h2{font:600 18pt Georgia,serif}}
 .sug{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;max-height:132px;overflow-y:auto}.sug span{font-size:12.5px;border:1px dashed var(--cu);color:var(--cu);border-radius:99px;padding:5px 10px;cursor:pointer;background:#fffaf5}
 .notice{font-size:14px;line-height:1.55}.notice p{margin:0 0 9px}.notice b{color:var(--sl)}
 .prop{background:#FBF7F1;border:1px solid var(--cu2);border-radius:12px;padding:12px;margin-top:8px}.prop h4{margin:0 0 6px;font:600 14px Georgia,serif;color:var(--cu)}
@@ -129,6 +132,7 @@ pre.pr{white-space:pre-wrap;font:12.5px/1.45 ui-monospace,Menlo,monospace;backgr
   <div style="position:relative"><canvas id="c3"></canvas><div class="ov" id="ov3">Rendu en cours…</div></div>
   <div class="bar" id="views"></div>
   <div class="bar" id="roomsBar"></div>
+  <div class="tg" id="roomCtl" style="display:none;margin-top:6px"><span class="chip" id="bNextVp">↻ Autre angle de la pièce</span><span class="muted" style="align-self:center">Glissez pour regarder autour, pincez pour élargir le champ.</span></div>
   <button class="btn cu w" id="b4k" style="margin-top:8px">📸 Vision 4K (3840 × 2160)</button>
   <div class="card" style="margin-top:8px">
     <div class="tg"><span class="chip on" id="tRoof">Toiture</span><span class="chip on" id="tUp">Étage</span><span class="chip on" id="tQ">Rendu expert</span></div>
@@ -156,6 +160,16 @@ pre.pr{white-space:pre-wrap;font:12.5px/1.45 ui-monospace,Menlo,monospace;backgr
   </div>
 </section>
 
+<!-- DOSSIER TECHNIQUE -->
+<section class="scr" id="s-tech">
+  <div class="card"><h3>Dossier technique</h3><div class="muted">Plans d'exécution indicatifs tirés de votre projet : à faire valider et signer par un architecte inscrit à l'OACI et par un bureau d'études structure avant le chantier.</div>
+    <div class="tg" id="tsheets" style="margin-top:10px"></div></div>
+  <div id="tview"><div class="planbox" id="tbox"></div><div class="leg">Pincez pour zoomer, glissez pour déplacer. Double-tap : recadrer.</div></div>
+  <div class="card" id="ttab" style="display:none;overflow-x:auto"></div>
+  <div class="row" style="margin-top:10px"><button class="btn gh" id="bTsvg">Exporter la planche</button><button class="btn cu" id="bTpdf">Tout imprimer / PDF</button></div>
+</section>
+<div id="print"></div>
+
 <!-- RÉGLAGES -->
 <section class="scr" id="s-set">
   <div class="card"><h3>Application</h3><div id="ver"></div><div class="muted">by CLB</div>
@@ -171,13 +185,15 @@ pre.pr{white-space:pre-wrap;font:12.5px/1.45 ui-monospace,Menlo,monospace;backgr
   <button data-s="plan"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 12h9V3M12 12v9M16 12h5"/></svg>Plans</button>
   <button data-s="3d"><svg viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg>3D</button>
   <button data-s="deco"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18c1.5 0 2-1 2-2s-1-1.5-1-2.5S14 15 15.5 15H18a3 3 0 003-3c0-5-4-9-9-9z"/><circle cx="7.5" cy="11" r="1.2"/><circle cx="10" cy="7" r="1.2"/><circle cx="15" cy="7.5" r="1.2"/></svg>Décor</button>
+  <button data-s="tech"><svg viewBox="0 0 24 24"><path d="M4 3h11l5 5v13H4z"/><path d="M15 3v5h5M8 13h8M8 17h5"/></svg>Dossier</button>
   <button data-s="set"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>Réglages</button>
 </nav>
 <div class="toast" id="toast"></div>
 
 <script type="module">
 import { generate, svgPlan, variantSpec } from './plan.js';
-const VER = "1.2.0", K = "archea_";
+import * as TECH from './tech.js';
+const VER = "1.3.0", K = "archea_";
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const LS = { get(k, d) { try { const v = localStorage.getItem(K + k); return v ? JSON.parse(v) : d; } catch { return d; } }, set(k, v) { try { localStorage.setItem(K + k, JSON.stringify(v)); } catch { } } };
 const toast = (t, ms = 2400) => { const e = $("#toast"); e.textContent = t; e.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => e.classList.remove("on"), ms); };
@@ -321,10 +337,9 @@ function draw(rebuild3d) {
   if (rebuild3d) need3d = true; if (cur === "3d") show3d();
 }
 // zoom / pan du plan
-let Z = { s: 1, x: 0, y: 0 };
-function resetZoom() { Z = { s: 1, x: 0, y: 0 }; applyZ(); }
-function applyZ() { const sv = $("#pbox svg"); if (sv) sv.style.transform = `translate(${Z.x}px,${Z.y}px) scale(${Z.s})`; }
-(() => { const b = $("#pbox"), pts = new Map(); let st0 = null, lastTap = 0;
+function makeZoom(sel) { let Z = { s: 1, x: 0, y: 0 }; const resetZoom = () => { Z = { s: 1, x: 0, y: 0 }; applyZ(); };
+function applyZ() { const sv = $(sel + " svg"); if (sv) sv.style.transform = `translate(${Z.x}px,${Z.y}px) scale(${Z.s})`; }
+{ const b = $(sel), pts = new Map(); let st0 = null, lastTap = 0;
   b.addEventListener("pointerdown", e => { b.setPointerCapture(e.pointerId); pts.set(e.pointerId, { x: e.clientX, y: e.clientY }); st0 = null; const n = Date.now(); if (pts.size === 1 && n - lastTap < 300) resetZoom(); lastTap = n; });
   b.addEventListener("pointermove", e => { if (!pts.has(e.pointerId)) return; const p0 = pts.get(e.pointerId), p = { x: e.clientX, y: e.clientY };
     if (pts.size === 1) { Z.x += p.x - p0.x; Z.y += p.y - p0.y; }
@@ -333,7 +348,9 @@ function applyZ() { const sv = $("#pbox svg"); if (sv) sv.style.transform = `tra
     pts.set(e.pointerId, p); applyZ(); });
   const up = e => pts.delete(e.pointerId); b.addEventListener("pointerup", up); b.addEventListener("pointercancel", up);
   b.addEventListener("wheel", e => { e.preventDefault(); const r = b.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top, k = Math.max(.6, Math.min(8, Z.s * (e.deltaY < 0 ? 1.15 : .87))) / Z.s; Z.x = mx - (mx - Z.x) * k; Z.y = my - (my - Z.y) * k; Z.s *= k; applyZ(); }, { passive: false });
-})();
+}
+return resetZoom; }
+const resetZoom = makeZoom("#pbox"), resetZoomT = makeZoom("#tbox");
 async function shareOrDownload(blob, name) {
   const f = new File([blob], name, { type: blob.type });
   if (navigator.canShare && navigator.canShare({ files: [f] })) { try { await navigator.share({ files: [f], title: name }); return; } catch (e) { if (e.name === "AbortError") return; } }
@@ -366,9 +383,10 @@ function styleObj() { const b = STY[st.style] || STY.tropical, o = st.custom ? {
   if (F.menu && F.menu !== "auto") o.frame = { noir: "#1b1b1b", blanc: "#f2f2f0", champ: "#b9a27a", bois: "#6b4a2e" }[F.menu];
   return o; }
 function roomsBar() { $("#roomsBar").innerHTML = viewer.rooms.map((it, i) => it.r.k === "couloir" || it.r.k === "wc" ? "" : `<span class="chip" data-r="${i}">${it.r.n}${plan.levels.length > 1 ? (it.l ? " · ét." : " · rdc") : ""}</span>`).join("");
-  $$("#roomsBar .chip").forEach(c => c.onclick = () => { $$("#views .chip,#roomsBar .chip").forEach(x => x.classList.remove("on")); c.classList.add("on"); viewer.roof = true; viewer.upper = true; $("#tRoof").classList.add("on"); $("#tUp").classList.add("on"); viewer.view("room", +c.dataset.r); }); }
+  $$("#roomsBar .chip").forEach(c => c.onclick = () => { $$("#views .chip,#roomsBar .chip").forEach(x => x.classList.remove("on")); c.classList.add("on"); viewer.roof = true; viewer.upper = true; $("#tRoof").classList.add("on"); $("#tUp").classList.add("on"); viewer.view("room", +c.dataset.r); $("#roomCtl").style.display = "flex"; }); }
 $("#views").innerHTML = [["34", "Vue 3/4"], ["front", "Rue"], ["garden", "Jardin"], ["drone", "Drone"], ["top", "Dessus"]].map(([k, n], i) => `<span class="chip ${i ? "" : "on"}" data-v="${k}">${n}</span>`).join("");
-$$("#views .chip").forEach(c => c.onclick = () => { $$("#views .chip,#roomsBar .chip").forEach(x => x.classList.remove("on")); c.classList.add("on"); if (c.dataset.v === "top") { viewer.roof = false; $("#tRoof").classList.remove("on"); } viewer?.view(c.dataset.v); });
+$("#bNextVp").onclick = () => viewer?.nextView();
+$$("#views .chip").forEach(c => c.onclick = () => { $("#roomCtl").style.display = "none"; $$("#views .chip,#roomsBar .chip").forEach(x => x.classList.remove("on")); c.classList.add("on"); if (c.dataset.v === "top") { viewer.roof = false; $("#tRoof").classList.remove("on"); } viewer?.view(c.dataset.v); });
 $("#tRoof").onclick = e => { const on = e.target.classList.toggle("on"); if (viewer) viewer.roof = on; };
 $("#tUp").onclick = e => { const on = e.target.classList.toggle("on"); if (viewer) viewer.upper = on; };
 $("#hour").oninput = e => { const v = +e.target.value; $("#hv").textContent = Math.floor(v) + " h " + String(Math.round((v % 1) * 60) % 60).padStart(2, "0") + (v > 18.5 ? " · nuit" : ""); viewer?.setSun(v); };
@@ -408,8 +426,27 @@ $("#bPrm").onclick = async () => { try { await navigator.clipboard.writeText($("
 // ---------- navigation ----------
 let cur = "proj";
 function go(s) { cur = s; $$("section.scr").forEach(x => x.classList.toggle("on", x.id === "s-" + s)); $$("nav button").forEach(b => b.classList.toggle("on", b.dataset.s === s)); scrollTo(0, 0);
-  if (s === "plan" && !plan) draw(true); if (s === "3d") show3d(); else viewer?.pause(true); if (s === "deco") renderStyles(); }
+  if (s === "plan" && !plan) draw(true); if (s === "3d") show3d(); else viewer?.pause(true); if (s === "deco") renderStyles(); if (s === "tech") showTech(); }
 $$("nav button").forEach(b => b.onclick = () => go(b.dataset.s));
+// ---------- dossier technique ----------
+let tsh = "cote0";
+function techSheets() { const T = [], lv = plan.levels; lv.forEach((L, i) => T.push(["cote" + i, "Plan coté " + (lv.length > 1 ? L.name.toLowerCase() : "")])); T.push(["struct", "Fondations & structure"], ["coupe", "Coupe A-A"], ["facS", "Façade principale"], ["facN", "Façade arrière"], ["facE", "Façade est"], ["facW", "Façade ouest"]);
+  lv.forEach((L, i) => T.push(["res" + i, "Électricité & plomberie " + (lv.length > 1 ? L.name.toLowerCase() : "")])); T.push(["menu", "Tableau des menuiseries"], ["metre", "Avant-métré"], ["notes", "Hypothèses"]); return T; }
+function techStyle() { return STY ? styleObj() : { roof: ({ afro: 1, luxe: 1, medit: 1 })[st.style] ? "hip" : "flat" }; }
+function techSVG(k) { const fin = st.fin || {}, sty = techStyle(), roof = (st.custom && st.custom.roof) || sty.roof;
+  if (k.startsWith("cote")) return TECH.sheetCote(plan, +k.slice(4), fin, st.name); if (k === "struct") return TECH.sheetStruct(plan, st.name); if (k === "coupe") return TECH.sheetCoupe(plan, roof, fin, st.name);
+  if (k.startsWith("fac")) return TECH.sheetFacade(plan, k[3], { ...sty, roof }, st.name); if (k.startsWith("res")) return TECH.sheetReseaux(plan, +k.slice(3), fin, st.name); return null; }
+function techTable(k) { const fin = st.fin || {}, roof = (st.custom && st.custom.roof) || techStyle().roof;
+  if (k === "menu") { const J = TECH.joinery(plan, fin); return `<h3>Tableau des menuiseries</h3><table class="tt"><tr><th>Repère</th><th>Type</th><th>L × H (cm)</th><th>Allège</th><th>Qté</th><th>Matériau</th><th>Localisation</th></tr>${J.types.map(t => `<tr><td><b>${t.id}</b></td><td>${t.kind}</td><td>${Math.round(t.w * 100)} × ${Math.round(t.h * 100)}</td><td>${t.sill ? Math.round(t.sill * 100) + " cm" : "—"}</td><td>${t.n}</td><td>${t.mat}</td><td>${[...t.loc].join(", ")}</td></tr>`).join("")}</table><div class="muted" style="margin-top:8px">Dimensions en tableau de maçonnerie, à vérifier sur chantier avant fabrication. Vitrages feuilletés conseillés pour les baies.</div>`; }
+  if (k === "metre") { const M = TECH.metre(plan, roof, fin); return `<h3>Avant-métré quantitatif</h3><table class="tt"><tr><th>N°</th><th>Désignation</th><th>Qté</th><th>U</th></tr>${M.rows.map(r => r.length === 2 ? `<tr class="h"><td>${r[0]}</td><td colspan="3">${r[1]}</td></tr>` : `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${fr(r[2], r[3] === "u" ? 0 : 1)}</td><td>${r[3]}</td></tr>`).join("")}</table><div class="muted" style="margin-top:8px">Quantités calculées sur la maquette, sans prix : à compléter par un économiste ou les devis d'entreprises. Ciment pour les bétons ≈ ${fr(M.cement, 1)} t, agglos ≈ ${fr(Math.round(M.agglo / 50) * 50)} unités.</div>`; }
+  if (k === "notes") return `<h3>Notice et hypothèses techniques</h3><div class="notice">${notice(plan)}${TECH.notesHTML(plan, roof, fin)}</div>`; return ""; }
+async function showTech() { if (!plan) draw(true); await load3d().catch(() => { }); const T = techSheets(); if (!T.some(t => t[0] === tsh)) tsh = T[0][0];
+  $("#tsheets").innerHTML = T.map(([k, n]) => `<span class="chip ${k === tsh ? "on" : ""}" data-t="${k}">${n}</span>`).join("");
+  $$("#tsheets .chip").forEach(c => c.onclick = () => { tsh = c.dataset.t; showTech(); });
+  const sv = techSVG(tsh); $("#tview").style.display = sv ? "block" : "none"; $("#ttab").style.display = sv ? "none" : "block";
+  if (sv) { $("#tbox").innerHTML = sv; resetZoomT(); } else $("#ttab").innerHTML = techTable(tsh); }
+$("#bTsvg").onclick = () => { const sv = techSVG(tsh); if (sv) shareOrDownload(new Blob([sv], { type: "image/svg+xml" }), `${slug()}-${tsh}.svg`); else { const h = `<!DOCTYPE html><meta charset="utf-8"><style>body{font:14px Helvetica,Arial}td,th{border-bottom:1px solid #ccc;padding:4px;text-align:left}</style>` + techTable(tsh); shareOrDownload(new Blob([h], { type: "text/html" }), `${slug()}-${tsh}.html`); } };
+$("#bTpdf").onclick = () => { const T = techSheets(); $("#print").innerHTML = `<div class="pg"><h2>${st.name} — dossier technique indicatif</h2><div>${notice(plan)}</div></div>` + T.map(([k]) => { const sv = techSVG(k); return `<div class="pg">${sv || techTable(k)}</div>`; }).join(""); setTimeout(() => window.print(), 150); };
 
 // ---------- réglages / PWA ----------
 $("#bShare").onclick = async () => { const d = { title: "ARCHÉA", text: "ARCHÉA — plans de maison, 3D réaliste et rendus 4K, by CLB", url: location.href.split("?")[0] }; try { if (navigator.share) await navigator.share(d); else { await navigator.clipboard.writeText(d.url); toast("Lien copié"); } } catch { } };
