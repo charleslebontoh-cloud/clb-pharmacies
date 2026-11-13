@@ -26,7 +26,7 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke
 header{display:flex;align-items:center;justify-content:space-between;margin:2px 2px 14px}
 .brand{display:flex;align-items:center;gap:10px;font:800 21px var(--disp);letter-spacing:-.02em}.brand img{width:34px;height:34px;border-radius:10px;box-shadow:0 6px 14px -6px rgba(0,0,0,.4)}
 .brand em{font-style:normal;background:var(--g-sunset);-webkit-background-clip:text;background-clip:text;color:transparent}
-.wx{display:flex;align-items:center;gap:6px;font:600 12px var(--sans);color:var(--ink2);background:var(--card);border:1px solid var(--line);padding:6px 10px;border-radius:999px;text-transform:capitalize}
+.wx{display:flex;align-items:center;gap:6px;font:600 12px var(--sans);color:var(--ink2);background:var(--card);border:1px solid var(--line);padding:6px 10px;border-radius:999px}
 h2{font:800 30px/1.05 var(--disp);margin:4px 2px 4px;letter-spacing:-.03em}
 .sub{color:var(--ink2);margin:0 2px 16px;font-size:14px}
 .sec{display:flex;align-items:center;gap:10px;font:800 18px var(--disp);margin:24px 2px 12px;letter-spacing:-.01em}
@@ -231,7 +231,7 @@ nav button.on{color:#fff}nav button.on svg.i{transform:translateY(-1px) scale(1.
 
 <div id="splash" role="button" tabindex="0">
  <img class="bgp" id="spImg" alt=""><div class="shade"></div>
- <div class="c"><img src="icon-512.png" alt=""><div class="t">CLB World</div><div class="q">Culture, voyages, football. Le monde entier, chaque jour.</div><span class="tap">Embarquer <svg class="i"><use href="#i-arrow"/></svg></span><small style="display:block;margin-top:24px;opacity:.85;font-size:11px;font-weight:600">version 7.8.0 · 12 nov. 2026</small></div>
+ <div class="c"><img src="icon-512.png" alt=""><div class="t">CLB World</div><div class="q">Culture, voyages, football. Le monde entier, chaque jour.</div><span class="tap">Embarquer <svg class="i"><use href="#i-arrow"/></svg></span><small style="display:block;margin-top:24px;opacity:.85;font-size:11px;font-weight:600">version 7.8.1 · 13 nov. 2026</small></div>
  <div class="credit" id="spCred"></div>
 <div style="display:none"></div>
 </div>
@@ -352,7 +352,7 @@ async function tsEvents(code,a,b){const id=TID[code];if(!id)return null;
  if(!p&&!n)return null;const d1=new Date(),d2=new Date();d1.setDate(d1.getDate()+a);d1.setHours(0,0,0,0);d2.setDate(d2.getDate()+b);d2.setHours(23,59,59,999);
  return[...((p&&p.events)||[]),...((n&&n.events)||[])].map(x=>tsEv(x,code)).filter(e=>{const t=new Date(e.date);return t>=d1&&t<=d2;});}
 const xcache={};function CX(u){if(!xcache[u])xcache[u]=JX(u).catch(e=>{delete xcache[u];throw e;});return xcache[u];}
-$("today").textContent=NOW.toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"});
+{const s=NOW.toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"});$("today").textContent=s.charAt(0).toUpperCase()+s.slice(1);}
 {const h=NOW.getHours();$("hello").textContent=(h<5?"Bonne nuit":h<18?"Bonjour":"Bonsoir")+" Charles 👋";}
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("on");io.unobserve(e.target);}}),{threshold:.06});
 function obs(root=document){root.querySelectorAll(".reveal:not(.on)").forEach(e=>io.observe(e));}

@@ -97,7 +97,11 @@ const DICO=[
 ["réfuter","v. tr.","Démontrer, arguments à l'appui, qu'une affirmation est fausse.","Le gérant a réfuté point par point les conclusions de l'audit.","contredire, démentir","soutenu","Communication"],
 ["pondéré","adj.","Qui juge avec mesure et calme ; en calcul, dont chaque élément reçoit un coefficient selon son importance.","Le taux moyen pondéré du portefeuille s'établit à 9 %.","mesuré, modéré","courant","Caractère"],
 ["velléitaire","adj.","Qui a des intentions mais ne va jamais jusqu'au bout pour les réaliser.","Un promoteur velléitaire inquiète le comité de crédit.","irrésolu, indécis","soutenu","Caractère"],
-["obvier","v. tr. ind.","Prendre à l'avance les mesures qui empêchent un inconvénient de se produire (obvier à).","Une assurance décès permet d'obvier à ce risque.","parer, prévenir","soutenu","Général"]
+["obvier","v. tr. ind.","Prendre à l'avance les mesures qui empêchent un inconvénient de se produire (obvier à).","Une assurance décès permet d'obvier à ce risque.","parer, prévenir","soutenu","Général"],
+["pléthore","n. f.","Quantité bien plus grande que ce qui est nécessaire ou utile.","Il y a pléthore de candidats pour ce poste de chargé d'affaires.","surabondance, profusion, excès","soutenu","Général"],
+["fongible","adj.","Se dit de choses interchangeables, qu'on peut remplacer par d'autres de même nature et de même quantité, comme l'argent ou les céréales.","L'argent étant fongible, la banque rembourse une somme équivalente, pas les mêmes billets.","interchangeable, consomptible","juridique","Juridique"],
+["quitus","n. m.","Acte par lequel on reconnaît qu'une personne a bien rempli sa mission de gestion, ce qui la libère pour la période concernée.","L'assemblée générale a donné quitus au gérant pour l'exercice 2025.","décharge, approbation","juridique","Juridique"],
+["exonérer","v. tr.","Dispenser, en tout ou en partie, d'une charge, d'un impôt ou d'une obligation.","Les intérêts de ce placement sont exonérés d'impôt.","dispenser, affranchir, décharger","courant","Finance"]
 ];
 
 /* Orthographe : [bonne graphie, [variantes fautives], astuce, [graphies aussi admises (facultatif)]] */
