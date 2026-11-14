@@ -1,26 +1,38 @@
 feature,area,priority,original,clone,notes
-Connexion du propriétaire,compte,must,yes,no,supposé ; écran non vu
-Sélecteur de langue,compte,should,yes,no,vu dans le menu
-Tableau de bord de la flotte (recettes et véhicules actifs),tableau de bord,must,yes,no,supposé
-Calcul du ROI par véhicule,roi,must,yes,no,écran derrière connexion ; champs et formule à confirmer
-Liste des véhicules,flotte,must,yes,no,supposé
-Liste des chauffeurs et affectation aux véhicules,chauffeurs,must,yes,no,supposé
-Liste des transactions avec filtres,transactions,must,yes,no,supposé
-Saisie de transactions manuelles,transactions,must,yes,no,devient la source principale sans taximètre
-KPIs de la flotte,kpis,should,yes,no,supposé
-Suivi des dépenses et comptabilité,comptabilité,should,yes,no,supposé
-Décaissements,comptabilité,should,yes,no,supposé
-Entretien et garage,garage,should,yes,no,supposé
-Documents des véhicules et chauffeurs avec alertes d'expiration,documents,should,yes,no,supposé
-Facturation,facturation,could,yes,no,supposé
-Éditique (documents imprimables),éditique,could,yes,no,supposé
-Rubrique CGI (fiscalité),fiscalité,could,yes,no,supposé ; à vérifier avec un comptable
-Simulation CGI,fiscalité,could,yes,no,supposé
-Suivi GPS des véhicules,suivi,could,yes,no,demande une app chauffeur ou un boîtier GPS
+Choix de la période (plage de dates),roi,must,yes,no,vu sur S02
+Raccourcis de période (année entière et mois),roi,must,yes,no,vu sur S02
+Liste des véhicules avec recherche,roi,must,yes,no,vu sur S02
+Groupes de véhicules avec recherche,roi,should,yes,no,vu sur S02
+Filtre par propriétaire,roi,could,yes,no,vu sur S02 ; utile seulement à plusieurs propriétaires
+Carte du véhicule : investissement / résultat net / ROI / délai de récupération,roi,must,yes,no,vu sur S02
+Résultat net cumulé avec capital récupéré et barre de progression,roi,must,yes,no,vu sur S02
+Répartition des sorties en anneau (investissement / exploitation / financement),roi,must,yes,no,vu sur S02
+Indicateurs clés du véhicule,roi,must,yes,no,vu sur S02
+Données d'exploitation : km / courses / objectif / montant versé / taux d'atteinte / recette par km,roi,must,yes,no,vu sur S02 ; la suite de la grille n'est pas visible
+Onglet Vue d'ensemble,roi,must,yes,no,vu sur S02
+Onglet Tous les véhicules,roi,should,yes,no,onglet vu ; contenu non vu
+Onglet Par groupe,roi,should,yes,no,onglet vu ; contenu non vu
+Statut d'analyse du véhicule (badge Analysé),roi,could,yes,no,vu sur S02 ; sens exact inconnu
+Saisie des mouvements (recette / investissement / exploitation / financement),saisie,must,yes,no,supposé côté Carcul ; indispensable sans taximètre
+Saisie quotidienne de l'activité (versement / km / courses),saisie,must,no,no,remplace le taximètre connecté
+Objectif de versement par chauffeur ou véhicule,saisie,must,yes,no,déduit de « Objectif cumulé »
+Sélecteur de langue,compte,could,yes,no,vu dans l'en-tête
+Tableau de bord de la flotte,tableau de bord,should,yes,no,supposé
+Chauffeurs,chauffeurs,should,yes,no,supposé
+Transactions,transactions,should,yes,no,supposé
+KPIs de la flotte,kpis,could,yes,no,supposé
+Comptabilité et décaissements,comptabilité,could,yes,no,supposé
+Garage et entretien,garage,could,yes,no,supposé
+Documents avec alertes d'expiration,documents,could,yes,no,supposé
+Facturation et éditique,facturation,could,yes,no,supposé
+CGI et simulation CGI,fiscalité,could,yes,no,supposé ; à faire valider par un comptable
+Tracking GPS,suivi,could,yes,no,demande une app chauffeur ou un boîtier
 Tutoriel,aide,could,yes,no,
-Gestion des propriétaires,administration,could,yes,no,peut-être une vue administrateur Carcul
-Facture Carcul (abonnement),administration,skip,yes,skip,c'est leur facturation à eux
+ROI affiché alors que l'investissement n'est pas saisi : inviter à le saisir,roi,should,no,no,correctif : un véhicule en perte apparaît à 0 %
+Couleur du résultat négatif cohérente (rouge partout),roi,must,no,no,correctif : vert sur la carte du véhicule chez l'original
+Montants au format français (256 350 F CFA),roi,must,no,no,correctif : séparateur à l'anglaise chez l'original
 Gestion des taximètres connectés,appareils,skip,yes,skip,matériel Carcul
 Configuration des taximètres,appareils,skip,yes,skip,matériel Carcul
 Radio pub,publicité,skip,yes,skip,leur régie publicitaire
 Collecte de données routières,données,skip,yes,skip,dépend de leur parc équipé
+Facture Carcul (abonnement),administration,skip,yes,skip,leur facturation

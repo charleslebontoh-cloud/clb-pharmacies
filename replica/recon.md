@@ -1,103 +1,184 @@
-# Recon map : Carcul, tableau de bord propriétaire (web)
+# Recon map : Carcul, tableau de bord propriétaire (web, affiché sur mobile)
 
-Portée : le tableau de bord de gestion de flotte de taxis (`carcul.ci/v2/`), les 22 rubriques du menu.
+Portée : le tableau de bord de gestion de flotte de taxis (`carcul.ci/v2/`).
+Écran étudié en détail : **ROI des véhicules** (S02). Les autres rubriques restent supposées.
 Pour : une nouvelle rubrique du site CLB, sous la même forme que les autres
 (un dossier autonome installable sur téléphone, comme `bourse/` ou `archi/` :
 `index.html`, `manifest.json`, `sw.js`, icônes). Sous une marque CLB, pas Carcul.
 Date : 2026-11-14
 
-> **État : PRÉLIMINAIRE.** Le tableau de bord est réservé aux comptes connectés.
-> Tout ce qui suit vient uniquement du menu de navigation visible sans connexion.
-> Les écrans, champs et calculs sont des **suppositions** tant que nous n'avons pas
-> de captures du compte de l'utilisateur ou de sources publiques.
+> **État.** S02 (ROI) est repéré à partir de 5 captures du compte de l'utilisateur,
+> sur iPhone, le 14/11/2026. Les autres écrans ne viennent que des libellés du menu :
+> ce sont des **suppositions**. Les captures ne sont pas versées au dépôt : elles
+> contiennent l'immatriculation et les chiffres réels d'un véhicule de l'utilisateur.
 
 ## Sources
 
 | # | source | URL | notes |
 | --- | --- | --- | --- |
 | 1 | site public | https://carcul.ci/ | titre « CARCUL - Le taximetre connecté » ; contenu rendu en JavaScript, illisible ici |
-| 2 | tableau de bord (coquille) | https://carcul.ci/v2/ | titre « CarCul Dashboard » ; menu de 22 rubriques, sélecteur de langue, bouton de déconnexion |
-| 3 | écran ROI | https://carcul.ci/v2/#/roi | derrière la connexion, non vu |
-| 4 | compte de l'utilisateur | — | **à fournir** (captures d'écran) |
-| 5 | fiches App Store / Play Store, tutoriels vidéo, réseaux sociaux | — | **à trouver** |
-| 6 | conditions d'utilisation | — | **à lire** avant d'utiliser un compte pour ce projet |
+| 2 | tableau de bord (coquille) | https://carcul.ci/v2/ | titre « CarCul Dashboard » ; menu de 22 rubriques, sélecteur de langue, déconnexion |
+| 3 | compte de l'utilisateur, écran ROI | https://carcul.ci/v2/#/roi | 5 captures iPhone (période « Année entière » et période d'un jour), 14/11/2026 |
+| 4 | fiches stores, tutoriels vidéo, réseaux sociaux | — | à trouver |
+| 5 | conditions d'utilisation | — | à lire |
 
-## Core loop (supposé)
+Sous-titre du logo : « Calculateur des recettes ».
 
-Un propriétaire de taxis équipés d'un taximètre Carcul suit en temps réel les courses,
-les recettes et les chauffeurs de sa flotte, et voit quand ses véhicules sont rentabilisés.
+## Core loop
 
-## Screens (déduits des libellés du menu)
+Un propriétaire de taxis voit, véhicule par véhicule et sur une période choisie,
+combien le véhicule a rapporté (versements du chauffeur), combien il a coûté,
+et s'il a remboursé l'investissement.
 
-| ID | écran | route | but supposé | états vus |
-| --- | --- | --- | --- | --- |
-| S01 | Tableau de bord | `#/dashboard` ? | vue d'ensemble de la flotte : recettes du jour, véhicules actifs | aucun |
-| S02 | ROI | `#/roi` | retour sur investissement par véhicule : coût, recettes, charges, délai de rentabilité | aucun |
-| S03 | Appareils | ? | liste des taximètres connectés, état, véhicule associé | aucun |
-| S04 | Configuration Carcul | ? | réglages des taximètres : tarifs, prise en charge, prix au km ou à la minute | aucun |
-| S05 | Chauffeurs | ? | fiches chauffeurs, affectation aux véhicules | aucun |
-| S06 | Transactions | ? | courses enregistrées par les taximètres | aucun |
-| S07 | Transactions manuelles | ? | saisie à la main de courses ou de recettes | aucun |
-| S08 | Comptabilité | ? | recettes et charges, journal | aucun |
-| S09 | Facturation | ? | factures émises (clients, entreprises) | aucun |
-| S10 | Décaissements | ? | sorties d'argent : versements, paiements | aucun |
-| S11 | CGI | ? | fiscalité (Code général des impôts ivoirien ?) | aucun |
-| S12 | Simulation CGI | ? | simulateur d'impôt ou de taxe | aucun |
-| S13 | Éditique | ? | génération de documents imprimables (reçus, rapports) | aucun |
-| S14 | KPIs | ? | indicateurs de performance de la flotte | aucun |
-| S15 | Documents | ? | pièces des véhicules et chauffeurs (assurance, visite technique, permis) | aucun |
-| S16 | Garage | ? | entretien et réparations | aucun |
-| S17 | Radio pub | ? | diffusion de publicités dans les taxis ? | aucun |
-| S18 | Suivi | ? | géolocalisation des véhicules sur une carte | aucun |
-| S19 | Collecte de données routières | ? | données de trafic et de routes remontées par les véhicules | aucun |
-| S20 | Propriétaires | ? | gestion des propriétaires (multi-propriétaires, vue administrateur ?) | aucun |
-| S21 | Facture Carcul | ? | factures de l'abonnement Carcul au propriétaire | aucun |
-| S22 | Tutoriel | ? | aide | aucun |
-| S00 | Connexion | ? | authentification | aucun |
+## Screens
 
-Transversal : sélecteur de langue (au moins deux langues, avec drapeaux).
+| ID | écran | route | but | composants clés | états vus |
+| --- | --- | --- | --- | --- | --- |
+| S02 | ROI des véhicules / Rentabilité du véhicule | `#/roi` | rentabilité par véhicule sur une période | voir détail ci-dessous | rempli (année), vide (un jour, 0 mouvement), investissement à 0 |
+| S01 | Tableau de bord | ? | vue d'ensemble de la flotte | supposé | aucun |
+| S03 | Appareils | ? | taximètres connectés | supposé | aucun |
+| S04 | Configuration Carcul | ? | réglages des taximètres | supposé | aucun |
+| S05 | Chauffeurs | ? | fiches chauffeurs | supposé | aucun |
+| S06 | Transactions | ? | courses et versements | supposé | aucun |
+| S07 | Transactions manuelles | ? | saisie à la main | supposé | aucun |
+| S08 | Comptabilité | ? | recettes et charges | supposé | aucun |
+| S09 | Facturation | ? | factures | supposé | aucun |
+| S10 | Décaissements | ? | sorties d'argent | supposé | aucun |
+| S11 | CGI | ? | fiscalité (icône d'alerte dans le menu) | supposé | aucun |
+| S12 | CGI Simulation | ? | simulateur fiscal | supposé | aucun |
+| S13 | Éditique | ? | documents imprimables | supposé | aucun |
+| S14 | KPIs | ? | indicateurs de flotte | supposé | aucun |
+| S15 | Documents | ? | pièces des véhicules et chauffeurs | supposé | aucun |
+| S16 | Garage | ? | entretien | supposé | aucun |
+| S17 | Radio pub | ? | publicité dans les taxis | supposé | aucun |
+| S18 | Tracking | ? | géolocalisation | supposé | aucun |
+| S19 | Collecte de données routières | ? | données routières | supposé | aucun |
+| S20 | Propriétaires | ? | gestion des propriétaires | supposé | aucun |
+| S21 | Facture Carcul | ? | abonnement Carcul | supposé | aucun |
+| S22 | Tutoriel | ? | aide | supposé | aucun |
 
-## Flows (supposés, à confirmer)
+### S02 en détail, de haut en bas
+
+1. **En-tête commun** : logo, menu horizontal défilant (onglet actif encadré en rouge), sélecteur de langue « FR ».
+2. **Fil d'Ariane** : « ROI du véhicule > Détails du véhicule ». Titre « Rentabilité du véhicule ».
+3. **Période** : champ de plage de dates (`JJ-MM-AAAA - JJ-MM-AAAA`) + bouton « Actualiser ».
+   Puces de raccourci défilantes : « Année entière », puis les mois (« Nov 26 », « Oct 26 », « Sep 26 »…).
+4. **Groupes** : recherche « Rechercher un groupe… » + cartes de groupes (« Tous Groupes · VÉHICULES »).
+5. **Propriétaires** : section repliable, recherche « Rechercher un propriétaire… », bouton d'affichage en grille.
+6. **Véhicules** : recherche « Rechercher un véhicule… » + puces par véhicule (immatriculation), la sélectionnée encadrée.
+7. **Carte du véhicule** : immatriculation, badge « ✓ Analysé », « Sans groupe · Données de rentabilité consolidées »,
+   « N mouvements sur la période sélectionnée ». Quatre chiffres avec légende :
+   - Investissement total — « Capital investi »
+   - Résultat net cumulé — « Recettes moins les dépenses »
+   - ROI cumulé — « Performance de l'investissement »
+   - Délai de récupération — « Estimation actuelle » (texte « Non récupéré » quand non remboursé)
+8. **Onglets** : « Par groupe » · « Vue d'ensemble » (actif) · « Tous les véhicules ».
+9. **Carte « Résultat net cumulé »** — « Lecture des flux financiers du véhicule » : montant en grand,
+   « Capital récupéré » en % avec barre de progression, puis Recettes (vert) et Total dépenses (rouge).
+10. **Carte « Répartition des sorties »** — « Tous les mouvements classés par type » : graphique en anneau,
+    légende Investissement · Exploitation · Financement, puis « Total sorties ».
+11. **Carte « Indicateurs clés »** — « Vue de synthèse du véhicule » : Recettes totales, Total dépenses,
+    Résultat net cumulé, ROI, Délai estimé.
+12. **Carte « Données d'exploitation »** — « Activité du véhicule sur la période sélectionnée » : grille de tuiles
+    KM parcourus, Courses, Objectif cumulé, Montant versé, Taux d'atteinte, Recette / km (la suite n'est pas visible).
+
+Montants affichés « F CFA 256,350 » (virgule comme séparateur de milliers), négatifs « -F CFA 248,650 ».
+
+### Calculs observés et déduits
+
+Cas réel (période « Année entière », un véhicule) : recettes 256 350, dépenses 505 000,
+investissement 0, financement 0 → résultat net −248 650, ROI 0,0 %, délai « Non récupéré ».
+Montant versé = recettes totales = 256 350. Objectif cumulé 227 115. 2 221 km, 1 075 courses, 11 mouvements.
+
+| indicateur | formule | confiance |
+| --- | --- | --- |
+| Résultat net cumulé | recettes − dépenses | haute (écrit à l'écran, vérifié par les chiffres) |
+| Recettes totales | somme des versements du chauffeur sur la période | haute (égal à « Montant versé ») |
+| Total dépenses / Total sorties | investissement + exploitation + financement | haute (la répartition se totalise ainsi) |
+| ROI cumulé | résultat net ÷ investissement × 100, et 0 si l'investissement vaut 0 | moyenne |
+| Capital récupéré | part de l'investissement couverte par le résultat net, bornée entre 0 et 100 % | moyenne |
+| Délai de récupération | investissement restant ÷ résultat net moyen par mois ; « Non récupéré » si le résultat n'est pas positif | supposition |
+| Taux d'atteinte | montant versé ÷ objectif cumulé × 100 (≈ 112,9 % ici) | moyenne |
+| Recette / km | recettes ÷ km parcourus (≈ 115 F/km ici) | moyenne |
+
+À noter pour la suite (`/replica-entrepreneur`) :
+- Un investissement à 0 donne un ROI « 0,0 % » et masque un véhicule pourtant en perte : rien n'invite à saisir le prix d'achat.
+- Le résultat net négatif s'affiche **en vert** sur la carte du véhicule et en rouge plus bas : couleurs incohérentes.
+- Séparateur de milliers à l'anglaise (256,350) dans une interface en français.
+- La longue suite de filtres (période, groupes, propriétaires, véhicules) repousse les chiffres très bas sur mobile.
+
+## Flows
 
 ```
-F01 Le propriétaire consulte la rentabilité d'un taxi
-    S00 connexion -> S01 tableau de bord -> S02 ROI -> choisir un véhicule
-F02 Le propriétaire suit ses recettes du jour
-    S01 -> S06 transactions (filtre véhicule, chauffeur, date)
-F03 Le propriétaire saisit une recette hors taximètre
-    S07 -> formulaire -> S06
-F04 Le propriétaire affecte un chauffeur à un véhicule
-    S05 -> fiche chauffeur -> véhicule / appareil
-F05 Le propriétaire suit l'entretien
-    S16 -> nouvelle intervention -> S08 (charge)
+F01 Le propriétaire consulte la rentabilité d'un véhicule
+    S02 : choisir la période (puce « Année entière » ou un mois) -> choisir le véhicule -> lire les cartes
+    happy path : 2 touchers après ouverture de l'écran
+    edge : aucun mouvement sur la période (tout à 0), investissement non saisi (ROI 0 %),
+           résultat négatif, plage de dates d'un seul jour
+F02 Le propriétaire compare ses véhicules
+    S02 : onglet « Tous les véhicules » (non vu)
+F03 Le propriétaire regarde un groupe de véhicules
+    S02 : carte de groupe ou onglet « Par groupe » (non vu)
+F04 Le propriétaire saisit une dépense ou un investissement (supposé)
+    S07 ou S08 ou S10 -> le mouvement apparaît dans S02
 ```
 
-## Inferred data model (confiance : supposition pour tout)
+## Components
+
+| composant | variantes | états | utilisé sur |
+| --- | --- | --- | --- |
+| Menu horizontal défilant | onglet normal, onglet actif encadré | — | tous |
+| Sélecteur de langue | — | ouvert, fermé | tous |
+| Plage de dates + bouton Actualiser | — | — | S02 |
+| Puces de période | active (pleine, rouge), inactive (contour) | — | S02 |
+| Champ de recherche avec loupe | — | vide, saisi | S02 (×3) |
+| Puce de véhicule | sélectionnée (contour rouge) | — | S02 |
+| Carte de groupe | sélectionnée | — | S02 |
+| Section repliable | ouverte, fermée | — | S02 |
+| Badge de statut | « Analysé » (vert) | — | S02 |
+| Bloc chiffre + légende | positif, négatif, neutre | — | S02 |
+| Onglets à icône | actif souligné rouge | — | S02 |
+| Carte avec titre, sous-titre et pastille d'icône colorée | verte, rouge, orange, gris-vert | — | S02 |
+| Barre de progression | — | 0 %, partielle | S02 |
+| Graphique en anneau + légende | — | vide, rempli | S02 |
+| Ligne d'indicateur (icône carrée, libellé, valeur colorée) | recette verte, dépense rouge, neutre | — | S02 |
+| Tuile d'indicateur (icône, libellé en majuscules, grand chiffre) | — | — | S02 |
+
+## Inferred data model
 
 ```
-Owner        id, nom, téléphone, langue
-Vehicle      id, owner_id, immatriculation, prix d'achat, date de mise en service
-Device       id, vehicle_id, numéro de série, statut, dernière connexion
-Driver       id, owner_id, nom, permis, vehicle_id
-Trip         id, device_id, driver_id, début, fin, distance, durée, montant, position départ/arrivée
-Transaction  id, vehicle_id, type (course | manuelle | charge | versement), montant, date
-Expense      id, vehicle_id, catégorie (carburant | entretien | assurance | taxe), montant, date
-Document     id, vehicle_id ou driver_id, type, date d'expiration, fichier
-Invoice      id, owner_id, numéro, lignes, total
+Owner        id, nom
+             evidence : S02 section « Propriétaires » ; confidence : high
+VehicleGroup id, owner_id, nom
+             evidence : S02 « Groupes », « Sans groupe » ; confidence : high
+Vehicle      id, owner_id, group_id (nullable), immatriculation, statut d'analyse
+             evidence : S02 puces et carte du véhicule ; confidence : high
+Movement     id, vehicle_id, date, montant,
+             type (recette | investissement | exploitation | financement), libellé
+             evidence : S02 « 11 mouvements », « Répartition des sorties » ; confidence : medium
+Activity     vehicle_id, jour, km, courses, objectif, montant versé
+             evidence : S02 « Données d'exploitation » ; confidence : medium (fournie par le taximètre chez Carcul)
+Driver       id, owner_id, nom, vehicle_id, objectif de versement
+             evidence : menu « Chauffeurs », « Objectif cumulé » ; confidence : guess
 ```
 
-Relations : Owner 1-n Vehicle, Vehicle 1-1 Device, Vehicle 1-n Trip, Driver 1-n Trip, Vehicle 1-n Expense.
+Relations : Owner 1-n VehicleGroup, Owner 1-n Vehicle, VehicleGroup 1-n Vehicle,
+Vehicle 1-n Movement, Vehicle 1-n Activity, Driver n-1 Vehicle.
+
+## Feature matrix
+
+Voir `features.csv`.
 
 ## Out of scope (ne peut pas ou ne doit pas être cloné)
 
-- **Le taximètre physique** et son logiciel embarqué : c'est du matériel, avec sans doute une homologation.
-- **Les données** des courses, véhicules et clients de Carcul : elles lui appartiennent.
-- **La régie Radio pub** : ce sont leurs contrats avec les annonceurs.
-- **La collecte de données routières** : elle dépend de leur parc de véhicules équipés.
-- Sans taximètre, un clone ne reçoit pas de courses automatiques : il faudrait soit une saisie manuelle, soit une app mobile chauffeur (GPS) pour les remplacer.
+- **Le taximètre physique** et son logiciel : c'est leur matériel. Chez Carcul, km, courses et versements arrivent tout seuls.
+  Dans la version CLB, ils seront **saisis à la main** (versement du jour, km au compteur, nombre de courses).
+- **Les données** de Carcul et de ses clients.
+- **Radio pub**, **collecte de données routières**, **facture Carcul** : leur régie, leur parc, leur abonnement.
 
 ## Size
 
-Écrans 23, flows 5 (supposés), entités 9. Parties dures : la source des courses
-sans le boîtier, la fiscalité ivoirienne (CGI), le suivi GPS en temps réel, la comptabilité.
-**Taille : XL pour les 22 rubriques. À recadrer**, voir le résumé.
+Pour la version CLB réduite (ROI + véhicules + groupes + saisie des mouvements et de l'activité) :
+5 écrans, 4 flows, 6 entités. Parties dures : les formules (ROI, délai de récupération) à valider,
+la saisie quotidienne qui doit rester rapide sur téléphone, le stockage (local ou en ligne).
+**Taille : S à M.** Les 22 rubriques complètes restent XL.
