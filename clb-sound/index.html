@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CLB Sound</title>
+<meta name="description" content="La musique des créateurs Suno, gratuite pour tout le monde. Écoute en boucle ou en aléatoire.">
+<meta name="theme-color" content="#0E0C14">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700;800&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <svg viewBox="0 0 512 512" aria-hidden="true"><g fill="currentColor"><rect x="96" y="216" width="40" height="80" rx="20"/><rect x="166" y="156" width="40" height="200" rx="20"/><rect x="236" y="96" width="40" height="320" rx="20"/><rect x="306" y="176" width="40" height="160" rx="20"/><rect x="376" y="226" width="40" height="60" rx="20"/></g></svg>
+      <span>CLB Sound</span>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button id="tab-listen" class="tab is-on" role="tab" aria-selected="true" data-view="listen">Écouter</button>
+      <button id="tab-add" class="tab" role="tab" aria-selected="false" data-view="add">Publier ma chanson</button>
+    </nav>
+  </header>
+
+  <div id="setup" class="notice" hidden>
+    <strong>Il reste une étape avant la mise en ligne.</strong>
+    Renseigne l'adresse et la clé publique de ton projet Supabase dans <code>config.js</code>, puis exécute <code>supabase/schema.sql</code>. Le mode d'emploi complet est dans le README.
+  </div>
+
+  <main>
+    <section id="view-listen" class="view">
+      <div class="hero">
+        <h1>La musique des créateurs Suno, libre pour tout le monde.</h1>
+        <p class="lede">Publie tes chansons gratuitement. Écoute celles des autres en boucle ou en aléatoire.</p>
+        <div class="hero-actions">
+          <button id="play-all" class="btn btn-primary" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg> Tout écouter
+          </button>
+          <button id="shuffle-all" class="btn" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.6 9.2 5.4 4 4 5.4l5.2 5.2zM14.5 4l2 2L4 18.6 5.4 20 18 7.5l2 2V4zm.3 9.4-1.4 1.4 3.1 3.1-2 2H20v-5.5l-2 2z"/></svg> Aléatoire
+          </button>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <label class="search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 14h-.8l-.3-.3A6.5 6.5 0 1 0 9.5 16a6.5 6.5 0 0 0 4.2-1.6l.3.3v.8l5 5 1.5-1.5zm-6 0a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9"/></svg>
+          <input id="q" type="search" placeholder="Titre, artiste ou genre" autocomplete="off" aria-label="Rechercher">
+        </label>
+        <div class="seg" role="group" aria-label="Trier">
+          <button id="sort-new" class="is-on" data-sort="new" type="button">Nouveautés</button>
+          <button id="sort-top" data-sort="top" type="button">Les plus écoutées</button>
+        </div>
+      </div>
+
+      <p id="count" class="count"></p>
+      <ol id="list" class="list" aria-live="polite"></ol>
+      <div id="empty" class="empty" hidden></div>
+      <button id="more" class="btn more" type="button" hidden>Afficher plus</button>
+    </section>
+
+    <section id="view-add" class="view" hidden>
+      <div class="add">
+        <h2>Publier ma chanson</h2>
+        <p class="lede">Gratuit, sans compte. Ta chanson sera écoutable par tout le monde.</p>
+
+        <div class="seg seg-wide" role="group" aria-label="Méthode">
+          <button id="mode-link" class="is-on" data-mode="link" type="button">Lien Suno</button>
+          <button id="mode-file" data-mode="file" type="button">Fichier MP3</button>
+        </div>
+
+        <form id="add-form" novalidate>
+          <div class="field" data-for="link">
+            <label for="f-link">Lien de la chanson sur Suno</label>
+            <input id="f-link" type="url" inputmode="url" placeholder="https://suno.com/song/…" autocomplete="off">
+            <small>Sur Suno : ⋯ › Partager › Copier le lien. La chanson doit être publique sur Suno.</small>
+          </div>
+          <div class="field" data-for="file" hidden>
+            <label for="f-audio">Fichier audio (MP3, WAV ou M4A, 15 Mo max)</label>
+            <input id="f-audio" type="file" accept="audio/mpeg,audio/mp3,audio/wav,audio/x-wav,audio/mp4,audio/x-m4a,.mp3,.wav,.m4a">
+          </div>
+          <div class="field" data-for="file" hidden>
+            <label for="f-cover">Pochette (facultatif, JPG ou PNG)</label>
+            <input id="f-cover" type="file" accept="image/jpeg,image/png,image/webp">
+          </div>
+
+          <div class="preview" id="preview" hidden>
+            <img id="pv-cover" alt="">
+            <div><strong>Aperçu</strong><audio id="pv-audio" controls preload="none"></audio></div>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label for="f-title">Titre</label>
+              <input id="f-title" maxlength="120" required autocomplete="off">
+            </div>
+            <div class="field">
+              <label for="f-artist">Nom d'artiste</label>
+              <input id="f-artist" maxlength="80" required autocomplete="nickname">
+            </div>
+          </div>
+          <div class="field">
+            <label for="f-genre">Genre (facultatif)</label>
+            <input id="f-genre" maxlength="40" list="genres" autocomplete="off">
+            <datalist id="genres">
+              <option>Afrobeat</option><option>Coupé-décalé</option><option>Zouglou</option><option>Rap</option>
+              <option>R&amp;B</option><option>Pop</option><option>Gospel</option><option>Reggae</option>
+              <option>Électro</option><option>Rock</option><option>Jazz</option><option>Classique</option>
+            </datalist>
+          </div>
+          <label class="check">
+            <input id="f-rights" type="checkbox" required>
+            <span>J'ai créé cette chanson sur Suno avec mon propre compte, et j'accepte qu'elle soit écoutée gratuitement par tous.</span>
+          </label>
+          <p id="form-msg" class="form-msg" role="status"></p>
+          <button id="submit" class="btn btn-primary" type="submit">Publier</button>
+        </form>
+      </div>
+    </section>
+  </main>
+</div>
+
+<footer class="player" id="player" aria-label="Lecteur">
+  <div class="p-inner">
+    <div class="p-track">
+      <img id="p-cover" alt="" hidden>
+      <div class="p-meta">
+        <strong id="p-title">Choisis une chanson</strong>
+        <span id="p-artist">La lecture démarre ici</span>
+      </div>
+    </div>
+    <div class="p-center">
+      <div class="p-controls">
+        <button id="b-shuffle" class="ic" type="button" aria-pressed="false" title="Aléatoire">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.6 9.2 5.4 4 4 5.4l5.2 5.2zM14.5 4l2 2L4 18.6 5.4 20 18 7.5l2 2V4zm.3 9.4-1.4 1.4 3.1 3.1-2 2H20v-5.5l-2 2z"/></svg>
+        </button>
+        <button id="b-prev" class="ic" type="button" title="Précédente">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+        </button>
+        <button id="b-play" class="ic ic-big" type="button" title="Lecture">
+          <svg id="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+          <svg id="i-pause" viewBox="0 0 24 24" aria-hidden="true" hidden><path d="M6 19h4V5H6zm8-14v14h4V5z"/></svg>
+        </button>
+        <button id="b-next" class="ic" type="button" title="Suivante">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 18 8.5-6L6 6zM16 6v12h2V6z"/></svg>
+        </button>
+        <button id="b-repeat" class="ic" type="button" title="Répéter : non">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10v3l4-4-4-4v3H5v6h2zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2z"/></svg>
+          <span id="repeat-one" class="badge" hidden>1</span>
+        </button>
+      </div>
+      <div class="p-progress">
+        <span id="t-cur">0:00</span>
+        <input id="seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Position">
+        <span id="t-dur">0:00</span>
+      </div>
+    </div>
+    <div class="p-side">
+      <button id="b-share" class="ic" type="button" title="Partager" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 16a3 3 0 0 0-2 .8L8.9 12.7a3 3 0 0 0 0-1.4L16 7.2A3 3 0 1 0 15 5l.1.7L8 9.8a3 3 0 1 0 0 4.4l7.1 4.2-.1.6a3 3 0 1 0 3-3"/></svg>
+      </button>
+      <input id="vol" type="range" min="0" max="1" step="0.01" value="1" aria-label="Volume">
+    </div>
+  </div>
+</footer>
+<div id="toast" class="toast" role="status" hidden></div>
+<audio id="audio" preload="metadata"></audio>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
