@@ -231,7 +231,7 @@ nav button.on{color:#fff}nav button.on svg.i{transform:translateY(-1px) scale(1.
 
 <div id="splash" role="button" tabindex="0">
  <img class="bgp" id="spImg" alt=""><div class="shade"></div>
- <div class="c"><img src="icon-512.png" alt=""><div class="t">CLB World</div><div class="q">Culture, voyages, football. Le monde entier, chaque jour.</div><span class="tap">Embarquer <svg class="i"><use href="#i-arrow"/></svg></span><small style="display:block;margin-top:24px;opacity:.85;font-size:11px;font-weight:600">version 7.8.1 · 13 nov. 2026</small></div>
+ <div class="c"><img src="icon-512.png" alt=""><div class="t">CLB World</div><div class="q">Culture, voyages, football. Le monde entier, chaque jour.</div><span class="tap">Embarquer <svg class="i"><use href="#i-arrow"/></svg></span><small style="display:block;margin-top:24px;opacity:.85;font-size:11px;font-weight:600">version 7.9.0 · 14 nov. 2026</small></div>
  <div class="credit" id="spCred"></div>
 <div style="display:none"></div>
 </div>
@@ -319,6 +319,9 @@ nav button.on{color:#fff}nav button.on svg.i{transform:translateY(-1px) scale(1.
 <script src="data.js"></script>
 <script src="photos/accueil.js"></script>
 <script>
+/* logos d'équipes ou vignettes indisponibles (hors ligne) : masqués au lieu de l'icône d'image cassée */
+document.addEventListener("error",e=>{const t=e.target;if(t&&t.tagName==="IMG"&&!t.classList.contains("bg")&&!t.classList.contains("bgp"))t.style.visibility="hidden";},true);
+document.addEventListener("load",e=>{const t=e.target;if(t&&t.tagName==="IMG"&&t.style.visibility==="hidden")t.style.visibility="";},true);
 const $=id=>document.getElementById(id),LS={get:(k,d)=>{try{const v=localStorage.getItem("clbw-"+k);return v==null?d:JSON.parse(v);}catch(e){return d;}},set:(k,v)=>{try{localStorage.setItem("clbw-"+k,JSON.stringify(v));}catch(e){}}};
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const I=(n,c="")=>`<svg class="i" ${c?`style="${c}"`:""}><use href="#i-${n}"/></svg>`,T=(n,g,s="")=>`<span class="tile ${s} t-${g}">${I(n)}</span>`;
