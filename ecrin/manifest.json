@@ -1,7 +1,7 @@
 {
   "name": "Écrin",
   "short_name": "Écrin",
-  "description": "La musique des créateurs Suno, gardée comme un bijou et libre pour tout le monde.",
+  "description": "Parce que vos oreilles méritent la douceur. La musique des créateurs IA, gratuite pour tout le monde.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
