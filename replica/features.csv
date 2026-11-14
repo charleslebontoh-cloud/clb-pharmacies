@@ -1,0 +1,26 @@
+feature,area,priority,original,clone,notes
+Connexion du propriétaire,compte,must,yes,no,supposé ; écran non vu
+Sélecteur de langue,compte,should,yes,no,vu dans le menu
+Tableau de bord de la flotte (recettes et véhicules actifs),tableau de bord,must,yes,no,supposé
+Calcul du ROI par véhicule,roi,must,yes,no,écran derrière connexion ; champs et formule à confirmer
+Liste des véhicules,flotte,must,yes,no,supposé
+Liste des chauffeurs et affectation aux véhicules,chauffeurs,must,yes,no,supposé
+Liste des transactions avec filtres,transactions,must,yes,no,supposé
+Saisie de transactions manuelles,transactions,must,yes,no,devient la source principale sans taximètre
+KPIs de la flotte,kpis,should,yes,no,supposé
+Suivi des dépenses et comptabilité,comptabilité,should,yes,no,supposé
+Décaissements,comptabilité,should,yes,no,supposé
+Entretien et garage,garage,should,yes,no,supposé
+Documents des véhicules et chauffeurs avec alertes d'expiration,documents,should,yes,no,supposé
+Facturation,facturation,could,yes,no,supposé
+Éditique (documents imprimables),éditique,could,yes,no,supposé
+Rubrique CGI (fiscalité),fiscalité,could,yes,no,supposé ; à vérifier avec un comptable
+Simulation CGI,fiscalité,could,yes,no,supposé
+Suivi GPS des véhicules,suivi,could,yes,no,demande une app chauffeur ou un boîtier GPS
+Tutoriel,aide,could,yes,no,
+Gestion des propriétaires,administration,could,yes,no,peut-être une vue administrateur Carcul
+Facture Carcul (abonnement),administration,skip,yes,skip,c'est leur facturation à eux
+Gestion des taximètres connectés,appareils,skip,yes,skip,matériel Carcul
+Configuration des taximètres,appareils,skip,yes,skip,matériel Carcul
+Radio pub,publicité,skip,yes,skip,leur régie publicitaire
+Collecte de données routières,données,skip,yes,skip,dépend de leur parc équipé
