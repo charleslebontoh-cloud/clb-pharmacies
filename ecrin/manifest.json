@@ -1,7 +1,7 @@
 {
   "name": "Écrin",
   "short_name": "Écrin",
-  "description": "Parce que vos oreilles méritent la douceur. La musique des créateurs IA, gratuite pour tout le monde.",
+  "description": "L’IA compose, vos oreilles savourent. La musique des créateurs IA, gratuite pour tout le monde.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
