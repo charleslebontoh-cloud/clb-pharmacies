@@ -1,0 +1,11 @@
+{
+  "name": "Écrin",
+  "short_name": "Écrin",
+  "description": "La musique des créateurs Suno, gardée comme un bijou et libre pour tout le monde.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#140A10",
+  "theme_color": "#140A10",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

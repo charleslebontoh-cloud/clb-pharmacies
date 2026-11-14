@@ -1,4 +1,4 @@
--- CLB Sound · schéma Supabase
+-- Écrin · schéma Supabase
 -- À coller une seule fois dans Supabase > SQL Editor > New query > Run.
 
 -- 1. Table des chansons

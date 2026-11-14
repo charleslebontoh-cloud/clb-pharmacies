@@ -1,5 +1,5 @@
-// Version 1.0.0 : change le nom du cache à chaque version publiée.
-const CACHE = "clb-sound-1.0.0";
+// Version 1.1.0 : change le nom du cache à chaque version publiée.
+const CACHE = "ecrin-1.1.0";
 const SHELL = ["./", "index.html", "style.css", "app.js", "config.js", "manifest.json", "icon.svg"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL))); self.skipWaiting(); });
 self.addEventListener("activate", e => {

@@ -1,8 +1,8 @@
-# CLB Sound
+# Écrin
 
 La musique des créateurs Suno, gratuite pour tout le monde. Les artistes publient leurs chansons (lien Suno ou fichier MP3) et tout le monde peut les écouter en boucle ou en aléatoire.
 
-Version 1.0.0
+Version 1.1.0
 
 ## Fonctions
 - **Écouter** : liste des nouveautés ou des plus écoutées, recherche par titre, artiste ou genre.
@@ -41,3 +41,9 @@ Dans Supabase › **Table Editor** › `tracks` :
 - `config.js` : adresse et clé publique Supabase
 - `supabase/schema.sql` : tables, règles de sécurité, stockage
 - `sw.js`, `manifest.json`, `icon.svg` : installation sur téléphone
+
+## Identité
+- **Nom** : Écrin, la boîte de velours où l'on garde les bijoux. Ici, chaque chanson en est un.
+- **Logo** (`icon.svg`) : le bâton de Moïse, droit avec sa crosse de berger, forme la colonne de la harpe de David. La crosse se prolonge en console, les cordes sont tendues jusqu'à la caisse, et une pierre précieuse brille au sommet. Or sur velours bordeaux.
+- **Couleurs** : velours `#140A10`, or `#D9B36A` (thème sombre) ; ivoire `#FBF7F2`, or bruni `#9C6B1E` (thème clair).
+- **Typographies** : Marcellus (titres, inspirée des inscriptions gravées antiques), Inter (texte).

@@ -1,16 +1,16 @@
-/* CLB Sound 1.0.0 */
+/* Écrin 1.1.0 */
 (() => {
   "use strict";
   const $ = id => document.getElementById(id);
-  const cfg = window.CLB_SOUND_CONFIG || {};
+  const cfg = window.ECRIN_CONFIG || {};
   const ready = !!(cfg.supabaseUrl && cfg.supabaseAnonKey && window.supabase);
   const sb = ready ? window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey) : null;
   const PAGE = 50;
 
   // ---------- préférences locales ----------
   const store = {
-    get(k, d) { try { const v = localStorage.getItem("clbsound." + k); return v === null ? d : JSON.parse(v); } catch { return d; } },
-    set(k, v) { try { localStorage.setItem("clbsound." + k, JSON.stringify(v)); } catch {} }
+    get(k, d) { try { const v = localStorage.getItem("ecrin." + k); return v === null ? d : JSON.parse(v); } catch { return d; } },
+    set(k, v) { try { localStorage.setItem("ecrin." + k, JSON.stringify(v)); } catch {} }
   };
 
   // ---------- état ----------
@@ -177,9 +177,9 @@
     $("p-artist").textContent = t.artist;
     const img = $("p-cover"); setImg(img, t); img.hidden = false;
     $("b-share").disabled = false;
-    document.title = t.title + " · " + t.artist + " | CLB Sound";
+    document.title = t.title + " · " + t.artist + " | Écrin";
     if ("mediaSession" in navigator) {
-      navigator.mediaSession.metadata = new MediaMetadata({ title: t.title, artist: t.artist, album: "CLB Sound", artwork: [{ src: coverOf(t), sizes: "512x512" }] });
+      navigator.mediaSession.metadata = new MediaMetadata({ title: t.title, artist: t.artist, album: "Écrin", artwork: [{ src: coverOf(t), sizes: "512x512" }] });
     }
     renderList();
   }
@@ -346,7 +346,7 @@
       msg("Publication…");
       const { error } = await sb.from("tracks").insert(row);
       if (error) {
-        if (error.code === "23505") { msg("Cette chanson Suno est déjà sur CLB Sound.", "err"); return; }
+        if (error.code === "23505") { msg("Cette chanson Suno est déjà sur Écrin.", "err"); return; }
         throw error;
       }
       store.set("artist", artist);

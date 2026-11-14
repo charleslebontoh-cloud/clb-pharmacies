@@ -1,24 +1,24 @@
-/* Concept : salle d'écoute de nuit, liste dense, lecteur fixe en bas. Accent ambre « VU-mètre ». */
+/* Concept : un écrin de velours bordeaux, l'or pour ce qui brille (lecture, logo). Liste dense, lecteur fixe en bas. */
 :root {
-  --bg: #0E0C14;
-  --surface: #17141F;
-  --raise: #221E2D;
-  --line: #2E2939;
-  --fg: #F2EEF7;
-  --muted: #A49DB2;
-  --accent: #FFB547;
-  --accent-ink: #1A1206;
-  --danger: #FF6B6B;
-  --ok: #5FD39A;
-  --display: "Sora", "Segoe UI", system-ui, sans-serif;
+  --bg: #140A10;
+  --surface: #1E1018;
+  --raise: #2B1723;
+  --line: #3B2331;
+  --fg: #F6EEF0;
+  --muted: #B9A3AD;
+  --accent: #D9B36A;
+  --accent-ink: #1A1006;
+  --danger: #FF7A7A;
+  --ok: #6FD3A0;
+  --display: "Marcellus", "Times New Roman", Georgia, serif;
   --body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --player-h: 96px;
   color-scheme: dark;
 }
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
-    --bg: #F7F5FA; --surface: #FFFFFF; --raise: #EEEAF4; --line: #DDD7E6;
-    --fg: #17131F; --muted: #625A70; --accent: #C77700; --accent-ink: #FFFFFF;
+    --bg: #FBF7F2; --surface: #FFFFFF; --raise: #F3EAE3; --line: #E6D9CF;
+    --fg: #24121C; --muted: #6E5A63; --accent: #9C6B1E; --accent-ink: #FFFFFF;
     --danger: #C92A2A; --ok: #1E8A55; color-scheme: light;
   }
 }
@@ -43,8 +43,8 @@ svg { width: 20px; height: 20px; fill: currentColor; flex: none; }
 }
 
 .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-block: 8px 20px; }
-.brand { display: flex; align-items: center; gap: 10px; font: 800 20px var(--display); letter-spacing: -0.02em; }
-.brand svg { width: 30px; height: 30px; color: var(--accent); }
+.brand { display: flex; align-items: center; gap: 10px; font: 400 24px var(--display); letter-spacing: 0.04em; }
+.brand svg { width: 26px; height: 34px; color: var(--accent); }
 .tabs { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 4px; }
 .tab { border: 0; background: none; padding: 8px 14px; border-radius: 999px; cursor: pointer; font-weight: 600; color: var(--muted); }
 .tab.is-on { background: var(--raise); color: var(--fg); }
@@ -54,8 +54,8 @@ svg { width: 20px; height: 20px; fill: currentColor; flex: none; }
 code { background: var(--bg); padding: 1px 6px; border-radius: 6px; font-size: 0.9em; }
 
 .hero { padding-block: 12px 28px; }
-h1 { font: 800 clamp(28px, 5.4vw, 52px)/1.05 var(--display); letter-spacing: -0.035em; margin: 0 0 12px; max-width: 18ch; text-wrap: balance; }
-h2 { font: 700 28px/1.15 var(--display); letter-spacing: -0.02em; margin: 0 0 6px; }
+h1 { font: 400 clamp(30px, 5.4vw, 54px)/1.1 var(--display); letter-spacing: -0.01em; margin: 0 0 12px; max-width: 18ch; text-wrap: balance; }
+h2 { font: 400 30px/1.15 var(--display); margin: 0 0 6px; }
 .lede { color: var(--muted); margin: 0 0 20px; max-width: 58ch; }
 .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 
