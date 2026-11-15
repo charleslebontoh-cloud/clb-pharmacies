@@ -101,7 +101,11 @@ const DICO=[
 ["pléthore","n. f.","Quantité bien plus grande que ce qui est nécessaire ou utile.","Il y a pléthore de candidats pour ce poste de chargé d'affaires.","surabondance, profusion, excès","soutenu","Général"],
 ["fongible","adj.","Se dit de choses interchangeables, qu'on peut remplacer par d'autres de même nature et de même quantité, comme l'argent ou les céréales.","L'argent étant fongible, la banque rembourse une somme équivalente, pas les mêmes billets.","interchangeable, consomptible","juridique","Juridique"],
 ["quitus","n. m.","Acte par lequel on reconnaît qu'une personne a bien rempli sa mission de gestion, ce qui la libère pour la période concernée.","L'assemblée générale a donné quitus au gérant pour l'exercice 2025.","décharge, approbation","juridique","Juridique"],
-["exonérer","v. tr.","Dispenser, en tout ou en partie, d'une charge, d'un impôt ou d'une obligation.","Les intérêts de ce placement sont exonérés d'impôt.","dispenser, affranchir, décharger","courant","Finance"]
+["exonérer","v. tr.","Dispenser, en tout ou en partie, d'une charge, d'un impôt ou d'une obligation.","Les intérêts de ce placement sont exonérés d'impôt.","dispenser, affranchir, décharger","courant","Finance"],
+["dilatoire","adj.","Qui ne sert qu'à gagner du temps, à retarder une décision ou une procédure.","L'avocat a soulevé une exception dilatoire pour repousser l'audience.","retardateur","juridique","Juridique"],
+["anatocisme","n. m.","Fait d'ajouter au capital les intérêts échus pour qu'ils produisent eux-mêmes des intérêts.","Le contrat prévoit l'anatocisme des intérêts de retard dus depuis plus d'un an.","capitalisation des intérêts","juridique","Finance"],
+["obséquieux","adj.","Qui se montre poli et empressé à l'excès, au point d'en devenir servile.","Son ton obséquieux devant la direction agaçait ses collègues.","servile, flagorneur, mielleux","soutenu","Caractère"],
+["corollaire","n. m.","Conséquence qui découle directement et nécessairement de ce qui précède.","La hausse des taux a pour corollaire un recul des demandes de crédit.","conséquence, suite, implication","soutenu","Communication"]
 ];
 
 /* Orthographe : [bonne graphie, [variantes fautives], astuce, [graphies aussi admises (facultatif)]] */

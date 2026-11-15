@@ -244,3 +244,15 @@ QZ.push(
 ["spo","Quel pays a remporté le plus de Coupes du monde de football ?",["Allemagne","Italie","Argentine","Brésil"],3,"Le Brésil compte cinq titres (1958, 1962, 1970, 1994 et 2002), devant l'Allemagne et l'Italie (quatre chacune)."],
 ["cin","Quel film d'animation Disney (2016) suit une jeune navigatrice polynésienne accompagnée du demi-dieu Maui ?",["Raiponce","Encanto","Vaiana","Rebelle"],2,"Vaiana, la légende du bout du monde (Moana en version originale), sorti en 2016."]
 );
+
+/* Ajout du 15 nov. 2026 — faits vérifiés */
+QZ.push(
+["his","Quel Ghanéen a été secrétaire général de l'ONU de 1997 à 2006 ?",["Boutros Boutros-Ghali","Kofi Annan","Javier Pérez de Cuéllar","Ban Ki-moon"],1,"Kofi Annan, premier secrétaire général issu d'Afrique subsaharienne, a reçu le prix Nobel de la paix en 2001 avec l'ONU."],
+["geo","Quel fleuve marque une grande partie de la frontière entre la Côte d'Ivoire et le Liberia ?",["Le Bandama","Le Cavally","Le Comoé","La Mano"],1,"Le Cavally longe l'ouest ivoirien avant de se jeter dans l'océan près de Tabou ; un pont entre les deux pays y est en construction."],
+["sci","Quel gaz est le plus abondant dans l'air que nous respirons ?",["L'oxygène","Le dioxyde de carbone","L'azote","L'argon"],2,"L'azote représente environ 78 % de l'atmosphère, l'oxygène environ 21 %."],
+["art","Quel écrivain ivoirien a publié le recueil de contes « Le Pagne noir » (1955) ?",["Ahmadou Kourouma","Bernard Dadié","Jean-Marie Adiaffi","Véronique Tadjo"],1,"Bernard Binlin Dadié (1916-2019), considéré comme le père de la littérature ivoirienne, y met en scène l'araignée Kacou Ananzè."],
+["eco","Quelle organisation internationale, créée en 1995 et basée à Genève, encadre le commerce entre les pays ?",["L'OMC","L'OCDE","La CNUCED","L'OMS"],0,"L'Organisation mondiale du commerce a succédé au GATT le 1er janvier 1995."],
+["afr","Quel port ivoirien, le deuxième du pays, est l'un des premiers ports d'exportation de cacao au monde ?",["Port de Sassandra","Port de San-Pédro","Port de Grand-Bassam","Port de Tabou"],1,"Le port autonome de San-Pédro, ouvert en 1971 dans le sud-ouest, vient après celui d'Abidjan."],
+["spo","Quel taekwondoïste a offert à la Côte d'Ivoire son premier titre olympique, à Rio en 2016 ?",["Cheick Sallah Cissé","Ruth Gbagbi","Seydou Gbané","Gabriel Tiacoh"],0,"Cheick Sallah Cissé gagne l'or en -80 kg à la dernière seconde de la finale ; Ruth Gbagbi y décroche le bronze."],
+["cin","Quelle chanteuse béninoise, plusieurs fois récompensée aux Grammy Awards, a popularisé « Agolo » ?",["Angélique Kidjo","Oumou Sangaré","Aya Nakamura","Fatoumata Diawara"],0,"Angélique Kidjo, née à Ouidah, a notamment remporté le Grammy de la meilleure musique du monde en 2008 avec « Djin Djin »."]
+);
