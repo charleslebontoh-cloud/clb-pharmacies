@@ -1,0 +1,21 @@
+name: pharmacies-garde
+# Pharmacies de garde de la semaine (planning UNPPCI, du samedi au vendredi).
+# Plusieurs passages le samedi et un le dimanche, au cas où le site publie tard ;
+# le script ne commite que si la liste a changé.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "13 5,11,17 * * 6"
+    - cron: "13 6 * * 0"
+permissions: {contents: write}
+concurrency: {group: pharmacies-garde, cancel-in-progress: false}
+jobs:
+  b:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 tools/pharmacies_garde.py
+      - run: |
+          git config user.name clb-bot; git config user.email bot@users.noreply.github.com
+          git add pharmacies.json; git commit -m "pharmacies de garde : semaine du $(python3 -c 'import json;print(json.load(open("pharmacies.json"))["du"])')" || exit 0
+          for i in 1 2 3; do git pull --rebase -X theirs origin main && git push && break; sleep 5; done

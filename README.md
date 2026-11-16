@@ -4,6 +4,8 @@ Pharmacies de garde autour de toi (GPS), suivi d’'eau avec rappels, parking, n
 
 https://charleslebontoh-cloud.github.io/clb-pharmacies/
 
+- Pharmacies de garde : `pharmacies.json` mis à jour par `tools/pharmacies_garde.py` via `.github/workflows/pharmacies-garde.yml` (samedi 5 h, 11 h et 17 h, dimanche 6 h, heure d'Abidjan ; source pharmacies-de-garde.ci, planning UNPPCI). Le script refuse d'écrire une liste vide, incomplète ou plus ancienne.
+
 ## Numérotation des versions (demande de Charles)
 
 Toutes les applis suivent le format **MAJEURE.MINEURE.CORRECTIF** (ex. 7.1.2), affiché sur l'écran d'ouverture :
