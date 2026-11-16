@@ -28,7 +28,9 @@ def get(u):
 def dec(v):
     """Cote américaine (+150, -120) ou décimale (2.5) -> cote décimale."""
     try:
-        if isinstance(v, dict): v = (v.get("close") or v.get("open") or {}).get("odds", v.get("odds"))
+        if isinstance(v, dict):
+            w = v.get("close") or v.get("open")
+            v = w.get("odds") if isinstance(w, dict) else v.get("odds")
         if v is None or v == "": return None
         t = str(v).strip().replace(",", ".")
         if t.upper() in ("EVEN", "EV"): return 2.0
@@ -38,18 +40,26 @@ def dec(v):
     except Exception:
         return None
 def market(c):
-    """Probabilités 1/N/2 (et plus de 2,5 buts) déduites des cotes, marge du bookmaker retirée."""
+    """Probabilités 1/N/2 (et plus de 2,5 buts) déduites des cotes, marge du bookmaker retirée.
+    Ne lève jamais d'erreur : une cote mal formée ne doit pas bloquer la publication des scores."""
+    try:
+        return _market(c)
+    except Exception:
+        return None
+def _market(c):
     for o in c.get("odds") or []:
-        ml = o.get("moneyline") or {}
-        h = dec((o.get("homeTeamOdds") or {}).get("moneyLine")) or dec(ml.get("home"))
-        a = dec((o.get("awayTeamOdds") or {}).get("moneyLine")) or dec(ml.get("away"))
-        d = dec((o.get("drawOdds") or {}).get("moneyLine")) or dec(ml.get("draw"))
+        if not isinstance(o, dict): continue
+        ml = o.get("moneyline") if isinstance(o.get("moneyline"), dict) else {}
+        g = lambda k: o.get(k) if isinstance(o.get(k), dict) else {}
+        h = dec(g("homeTeamOdds").get("moneyLine")) or dec(ml.get("home"))
+        a = dec(g("awayTeamOdds").get("moneyLine")) or dec(ml.get("away"))
+        d = dec(g("drawOdds").get("moneyLine")) or dec(ml.get("draw"))
         if not (h and a and d): continue
         s = 1 / h + 1 / d + 1 / a
         if not 0.95 < s < 1.35: continue
         r = {"p1": round(1 / h / s, 3), "pn": round(1 / d / s, 3), "p2": round(1 / a / s, 3),
              "src": ((o.get("provider") or {}).get("name") or "")[:20]}
-        tot = o.get("total") or {}
+        tot = o.get("total") if isinstance(o.get("total"), dict) else {}
         ov, un = dec(o.get("overOdds")) or dec(tot.get("over")), dec(o.get("underOdds")) or dec(tot.get("under"))
         if o.get("overUnder") == 2.5 and ov and un: r["o25"] = round((1 / ov) / (1 / ov + 1 / un), 3)
         return r
@@ -152,26 +162,29 @@ def elo_probs(row):
         r["o25"] = round(sum(v for k, v in rs if sum(sc(k)) >= 3) / tot, 3)
         r["btts"] = round(sum(v for k, v in rs if min(sc(k)) > 0) / tot, 3)
     return r
-fx = clubelo()
-byday = {}
-for row in fx: byday.setdefault(row.get("Date", "")[:10], []).append(row)
-nelo = 0
-for code, L in out["events"].items():
-    if code in ("fifa.friendly", "caf.nations_qual", "uefa.nations", "concacaf.nations.league"): continue
-    for e in L:
-        if e["competitions"][0]["status"]["type"]["state"] != "pre": continue
-        cs = e["competitions"][0]["competitors"]
-        h = next((x for x in cs if x["homeAway"] == "home"), None); a = next((x for x in cs if x["homeAway"] == "away"), None)
-        if not h or not a: continue
-        d0 = D.datetime.fromisoformat(e["date"].replace("Z", "+00:00"))
-        best, bs = None, 0
-        for dd in (0, -1, 1):
-            for row in byday.get((d0 + D.timedelta(days=dd)).strftime("%Y-%m-%d"), []):
-                s1, s2 = sim(h["team"]["displayName"], row.get("Home")), sim(a["team"]["displayName"], row.get("Away"))
-                if min(s1, s2) >= .85 and s1 + s2 > bs: best, bs = row, s1 + s2
-        if best:
-            pr = elo_probs(best)
-            if pr: e["_elo"] = pr; nelo += 1
-print("elo", len(fx), "matchs ClubElo,", nelo, "rapprochés ;", sum(1 for L in out["events"].values() for e in L if "_mk" in e), "matchs avec cotes")
+try:
+    fx = clubelo()
+    byday = {}
+    for row in fx: byday.setdefault(row.get("Date", "")[:10], []).append(row)
+    nelo = 0
+    for code, L in out["events"].items():
+        if code in ("fifa.friendly", "caf.nations_qual", "uefa.nations", "concacaf.nations.league"): continue
+        for e in L:
+            if e["competitions"][0]["status"]["type"]["state"] != "pre": continue
+            cs = e["competitions"][0]["competitors"]
+            h = next((x for x in cs if x["homeAway"] == "home"), None); a = next((x for x in cs if x["homeAway"] == "away"), None)
+            if not h or not a: continue
+            d0 = D.datetime.fromisoformat(e["date"].replace("Z", "+00:00"))
+            best, bs = None, 0
+            for dd in (0, -1, 1):
+                for row in byday.get((d0 + D.timedelta(days=dd)).strftime("%Y-%m-%d"), []):
+                    s1, s2 = sim(h["team"]["displayName"], row.get("Home")), sim(a["team"]["displayName"], row.get("Away"))
+                    if min(s1, s2) >= .85 and s1 + s2 > bs: best, bs = row, s1 + s2
+            if best:
+                pr = elo_probs(best)
+                if pr: e["_elo"] = pr; nelo += 1
+    print("elo", len(fx), "matchs ClubElo,", nelo, "rapprochés ;", sum(1 for L in out["events"].values() for e in L if "_mk" in e), "matchs avec cotes")
+except Exception as ex:  # l'Elo est un plus : en cas d'imprévu, on publie quand même les scores
+    out["errors"].append(f"elo: {ex}")
 open("foot.json", "w").write(json.dumps(out, ensure_ascii=False, separators=(",", ":")))
 print("ok", sum(len(v) for v in out["events"].values()), "matchs", len(out["errors"]), "erreurs")
