@@ -18,6 +18,7 @@ jobs:
         run: python3 tools/foot_data.py
       - name: Publier sur la branche foot-data (un seul commit, écrasé à chaque fois)
         run: |
+          python3 tools/valider_donnees.py foot.json
           mkdir -p /tmp/out && cp foot.json /tmp/out/
           cd /tmp/out && git init -q -b foot-data
           git config user.name "clb-bot" && git config user.email "clb-bot@users.noreply.github.com"

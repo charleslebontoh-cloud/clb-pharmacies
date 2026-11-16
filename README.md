@@ -6,6 +6,9 @@ https://charleslebontoh-cloud.github.io/clb-pharmacies/
 
 - Pharmacies de garde : `pharmacies.json` mis à jour par `tools/pharmacies_garde.py` via `.github/workflows/pharmacies-garde.yml` (samedi 5 h, 11 h et 17 h, dimanche 6 h, heure d'Abidjan ; source pharmacies-de-garde.ci, planning UNPPCI). Le script refuse d'écrire une liste vide, incomplète ou plus ancienne.
 
+## Vérification des données avant publication
+Avant chaque commit automatique, les workflows de données (Sentinel, VERITAS, médicaments, pharmacies, pharmacies de garde, foot) lancent `tools/valider_donnees.py`. Le script compare chaque JSON à la version déjà publiée et bloque le commit si un fichier est illisible, vide, a perdu plus de la moitié de ses éléments ou a disparu. Le workflow échoue alors, et l'alerte ci-dessous prévient.
+
 ## Alertes en cas d'échec
 `.github/workflows/alerte-echecs.yml` envoie une notification ntfy quand un workflow de données ou la publication du site échoue sur `main` (une seule alerte par panne). Pour la recevoir : appli ntfy › « + » › canal **clb-alertes-5dd90ec93ea1**.
 
