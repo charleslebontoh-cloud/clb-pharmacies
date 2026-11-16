@@ -15,6 +15,7 @@ jobs:
         continue-on-error: true
       - run: |
           git config user.name "veritas-bot"; git config user.email "actions@users.noreply.github.com"
+          python3 tools/valider_donnees.py compliance/data/news.json compliance/data/jobs.json
           git add compliance/data/news.json compliance/data/jobs.json
           git diff --cached --quiet && exit 0
           git commit -qm "VERITAS : veille du $(date -u +%Y-%m-%d)"

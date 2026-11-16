@@ -11,5 +11,6 @@ jobs:
       - run: python3 tools/pharma_all.py
       - run: |
           git config user.name clb-bot; git config user.email bot@users.noreply.github.com
+          python3 tools/valider_donnees.py pharmacies-all.json
           git add pharmacies-all.json; git commit -m "pharmacies : liste complète" || exit 0
           for i in 1 2 3; do git pull --rebase -X theirs origin main && git push && break; sleep 5; done

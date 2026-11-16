@@ -34,6 +34,7 @@ jobs:
         if: always()
         run: |
           git config user.name "sentinel-bot"; git config user.email "actions@users.noreply.github.com"
+          python3 tools/valider_donnees.py bourse/data
           git add bourse/data
           git diff --cached --quiet && exit 0
           git commit -qm "Sentinel : données BRVM $(date -u +%Y-%m-%dT%H:%M)"

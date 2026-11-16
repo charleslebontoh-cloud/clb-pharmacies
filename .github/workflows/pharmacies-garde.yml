@@ -17,5 +17,6 @@ jobs:
       - run: python3 tools/pharmacies_garde.py
       - run: |
           git config user.name clb-bot; git config user.email bot@users.noreply.github.com
+          python3 tools/valider_donnees.py pharmacies.json
           git add pharmacies.json; git commit -m "pharmacies de garde : semaine du $(python3 -c 'import json;print(json.load(open("pharmacies.json"))["du"])')" || exit 0
           for i in 1 2 3; do git pull --rebase -X theirs origin main && git push && break; sleep 5; done
