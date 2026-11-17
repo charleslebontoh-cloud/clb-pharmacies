@@ -149,7 +149,13 @@ const QZ=[
 ["cin","De quel pays est originaire la K-pop ?",["Japon","Chine","Corée du Sud","Thaïlande"],2,"BTS et Blackpink en sont les ambassadeurs."],
 ["cin","Quelle série raconte la survie de 100 jeunes renvoyés sur Terre ?",["Lost","The 100","Dark","The Walking Dead"],1,"The 100, série diffusée de 2014 à 2020."],
 ["cin","Quel instrument est associé à la musique traditionnelle mandingue ?",["La kora","Le balafon seulement","La cornemuse","Le sitar"],0,"La kora est une harpe-luth à 21 cordes (le balafon est aussi mandingue)."],
-["cin","Quel film d'animation met en scène le lion Simba ?",["Madagascar","Le Roi lion","Zootopie","Kung Fu Panda"],1,"Le Roi lion, Disney, 1994."]
+["cin","Quel film d'animation met en scène le lion Simba ?",["Madagascar","Le Roi lion","Zootopie","Kung Fu Panda"],1,"Le Roi lion, Disney, 1994."],
+["geo","Quel pays africain possède trois capitales : Pretoria, Le Cap et Bloemfontein ?",["Nigeria","Afrique du Sud","Tanzanie","Côte d'Ivoire"],1,"L'Afrique du Sud répartit ses pouvoirs : exécutif à Pretoria, législatif (Parlement) au Cap et judiciaire à Bloemfontein."],
+["afr","Quelle ville, première capitale de la colonie de Côte d'Ivoire, est inscrite au patrimoine mondial de l'UNESCO depuis 2012 ?",["Grand-Bassam","Bingerville","Assinie","Jacqueville"],0,"Grand-Bassam fut la capitale de 1893 à 1900 ; son quartier colonial (le « Quartier France ») est classé au patrimoine mondial depuis 2012. Bingerville lui a succédé."],
+["eco","Quel pays membre de l'UEMOA a pour langue officielle le portugais ?",["Togo","Guinée-Bissau","Bénin","Niger"],1,"Ancienne colonie portugaise, la Guinée-Bissau a rejoint l'UEMOA en 1997 et utilise le franc CFA ; les sept autres membres sont francophones."],
+["art","Qui a écrit « Le Comte de Monte-Cristo » ?",["Victor Hugo","Alexandre Dumas","Jules Verne","Gustave Flaubert"],1,"Alexandre Dumas publie ce roman en feuilleton de 1844 à 1846 : l'histoire d'Edmond Dantès, emprisonné à tort au château d'If."],
+["cin","Quel compositeur a créé l'opéra « La Flûte enchantée » à Vienne en 1791 ?",["Wolfgang Amadeus Mozart","Ludwig van Beethoven","Giuseppe Verdi","Joseph Haydn"],0,"Mozart dirige la première le 30 septembre 1791, quelques semaines avant sa mort ; on y entend le célèbre air de la Reine de la nuit."],
+["spo","Combien de points vaut un essai au rugby à XV ?",["3","4","5","7"],2,"Un essai vaut 5 points ; la transformation qui suit en rapporte 2, une pénalité ou un drop 3."]
 ];
 
 QZ.push(
