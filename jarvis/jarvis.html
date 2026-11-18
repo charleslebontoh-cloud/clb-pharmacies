@@ -69,6 +69,7 @@ button { font: inherit; }
 .msg { max-width: 88%; padding: 10px 13px; border-radius: 14px; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; min-width: 0; }
 .msg.me { align-self: flex-end; background: #1b2a3e; border-bottom-right-radius: 4px; }
 .msg.ai { align-self: flex-start; background: var(--panel); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
+.replay { display: block; margin-top: 8px; font: 600 13px var(--f-body); color: var(--gold); background: none; border: 1px solid color-mix(in srgb, var(--gold) 50%, transparent); border-radius: 999px; padding: 6px 12px; cursor: pointer; }
 .msg.sys { align-self: center; font-family: var(--f-mono); font-size: 12px; color: var(--muted); background: none; padding: 2px; text-align: center; }
 .card { align-self: stretch; border: 1px solid color-mix(in srgb, var(--gold) 45%, var(--line)); background: color-mix(in srgb, var(--gold) 6%, var(--panel)); border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
 .card .k { font-family: var(--f-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--gold); }
@@ -172,7 +173,7 @@ details.settings summary { cursor: pointer; padding: 10px 14px; font-family: var
   const STATES = { off: "Hors ligne", veille: "En veille", ecoute: "J'écoute", attente: "Je vous écoute", reflexion: "Je réfléchis", parle: "Je parle" };
   function setState(s) {
     app.dataset.state = s; $("chipText").textContent = STATES[s] || s;
-    $("coreLabel").textContent = s === "off" ? "Touchez le réacteur pour réveiller JARVIS"
+    $("coreLabel").textContent = s === "off" ? (dict === null && window.__noDict ? "Touchez « Parler » puis le micro 🎤 du clavier" : "Touchez le réacteur pour réveiller JARVIS")
       : s === "veille" ? `En veille — dites « ${cfg.wake} »` : STATES[s];
   }
   function idleState() { setState(listening ? (Date.now() < followUntil ? "attente" : "veille") : "off"); }
@@ -278,7 +279,7 @@ details.settings summary { cursor: pointer; padding: 10px 14px; font-family: var
     }
   }
   let unlocked = false;
-  function unlockSpeech() { if (unlocked) return; unlocked = true; try { const u = new SpeechSynthesisUtterance(" "); u.volume = 0; speechSynthesis.speak(u); } catch {} }
+  function unlockSpeech() { if (unlocked) return; unlocked = true; try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance("ok"); u.lang = "fr-FR"; u.volume = 0.01; speechSynthesis.speak(u); } catch {} }
   async function toggleListening() {
     unlockSpeech();
     if (!dict) { const t = $("txt"); t.focus(); t.placeholder = "Touchez le micro du clavier et parlez…"; return; }
@@ -405,6 +406,7 @@ ${memory.length ? memory.map(m => "- " + m).join("\n") : "- (rien encore)"}`;
       const r = await sample(msgs, { tools, cache: false, signal: abortCtl.signal, modelTier: "default", onText: ({ text }) => { bubble.textContent = text || "…"; } });
       const text = (r.text || "").trim() || "C'est fait.";
       bubble.textContent = text; history.push({ role: "assistant", content: text });
+      const rp = document.createElement("button"); rp.type = "button"; rp.className = "replay"; rp.textContent = "🔊 Écouter"; rp.onclick = () => { unlocked = true; speak(text); }; bubble.appendChild(rp);
       busy = false; speak(text);
     } catch (e) {
       busy = false;
@@ -433,7 +435,7 @@ ${memory.length ? memory.map(m => "- " + m).join("\n") : "- (rien encore)"}`;
     claude.use("tts").then(t => { tts = t; });
     claude.use("mcp").then(m => { mcp = m; });
     claude.use("dictation").then(d => {
-      dict = d; if (!d) { $("wakeBtn").textContent = "Parler"; $("coreLabel").textContent = "Touchez, puis le micro 🎤 du clavier"; live.innerHTML = "<em>Touchez « Parler », puis le micro du clavier, dictez, et touchez Envoyer.</em>"; return; }
+      dict = d; if (!d) { window.__noDict = true; $("wakeBtn").textContent = "Parler"; $("coreLabel").textContent = "Touchez, puis le micro 🎤 du clavier"; live.innerHTML = "<em>Touchez « Parler », puis le micro du clavier, dictez, et touchez Envoyer.</em>"; return; }
       d.onPartial(({ text }) => { if (!speaking && !busy && text) live.textContent = (buffer + " " + text).trim(); });
       d.onFinal(({ text }) => { if (text && text.trim()) onHeard(text.trim()); });
       d.onState(({ state, reason }) => {
