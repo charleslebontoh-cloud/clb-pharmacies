@@ -184,5 +184,12 @@ const PARO=[
 ["Le directeur a prononcé une courte … devant le personnel.",["allocution","allocation"],0,"Allocution = bref discours ; allocation = somme versée."],
 ["Le médecin lui a … trois jours de repos.",["prescrit","proscrit"],0,"Prescrire = ordonner, recommander ; proscrire = interdire."],
 ["Les contrôleurs ont fait … dans l'agence sans prévenir.",["irruption","éruption"],0,"Irruption = entrée brusque ; éruption = jaillissement (volcan, boutons)."],
-["Quelle sera l'… de ces fonds dans le budget ?",["affectation","affection"],0,"Affectation = destination donnée à une chose ; affection = attachement ou maladie."]
+["Quelle sera l'… de ces fonds dans le budget ?",["affectation","affection"],0,"Affectation = destination donnée à une chose ; affection = attachement ou maladie."],
+/* Ajout du 18 nov. 2026 */
+["Le tribunal lui a … une amende pour retard de déclaration.",["infligé","affligé"],0,"Infliger = imposer une peine ; affliger = causer du chagrin."],
+["L'orateur s'est montré … : son discours a duré deux heures.",["prolixe","prolifique"],0,"Prolixe = trop long, bavard ; prolifique = qui produit beaucoup."],
+["La banque centrale veut … la hausse des prix.",["enrayer","enrailler"],0,"Enrayer = stopper la progression ; enrailler = remettre sur les rails."],
+["Le stagiaire parle à son directeur avec beaucoup de …",["déférence","différence"],0,"Déférence = respect marqué ; différence = ce qui distingue."],
+["Faute de quorum, la réunion a été … à jeudi.",["reportée","rapportée"],0,"Reporter = remettre à plus tard ; rapporter = rapporter un objet, un fait, ou annuler une décision."],
+["Le client a … son contrat d'assurance.",["résilié","résigné"],0,"Résilier = mettre fin à un contrat ; se résigner = accepter à contrecœur."]
 ];

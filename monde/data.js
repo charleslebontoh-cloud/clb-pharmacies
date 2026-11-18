@@ -264,3 +264,15 @@ QZ.push(
 ["spo","Quel taekwondoïste a offert à la Côte d'Ivoire son premier titre olympique, à Rio en 2016 ?",["Cheick Sallah Cissé","Ruth Gbagbi","Seydou Gbané","Gabriel Tiacoh"],0,"Cheick Sallah Cissé gagne l'or en -80 kg à la dernière seconde de la finale ; Ruth Gbagbi y décroche le bronze."],
 ["cin","Quelle chanteuse béninoise, plusieurs fois récompensée aux Grammy Awards, a popularisé « Agolo » ?",["Angélique Kidjo","Oumou Sangaré","Aya Nakamura","Fatoumata Diawara"],0,"Angélique Kidjo, née à Ouidah, a notamment remporté le Grammy de la meilleure musique du monde en 2008 avec « Djin Djin »."]
 );
+
+/* Ajout du 18 nov. 2026 — faits vérifiés */
+QZ.push(
+["his","Quel dirigeant a conduit le Ghana (ex-Gold Coast) à l'indépendance en 1957 ?",["Jerry Rawlings","Kwame Nkrumah","John Kufuor","Kofi Busia"],1,"Kwame Nkrumah proclame l'indépendance le 6 mars 1957 ; panafricaniste, il est aussi l'un des pères de l'OUA."],
+["geo","Quel est le plus haut sommet du monde ?",["Le K2","Le Kilimandjaro","L'Everest","Le mont Blanc"],2,"L'Everest, à la frontière du Népal et de la Chine, culmine à 8 848,86 m selon la mesure commune publiée par les deux pays en 2020."],
+["sci","Combien de chromosomes compte une cellule humaine ordinaire ?",["23","46","48","64"],1,"46 chromosomes, soit 23 paires : une moitié vient de la mère, l'autre du père."],
+["art","Quel poète martiniquais a fondé le mouvement de la négritude avec Senghor et Léon-Gontran Damas ?",["Aimé Césaire","Frantz Fanon","Édouard Glissant","Patrick Chamoiseau"],0,"Aimé Césaire (1913-2008) est l'auteur du « Cahier d'un retour au pays natal » (1939)."],
+["eco","Quels trois pays ont officiellement quitté la CEDEAO en janvier 2025 ?",["Mali, Burkina Faso et Niger","Guinée, Mali et Tchad","Niger, Tchad et Soudan","Burkina Faso, Ghana et Togo"],0,"Regroupés dans l'Alliance des États du Sahel (AES), ils ont quitté la CEDEAO, fondée à Lagos en 1975, le 29 janvier 2025."],
+["afr","Quelle ville du nord ivoirien est réputée pour ses toiles peintes de Fakaha et les tisserands de Waraniéné ?",["Bouaké","Korhogo","Odienné","Ferkessédougou"],1,"Korhogo, capitale du pays sénoufo, a même donné son nom à ces toiles peintes de motifs d'animaux et de masques."],
+["spo","Quelle sprinteuse ivoirienne a remporté l'argent sur 100 m et 200 m aux Mondiaux d'athlétisme de Moscou en 2013 ?",["Marie-Josée Ta Lou","Murielle Ahouré","Ruth Gbagbi","Blessing Okagbare"],1,"Murielle Ahouré signe alors les premières médailles mondiales d'une Ivoirienne en sprint ; Marie-Josée Ta Lou brillera à son tour à partir de 2017."],
+["cin","Quel duo malien de musiciens aveugles a sorti l'album « Dimanche à Bamako » en 2004 ?",["Toumani & Sidiki","Amadou & Mariam","Bassekou & Ami","Tinariwen"],1,"Amadou Bagayoko et son épouse Mariam Doumbia, connus dans le monde entier ; Amadou est décédé en avril 2025 à 70 ans."]
+);
