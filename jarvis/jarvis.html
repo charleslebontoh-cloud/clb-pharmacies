@@ -134,6 +134,7 @@ details.settings summary { cursor: pointer; padding: 10px 14px; font-family: var
         <div class="hint" style="margin-bottom:6px">Ce que JARVIS sait de vous (dites « Jarvis, retiens que… »)</div>
         <ul class="mem" id="mem"></ul>
       </div>
+      <p class="hint">Sur iPhone : touchez « Parler », puis le micro 🎤 du clavier, dictez votre demande et touchez Envoyer. JARVIS répond à voix haute (vérifiez que le bouton silencieux du téléphone est désactivé). Pour l'appeler à la voix, créez un raccourci Siri « Jarvis » qui ouvre cette page.</p>
       <p class="hint">Sur téléphone Android, ouvrez cette page dans <b>Chrome</b> (pas dans l'app Claude) pour que le micro fonctionne. Après « Activer l'écoute », JARVIS écoute jusqu'à 60 minutes et ne réagit qu'à son nom. Les appels, SMS et WhatsApp s'ouvrent par un bouton à toucher : la page ne peut rien envoyer sans vous.</p>
     </div>
   </details>
@@ -219,6 +220,7 @@ details.settings summary { cursor: pointer; padding: 10px 14px; font-family: var
         const u = new SpeechSynthesisUtterance(text); u.lang = "fr-FR"; if (frVoice) u.voice = frVoice; u.rate = 1.03; u.pitch = .9;
         u.onend = u.onerror = () => res(); speechSynthesis.speak(u);
         setTimeout(res, Math.min(60000, 1500 + text.length * 90));
+        if (/iP(hone|ad)/.test(navigator.userAgent)) setTimeout(() => { try { speechSynthesis.resume(); } catch {} }, 250);
       } catch { res(); }
     });
   }
@@ -275,7 +277,11 @@ details.settings summary { cursor: pointer; padding: 10px 14px; font-family: var
       idleState();
     }
   }
+  let unlocked = false;
+  function unlockSpeech() { if (unlocked) return; unlocked = true; try { const u = new SpeechSynthesisUtterance(" "); u.volume = 0; speechSynthesis.speak(u); } catch {} }
   async function toggleListening() {
+    unlockSpeech();
+    if (!dict) { const t = $("txt"); t.focus(); t.placeholder = "Touchez le micro du clavier et parlez…"; return; }
     if (listening) { try { await dict.stop(); } catch {} return; }
     startListening();
   }
@@ -413,7 +419,7 @@ ${memory.length ? memory.map(m => "- " + m).join("\n") : "- (rien encore)"}`;
   $("core").onclick = toggleListening;
   $("wakeBtn").onclick = toggleListening;
   $("hushBtn").onclick = hush;
-  $("bar").onsubmit = (e) => { e.preventDefault(); const v = $("txt").value; $("txt").value = ""; ask(v); };
+  $("bar").onsubmit = (e) => { e.preventDefault(); unlockSpeech(); const v = $("txt").value; $("txt").value = ""; ask(v); };
   $("setName").value = cfg.name; $("setWake").value = cfg.wake; $("setWakeOnly").checked = cfg.wakeOnly; $("setVoice").checked = cfg.voice;
   $("setName").onchange = e => { cfg.name = e.target.value.trim() || "Monsieur"; store.set("name", cfg.name); };
   $("setWake").onchange = e => { cfg.wake = e.target.value.trim() || "Jarvis"; store.set("wake", cfg.wake); idleState(); };
@@ -427,7 +433,7 @@ ${memory.length ? memory.map(m => "- " + m).join("\n") : "- (rien encore)"}`;
     claude.use("tts").then(t => { tts = t; });
     claude.use("mcp").then(m => { mcp = m; });
     claude.use("dictation").then(d => {
-      dict = d; if (!d) { $("wakeBtn").disabled = true; $("wakeBtn").textContent = "Micro indisponible ici"; return; }
+      dict = d; if (!d) { $("wakeBtn").textContent = "Parler"; $("coreLabel").textContent = "Touchez, puis le micro 🎤 du clavier"; live.innerHTML = "<em>Touchez « Parler », puis le micro du clavier, dictez, et touchez Envoyer.</em>"; return; }
       d.onPartial(({ text }) => { if (!speaking && !busy && text) live.textContent = (buffer + " " + text).trim(); });
       d.onFinal(({ text }) => { if (text && text.trim()) onHeard(text.trim()); });
       d.onState(({ state, reason }) => {
