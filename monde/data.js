@@ -276,3 +276,15 @@ QZ.push(
 ["spo","Quelle sprinteuse ivoirienne a remporté l'argent sur 100 m et 200 m aux Mondiaux d'athlétisme de Moscou en 2013 ?",["Marie-Josée Ta Lou","Murielle Ahouré","Ruth Gbagbi","Blessing Okagbare"],1,"Murielle Ahouré signe alors les premières médailles mondiales d'une Ivoirienne en sprint ; Marie-Josée Ta Lou brillera à son tour à partir de 2017."],
 ["cin","Quel duo malien de musiciens aveugles a sorti l'album « Dimanche à Bamako » en 2004 ?",["Toumani & Sidiki","Amadou & Mariam","Bassekou & Ami","Tinariwen"],1,"Amadou Bagayoko et son épouse Mariam Doumbia, connus dans le monde entier ; Amadou est décédé en avril 2025 à 70 ans."]
 );
+
+/* Ajout du 19 nov. 2026 — faits vérifiés */
+QZ.push(
+["his","En quelle année l'Organisation de l'unité africaine (OUA) a-t-elle été fondée à Addis-Abeba ?",["1957","1960","1963","1975"],2,"L'OUA naît le 25 mai 1963 ; cette date est devenue la Journée de l'Afrique. L'Union africaine lui succède en 2002."],
+["geo","Quel royaume est entièrement entouré par le territoire de l'Afrique du Sud ?",["Le Lesotho","L'Eswatini","Le Botswana","Le Malawi"],0,"Le Lesotho est enclavé dans l'Afrique du Sud ; tout son territoire est situé à plus de 1 000 m d'altitude."],
+["sci","Quel organe produit l'insuline, l'hormone qui fait baisser le taux de sucre dans le sang ?",["Le foie","Le pancréas","La rate","Les reins"],1,"Ce sont les cellules bêta des îlots de Langerhans, dans le pancréas, qui fabriquent l'insuline."],
+["art","Quel romancier nigérian a écrit « Le monde s'effondre » (Things Fall Apart, 1958) ?",["Wole Soyinka","Ben Okri","Chinua Achebe","Ngũgĩ wa Thiong'o"],2,"Chinua Achebe (1930-2013) y raconte la vie d'un village igbo bouleversée par l'arrivée des colons et des missionnaires."],
+["eco","Combien de francs CFA (XOF) vaut 1 euro, selon la parité fixe ?",["500 F CFA","600 F CFA","655,957 F CFA","700 F CFA"],2,"La parité est fixe depuis le passage à l'euro en 1999 : 1 € = 655,957 F CFA, ce qui facilite les échanges avec la zone euro."],
+["afr","Sur quel fleuve a été construit le barrage de Soubré, la plus puissante centrale hydroélectrique de Côte d'Ivoire ?",["La Comoé","Le Bandama","Le Sassandra","Le Cavally"],2,"Mis en service en 2017, le barrage de Soubré, sur le Sassandra, a une puissance de 275 MW."],
+["spo","Quel club ivoirien a remporté la Ligue des champions de la CAF en 1998 ?",["Africa Sports","ASEC Mimosas","Stade d'Abidjan","SOA"],1,"L'ASEC Mimosas bat les Dynamos de Harare en finale et remporte la première Ligue des champions de son histoire."],
+["cin","Quel film de Philippe Lacôte (2020) se déroule à la MACA, la prison d'Abidjan ?",["Run","La Nuit des rois","Bal poussière","Le Pagne"],1,"Dans « La Nuit des rois », présenté à la Mostra de Venise 2020, un jeune détenu doit raconter une histoire jusqu'à l'aube pour survivre."]
+);
