@@ -1,6 +1,18 @@
 {
-"u": "2026-11-18T07:43Z",
+"u": "2026-11-19T07:45Z",
 "jobs": [
+{
+"t": "Underwriter & Compliance Off. (TA)",
+"c": "African Development Bank Group",
+"l": "Abidjan, Côte d’Ivoire",
+"d": "2026-11-18",
+"u": "https://ci.linkedin.com/jobs/view/underwriter-compliance-off-ta-at-african-development-bank-group-4491869716",
+"s": "LinkedIn",
+"g": "Conformité",
+"f": "2026-11-19",
+"a": "plateforme",
+"k2": 1
+},
 {
 "t": "Regional Regulatory Affairs & Compliance Specialist, Fintech (CV in English)",
 "c": "Channel VAS",
@@ -9,7 +21,7 @@
 "u": "https://ci.linkedin.com/jobs/view/regional-regulatory-affairs-compliance-specialist-fintech-cv-in-english-at-optasia-4491570362",
 "s": "LinkedIn",
 "g": "Conformité",
-"f": "2026-11-18",
+"f": "2026-11-19",
 "a": "plateforme",
 "k2": 1
 },
@@ -35,7 +47,19 @@
 "u": "https://ci.linkedin.com/jobs/view/compliance-analyst-at-luo-4489758462",
 "s": "LinkedIn",
 "g": "Conformité",
-"f": "2026-11-18",
+"f": "2026-11-19",
+"a": "plateforme",
+"k2": 1
+},
+{
+"t": "Auditeur interne principal/Auditrice interne principale",
+"c": "Société Générale Côte d'Ivoire",
+"l": "Abidjan, Côte d’Ivoire",
+"d": "2026-11-16",
+"u": "https://ci.linkedin.com/jobs/view/auditeur-interne-principal-auditrice-interne-principale-at-soci%C3%A9t%C3%A9-g%C3%A9n%C3%A9rale-c%C3%B4te-d-ivoire-4490611038",
+"s": "LinkedIn",
+"g": "Risques & contrôle",
+"f": "2026-11-19",
 "a": "plateforme",
 "k2": 1
 },
@@ -80,23 +104,6 @@
 "k2": 1
 },
 {
-"t": "STAIGIAIRES AUDIT INTERNE ET RISQUES",
-"c": "CARE International Côte d'Ivoire",
-"l": "Abidjan",
-"k": "Stage",
-"d": "2026-11-09",
-"x": "2026-11-18",
-"u": "https://emploi.educarriere.ci/offre-158167-staigiaires-audit-interne-et-risques.html",
-"s": "Educarriere",
-"g": "Risques & contrôle",
-"f": "2026-11-10",
-"m": [
-"civ.recrutement@care.org"
-],
-"a": "mail",
-"k2": 1
-},
-{
 "t": "Senior Consultant Risque Opérationnel F/H",
 "c": "Deloitte",
 "l": "Abidjan, Côte d’Ivoire",
@@ -104,7 +111,7 @@
 "u": "https://ci.linkedin.com/jobs/view/senior-consultant-risque-op%C3%A9rationnel-f-h-at-deloitte-4478449940",
 "s": "LinkedIn",
 "g": "Risques & contrôle",
-"f": "2026-11-18",
+"f": "2026-11-19",
 "a": "plateforme",
 "k2": 1
 },
@@ -125,11 +132,11 @@
 "c": "AfricSearch",
 "l": "Abidjan",
 "k": "CDI",
-"d": "2026-10-19",
+"d": "2026-10-20",
 "u": "https://africarrieres.com/cote-divoire/fr/emplois/responsable-conformite-criminalite-financiere-hf",
 "s": "Africarrières",
 "g": "Conformité",
-"f": "2026-11-18",
+"f": "2026-11-19",
 "a": "mail-cache",
 "k2": 1
 },
@@ -138,11 +145,11 @@
 "c": "AMIFA CI",
 "l": "Abidjan",
 "k": "CDI",
-"d": "2026-10-19",
+"d": "2026-10-20",
 "u": "https://africarrieres.com/cote-divoire/fr/emplois/chef-de-departement-controle-permanent-et-gestion-des-risques",
 "s": "Africarrières",
 "g": "Risques & contrôle",
-"f": "2026-11-18",
+"f": "2026-11-19",
 "a": "mail-cache",
 "k2": 1
 },
@@ -151,11 +158,11 @@
 "c": "BDU-CI",
 "l": "Abidjan",
 "k": "Stage",
-"d": "2026-10-19",
+"d": "2026-10-20",
 "u": "https://africarrieres.com/cote-divoire/fr/emplois/stagiaire-audit-interne-hf",
 "s": "Africarrières",
 "g": "Risques & contrôle",
-"f": "2026-11-18",
+"f": "2026-11-19",
 "a": "mail-cache",
 "k2": 1
 },
@@ -164,11 +171,11 @@
 "c": "Confidentiel",
 "l": "Abidjan",
 "k": "CDI",
-"d": "2026-09-19",
+"d": "2026-09-20",
 "u": "https://africarrieres.com/cote-divoire/fr/emplois/chargee-de-conformite-securite-financiere-kyc-lcb-ft-et-surveillance",
 "s": "Africarrières",
 "g": "Conformité",
-"f": "2026-11-18",
+"f": "2026-11-19",
 "a": "mail-cache",
 "k2": 1
 }
