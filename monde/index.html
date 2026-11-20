@@ -231,7 +231,7 @@ nav button.on{color:#fff}nav button.on svg.i{transform:translateY(-1px) scale(1.
 
 <div id="splash" role="button" tabindex="0">
  <img class="bgp" id="spImg" alt=""><div class="shade"></div>
- <div class="c"><img src="icon-512.png" alt=""><div class="t">CLB World</div><div class="q">Culture, voyages, football. Le monde entier, chaque jour.</div><span class="tap">Embarquer <svg class="i"><use href="#i-arrow"/></svg></span><small style="display:block;margin-top:24px;opacity:.85;font-size:11px;font-weight:600">version 7.15.0 · 19 nov. 2026</small></div>
+ <div class="c"><img src="icon-512.png" alt=""><div class="t">CLB World</div><div class="q">Culture, voyages, football. Le monde entier, chaque jour.</div><span class="tap">Embarquer <svg class="i"><use href="#i-arrow"/></svg></span><small style="display:block;margin-top:24px;opacity:.85;font-size:11px;font-weight:600">version 7.16.0 · 20 nov. 2026</small></div>
  <div class="credit" id="spCred"></div>
 <div style="display:none"></div>
 </div>
@@ -437,7 +437,8 @@ function grid(){const L=DEST.map((d,i)=>[d,i]).filter(([d])=>contF==="all"||(con
 
 /* Accueil */
 const featured=()=>CJ(WK+`feed/featured/${NOW.getFullYear()}/${pad(NOW.getMonth()+1)}/${pad(NOW.getDate())}`).catch(()=>CJ(`https://api.wikimedia.org/feed/v1/wikipedia/fr/featured/${NOW.getFullYear()}/${pad(NOW.getMonth()+1)}/${pad(NOW.getDate())}`));
-function optBtns(box,q,onAns){const L=["A","B","C","D"];q[2].forEach((o,i)=>{const b=document.createElement("button");b.className="opt";b.dataset.k=i;b.innerHTML=`<span class="k">${L[i]}</span>${esc(o)}`;b.onclick=()=>{if(box.dataset.done)return;box.dataset.done=1;const g=i===q[3];b.classList.add(g?"ok":"ko");box.querySelector(`[data-k="${q[3]}"]`).classList.add("ok");if(navigator.vibrate)navigator.vibrate(g?20:[30,40,30]);onAns&&onAns(g);const e=document.createElement("div");e.className="exp";e.innerHTML=`<b>${g?"✅ Exact !":"❌ Raté."}</b> ${esc(q[4])}`;box.appendChild(e);};box.appendChild(b);});}
+function optBtns(box,q,onAns){const L=["A","B","C","D"],n=q[2].length;/* ordre des choix décalé selon le jour : la bonne réponse n'est plus presque toujours « B » */
+ q[2].map((_,p)=>(p+DAY)%n).forEach((i,p)=>{const o=q[2][i];const b=document.createElement("button");b.className="opt";b.dataset.k=i;b.innerHTML=`<span class="k">${L[p]}</span>${esc(o)}`;b.onclick=()=>{if(box.dataset.done)return;box.dataset.done=1;const g=i===q[3];b.classList.add(g?"ok":"ko");box.querySelector(`[data-k="${q[3]}"]`).classList.add("ok");if(navigator.vibrate)navigator.vibrate(g?20:[30,40,30]);onAns&&onAns(g);const e=document.createElement("div");e.className="exp";e.innerHTML=`<b>${g?"✅ Exact !":"❌ Raté."}</b> ${esc(q[4])}`;box.appendChild(e);};box.appendChild(b);});}
 async function renderHome(){const k=DAY%DEST.length,d=DEST[k],h=$("homeDest");
  h.innerHTML=heroHTML(d,k,true);bindFav(h);obs(h);h.querySelector(".hero").onclick=()=>{di=k;LS.set("di",di);renderTrip();go("trip");};fillHero(h,d);
  const q=QZ[(DAY*7)%QZ.length];$("homeQ").innerHTML=`<div class="row" style="align-items:center;gap:10px">${T("bolt","violet")}<div><b style="font:800 16px var(--disp)">Question du jour</b><br><small style="color:var(--mu);font-weight:600">${DOM[q[0]]}</small></div></div><h4 style="font:800 19px/1.3 var(--disp);margin:12px 0 4px">${esc(q[1])}</h4><div id="hq"></div>`;

@@ -288,3 +288,15 @@ QZ.push(
 ["spo","Quel club ivoirien a remporté la Ligue des champions de la CAF en 1998 ?",["Africa Sports","ASEC Mimosas","Stade d'Abidjan","SOA"],1,"L'ASEC Mimosas bat les Dynamos de Harare en finale et remporte la première Ligue des champions de son histoire."],
 ["cin","Quel film de Philippe Lacôte (2020) se déroule à la MACA, la prison d'Abidjan ?",["Run","La Nuit des rois","Bal poussière","Le Pagne"],1,"Dans « La Nuit des rois », présenté à la Mostra de Venise 2020, un jeune détenu doit raconter une histoire jusqu'à l'aube pour survivre."]
 );
+
+/* Ajout du 20 nov. 2026 — faits vérifiés */
+QZ.push(
+["his","Dans quelle ville Johannes Gutenberg a-t-il mis au point l'imprimerie à caractères mobiles, vers 1450 ?",["Paris","Venise","Mayence","Londres"],2,"À Mayence, en Allemagne, Gutenberg combine caractères métalliques mobiles, encre grasse et presse ; sa célèbre Bible est achevée vers 1455."],
+["geo","Dans quel pays se trouve la falaise de Bandiagara, au cœur du pays dogon ?",["Le Niger","Le Burkina Faso","La Mauritanie","Le Mali"],3,"Ce grand escarpement du centre du Mali, avec ses villages dogons accrochés à la roche, est inscrit au patrimoine mondial de l'UNESCO depuis 1989."],
+["sci","Quel savant britannique a publié « De l'origine des espèces » en 1859 ?",["Charles Darwin","Isaac Newton","Louis Pasteur","Gregor Mendel"],0,"Charles Darwin y expose la sélection naturelle : les êtres vivants les mieux adaptés à leur milieu survivent et se reproduisent davantage."],
+["art","Quel peintre a réalisé « La Nuit étoilée » en 1889 ?",["Claude Monet","Vincent van Gogh","Paul Gauguin","Paul Cézanne"],1,"Vincent van Gogh l'a peinte à Saint-Rémy-de-Provence ; le tableau est aujourd'hui exposé au MoMA de New York."],
+["eco","Dans quelle ville se trouve le siège de la BCEAO, la banque centrale qui émet le franc CFA ouest-africain ?",["Dakar","Abidjan","Lomé","Ouagadougou"],0,"La Banque centrale des États de l'Afrique de l'Ouest a son siège à Dakar ; elle sert les huit pays de l'UEMOA, dont la Côte d'Ivoire."],
+["afr","Quel pape a consacré la basilique Notre-Dame-de-la-Paix de Yamoussoukro en 1990 ?",["Paul VI","Benoît XVI","Jean-Paul II","François"],2,"Jean-Paul II la consacre le 10 septembre 1990 ; voulue par Félix Houphouët-Boigny, elle compte parmi les plus grandes églises du monde."],
+["spo","Quel joueur reste, à ce jour, le seul Africain à avoir remporté le Ballon d'or ?",["Didier Drogba","Samuel Eto'o","Mohamed Salah","George Weah"],3,"Le Libérien George Weah, alors à l'AC Milan, reçoit le Ballon d'or 1995 ; il deviendra plus tard président du Liberia (2018-2024)."],
+["cin","Comment s'appelle le grand prix décerné au meilleur film du FESPACO, à Ouagadougou ?",["La Palme d'or","L'Étalon d'or de Yennenga","Le Lion d'or","L'Ours d'or"],1,"L'Étalon d'or de Yennenga, du nom de la princesse cavalière de la légende mossi, récompense le meilleur long métrage de la compétition."]
+);

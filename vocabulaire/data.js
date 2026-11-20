@@ -105,7 +105,16 @@ const DICO=[
 ["dilatoire","adj.","Qui ne sert qu'à gagner du temps, à retarder une décision ou une procédure.","L'avocat a soulevé une exception dilatoire pour repousser l'audience.","retardateur","juridique","Juridique"],
 ["anatocisme","n. m.","Fait d'ajouter au capital les intérêts échus pour qu'ils produisent eux-mêmes des intérêts.","Le contrat prévoit l'anatocisme des intérêts de retard dus depuis plus d'un an.","capitalisation des intérêts","juridique","Finance"],
 ["obséquieux","adj.","Qui se montre poli et empressé à l'excès, au point d'en devenir servile.","Son ton obséquieux devant la direction agaçait ses collègues.","servile, flagorneur, mielleux","soutenu","Caractère"],
-["corollaire","n. m.","Conséquence qui découle directement et nécessairement de ce qui précède.","La hausse des taux a pour corollaire un recul des demandes de crédit.","conséquence, suite, implication","soutenu","Communication"]
+["corollaire","n. m.","Conséquence qui découle directement et nécessairement de ce qui précède.","La hausse des taux a pour corollaire un recul des demandes de crédit.","conséquence, suite, implication","soutenu","Communication"],
+/* Ajout du 20 nov. 2026 */
+["affacturage","n. m.","Technique par laquelle une entreprise cède ses factures clients à un organisme spécialisé, qui lui en avance le montant et se charge ensuite d'encaisser les paiements.","Grâce à l'affacturage, la PME n'attend plus 90 jours pour être payée.","factoring, cession de créances","technique","Finance"],
+["découvert","n. m.","Situation d'un compte dont le solde passe en négatif, la banque avançant temporairement la différence.","Le découvert autorisé est plafonné à 200 000 F CFA.","solde débiteur, débit","courant","Finance"],
+["stagflation","n. f.","Situation économique où une croissance faible ou nulle et un chômage élevé coexistent avec une forte hausse des prix.","Les chocs pétroliers des années 1970 ont plongé plusieurs pays dans la stagflation.","stagnation et inflation","technique","Économie"],
+["préjudice","n. m.","Tort, dommage matériel, financier ou moral subi par une personne, qui peut ouvrir droit à réparation.","Le client réclame des dommages-intérêts pour le préjudice subi.","dommage, tort, lésion","juridique","Juridique"],
+["liminaire","adj.","Placé au tout début d'un texte, d'un discours ou d'une réunion, en guise d'introduction.","Dans son propos liminaire, le directeur a rappelé les objectifs de l'année.","préliminaire, introductif, d'ouverture","soutenu","Communication"],
+["sibyllin","adj.","Dont le sens est obscur, énigmatique, difficile à saisir.","Sa réponse sibylline n'a pas rassuré le comité de crédit.","énigmatique, obscur, hermétique","soutenu","Communication"],
+["magnanime","adj.","Qui montre de la grandeur d'âme, notamment en pardonnant volontiers les fautes d'autrui.","Magnanime, le chef d'agence n'a pas tenu rigueur de l'erreur à son stagiaire.","généreux, clément, indulgent","soutenu","Caractère"],
+["pusillanime","adj.","Qui manque d'audace et de courage, qui recule devant la moindre décision ou le moindre risque.","Une direction pusillanime laisse passer les bonnes occasions.","timoré, craintif, frileux","soutenu","Caractère"]
 ];
 
 /* Orthographe : [bonne graphie, [variantes fautives], astuce, [graphies aussi admises (facultatif)]] */
