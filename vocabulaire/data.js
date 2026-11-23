@@ -114,7 +114,15 @@ const DICO=[
 ["liminaire","adj.","Placé au tout début d'un texte, d'un discours ou d'une réunion, en guise d'introduction.","Dans son propos liminaire, le directeur a rappelé les objectifs de l'année.","préliminaire, introductif, d'ouverture","soutenu","Communication"],
 ["sibyllin","adj.","Dont le sens est obscur, énigmatique, difficile à saisir.","Sa réponse sibylline n'a pas rassuré le comité de crédit.","énigmatique, obscur, hermétique","soutenu","Communication"],
 ["magnanime","adj.","Qui montre de la grandeur d'âme, notamment en pardonnant volontiers les fautes d'autrui.","Magnanime, le chef d'agence n'a pas tenu rigueur de l'erreur à son stagiaire.","généreux, clément, indulgent","soutenu","Caractère"],
-["pusillanime","adj.","Qui manque d'audace et de courage, qui recule devant la moindre décision ou le moindre risque.","Une direction pusillanime laisse passer les bonnes occasions.","timoré, craintif, frileux","soutenu","Caractère"]
+["pusillanime","adj.","Qui manque d'audace et de courage, qui recule devant la moindre décision ou le moindre risque.","Une direction pusillanime laisse passer les bonnes occasions.","timoré, craintif, frileux","soutenu","Caractère"],
+["subsidiaire","adj.","Qui ne vient qu'en second lieu, en complément ou en remplacement de l'élément principal.","À titre subsidiaire, l'avocat demande un délai de paiement.","accessoire, secondaire","juridique","Juridique"],
+["cautionnement","n. m.","Contrat par lequel une personne s'engage à payer la dette d'un débiteur si celui-ci ne la règle pas.","Le prêt est garanti par le cautionnement solidaire du gérant.","caution, garantie","technique","Finance"],
+["ambivalent","adj.","Qui présente deux aspects, deux sentiments ou deux sens opposés en même temps.","Sa réaction face à la fusion reste ambivalente.","partagé, ambigu","soutenu","Caractère"],
+["consensuel","adj.","Qui recherche ou recueille l'accord du plus grand nombre.","Le comité a retenu une solution consensuelle.","fédérateur, conciliant","courant","Communication"],
+["éphémère","adj.","Qui ne dure que très peu de temps.","Cette hausse des ventes n'a été qu'éphémère.","passager, fugace","courant","Général"],
+["déflation","n. f.","Baisse générale et durable du niveau des prix dans une économie.","La déflation pousse les ménages à repousser leurs achats.","baisse des prix","technique","Économie"],
+["récession","n. f.","Recul de l'activité économique, souvent mesuré par plusieurs trimestres de baisse du PIB.","Le pays est entré en récession au deuxième semestre.","ralentissement, crise","technique","Économie"],
+["intransigeant","adj.","Qui refuse tout compromis et ne cède sur rien.","Le négociateur s'est montré intransigeant sur les délais.","inflexible, intraitable","courant","Caractère"],
 ];
 
 /* Orthographe : [bonne graphie, [variantes fautives], astuce, [graphies aussi admises (facultatif)]] */
