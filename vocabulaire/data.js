@@ -123,6 +123,14 @@ const DICO=[
 ["déflation","n. f.","Baisse générale et durable du niveau des prix dans une économie.","La déflation pousse les ménages à repousser leurs achats.","baisse des prix","technique","Économie"],
 ["récession","n. f.","Recul de l'activité économique, souvent mesuré par plusieurs trimestres de baisse du PIB.","Le pays est entré en récession au deuxième semestre.","ralentissement, crise","technique","Économie"],
 ["intransigeant","adj.","Qui refuse tout compromis et ne cède sur rien.","Le négociateur s'est montré intransigeant sur les délais.","inflexible, intraitable","courant","Caractère"],
+["abroger","v. tr.","Supprimer officiellement un texte (loi, décret, règlement) pour qu'il cesse de s'appliquer.","Le décret de 2015 a été abrogé par la nouvelle loi.","annuler, supprimer","juridique","Juridique"],
+["ratifier","v. tr.","Approuver formellement un acte ou un traité déjà signé, pour lui donner pleine valeur.","L'Assemblée nationale a ratifié l'accord de coopération.","entériner, valider","juridique","Juridique"],
+["dividende","n. m.","Part du bénéfice d'une société versée à chaque actionnaire, en général chaque année.","La société cotée à la BRVM a versé un dividende de 500 F par action.","coupon, rémunération","courant","Finance"],
+["inflation","n. f.","Hausse générale et durable des prix, qui fait perdre de la valeur à la monnaie.","La BCEAO relève son taux directeur pour freiner l'inflation.","hausse des prix, renchérissement","courant","Économie"],
+["concis","adj.","Qui dit l'essentiel en peu de mots, sans détails inutiles.","Merci de rédiger un rapport concis d'une page.","bref, laconique","courant","Communication"],
+["éloquent","adj.","Qui sait convaincre ou émouvoir par sa parole ; qui en dit long sans qu'on ait besoin de l'expliquer.","Les chiffres du trimestre sont éloquents : les ventes ont doublé.","convaincant, parlant","soutenu","Communication"],
+["intègre","adj.","D'une honnêteté sans faille, qu'on ne peut pas corrompre.","Un gestionnaire intègre refuse tout cadeau de ses clients.","honnête, incorruptible","courant","Caractère"],
+["opiniâtre","adj.","Qui poursuit son but avec ténacité, sans se décourager.","À force d'efforts opiniâtres, elle a obtenu son diplôme.","tenace, persévérant","soutenu","Caractère"]
 ];
 
 /* Orthographe : [bonne graphie, [variantes fautives], astuce, [graphies aussi admises (facultatif)]] */
@@ -207,6 +215,9 @@ const PARO=[
 ["L'orateur s'est montré … : son discours a duré deux heures.",["prolixe","prolifique"],0,"Prolixe = trop long, bavard ; prolifique = qui produit beaucoup."],
 ["La banque centrale veut … la hausse des prix.",["enrayer","enrailler"],0,"Enrayer = stopper la progression ; enrailler = remettre sur les rails."],
 ["Le stagiaire parle à son directeur avec beaucoup de …",["déférence","différence"],0,"Déférence = respect marqué ; différence = ce qui distingue."],
-["Faute de quorum, la réunion a été … à jeudi.",["reportée","rapportée"],0,"Reporter = remettre à plus tard ; rapporter = rapporter un objet, un fait, ou annuler une décision."],
-["Le client a … son contrat d'assurance.",["résilié","résigné"],0,"Résilier = mettre fin à un contrat ; se résigner = accepter à contrecœur."]
+["Faute de quorum, la réunion a été … à jeudi.",["reportée","rapportée"],0,"Reporter = remettre à plus tard ; rapporter = ramener un objet, relater un fait, ou annuler une décision."],
+["Le client a … son contrat d'assurance.",["résilié","résigné"],0,"Résilier = mettre fin à un contrat ; se résigner = accepter à contrecœur."],
+["Pour justifier son retard, il a … une panne de voiture.",["invoqué","évoqué"],0,"Invoquer = avancer comme justification ou appeler à l'aide ; évoquer = mentionner, rappeler à l'esprit."],
+["Le jardin de la villa offre une végétation …",["luxuriante","luxueuse"],0,"Luxuriant = qui pousse en abondance ; luxueux = qui montre du luxe, coûteux."],
+["L'auditeur a … une erreur dans le bilan.",["décelé","descellé"],0,"Déceler = découvrir ce qui était caché ; desceller = détacher ce qui était scellé."]
 ];
