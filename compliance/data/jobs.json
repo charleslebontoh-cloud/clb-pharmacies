@@ -1,5 +1,5 @@
 {
-"u": "2026-11-24T07:50Z",
+"u": "2026-11-25T07:51Z",
 "jobs": [
 {
 "t": "Analyste Senior des Risques de Crédit",
@@ -9,7 +9,7 @@
 "u": "https://ci.linkedin.com/jobs/view/analyste-senior-des-risques-de-cr%C3%A9dit-at-soci%C3%A9t%C3%A9-g%C3%A9n%C3%A9rale-c%C3%B4te-d-ivoire-4493625656",
 "s": "LinkedIn",
 "g": "Risques & contrôle",
-"f": "2026-11-24",
+"f": "2026-11-25",
 "a": "plateforme",
 "k2": 1
 },
@@ -21,7 +21,10 @@
 "u": "https://ci.linkedin.com/jobs/view/prenez-votre-envol-avec-nous%E2%80%A6-nous-recrutons-un-agent-charg%C3%A9-de-l-evaluation-des-risques-h-f-at-air-c%C3%B4te-d-ivoire-4492593876",
 "s": "LinkedIn",
 "g": "Risques & contrôle",
-"f": "2026-11-23"
+"f": "2026-11-25",
+"x": "2026-12-06",
+"a": "plateforme",
+"k2": 1
 },
 {
 "t": "Underwriter & Compliance Off. (TA)",
@@ -31,7 +34,7 @@
 "u": "https://ci.linkedin.com/jobs/view/underwriter-compliance-off-ta-at-african-development-bank-group-4491869716",
 "s": "LinkedIn",
 "g": "Conformité",
-"f": "2026-11-24",
+"f": "2026-11-25",
 "a": "plateforme",
 "k2": 1
 },
@@ -43,7 +46,7 @@
 "u": "https://ci.linkedin.com/jobs/view/regional-regulatory-affairs-compliance-specialist-fintech-cv-in-english-at-optasia-4491570362",
 "s": "LinkedIn",
 "g": "Conformité",
-"f": "2026-11-24",
+"f": "2026-11-25",
 "a": "plateforme",
 "k2": 1
 },
@@ -55,9 +58,7 @@
 "u": "https://ci.linkedin.com/jobs/view/compliance-analyst-at-luo-4489758462",
 "s": "LinkedIn",
 "g": "Conformité",
-"f": "2026-11-24",
-"a": "plateforme",
-"k2": 1
+"f": "2026-11-25"
 },
 {
 "t": "Auditeur interne principal/Auditrice interne principale",
@@ -67,7 +68,9 @@
 "u": "https://ci.linkedin.com/jobs/view/auditeur-interne-principal-auditrice-interne-principale-at-soci%C3%A9t%C3%A9-g%C3%A9n%C3%A9rale-c%C3%B4te-d-ivoire-4490611038",
 "s": "LinkedIn",
 "g": "Risques & contrôle",
-"f": "2026-11-24"
+"f": "2026-11-25",
+"a": "plateforme",
+"k2": 1
 },
 {
 "t": "Chef de Mission Audit Interne",
@@ -89,9 +92,7 @@
 "u": "https://ci.linkedin.com/jobs/view/senior-consultant-risque-op%C3%A9rationnel-f-h-at-deloitte-4478449940",
 "s": "LinkedIn",
 "g": "Risques & contrôle",
-"f": "2026-11-24",
-"a": "plateforme",
-"k2": 1
+"f": "2026-11-25"
 },
 {
 "t": "Agent d'Inspection & Conformité - Bilingue",
@@ -110,11 +111,11 @@
 "c": "AfricSearch",
 "l": "Abidjan",
 "k": "CDI",
-"d": "2026-10-25",
+"d": "2026-10-26",
 "u": "https://africarrieres.com/cote-divoire/fr/emplois/responsable-conformite-criminalite-financiere-hf",
 "s": "Africarrières",
 "g": "Conformité",
-"f": "2026-11-24",
+"f": "2026-11-25",
 "a": "mail-cache",
 "k2": 1
 },
@@ -123,11 +124,11 @@
 "c": "AMIFA CI",
 "l": "Abidjan",
 "k": "CDI",
-"d": "2026-10-25",
+"d": "2026-10-26",
 "u": "https://africarrieres.com/cote-divoire/fr/emplois/chef-de-departement-controle-permanent-et-gestion-des-risques",
 "s": "Africarrières",
 "g": "Risques & contrôle",
-"f": "2026-11-24",
+"f": "2026-11-25",
 "a": "mail-cache",
 "k2": 1
 },
@@ -136,11 +137,11 @@
 "c": "BDU-CI",
 "l": "Abidjan",
 "k": "Stage",
-"d": "2026-10-25",
+"d": "2026-10-26",
 "u": "https://africarrieres.com/cote-divoire/fr/emplois/stagiaire-audit-interne-hf",
 "s": "Africarrières",
 "g": "Risques & contrôle",
-"f": "2026-11-24",
+"f": "2026-11-25",
 "a": "mail-cache",
 "k2": 1
 }
