@@ -130,7 +130,16 @@ const DICO=[
 ["concis","adj.","Qui dit l'essentiel en peu de mots, sans détails inutiles.","Merci de rédiger un rapport concis d'une page.","bref, laconique","courant","Communication"],
 ["éloquent","adj.","Qui sait convaincre ou émouvoir par sa parole ; qui en dit long sans qu'on ait besoin de l'expliquer.","Les chiffres du trimestre sont éloquents : les ventes ont doublé.","convaincant, parlant","soutenu","Communication"],
 ["intègre","adj.","D'une honnêteté sans faille, qu'on ne peut pas corrompre.","Un gestionnaire intègre refuse tout cadeau de ses clients.","honnête, incorruptible","courant","Caractère"],
-["opiniâtre","adj.","Qui poursuit son but avec ténacité, sans se décourager.","À force d'efforts opiniâtres, elle a obtenu son diplôme.","tenace, persévérant","soutenu","Caractère"]
+["opiniâtre","adj.","Qui poursuit son but avec ténacité, sans se décourager.","À force d'efforts opiniâtres, elle a obtenu son diplôme.","tenace, persévérant","soutenu","Caractère"],
+["plus-value","n. f.","Gain obtenu quand on revend un bien ou un titre plus cher qu'on ne l'a acheté.","En revendant ses actions, il a réalisé une plus-value de 300 000 F.","gain, bénéfice","courant","Finance"],
+["dévaluation","n. f.","Décision officielle de baisser la valeur d'une monnaie par rapport aux autres.","En janvier 1994, la dévaluation a divisé par deux la valeur du franc CFA face au franc français.","dépréciation","technique","Économie"],
+["subvention","n. f.","Aide financière versée par l'État ou un organisme public pour soutenir une activité.","La coopérative a reçu une subvention pour acheter des séchoirs.","aide, allocation","courant","Économie"],
+["productivité","n. f.","Quantité produite rapportée aux moyens employés (temps, personnel, machines).","La nouvelle machine a doublé la productivité de l'atelier.","rendement, efficacité","courant","Économie"],
+["jurisprudence","n. f.","Ensemble des décisions déjà rendues par les tribunaux, qui guide la façon de juger des cas semblables.","L'avocat s'appuie sur la jurisprudence de la Cour suprême.","précédents","juridique","Juridique"],
+["litige","n. m.","Désaccord entre deux parties qui peut être porté devant un juge ou un arbitre.","Le litige avec le fournisseur a été réglé à l'amiable.","différend, contentieux","courant","Juridique"],
+["équivoque","adj.","Qui peut se comprendre de plusieurs façons et laisse donc un doute.","Sa réponse équivoque n'a rassuré personne.","ambigu, flou","soutenu","Communication"],
+["affable","adj.","Qui accueille les autres avec douceur et amabilité.","Le directeur, très affable, a pris le temps de saluer chaque client.","aimable, avenant","soutenu","Caractère"],
+["sagace","adj.","Qui comprend vite et juge avec finesse.","Une analyste sagace a repéré l'anomalie dans les comptes.","perspicace, clairvoyant","soutenu","Caractère"]
 ];
 
 /* Orthographe : [bonne graphie, [variantes fautives], astuce, [graphies aussi admises (facultatif)]] */
