@@ -73,10 +73,10 @@ nav.dock button[aria-selected=true]{color:#1c1105;background:linear-gradient(180
 <body>
 <canvas id="scene" aria-hidden="true"></canvas>
 <div class="orbcss" aria-hidden="true"></div>
-<img class="holoimg" src="https://cdn.creativeclaw.co/u/79610596/images/eee14c47-2662-4e08-9c9f-18bc3ef4eadc.png" alt="" aria-hidden="true">
+<img class="holoimg" src="https://cdn.creativeclaw.co/u/79610596/images/c5282a86-c6ba-4986-b9f5-3611e4c24690.png" alt="" aria-hidden="true">
 
 <div class="app">
-  <header><h1>CLB VOIX</h1><div class="ver">Version 1.4.0 · TITAN</div></header>
+  <header><h1>CLB VOIX</h1><div class="ver">Version 1.5.0 · TITAN</div></header>
 
   <!-- 1 PRÉPARER -->
   <section class="view compact" id="v-prep">
@@ -184,7 +184,7 @@ import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 
-const HOLO_URL = "https://cdn.creativeclaw.co/u/79610596/images/eee14c47-2662-4e08-9c9f-18bc3ef4eadc.png";
+const HOLO_URL = "https://cdn.creativeclaw.co/u/79610596/images/c5282a86-c6ba-4986-b9f5-3611e4c24690.png";
 const S = window.TITAN3D = window.TITAN3D || { level: 0, mode: "idle", compact: false };
 try {
   const canvas = document.getElementById("scene");
@@ -221,7 +221,7 @@ try {
     fragmentShader: `uniform float uTime; uniform float uLvl; uniform vec3 uCol; varying vec2 vUv; varying vec3 vN; varying vec3 vV;
       void main(){ float h=vUv.y; float edge=pow(1.0-abs(dot(vN,vV)),1.5); float fade=pow(1.0-h,1.6);
       float rays=0.6+0.4*sin(vUv.x*60.0+uTime*1.5)*sin(vUv.x*23.0-uTime);
-      float a=fade*(0.10+0.35*edge)*rays*(0.8+uLvl*1.2); gl_FragColor=vec4(uCol*a,a); }`
+      float a=fade*(0.18+0.55*edge)*rays*(0.9+uLvl*1.2); gl_FragColor=vec4(uCol*a,a); }`
   });
   const cone = new THREE.Mesh(new THREE.CylinderGeometry(1.55, 0.42, 3.2, 96, 1, true), coneMat);
   cone.position.y = -0.24; rig.add(cone);
@@ -242,12 +242,12 @@ try {
         float scan=0.94+0.06*sin(uv.y*620.0-uTime*5.0);
         float flick=0.97+0.03*sin(uTime*19.0);
         vec3 col=c.rgb*uTint*scan*flick + vec3(0.35,0.65,1.0)*(e*1.6+0.06+uLvl*0.18)*c.a;
-        float bottom=smoothstep(0.02,0.18,uv.y);
+        float bottom=smoothstep(0.0,0.08,uv.y);
         gl_FragColor=vec4(col, c.a*0.94*bottom);
       }`
   });
   const holo = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 3.2), holoMat);
-  holo.position.y = 0.05; holo.visible = false; rig.add(holo);
+  holo.position.y = -0.22; holo.visible = false; rig.add(holo);
   const loader = new THREE.TextureLoader(); loader.setCrossOrigin("anonymous");
   loader.load(HOLO_URL, t => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; holoU.uTex.value = t; holo.visible = true; }, undefined, () => { document.body.classList.add("holo-img"); });
 
@@ -305,7 +305,7 @@ try {
     coneMat.uniforms.uCol.value.lerp(S.mode === "talk" ? VIOLET : BLUE, 0.05);
     if (!reduce && Math.random() < 0.004) glitchT = 0.25;
     glitchT = Math.max(0, glitchT - 0.016); holoU.uGlitch.value = glitchT > 0 ? 1 : 0;
-    holo.position.y = 0.05 + (reduce ? 0 : Math.sin(t * 1.1) * 0.04);
+    holo.position.y = -0.22 + (reduce ? 0 : Math.sin(t * 1.1) * 0.02);
     panL.position.y = 0.75 + (reduce ? 0 : Math.sin(t * 0.9) * 0.06); panR.position.y = 0.95 + (reduce ? 0 : Math.sin(t * 0.8 + 1) * 0.06);
     glowRing.material.color.setHSL(0.58 - lvl * 0.08, 1, 0.65 + lvl * 0.2);
     under.intensity = 16 + lvl * 50;
