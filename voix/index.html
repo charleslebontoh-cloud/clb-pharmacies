@@ -11,62 +11,97 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
-/* VOICE: premium, calm, a little cinematic.
-   IDEA: a titanium-and-gold core floating in the dark: the agent's "heart" that every tab orbits.
-   PICTURE: realistic 3D core (three.js, PBR, bloom) that reacts to the voice.
-   COLOUR and TYPE: near-black, champagne gold, cool rim blue; Sora.
-   LAYOUT: 3D stage behind glass panels; tabs in a bottom dock on phone. */
-:root{color-scheme:dark;--ink:#f4efe6;--soft:#b9b2a6;--mute:#8f887d;--gold:#e8b25c;--glass:rgba(16,18,24,.62);--edge:rgba(255,220,170,.16);--ok:#3fd68a;--sky:#7cc8ff;--bad:#ff8a7a}
+/* VOICE: cinematic sci-fi console, alive and playful.
+   IDEA: a holographic command deck: TITAN stands in his light beam, the controls float around him like HUD glass.
+   PICTURE: the 3D hologram with HUD brackets, live voice waveform, emoji bursts.
+   COLOUR and TYPE: deep space navy, neon cyan, electric violet, hot pink spark, gold for the brand; Sora.
+   LAYOUT: hero stage on top, round mic core, emoji action grid, glass cards; dock at the bottom. */
+:root{color-scheme:dark;--ink:#eef4ff;--soft:#a9b6d6;--mute:#7d89a8;--gold:#f3c26b;--cyan:#3ee8ff;--violet:#9b6bff;--pink:#ff5fd2;--glass:rgba(12,16,34,.58);--edge:rgba(120,200,255,.18);--ok:#3dffa8;--sky:#7cc8ff;--bad:#ff7a8a}
 *{box-sizing:border-box;min-width:0}
-html,body{margin:0;min-height:100%;background:#05070a;color:var(--ink);font:16px/1.5 Sora,system-ui,sans-serif;overflow-x:clip}
+html,body{margin:0;min-height:100%;background:#040612;color:var(--ink);font:16px/1.5 Sora,system-ui,sans-serif;overflow-x:clip}
 #scene{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0}
-.orbcss{display:none;position:fixed;left:50%;top:30%;width:min(56vw,240px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at 34% 28%,#fff3d6 0,#e8b25c 22%,#7a4a18 60%,#1a0e04 100%);box-shadow:0 0 80px rgba(232,178,92,.35)}
-.fallback .orbcss{display:none}
-.holoimg{display:none;mix-blend-mode:screen;position:fixed;left:50%;top:6%;height:44vh;transform:translateX(-50%);pointer-events:none;z-index:0;filter:drop-shadow(0 0 30px rgba(120,170,255,.5))}
+.orbcss{display:none}
+.holoimg{display:none;mix-blend-mode:screen;position:fixed;left:50%;top:9%;height:40vh;transform:translateX(-50%);pointer-events:none;z-index:0;filter:drop-shadow(0 0 30px rgba(62,232,255,.45))}
 .fallback .holoimg,.holo-img .holoimg{display:block}
-.app{position:relative;z-index:1;min-height:100dvh;display:flex;flex-direction:column;padding:max(18px,env(safe-area-inset-top)) 16px calc(96px + env(safe-area-inset-bottom))}
-header{text-align:center;margin-bottom:8px}
-h1{margin:0;font-weight:800;font-size:clamp(28px,7vw,44px);letter-spacing:.28em;padding-left:.28em;line-height:1;background:linear-gradient(180deg,#fff6e4 0%,#e8b25c 55%,#8a5a22 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 18px rgba(232,178,92,.35))}
-.ver{font-size:12px;color:var(--mute);margin-top:6px;font-weight:300}
+.app{position:relative;z-index:1;min-height:100dvh;display:flex;flex-direction:column;padding:max(16px,env(safe-area-inset-top)) 16px calc(104px + env(safe-area-inset-bottom))}
+header{text-align:center;margin-bottom:4px}
+h1{margin:0;font-weight:800;font-size:clamp(26px,7vw,42px);letter-spacing:.3em;padding-left:.3em;line-height:1;background:linear-gradient(100deg,#fff 0%,var(--cyan) 25%,var(--violet) 50%,var(--pink) 70%,#fff 90%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 18px rgba(62,232,255,.35));animation:shine 7s linear infinite}
+@keyframes shine{to{background-position:-250% 0}}
+.ver{font-size:11px;color:var(--mute);margin-top:6px;letter-spacing:.18em;text-transform:none}
 .view{display:none;flex:1;flex-direction:column;width:min(100%,640px);margin:0 auto}
-.view.on{display:flex}
-.spacer{flex:1;min-height:min(46vh,380px)}
-.view.compact .spacer{min-height:min(26vh,200px);flex:0}
-.panel{border:1px solid var(--edge);border-radius:22px;padding:18px;background:var(--glass);backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);margin-top:12px;box-shadow:0 20px 50px rgba(0,0,0,.35)}
-h2{font-size:19px;margin:0 0 10px;font-weight:600}
+.view.on{display:flex;animation:rise .45s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}}
+.spacer{flex:1;min-height:min(50vh,420px)}
+.view.compact .spacer{min-height:min(24vh,190px);flex:0}
+.panel{position:relative;border-radius:22px;padding:18px;background:linear-gradient(160deg,rgba(30,40,80,.55),rgba(10,12,28,.62));backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);margin-top:12px;box-shadow:0 20px 50px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.08)}
+.panel::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;background:linear-gradient(135deg,rgba(62,232,255,.55),rgba(155,107,255,.15) 40%,rgba(255,95,210,.45));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+h2{font-size:18px;margin:0 0 10px;font-weight:600;display:flex;align-items:center;gap:8px}
+h2 .e{font-size:20px;filter:drop-shadow(0 0 8px rgba(62,232,255,.5))}
 p{margin:0}
 .note{font-size:13px;color:var(--soft);margin-top:8px}
 label{display:block;font-weight:600;font-size:14px;margin:14px 0 6px}
 label small{font-weight:300;color:var(--mute)}
-input,textarea,select{width:100%;font:16px Sora,sans-serif;color:var(--ink);background:rgba(0,0,0,.35);border:1px solid var(--edge);border-radius:14px;padding:12px 14px;min-height:46px}
+input,textarea,select{width:100%;font:16px Sora,sans-serif;color:var(--ink);background:rgba(4,8,24,.6);border:1px solid var(--edge);border-radius:14px;padding:12px 14px;min-height:46px}
 textarea{min-height:84px;resize:vertical}
-input:focus,textarea:focus,select:focus,button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-.btn{font:600 17px Sora,sans-serif;min-height:58px;width:100%;border:1px solid rgba(255,230,190,.45);border-radius:29px;cursor:pointer;color:#1c1105;background:linear-gradient(180deg,#ffe2a8 0%,#e8b25c 45%,#b07a32 100%);box-shadow:0 12px 30px rgba(232,178,92,.25),inset 0 1px 0 rgba(255,255,255,.7),inset 0 -3px 8px rgba(80,40,0,.35);transition:transform .15s;margin-top:14px}
-.btn:active{transform:scale(.98)}
-.btn.alt{background:rgba(255,255,255,.06);color:var(--ink);border-color:var(--edge);box-shadow:none}
-.btn.stop{color:#ffe9e9;background:linear-gradient(180deg,#7a2626,#3d1010);border-color:rgba(255,150,150,.35);box-shadow:0 12px 30px rgba(180,40,40,.3)}
+input:focus,textarea:focus,select:focus,button:focus-visible,a:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.btn{font:600 17px Sora,sans-serif;min-height:58px;width:100%;border:0;border-radius:29px;cursor:pointer;color:#06101f;background:linear-gradient(100deg,var(--cyan),#8fb8ff 45%,var(--violet));box-shadow:0 10px 34px rgba(62,232,255,.3),inset 0 1px 0 rgba(255,255,255,.6);transition:transform .15s;margin-top:14px}
+.btn:active{transform:scale(.97)}
+.btn.alt{background:rgba(255,255,255,.06);color:var(--ink);border:1px solid var(--edge);box-shadow:none}
+.btn.stop{color:#fff;background:linear-gradient(100deg,#ff4d6d,#b4245a);box-shadow:0 10px 34px rgba(255,77,109,.35)}
 .btn:disabled{opacity:.5}
-.status{text-align:center;font-weight:600;font-size:16px;min-height:24px;text-shadow:0 2px 10px #000}
-.loc{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;align-items:center;font-size:13px;color:var(--soft)}
+.status{text-align:center;font-weight:600;font-size:15px;min-height:22px;text-shadow:0 0 12px rgba(62,232,255,.6)}
+/* HUD */
+.hud{position:relative;display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:6px}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:6px 11px;border-radius:999px;background:rgba(8,14,34,.6);border:1px solid var(--edge);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);white-space:nowrap}
+.pill .live{width:8px;height:8px;border-radius:50%;background:var(--mute)}
+.pill .live.on{background:var(--ok);box-shadow:0 0 10px var(--ok);animation:blink 1.4s infinite}
+@keyframes blink{50%{opacity:.35}}
+.wave{display:flex;align-items:center;justify-content:center;gap:4px;height:38px;margin:4px auto 0}
+.wave i{display:block;width:4px;height:6px;border-radius:3px;background:linear-gradient(var(--cyan),var(--violet));box-shadow:0 0 8px rgba(62,232,255,.6);transition:height .08s}
+/* mic core */
+.core{position:relative;width:118px;height:118px;margin:8px auto 4px;border-radius:50%;border:0;cursor:pointer;display:grid;place-items:center;font-size:44px;color:#fff;background:radial-gradient(circle at 35% 30%,#9ff4ff 0,#3ee8ff 22%,#5b6bff 55%,#2a0f6b 100%);box-shadow:0 0 0 6px rgba(62,232,255,.12),0 0 40px rgba(62,232,255,.55),inset 0 -10px 30px rgba(20,0,60,.6),inset 0 6px 16px rgba(255,255,255,.5);transition:transform .2s}
+.core:active{transform:scale(.95)}
+.core::before,.core::after{content:"";position:absolute;inset:-10px;border-radius:50%;border:2px solid rgba(62,232,255,.5);animation:ring 2.4s ease-out infinite}
+.core::after{animation-delay:1.2s;border-color:rgba(155,107,255,.5)}
+@keyframes ring{from{transform:scale(.9);opacity:.9}to{transform:scale(1.55);opacity:0}}
+.core.stop{background:radial-gradient(circle at 35% 30%,#ffd0da 0,#ff4d6d 30%,#9b1747 70%,#3a0518 100%);box-shadow:0 0 0 6px rgba(255,77,109,.15),0 0 46px rgba(255,77,109,.6),inset 0 6px 16px rgba(255,255,255,.4)}
+.core.stop::before,.core.stop::after{border-color:rgba(255,77,109,.6)}
+.core-label{text-align:center;font-size:13px;color:var(--soft);margin-bottom:4px}
+/* quick actions */
+.acts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.act{position:relative;border:0;cursor:pointer;color:var(--ink);font:600 13px Sora,sans-serif;min-height:86px;border-radius:18px;padding:10px 6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:linear-gradient(160deg,rgba(40,56,110,.6),rgba(14,16,40,.7));box-shadow:0 10px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.1);transition:transform .15s,box-shadow .2s}
+.act .e{font-size:30px;line-height:1;filter:drop-shadow(0 4px 10px rgba(0,0,0,.4));transition:transform .2s}
+.act:hover .e,.act:active .e{transform:scale(1.18) rotate(-6deg)}
+.act:active{transform:scale(.96);box-shadow:0 0 24px rgba(62,232,255,.45)}
+.act::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;background:linear-gradient(135deg,rgba(62,232,255,.5),transparent 50%,rgba(255,95,210,.4));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+.loc{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;align-items:center;font-size:13px;color:var(--soft)}
+.loc .e{font-size:26px;grid-row:span 2}
 .loc b{color:var(--ink);font-size:15px;font-weight:600}
-.loc span:last-child{grid-column:2}
-.dot{width:10px;height:10px;border-radius:50%;background:#555}
-.dot.on{background:var(--ok);box-shadow:0 0 12px var(--ok)}
+.dot{display:none}
+.dot.on + b{color:var(--ok)}
 .log{max-height:300px;overflow:auto;display:flex;flex-direction:column;gap:8px;margin-top:10px}
 .msg{padding:9px 13px;border-radius:14px;max-width:90%;font-size:14px}
 .msg b{display:block;font-size:12px;color:var(--mute);font-weight:600}
-.msg.ai{background:rgba(232,178,92,.16);align-self:flex-end}
-.msg.user{background:rgba(124,200,255,.13);align-self:flex-start}
+.msg.ai{background:rgba(155,107,255,.18);align-self:flex-end}
+.msg.user{background:rgba(62,232,255,.12);align-self:flex-start}
 .msg.sys{align-self:center;font-size:12px;color:var(--mute)}
 ol{padding-left:20px;margin:0}li{margin:7px 0}
-.warn{border-left:3px solid var(--gold);padding:8px 12px;background:rgba(232,178,92,.08);border-radius:8px;font-size:13px;margin-top:12px;color:var(--soft)}
+.warn{border-left:3px solid var(--pink);padding:8px 12px;background:rgba(255,95,210,.08);border-radius:8px;font-size:13px;margin-top:12px;color:var(--soft)}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-.chip{font-size:13px;border:1px solid var(--edge);border-radius:999px;padding:6px 12px;color:var(--soft)}
+.chip{font-size:13px;border:1px solid var(--edge);border-radius:999px;padding:7px 12px;color:var(--ink);background:rgba(62,232,255,.06)}
+.apps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:6px}
+.app-i{display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none;color:var(--ink);font-size:12px;font-weight:600;text-align:center}
+.app-i .ic{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;font-size:28px;background:linear-gradient(145deg,rgba(62,232,255,.25),rgba(155,107,255,.3));box-shadow:0 8px 20px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.25)}
 .row{display:flex;gap:10px}.row>*{flex:1}
-nav.dock{position:fixed;z-index:3;left:50%;bottom:max(12px,env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;gap:4px;padding:6px;border-radius:26px;background:rgba(12,14,19,.78);border:1px solid var(--edge);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);width:min(calc(100% - 24px),520px)}
-nav.dock button{flex:1;border:0;background:transparent;color:var(--soft);font:600 12px Sora,sans-serif;min-height:52px;border-radius:20px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
-nav.dock button svg{width:20px;height:20px}
-nav.dock button[aria-selected=true]{color:#1c1105;background:linear-gradient(180deg,#ffe2a8,#e8b25c)}
+nav.dock{position:fixed;z-index:3;left:50%;bottom:max(12px,env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;gap:4px;padding:6px;border-radius:26px;background:rgba(8,12,30,.78);border:1px solid var(--edge);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);width:min(calc(100% - 24px),520px);box-shadow:0 10px 40px rgba(0,0,0,.5)}
+nav.dock button{flex:1;border:0;background:transparent;color:var(--soft);font:600 11px Sora,sans-serif;min-height:54px;border-radius:20px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+nav.dock button .e{font-size:20px;line-height:1}
+nav.dock button[aria-selected=true]{color:#06101f;background:linear-gradient(100deg,var(--cyan),var(--violet));box-shadow:0 0 20px rgba(62,232,255,.45)}
+/* floating emoji reactions */
+.fx{position:fixed;inset:0;pointer-events:none;z-index:5;overflow:hidden}
+.fx span{position:absolute;bottom:30%;font-size:34px;animation:fly 2.6s ease-out forwards;filter:drop-shadow(0 6px 12px rgba(0,0,0,.5))}
+@keyframes fly{0%{transform:translateY(0) scale(.4);opacity:0}15%{opacity:1;transform:translateY(-30px) scale(1.15)}100%{transform:translateY(-55vh) scale(.9) rotate(var(--r));opacity:0}}
+@media(prefers-reduced-motion:reduce){.core::before,.core::after,h1{animation:none}.fx{display:none}}
 @media(min-width:900px){.app{padding-bottom:110px}}
 </style>
 </head>
@@ -76,13 +111,13 @@ nav.dock button[aria-selected=true]{color:#1c1105;background:linear-gradient(180
 <img class="holoimg" src="https://cdn.creativeclaw.co/u/79610596/images/b2f4796f-eed1-4739-996f-0617b00ef9b2.jpg" alt="" aria-hidden="true">
 
 <div class="app">
-  <header><h1>CLB VOIX</h1><div class="ver">Version 1.6.1 · TITAN</div></header>
+  <header><h1>CLB VOIX</h1><div class="ver">Version 2.0.0 · TITAN</div></header>
 
   <!-- 1 PRÉPARER -->
   <section class="view compact" id="v-prep">
     <div class="spacer"></div>
     <form class="panel" id="form" autocomplete="off">
-      <h2>La mission de l'appel</h2>
+      <h2><span class="e">🎯</span>La mission de l'appel</h2>
       <label for="who">Qui appelles-tu ?</label>
       <input id="who" placeholder="Ex. Garage Sino Afrique, service après-vente">
       <label for="num">Numéro <small>(tu appelles depuis ton iPhone)</small></label>
@@ -122,7 +157,7 @@ nav.dock button[aria-selected=true]{color:#1c1105;background:linear-gradient(180
   <section class="view compact" id="v-conf">
     <div class="spacer"></div>
     <div class="panel">
-      <h2>Version finale : TITAN entre dans ton appel</h2>
+      <h2><span class="e">📲</span>TITAN entre dans ton appel</h2>
       <ol>
         <li>Tu appelles la personne depuis ton iPhone, avec ton numéro.</li>
         <li>Elle décroche : tu touches « Ajouter » et tu appelles le numéro de TITAN.</li>
@@ -135,41 +170,53 @@ nav.dock button[aria-selected=true]{color:#1c1105;background:linear-gradient(180
       <p class="note" id="agentline"></p>
     </div>
     <div class="panel">
-      <h2>Ta voix clonée</h2>
+      <h2><span class="e">🗣️</span>Ta voix clonée</h2>
       <p class="note">Ta voix est clonée sur ElevenLabs (modèle v2, vitesse 0,95, stabilité 0,5, similarité maximale). Pour les vrais appels, TITAN parlera avec elle dès que le numéro +225 sera branché.</p>
     </div>
   </section>
 
   <!-- 4 TITAN -->
   <section class="view" id="v-titan">
+    <div class="hud"><span class="pill"><span class="live" id="liveDot"></span><span id="hudMode">Hors ligne</span></span><span class="pill" id="wx">🌡️ …</span></div>
     <div class="spacer"></div>
+    <div class="wave" id="wave" aria-hidden="true"></div>
     <div class="status" id="tStatus">Prêt</div>
-    <button class="btn" id="tBtn">Parler à TITAN</button>
-    <div class="panel loc"><span class="dot" id="dot"></span><b id="place">Position pas encore partagée</b><span id="coords"></span></div>
-    <div class="panel" id="actionCard" hidden><h2 id="actionTitle">TITAN te propose</h2><p class="note" id="actionText"></p><a class="btn" id="actionLink" href="#" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;text-decoration:none">Ouvrir</a></div>
+    <button class="core" id="tBtn" aria-label="Parler à TITAN">🎙️</button>
+    <div class="core-label" id="tLabel">Touche pour parler à TITAN</div>
+    <div class="acts">
+      <button class="act" data-q="Quel temps fait-il là où je suis ?"><span class="e">☀️</span>Météo</button>
+      <button class="act" data-q="Donne-moi les scores du jour, surtout le Barça."><span class="e">⚽</span>Scores</button>
+      <button class="act" data-q="Combien font 100 euros en francs CFA ?"><span class="e">💱</span>Devises</button>
+      <button class="act" data-q="Montre-moi le trafic autour de moi."><span class="e">🚦</span>Trafic</button>
+      <button class="act" data-q="Je suis où exactement ?"><span class="e">📍</span>Où suis-je</button>
+      <button class="act" data-q="Raconte-moi une bonne blague ivoirienne."><span class="e">😂</span>Blague</button>
+    </div>
+    <div class="panel loc"><span class="e">📍</span><span class="dot" id="dot"></span><b id="place">Position pas encore partagée</b><span id="coords"></span></div>
+    <div class="panel" id="actionCard" hidden><h2><span class="e">✨</span><span id="actionTitle">TITAN te propose</span></h2><p class="note" id="actionText"></p><a class="btn" id="actionLink" href="#" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;text-decoration:none">Ouvrir</a></div>
     <div class="panel">
-      <h2>Sa mémoire</h2>
+      <h2><span class="e">📱</span>Mes applis</h2>
+      <div class="apps" id="apps"></div>
+    </div>
+    <div class="panel">
+      <h2><span class="e">🧠</span>Sa mémoire</h2>
       <p class="note" id="memInfo">TITAN retient tout seul ce que tu lui dis d'important. Tout reste sur ce téléphone.</p>
       <div class="log" id="memList" style="max-height:220px"></div>
-      <button class="btn alt" id="memClear" type="button">Tout effacer</button>
+      <button class="btn alt" id="memClear" type="button">🗑️ Tout effacer</button>
     </div>
     <div class="panel">
-      <h2>Mes applis</h2>
-      <div class="chips" id="apps"></div>
-    </div>
-    <div class="panel">
-      <h2>Ce qu'il sait faire</h2>
-      <div class="chips"><span class="chip">Discuter et conseiller</span><span class="chip">Recherche en ligne</span><span class="chip">Ta position en direct</span><span class="chip">Mode écoute</span><span class="chip">Marvin et Mila</span><span class="chip">Météo en direct</span><span class="chip">Devises</span><span class="chip">Scores en direct</span><span class="chip">Trafic</span><span class="chip">Ouvrir mes applis</span><span class="chip">« Retiens ça »</span></div>
-      <p class="note">Mets des écouteurs pour qu'il s'arrête net quand tu parles. Garde l'appli ouverte : l'iPhone coupe le GPS quand l'écran se verrouille. Préviens les personnes autour de toi qu'il les entend.</p>
+      <h2><span class="e">⚡</span>Ce qu'il sait faire</h2>
+      <div class="chips"><span class="chip">💬 Discuter</span><span class="chip">🔎 Recherche web</span><span class="chip">📍 Position</span><span class="chip">👂 Mode écoute</span><span class="chip">🧒 Marvin et Mila</span><span class="chip">☀️ Météo</span><span class="chip">💱 Devises</span><span class="chip">⚽ Scores</span><span class="chip">🚦 Trafic</span><span class="chip">📱 Mes applis</span><span class="chip">🧠 Mémoire</span></div>
+      <p class="note">🎧 Mets des écouteurs pour qu'il s'arrête net quand tu parles. Garde l'appli ouverte : l'iPhone coupe le GPS quand l'écran se verrouille.</p>
     </div>
   </section>
 </div>
 
+<div class="fx" id="fx" aria-hidden="true"></div>
 <nav class="dock" role="tablist" aria-label="Sections">
-  <button role="tab" data-v="prep" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M4 12h10M4 19h7"/></svg>Préparer</button>
-  <button role="tab" data-v="live" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>En ligne</button>
-  <button role="tab" data-v="conf" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M2 20c1-3 3.5-4.5 6-4.5s5 1.5 6 4.5M14 15.6c.6-.1 1.3-.1 2-.1 2.5 0 5 1.5 6 4.5"/></svg>Conférence</button>
-  <button role="tab" data-v="titan" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(-20 12 12)"/></svg>TITAN</button>
+  <button role="tab" data-v="prep" aria-selected="false"><span class="e">📝</span>Préparer</button>
+  <button role="tab" data-v="live" aria-selected="false"><span class="e">📞</span>En ligne</button>
+  <button role="tab" data-v="conf" aria-selected="false"><span class="e">👥</span>Conférence</button>
+  <button role="tab" data-v="titan" aria-selected="true"><span class="e">🤖</span>TITAN</button>
 </nav>
 
 <script type="importmap">
@@ -193,7 +240,7 @@ try {
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x03050b);
+  scene.background = new THREE.Color(0x040612);
   scene.fog = new THREE.FogExp2(0x03050b, 0.08);
   const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 100);
 
@@ -238,9 +285,9 @@ try {
         uv.x += band*0.012 + uGlitch*0.02*sin(uv.y*80.0+uTime*40.0);
         vec3 c=texture2D(uTex,uv).rgb;
         float ca=texture2D(uTex,uv+vec2(0.003,0.0)).r; float cb=texture2D(uTex,uv-vec2(0.003,0.0)).b; c=vec3(mix(c.r,ca,0.5),c.g,mix(c.b,cb,0.5));
-        float scan=0.86+0.14*sin(uv.y*700.0-uTime*6.0);
+        float scan=0.9+0.1*sin(uv.y*420.0-uTime*5.0);
         float flick=0.94+0.06*sin(uTime*23.0)*sin(uTime*7.0);
-        vec3 col=c*uTint*scan*flick*(1.05+uLvl*0.8);
+        vec3 col=pow(c,vec3(1.25))*uTint*scan*flick*(0.95+uLvl*0.7);
         gl_FragColor=vec4(col, max(max(col.r,col.g),col.b));
       }`
   });
@@ -257,8 +304,8 @@ try {
   const panelMat = t => new THREE.MeshBasicMaterial({ map: t, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, opacity: 0.85 });
   const panL = new THREE.Mesh(new THREE.PlaneGeometry(0.95, 0.95), panelMat(p1));
   const panR = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.8), panelMat(p2));
-  panL.position.set(-1.75, 0.75, -0.3); panL.rotation.y = 0.45;
-  panR.position.set(1.7, 0.95, -0.3); panR.rotation.y = -0.45;
+  panL.position.set(-1.45, 0.75, -0.3); panL.rotation.y = 0.5; panL.scale.setScalar(0.72);
+  panR.position.set(1.45, 0.95, -0.3); panR.rotation.y = -0.5; panR.scale.setScalar(0.72);
   rig.add(panL, panR);
 
   /* particles rising in the beam + dust */
@@ -268,12 +315,18 @@ try {
   const pts = new THREE.Points(pg, new THREE.PointsMaterial({ color: 0xa9d4ff, size: 0.022, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false }));
   rig.add(pts);
 
+  /* nebula glows */
+  const glowTex = (() => { const c = document.createElement("canvas"); c.width = c.height = 128; const x = c.getContext("2d"); const g = x.createRadialGradient(64, 64, 0, 64, 64, 64); g.addColorStop(0, "rgba(255,255,255,1)"); g.addColorStop(1, "rgba(255,255,255,0)"); x.fillStyle = g; x.fillRect(0, 0, 128, 128); return new THREE.CanvasTexture(c); })();
+  [[0x3ee8ff, -3.5, 2.5, 7, .35], [0x9b6bff, 3.2, 1.5, 8, .4], [0xff5fd2, 0.5, 4.5, 6, .18], [0x2a4bff, 0, -1, 9, .3]].forEach(([col, x, y, s, o]) => { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: col, transparent: true, opacity: o, blending: THREE.AdditiveBlending, depthWrite: false })); sp.position.set(x, y, -6); sp.scale.setScalar(s); scene.add(sp); });
+  /* orbit rings around the projector */
+  const orbit = new THREE.Group(); rig.add(orbit);
+  [[1.25, 0x3ee8ff], [1.5, 0x9b6bff]].forEach(([r, col], i) => { const m = new THREE.Mesh(new THREE.TorusGeometry(r, 0.008, 8, 200), new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: .7, blending: THREE.AdditiveBlending })); m.rotation.x = Math.PI / 2 + (i ? .08 : -.06); m.position.y = -1.86; orbit.add(m); });
   /* reflective floor grid */
-  const grid = new THREE.GridHelper(30, 60, 0x1d3a66, 0x0d1830); grid.position.y = -2.12; grid.material.transparent = true; grid.material.opacity = 0.35; scene.add(grid);
+  const grid = new THREE.GridHelper(30, 60, 0x2a5cff, 0x101c44); grid.position.y = -2.12; grid.material.transparent = true; grid.material.opacity = 0.35; scene.add(grid);
 
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
-  const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.7, 0.55, 0.15);
+  const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.45, 0.6, 0.35);
   composer.addPass(bloom); composer.addPass(new OutputPass());
 
   const resize = () => { const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); composer.setSize(w, h); bloom.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix(); };
@@ -284,7 +337,7 @@ try {
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const clock = new THREE.Clock();
   let lvl = 0, cs = 1, cy = 0, glitchT = 0;
-  const cTalk = new THREE.Color(1.05, 0.95, 1.15), cListen = new THREE.Color(0.85, 1.05, 1.2), cIdle = new THREE.Color(1, 1, 1);
+  const cTalk = new THREE.Color(1.0, 0.85, 1.25), cListen = new THREE.Color(0.7, 1.05, 1.25), cIdle = new THREE.Color(0.78, 0.98, 1.18);
   const tick = () => {
     const t = clock.getElapsedTime();
     lvl += (S.level - lvl) * 0.2;
@@ -292,8 +345,8 @@ try {
     const portrait = camera.aspect < 0.8;
     camera.position.z = portrait ? 9.2 : 7.2;
     const vh = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.position.z;
-    const ts = S.compact ? 0.48 : (portrait ? 1.0 : 0.82);
-    const ty0 = vh / 2 - (S.compact ? 0.24 : 0.36) * vh;
+    const ts = S.compact ? 0.45 : (portrait ? 0.84 : 0.78);
+    const ty0 = vh / 2 - (S.compact ? 0.22 : 0.33) * vh;
     cs += (ts - cs) * 0.08; cy += (ty0 - cy) * 0.08;
     rig.scale.setScalar(cs); rig.position.y = cy;
     const tm = reduce ? 0 : t;
@@ -307,8 +360,9 @@ try {
     panL.position.y = 0.75 + (reduce ? 0 : Math.sin(t * 0.9) * 0.06); panR.position.y = 0.95 + (reduce ? 0 : Math.sin(t * 0.8 + 1) * 0.06);
     glowRing.material.color.setHSL(0.58 - lvl * 0.08, 1, 0.65 + lvl * 0.2);
     under.intensity = 16 + lvl * 50;
-    bloom.strength = 0.6 + lvl * 0.7;
+    bloom.strength = 0.38 + lvl * 0.6;
     if (!reduce) { const p = pg.attributes.position.array; for (let i = 0; i < N; i++) { p[i * 3 + 1] += spd[i] * (1 + lvl * 2); if (p[i * 3 + 1] > 1.8) p[i * 3 + 1] = -1.8; } pg.attributes.position.needsUpdate = true; }
+    orbit.rotation.y = reduce ? 0 : t * 0.3;
     camera.position.x += (tx - camera.position.x) * 0.05;
     camera.position.y += (0.2 - ty - camera.position.y) * 0.05;
     camera.lookAt(0, cy * 0.5, 0);
@@ -412,7 +466,8 @@ const APPS = [
   ["Aurum", BASE + "parfums/", "collection de parfums"]
 ];
 const esc = t => String(t).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-$("apps").innerHTML = APPS.map(([n, u]) => `<a class="chip" style="color:var(--ink);text-decoration:none" href="${esc(u)}" target="_blank" rel="noopener">${esc(n)}</a>`).join("");
+const APP_IC = { "CLB Health": "🏥", "CLB Voix": "🎙️", "Sentinel": "📈", "VERITAS": "⚖️", "ARCHÉA": "🏛️", "CLB World": "🌍", "CLB Grammar": "✍️", "CLB Lexicon": "📚", "Aurum": "🌸" };
+$("apps").innerHTML = APPS.map(([n, u]) => `<a class="app-i" href="${esc(u)}" target="_blank" rel="noopener"><span class="ic">${APP_IC[n] || "✨"}</span>${esc(n)}</a>`).join("");
 const offer = (title, text, url, label) => {
   $("actionTitle").textContent = title; $("actionText").textContent = text;
   $("actionLink").href = url; $("actionLink").textContent = label || "Ouvrir";
@@ -598,10 +653,11 @@ async function start(which) {
       onDisconnect: () => stop(true),
       onError: e => { st.textContent = "Erreur : " + (e?.message || e); },
       onModeChange: m => m.mode === "speaking" ? setMode("talk", "TITAN parle") : setMode("listen", kind === "call" ? "TITAN écoute la ligne" : "TITAN t'écoute"),
-      onMessage: m => { if (m?.message && m.message !== "MODE APPEL") { addLog(m.source === "ai" ? "ai" : "user", m.message); if (kind === "titan") memLog(m.source === "ai" ? "ai" : "user", m.message); } }
+      onMessage: m => { if (m?.message && m.message !== "MODE APPEL") { addLog(m.source === "ai" ? "ai" : "user", m.message); if (kind === "titan") memLog(m.source === "ai" ? "ai" : "user", m.message); if (m.source === "ai") react(m.message); } }
     });
     meter = setInterval(() => { if (!conv) return; try { const v = S.mode === "talk" ? conv.getOutputVolume() : conv.getInputVolume() * 0.6; S.level = Math.min(1, v * 1.6); } catch {} }, 50);
-    btn.textContent = "Raccrocher"; btn.classList.add("stop");
+    if (kind === "titan") { btn.textContent = "⏹️"; $("tLabel").textContent = "Touche pour raccrocher"; $("liveDot").classList.add("on"); $("hudMode").textContent = "En ligne"; } else btn.textContent = "Raccrocher";
+    btn.classList.add("stop");
   } catch (e) {
     st.textContent = e?.name === "NotAllowedError" ? "Autorise le micro pour parler à TITAN" : "Impossible de joindre TITAN";
     stop(false, true);
@@ -611,7 +667,8 @@ async function start(which) {
 function stop(fromServer, keepMsg) {
   const { btn, st, idle } = ui();
   clearInterval(meter); meter = null; S.level = 0; stopWatch(); memEnd();
-  btn.textContent = idle; btn.classList.remove("stop"); btn.disabled = false;
+  if (kind === "titan") { btn.textContent = "🎙️"; $("tLabel").textContent = "Touche pour parler à TITAN"; $("liveDot").classList.remove("on"); $("hudMode").textContent = "Hors ligne"; } else btn.textContent = idle;
+  btn.classList.remove("stop"); btn.disabled = false;
   S.mode = "idle"; if (!keepMsg) st.textContent = kind === "call" ? "Appel terminé" : "À tout à l'heure";
   conv = null;
 }
@@ -619,6 +676,62 @@ const toggle = async which => {
   if (conv) { const same = kind === which; try { await conv.endSession(); } catch {} stop(); if (same) return; }
   start(which);
 };
+
+/* ---------- living interface: waveform, HUD weather, quick actions, emoji bursts ---------- */
+const wave = $("wave"); const BARS = 23;
+wave.innerHTML = Array.from({ length: BARS }, () => "<i></i>").join("");
+const bars = [...wave.children];
+(function loop() {
+  const t = performance.now() / 1000, l = S.level || 0, active = S.mode !== "idle";
+  bars.forEach((b, i) => {
+    const d = Math.abs(i - (BARS - 1) / 2) / (BARS / 2);
+    const h = active ? 6 + (l * 30 + 4) * (1 - d * .7) * (0.55 + 0.45 * Math.abs(Math.sin(t * 6 + i * 0.7))) : 4 + 3 * Math.abs(Math.sin(t * 1.5 + i * 0.5));
+    b.style.height = h.toFixed(1) + "px";
+  });
+  requestAnimationFrame(loop);
+})();
+(async () => {
+  try {
+    const g = await new Promise((res, rej) => navigator.geolocation ? navigator.geolocation.getCurrentPosition(p => res(p.coords), rej, { maximumAge: 600000, timeout: 6000 }) : rej());
+    const w = await getJSON(`https://api.open-meteo.com/v1/forecast?latitude=${g.latitude}&longitude=${g.longitude}&current=temperature_2m,weather_code`);
+    const c = w.current.weather_code, ic = c === 0 ? "☀️" : c <= 2 ? "🌤️" : c === 3 ? "☁️" : c < 60 ? "🌫️" : c < 80 ? "🌧️" : c < 95 ? "🌦️" : "⛈️";
+    $("wx").textContent = `${ic} ${Math.round(w.current.temperature_2m)}°C`;
+  } catch { $("wx").textContent = "🌍 TITAN"; }
+})();
+let pendingQ = null;
+document.querySelectorAll(".act").forEach(b => b.onclick = () => {
+  burst([b.querySelector(".e").textContent]);
+  const q = b.dataset.q;
+  if (conv && kind === "titan") { try { conv.sendUserMessage(q); } catch {} }
+  else { pendingQ = q; toggle("titan"); }
+});
+const _setMode = setMode;
+const sendPending = () => { if (pendingQ && conv && kind === "titan") { const q = pendingQ; pendingQ = null; setTimeout(() => { try { conv.sendUserMessage(q); } catch {} }, 1200); } };
+setInterval(sendPending, 600);
+function burst(list, n = 7) {
+  const fx = $("fx");
+  for (let i = 0; i < n; i++) {
+    const sp = document.createElement("span");
+    sp.textContent = list[i % list.length];
+    sp.style.left = (30 + Math.random() * 40) + "%";
+    sp.style.animationDelay = (i * 0.12) + "s";
+    sp.style.setProperty("--r", ((Math.random() - .5) * 60).toFixed(0) + "deg");
+    sp.style.fontSize = (26 + Math.random() * 18) + "px";
+    fx.append(sp); setTimeout(() => sp.remove(), 3200);
+  }
+}
+const REACT = [
+  [/haha|hihi|mdr|😂|rigol|blague|drôle|marrant/i, ["😂", "🤣", "😄"]],
+  [/barça|barca|but|victoire|gagn/i, ["⚽", "💙", "❤️", "🏆"]],
+  [/pluie|pleut|orage|averse/i, ["🌧️", "☔", "⛈️"]],
+  [/soleil|ensoleill|chaud|beau temps/i, ["☀️", "😎", "🌤️"]],
+  [/bravo|félicit|super|génial|excellent/i, ["🎉", "👏", "✨"]],
+  [/retenu|je retiens|noté/i, ["🧠", "✨"]],
+  [/amour|bisou|cœur|coeur/i, ["❤️", "💕"]],
+  [/argent|fcfa|euro|dollar|devise/i, ["💰", "💱"]]
+];
+function react(text) { for (const [re, em] of REACT) if (re.test(text)) { burst(em); return; } }
+
 $("tBtn").onclick = () => toggle("titan");
 $("liveBtn").onclick = () => toggle("call");
 $("copyLog").onclick = () => {
