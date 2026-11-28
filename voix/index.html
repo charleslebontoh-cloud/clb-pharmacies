@@ -22,7 +22,7 @@ html,body{margin:0;min-height:100%;background:#05070a;color:var(--ink);font:16px
 #scene{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0}
 .orbcss{display:none;position:fixed;left:50%;top:30%;width:min(56vw,240px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at 34% 28%,#fff3d6 0,#e8b25c 22%,#7a4a18 60%,#1a0e04 100%);box-shadow:0 0 80px rgba(232,178,92,.35)}
 .fallback .orbcss{display:none}
-.holoimg{display:none;position:fixed;left:50%;top:6%;height:44vh;transform:translateX(-50%);mix-blend-mode:screen;pointer-events:none;z-index:0;filter:drop-shadow(0 0 30px rgba(120,170,255,.5))}
+.holoimg{display:none;position:fixed;left:50%;top:6%;height:44vh;transform:translateX(-50%);pointer-events:none;z-index:0;filter:drop-shadow(0 0 30px rgba(120,170,255,.5))}
 .fallback .holoimg,.holo-img .holoimg{display:block}
 .app{position:relative;z-index:1;min-height:100dvh;display:flex;flex-direction:column;padding:max(18px,env(safe-area-inset-top)) 16px calc(96px + env(safe-area-inset-bottom))}
 header{text-align:center;margin-bottom:8px}
@@ -73,10 +73,10 @@ nav.dock button[aria-selected=true]{color:#1c1105;background:linear-gradient(180
 <body>
 <canvas id="scene" aria-hidden="true"></canvas>
 <div class="orbcss" aria-hidden="true"></div>
-<img class="holoimg" src="https://cdn.creativeclaw.co/u/79610596/images/cf53d87e-04be-443a-b60f-77620d8fdba9.jpg" alt="" aria-hidden="true">
+<img class="holoimg" src="https://cdn.creativeclaw.co/u/79610596/images/eee14c47-2662-4e08-9c9f-18bc3ef4eadc.png" alt="" aria-hidden="true">
 
 <div class="app">
-  <header><h1>CLB VOIX</h1><div class="ver">Version 1.3.0 · TITAN</div></header>
+  <header><h1>CLB VOIX</h1><div class="ver">Version 1.4.0 · TITAN</div></header>
 
   <!-- 1 PRÉPARER -->
   <section class="view compact" id="v-prep">
@@ -184,7 +184,7 @@ import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 
-const HOLO_URL = "https://cdn.creativeclaw.co/u/79610596/images/cf53d87e-04be-443a-b60f-77620d8fdba9.jpg";
+const HOLO_URL = "https://cdn.creativeclaw.co/u/79610596/images/eee14c47-2662-4e08-9c9f-18bc3ef4eadc.png";
 const S = window.TITAN3D = window.TITAN3D || { level: 0, mode: "idle", compact: false };
 try {
   const canvas = document.getElementById("scene");
@@ -229,21 +229,21 @@ try {
   /* hologram figure */
   const holoU = { uTex: { value: null }, uTime: { value: 0 }, uLvl: { value: 0 }, uTint: { value: new THREE.Color(1, 1, 1) }, uGlitch: { value: 0 } };
   const holoMat = new THREE.ShaderMaterial({
-    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, uniforms: holoU,
+    transparent: true, depthWrite: false, blending: THREE.NormalBlending, uniforms: holoU,
     vertexShader: `varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
     fragmentShader: `uniform sampler2D uTex; uniform float uTime; uniform float uLvl; uniform vec3 uTint; uniform float uGlitch; varying vec2 vUv;
       float rnd(float x){ return fract(sin(x*91.7)*43758.5); }
       void main(){
-        vec2 uv=vUv; float band=step(0.985, rnd(floor(uv.y*60.0)+floor(uTime*8.0)));
-        uv.x += (band*0.02 + uGlitch*0.03*sin(uv.y*80.0+uTime*40.0));
-        vec3 c=texture2D(uTex,uv).rgb;
-        float ca=texture2D(uTex,uv+vec2(0.004,0.0)).r; float cb=texture2D(uTex,uv-vec2(0.004,0.0)).b; c=vec3(mix(c.r,ca,0.5),c.g,mix(c.b,cb,0.5));
-        float scan=0.82+0.18*sin(uv.y*700.0-uTime*6.0);
-        float flick=0.93+0.07*sin(uTime*23.0)*sin(uTime*7.0);
-        float bottom=smoothstep(0.0,0.22,uv.y);
-        vec3 col=c*uTint*scan*flick*(1.0+uLvl*0.9)*bottom;
-        float a=max(max(col.r,col.g),col.b);
-        gl_FragColor=vec4(col,a);
+        vec2 uv=vUv; float band=step(0.992, rnd(floor(uv.y*60.0)+floor(uTime*8.0)));
+        uv.x += band*0.008 + uGlitch*0.012*sin(uv.y*80.0+uTime*40.0);
+        vec4 c=texture2D(uTex,uv);
+        // soft blue edge glow from the alpha outline
+        float e=0.0; for(int i=0;i<8;i++){ float a=float(i)*0.785; e+=texture2D(uTex,uv+vec2(cos(a),sin(a))*0.006).a; } e=clamp(1.0-e/8.0,0.0,1.0)*c.a;
+        float scan=0.94+0.06*sin(uv.y*620.0-uTime*5.0);
+        float flick=0.97+0.03*sin(uTime*19.0);
+        vec3 col=c.rgb*uTint*scan*flick + vec3(0.35,0.65,1.0)*(e*1.6+0.06+uLvl*0.18)*c.a;
+        float bottom=smoothstep(0.02,0.18,uv.y);
+        gl_FragColor=vec4(col, c.a*0.94*bottom);
       }`
   });
   const holo = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 3.2), holoMat);
