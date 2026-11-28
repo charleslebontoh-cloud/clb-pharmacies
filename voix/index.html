@@ -73,7 +73,7 @@ nav.dock button[aria-selected=true]{color:#1c1105;background:linear-gradient(180
 <div class="orbcss" aria-hidden="true"></div>
 
 <div class="app">
-  <header><h1>CLB VOIX</h1><div class="ver">Version 1.0.1 · TITAN</div></header>
+  <header><h1>CLB VOIX</h1><div class="ver">Version 1.2.0 · TITAN</div></header>
 
   <!-- 1 PRÉPARER -->
   <section class="view compact" id="v-prep">
@@ -143,9 +143,20 @@ nav.dock button[aria-selected=true]{color:#1c1105;background:linear-gradient(180
     <div class="status" id="tStatus">Prêt</div>
     <button class="btn" id="tBtn">Parler à TITAN</button>
     <div class="panel loc"><span class="dot" id="dot"></span><b id="place">Position pas encore partagée</b><span id="coords"></span></div>
+    <div class="panel" id="actionCard" hidden><h2 id="actionTitle">TITAN te propose</h2><p class="note" id="actionText"></p><a class="btn" id="actionLink" href="#" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;text-decoration:none">Ouvrir</a></div>
+    <div class="panel">
+      <h2>Sa mémoire</h2>
+      <p class="note" id="memInfo">TITAN retient tout seul ce que tu lui dis d'important. Tout reste sur ce téléphone.</p>
+      <div class="log" id="memList" style="max-height:220px"></div>
+      <button class="btn alt" id="memClear" type="button">Tout effacer</button>
+    </div>
+    <div class="panel">
+      <h2>Mes applis</h2>
+      <div class="chips" id="apps"></div>
+    </div>
     <div class="panel">
       <h2>Ce qu'il sait faire</h2>
-      <div class="chips"><span class="chip">Discuter et conseiller</span><span class="chip">Recherche en ligne</span><span class="chip">Ta position en direct</span><span class="chip">Mode écoute</span><span class="chip">Marvin et Mila</span><span class="chip">« Retiens ça »</span></div>
+      <div class="chips"><span class="chip">Discuter et conseiller</span><span class="chip">Recherche en ligne</span><span class="chip">Ta position en direct</span><span class="chip">Mode écoute</span><span class="chip">Marvin et Mila</span><span class="chip">Météo en direct</span><span class="chip">Devises</span><span class="chip">Scores en direct</span><span class="chip">Trafic</span><span class="chip">Ouvrir mes applis</span><span class="chip">« Retiens ça »</span></div>
       <p class="note">Mets des écouteurs pour qu'il s'arrête net quand tu parles. Garde l'appli ouverte : l'iPhone coupe le GPS quand l'écran se verrouille. Préviens les personnes autour de toi qu'il les entend.</p>
     </div>
   </section>
@@ -360,6 +371,169 @@ function locationReport() {
   return `Position actuelle de Charles : ${placeName || "lieu inconnu"}. Coordonnées GPS : ${pos.latitude.toFixed(5)}, ${pos.longitude.toFixed(5)} (précision ±${Math.round(pos.accuracy)} m).${speed} Lien carte : https://maps.google.com/?q=${pos.latitude},${pos.longitude}`;
 }
 
+
+/* ---------- live data tools ---------- */
+const BASE = "https://charleslebontoh-cloud.github.io/clb-pharmacies/";
+const APPS = [
+  ["CLB Health", BASE, "santé, pharmacies de garde"],
+  ["CLB Voix", BASE + "voix/", "TITAN et les appels"],
+  ["Sentinel", BASE + "bourse/", "bourse BRVM"],
+  ["VERITAS", BASE + "compliance/", "formation compliance"],
+  ["ARCHÉA", BASE + "archi/", "plans de maison et 3D"],
+  ["CLB World", BASE + "monde/", "culture générale, voyages, foot"],
+  ["CLB Grammar", BASE + "francais/", "grammaire et orthographe"],
+  ["CLB Lexicon", BASE + "vocabulaire/", "vocabulaire et dictionnaire"],
+  ["Aurum", BASE + "parfums/", "collection de parfums"]
+];
+const esc = t => String(t).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+$("apps").innerHTML = APPS.map(([n, u]) => `<a class="chip" style="color:var(--ink);text-decoration:none" href="${esc(u)}" target="_blank" rel="noopener">${esc(n)}</a>`).join("");
+const offer = (title, text, url, label) => {
+  $("actionTitle").textContent = title; $("actionText").textContent = text;
+  $("actionLink").href = url; $("actionLink").textContent = label || "Ouvrir";
+  $("actionCard").hidden = false; show("titan");
+};
+const norm = t => String(t || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+const getJSON = async (u, ms = 8000) => { const c = new AbortController(); const t = setTimeout(() => c.abort(), ms); try { const r = await fetch(u, { signal: c.signal }); if (!r.ok) throw new Error(r.status); return await r.json(); } finally { clearTimeout(t); } };
+
+const WMO = { 0: "ciel dégagé", 1: "plutôt dégagé", 2: "partiellement nuageux", 3: "couvert", 45: "brouillard", 48: "brouillard givrant", 51: "bruine légère", 53: "bruine", 55: "forte bruine", 61: "pluie faible", 63: "pluie", 65: "forte pluie", 80: "averses", 81: "averses", 82: "fortes averses", 95: "orage", 96: "orage avec grêle", 99: "orage violent" };
+async function meteo(p = {}) {
+  try {
+    let lat, lon, label;
+    if (p.lieu) {
+      const g = await getJSON(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(p.lieu)}&count=1&language=fr`);
+      if (!g.results?.length) return `Lieu « ${p.lieu} » introuvable.`;
+      ({ latitude: lat, longitude: lon } = g.results[0]); label = `${g.results[0].name}, ${g.results[0].country || ""}`;
+    } else {
+      if (!pos) await startWatch();
+      if (!pos) return "Position indisponible : demande à Charles la ville.";
+      lat = pos.latitude; lon = pos.longitude; label = placeName || "ta position";
+    }
+    const w = await getJSON(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,weather_code,wind_speed_10m&hourly=precipitation_probability&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code&forecast_days=3&timezone=auto`);
+    const c = w.current, d = w.daily;
+    const nextRain = Math.max(...(w.hourly?.precipitation_probability || []).slice(0, 6));
+    return `Météo en direct à ${label} : ${Math.round(c.temperature_2m)}°C (ressenti ${Math.round(c.apparent_temperature)}°C), ${WMO[c.weather_code] || "temps variable"}, humidité ${c.relative_humidity_2m} %, vent ${Math.round(c.wind_speed_10m)} km/h. Risque de pluie dans les 6 prochaines heures : ${nextRain} %. Aujourd'hui ${Math.round(d.temperature_2m_min[0])} à ${Math.round(d.temperature_2m_max[0])}°C ; demain ${Math.round(d.temperature_2m_min[1])} à ${Math.round(d.temperature_2m_max[1])}°C, ${WMO[d.weather_code[1]] || ""}, pluie ${d.precipitation_probability_max[1]} %. Source Open-Meteo.`;
+  } catch { return "Service météo injoignable pour le moment : utilise la recherche web."; }
+}
+
+async function convertir_devise(p = {}) {
+  const amt = Number(String(p.montant ?? 1).replace(/\s/g, "").replace(",", ".")) || 1;
+  const alias = { fcfa: "XOF", cfa: "XOF", franc: "XOF", euro: "EUR", euros: "EUR", dollar: "USD", dollars: "USD", livre: "GBP", naira: "NGN", cedi: "GHS", yuan: "CNY", dirham: "MAD" };
+  const code = v => { const n = norm(v).trim(); return (alias[n] || n).toUpperCase().slice(0, 3); };
+  const from = code(p.de || "EUR"), to = code(p.vers || "XOF");
+  try {
+    const r = await getJSON(`https://open.er-api.com/v6/latest/${from}`);
+    const rate = r.rates?.[to];
+    if (!rate) return `Devise ${to} inconnue.`;
+    const fmt = n => n.toLocaleString("fr-FR", { maximumFractionDigits: n < 10 ? 4 : 2 });
+    return `${fmt(amt)} ${from} = ${fmt(amt * rate)} ${to} (taux ${fmt(rate)}, mis à jour ${new Date(r.time_last_update_unix * 1000).toLocaleString("fr-FR")}). Taux indicatif du marché, les banques et bureaux de change appliquent une marge.${(from === "EUR" && to === "XOF") || (from === "XOF" && to === "EUR") ? " Rappel : l'euro et le franc CFA ont une parité fixe de 655,957 FCFA pour 1 euro." : ""}`;
+  } catch { return "Service de change injoignable : utilise la recherche web."; }
+}
+
+const LEAGUES = { liga: "esp.1", espagne: "esp.1", premier: "eng.1", angleterre: "eng.1", ligue1: "fra.1", france: "fra.1", seriea: "ita.1", italie: "ita.1", bundesliga: "ger.1", allemagne: "ger.1", champions: "uefa.champions", europa: "uefa.europa", can: "caf.nations", afrique: "caf.champions", ivoire: "civ.1", mls: "usa.1" };
+async function scores_direct(p = {}) {
+  const q = norm(p.competition || p.equipe || "").replace(/\s/g, "");
+  const team = norm(p.equipe || "");
+  let ids = Object.entries(LEAGUES).filter(([k]) => q && q.includes(k)).map(([, v]) => v);
+  if (!ids.length) ids = ["esp.1", "eng.1", "uefa.champions", "fra.1", "ita.1", "ger.1"];
+  ids = [...new Set(ids)];
+  const out = [];
+  await Promise.all(ids.map(async id => {
+    try {
+      const j = await getJSON(`https://site.api.espn.com/apis/site/v2/sports/soccer/${id}/scoreboard`);
+      for (const e of j.events || []) {
+        const c = e.competitions?.[0]; if (!c) continue;
+        const [h, a] = [c.competitors.find(x => x.homeAway === "home"), c.competitors.find(x => x.homeAway === "away")];
+        const line = `${h.team.displayName} ${h.score ?? ""}-${a.score ?? ""} ${a.team.displayName} (${c.status?.type?.shortDetail || e.status?.type?.shortDetail || ""})`;
+        if (team && !norm(line).includes(team)) continue;
+        out.push(`${j.leagues?.[0]?.name || id} : ${line}`);
+      }
+    } catch {}
+  }));
+  if (!out.length) return team ? `Pas de match trouvé aujourd'hui pour ${p.equipe} : vérifie avec la recherche web.` : "Aucun score disponible pour le moment : utilise la recherche web.";
+  return "Scores (ESPN, heure GMT) : " + out.slice(0, 25).join(" ; ");
+}
+
+async function trafic(p = {}) {
+  const dest = p.destination || "";
+  if (!pos) await startWatch();
+  const origin = pos ? `${pos.latitude},${pos.longitude}` : "";
+  const url = `https://www.google.com/maps/dir/?api=1${origin ? "&origin=" + origin : ""}&destination=${encodeURIComponent(dest)}&travelmode=driving`;
+  offer("Trafic en direct", dest ? `Itinéraire vers ${dest} avec le trafic en temps réel.` : "Carte du trafic autour de toi.", dest ? url : `https://www.google.com/maps/@${origin},14z/data=!5m1!1e1`, "Voir le trafic dans Maps");
+  return `J'ai affiché un bouton « Voir le trafic dans Maps » sur l'écran de Charles${dest ? " pour aller à " + dest : ""}. Dis-lui de le toucher : Google Maps montre les bouchons et le temps de trajet en direct. Tu n'as pas toi-même les chiffres du trafic, ne les invente pas ; tu peux chercher sur le web s'il y a un incident signalé.`;
+}
+
+async function ouvrir_appli(p = {}) {
+  const n = norm(p.nom);
+  const hit = APPS.find(([name, , desc]) => n && (norm(name).includes(n) || n.includes(norm(name)) || norm(desc).includes(n)));
+  if (!hit) return "Applis de Charles : " + APPS.map(([a, , d]) => `${a} (${d})`).join(", ") + ". Demande laquelle ouvrir.";
+  offer(hit[0], hit[2], hit[1], "Ouvrir " + hit[0]);
+  return `Bouton « Ouvrir ${hit[0]} » affiché sur l'écran de Charles : dis-lui de le toucher.`;
+}
+
+async function contexte_depart() {
+  const parts = [`Date et heure : ${new Date().toLocaleString("fr-FR", { dateStyle: "full", timeStyle: "short" })}.`];
+  if (pos) parts.push(locationReport());
+  try { parts.push(await meteo()); } catch {}
+  parts.push("Applis de Charles : " + APPS.map(([a, , d]) => `${a} (${d})`).join(", ") + ".");
+  const m = memoryContext(); if (m) parts.push("MÉMOIRE : " + m);
+  return "CONTEXTE EN DIRECT (ne le récite pas, utilise-le si utile) : " + parts.join(" ");
+}
+
+
+/* ---------- automatic memory (stored on this phone) ---------- */
+const MEMK = "titan_memoire", HISTK = "titan_historique";
+const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k) || "null") ?? d; } catch { return d; } };
+const store = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+let facts = load(MEMK, []);      // [{t: "...", d: timestamp}]
+let sessions = load(HISTK, []);  // [{d: timestamp, m: [[who, text], ...]}]
+let current = null;
+const renderMem = () => {
+  const box = $("memList"); box.innerHTML = "";
+  if (!facts.length) { box.innerHTML = '<div class="msg sys">Rien encore. Parle-lui de toi, il retiendra.</div>'; return; }
+  facts.slice().reverse().forEach((f, i) => {
+    const d = document.createElement("div"); d.className = "msg ai"; d.style.maxWidth = "100%";
+    const b = document.createElement("b"); b.textContent = new Date(f.d).toLocaleDateString("fr-FR");
+    const t = document.createElement("span"); t.textContent = f.t + " ";
+    const x = document.createElement("button"); x.type = "button"; x.textContent = "Oublier";
+    x.style.cssText = "border:0;background:none;color:var(--gold);font:600 12px Sora;cursor:pointer;padding:4px";
+    x.onclick = () => { facts.splice(facts.length - 1 - i, 1); store(MEMK, facts); renderMem(); };
+    d.append(b, t, x); box.append(d);
+  });
+};
+renderMem();
+$("memClear").onclick = () => { if ($("memClear").dataset.ok !== "1") { $("memClear").dataset.ok = "1"; $("memClear").textContent = "Touche encore pour tout effacer"; return; } facts = []; sessions = []; store(MEMK, facts); store(HISTK, sessions); $("memClear").dataset.ok = ""; $("memClear").textContent = "Tout effacer"; renderMem(); };
+async function retenir(p = {}) {
+  const t = String(p.info || p.fait || "").trim().slice(0, 300);
+  if (!t) return "Rien à retenir.";
+  if (facts.some(f => norm(f.t) === norm(t))) return "Déjà en mémoire.";
+  facts.push({ t, d: Date.now() }); if (facts.length > 150) facts.shift();
+  store(MEMK, facts); renderMem();
+  return "C'est retenu.";
+}
+async function oublier(p = {}) {
+  const q = norm(p.info || "");
+  const before = facts.length;
+  facts = facts.filter(f => !(q && norm(f.t).includes(q)));
+  store(MEMK, facts); renderMem();
+  return before === facts.length ? "Je n'ai rien trouvé à oublier." : "C'est oublié.";
+}
+const memStart = () => { current = { d: Date.now(), m: [] }; };
+const memLog = (who, text) => { if (!current || !text || text === "MODE APPEL" || /^CONTEXTE EN DIRECT/.test(text)) return; current.m.push([who, String(text).slice(0, 400)]); };
+const memEnd = () => {
+  if (current && current.m.length > 1) { sessions.push(current); while (sessions.length > 6) sessions.shift(); store(HISTK, sessions); }
+  current = null;
+};
+const memoryContext = () => {
+  const f = facts.length ? "Ce que tu sais de Charles et de son monde (retenu lors de vos conversations) : " + facts.map(x => "- " + x.t).join(" ") : "";
+  let recent = "";
+  for (const s of sessions.slice(-3)) {
+    const lines = s.m.slice(-14).map(([w, t]) => (w === "ai" ? "TITAN" : "Charles") + " : " + t).join(" / ");
+    recent += ` [Conversation du ${new Date(s.d).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" })}] ${lines}`;
+  }
+  const out = [f, recent ? "Derniers échanges :" + recent : ""].filter(Boolean).join(" ");
+  return out.slice(-6000);
+};
+
 /* one TITAN session, used by "En ligne" (call mode) and "TITAN" (companion) */
 let conv = null, meter = null, kind = null;
 const ui = () => kind === "call" ? { btn: $("liveBtn"), st: $("liveStatus"), idle: "Démarrer TITAN" } : { btn: $("tBtn"), st: $("tStatus"), idle: "Parler à TITAN" };
@@ -381,21 +555,24 @@ async function start(which) {
   try {
     await navigator.mediaDevices.getUserMedia({ audio: true });
     if (kind === "titan") await startWatch(); else startWatch();
+    if (kind === "titan") memStart();
     conv = await Conversation.startSession({
       agentId: AGENT,
-      connectionType: "websocket",
+      connectionType: "webrtc",
       clientTools: {
         position_actuelle: async () => locationReport(),
+        meteo, convertir_devise, scores_direct, trafic, ouvrir_appli, retenir, oublier,
         mission_actuelle: async () => kind === "call" ? mission() : "Aucune mission d'appel en cours : reste en mode compagnon."
       },
       onConnect: () => {
         setMode("listen", kind === "call" ? "TITAN lit ta mission…" : "TITAN t'écoute");
+        if (kind === "titan") contexte_depart().then(t => { try { conv?.sendContextualUpdate(t); } catch {} });
         if (kind === "call") setTimeout(() => { try { conv?.sendUserMessage("MODE APPEL"); addLog("sys", "Mission envoyée à TITAN. Lance l'appel sur ton iPhone."); } catch {} }, 2500);
       },
       onDisconnect: () => stop(true),
       onError: e => { st.textContent = "Erreur : " + (e?.message || e); },
       onModeChange: m => m.mode === "speaking" ? setMode("talk", "TITAN parle") : setMode("listen", kind === "call" ? "TITAN écoute la ligne" : "TITAN t'écoute"),
-      onMessage: m => { if (m?.message && m.message !== "MODE APPEL") addLog(m.source === "ai" ? "ai" : "user", m.message); }
+      onMessage: m => { if (m?.message && m.message !== "MODE APPEL") { addLog(m.source === "ai" ? "ai" : "user", m.message); if (kind === "titan") memLog(m.source === "ai" ? "ai" : "user", m.message); } }
     });
     meter = setInterval(() => { if (!conv) return; try { const v = S.mode === "talk" ? conv.getOutputVolume() : conv.getInputVolume() * 0.6; S.level = Math.min(1, v * 1.6); } catch {} }, 50);
     btn.textContent = "Raccrocher"; btn.classList.add("stop");
@@ -407,7 +584,7 @@ async function start(which) {
 }
 function stop(fromServer, keepMsg) {
   const { btn, st, idle } = ui();
-  clearInterval(meter); meter = null; S.level = 0; stopWatch();
+  clearInterval(meter); meter = null; S.level = 0; stopWatch(); memEnd();
   btn.textContent = idle; btn.classList.remove("stop"); btn.disabled = false;
   S.mode = "idle"; if (!keepMsg) st.textContent = kind === "call" ? "Appel terminé" : "À tout à l'heure";
   conv = null;
