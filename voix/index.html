@@ -73,7 +73,7 @@ nav.dock button[aria-selected=true]{color:#1c1105;background:linear-gradient(180
 <div class="orbcss" aria-hidden="true"></div>
 
 <div class="app">
-  <header><h1>CLB VOIX</h1><div class="ver">Version 1.0.0 · TITAN</div></header>
+  <header><h1>CLB VOIX</h1><div class="ver">Version 1.0.1 · TITAN</div></header>
 
   <!-- 1 PRÉPARER -->
   <section class="view compact" id="v-prep">
@@ -235,7 +235,7 @@ try {
     const w = h * camera.aspect;
     const fit = Math.min(w / 4.6, h / 4.6);
     const scale = (S.compact ? 0.55 : 1) * Math.min(fit, 1.15);
-    const topY = h / 2 - (S.compact ? 0.17 : 0.27) * h;
+    const topY = h / 2 - (S.compact ? 0.22 : 0.33) * h;
     return { y: topY - (S.compact ? 0 : 0.02 * h), scale };
   };
   const resize = () => {
