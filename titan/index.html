@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>TITAN · CLB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#0d1410;--ink:#f3efe6;--soft:#a9b3a6;--acc:#f28c28;--ok:#2fb36a;--line:#24302a}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;min-height:100dvh;background:radial-gradient(circle at 50% 30%,#1c2a21 0,#0d1410 70%);color:var(--ink);font:16px/1.5 "Schibsted Grotesk",system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;padding:max(24px,env(safe-area-inset-top)) 18px max(24px,env(safe-area-inset-bottom))}
+h1{font-size:32px;line-height:1.05;margin:8px 0 4px}
+p{margin:0;color:var(--soft);text-align:center;max-width:34ch}
+.orb{width:min(64vw,260px);aspect-ratio:1;border-radius:50%;margin:34px 0 26px;background:radial-gradient(circle at 35% 30%,#ffd29a,#f28c28 45%,#7a3a10 100%);box-shadow:0 0 0 10px #f28c2814,0 30px 60px #0008;transition:transform .3s}
+.orb.talk{animation:pulse 1s ease-in-out infinite}
+.orb.listen{box-shadow:0 0 0 10px #2fb36a33,0 30px 60px #0008}
+@keyframes pulse{50%{transform:scale(1.06)}}
+@media(prefers-reduced-motion:reduce){.orb.talk{animation:none}}
+button{font:inherit;font-weight:700;font-size:18px;min-height:56px;width:min(100%,340px);border:0;border-radius:28px;background:var(--acc);color:#1a0d02;cursor:pointer}
+button.stop{background:#3a1d1d;color:#ffd6d6}
+button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.status{margin-top:14px;font-weight:700;min-height:24px}
+.loc{margin-top:22px;width:min(100%,340px);border:1px solid var(--line);border-radius:16px;padding:14px 16px;font-size:14px;color:var(--soft)}
+.loc b{color:var(--ink);display:block;font-size:15px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#666;margin-right:6px}
+.dot.on{background:var(--ok)}
+small{margin-top:auto;padding-top:24px;color:var(--soft);font-size:13px;text-align:center;max-width:36ch}
+</style>
+</head>
+<body>
+<h1>TITAN</h1>
+<p>Ton compagnon. Il sait où tu es tant que cette page est ouverte.</p>
+<div class="orb" id="orb"></div>
+<button id="btn">Parler à TITAN</button>
+<div class="status" id="status">Prêt</div>
+<div class="loc"><span class="dot" id="dot"></span><b id="place">Position pas encore partagée</b><span id="coords"></span></div>
+<small>Ta position n'est envoyée à TITAN que pendant la conversation. Mets des écouteurs pour qu'il s'arrête bien quand tu parles.</small>
+<script type="module">
+import { Conversation } from "https://cdn.jsdelivr.net/npm/@elevenlabs/client/+esm";
+const AGENT = "agent_1501m8gypmc0ef1rjshjw9sxfzsy";
+const $ = id => document.getElementById(id);
+let conv = null, watchId = null, pos = null, placeName = "", lastGeo = 0;
+
+async function nameOf(lat, lon) {
+  try {
+    const r = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=fr`);
+    const j = await r.json();
+    const admin = (j.localityInfo?.administrative || []).map(a => a.name);
+    const parts = [j.locality, j.city, admin[admin.length - 1], j.countryName].filter(Boolean);
+    return [...new Set(parts)].join(", ");
+  } catch { return ""; }
+}
+
+function startWatch() {
+  return new Promise(res => {
+    if (!navigator.geolocation) { $("place").textContent = "GPS indisponible sur cet appareil"; return res(); }
+    let first = true;
+    watchId = navigator.geolocation.watchPosition(async p => {
+      pos = p.coords;
+      $("dot").classList.add("on");
+      $("coords").textContent = `${pos.latitude.toFixed(5)}, ${pos.longitude.toFixed(5)} · ±${Math.round(pos.accuracy)} m`;
+      if (Date.now() - lastGeo > 30000) {
+        lastGeo = Date.now();
+        placeName = await nameOf(pos.latitude, pos.longitude);
+        $("place").textContent = placeName || "Position reçue";
+      }
+      if (first) { first = false; res(); }
+    }, err => {
+      $("place").textContent = err.code === 1 ? "Localisation refusée : autorise-la dans Réglages > Safari > Position" : "Position introuvable";
+      if (first) { first = false; res(); }
+    }, { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 });
+  });
+}
+
+function locationReport() {
+  if (!pos) return "Position indisponible : Charles n'a pas autorisé la localisation ou le GPS ne répond pas.";
+  const speed = pos.speed != null && pos.speed > 0.5 ? ` Vitesse : ${Math.round(pos.speed * 3.6)} km/h.` : "";
+  return `Position actuelle de Charles : ${placeName || "lieu inconnu"}. Coordonnées GPS : ${pos.latitude.toFixed(5)}, ${pos.longitude.toFixed(5)} (précision ±${Math.round(pos.accuracy)} m).${speed} Lien carte : https://maps.google.com/?q=${pos.latitude},${pos.longitude}`;
+}
+
+async function start() {
+  $("btn").disabled = true;
+  $("status").textContent = "Connexion…";
+  try {
+    await navigator.mediaDevices.getUserMedia({ audio: true });
+    await startWatch();
+    conv = await Conversation.startSession({
+      agentId: AGENT,
+      connectionType: "websocket",
+      clientTools: { position_actuelle: async () => locationReport() },
+      onConnect: () => { $("status").textContent = "TITAN t'écoute"; },
+      onDisconnect: stopUi,
+      onError: e => { $("status").textContent = "Erreur : " + (e?.message || e); },
+      onModeChange: m => {
+        $("orb").className = "orb " + (m.mode === "speaking" ? "talk" : "listen");
+        $("status").textContent = m.mode === "speaking" ? "TITAN parle" : "TITAN t'écoute";
+      }
+    });
+    $("btn").textContent = "Raccrocher";
+    $("btn").className = "stop";
+  } catch (e) {
+    $("status").textContent = e?.name === "NotAllowedError" ? "Autorise le micro pour parler à TITAN" : "Impossible de joindre TITAN";
+    stopUi();
+  }
+  $("btn").disabled = false;
+}
+
+function stopUi() {
+  if (watchId != null) navigator.geolocation.clearWatch(watchId);
+  watchId = null;
+  $("dot").classList.remove("on");
+  $("orb").className = "orb";
+  $("btn").textContent = "Parler à TITAN";
+  $("btn").className = "";
+  if (!/Erreur|Autorise|Impossible/.test($("status").textContent)) $("status").textContent = "À tout à l'heure";
+  conv = null;
+}
+
+$("btn").addEventListener("click", async () => {
+  if (conv) { await conv.endSession(); stopUi(); } else start();
+});
+</script>
+</body>
+</html>
