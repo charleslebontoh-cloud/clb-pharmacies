@@ -21,7 +21,9 @@
 html,body{margin:0;min-height:100%;background:#05070a;color:var(--ink);font:16px/1.5 Sora,system-ui,sans-serif;overflow-x:clip}
 #scene{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0}
 .orbcss{display:none;position:fixed;left:50%;top:30%;width:min(56vw,240px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at 34% 28%,#fff3d6 0,#e8b25c 22%,#7a4a18 60%,#1a0e04 100%);box-shadow:0 0 80px rgba(232,178,92,.35)}
-.fallback .orbcss{display:block}
+.fallback .orbcss{display:none}
+.holoimg{display:none;position:fixed;left:50%;top:6%;height:44vh;transform:translateX(-50%);mix-blend-mode:screen;pointer-events:none;z-index:0;filter:drop-shadow(0 0 30px rgba(120,170,255,.5))}
+.fallback .holoimg,.holo-img .holoimg{display:block}
 .app{position:relative;z-index:1;min-height:100dvh;display:flex;flex-direction:column;padding:max(18px,env(safe-area-inset-top)) 16px calc(96px + env(safe-area-inset-bottom))}
 header{text-align:center;margin-bottom:8px}
 h1{margin:0;font-weight:800;font-size:clamp(28px,7vw,44px);letter-spacing:.28em;padding-left:.28em;line-height:1;background:linear-gradient(180deg,#fff6e4 0%,#e8b25c 55%,#8a5a22 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 18px rgba(232,178,92,.35))}
@@ -71,9 +73,10 @@ nav.dock button[aria-selected=true]{color:#1c1105;background:linear-gradient(180
 <body>
 <canvas id="scene" aria-hidden="true"></canvas>
 <div class="orbcss" aria-hidden="true"></div>
+<img class="holoimg" src="https://cdn.creativeclaw.co/u/79610596/images/cf53d87e-04be-443a-b60f-77620d8fdba9.jpg" alt="" aria-hidden="true">
 
 <div class="app">
-  <header><h1>CLB VOIX</h1><div class="ver">Version 1.2.0 · TITAN</div></header>
+  <header><h1>CLB VOIX</h1><div class="ver">Version 1.3.0 · TITAN</div></header>
 
   <!-- 1 PRÉPARER -->
   <section class="view compact" id="v-prep">
@@ -173,119 +176,144 @@ nav.dock button[aria-selected=true]{color:#1c1105;background:linear-gradient(180
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}
 </script>
 
-<!-- 3D stage -->
+<!-- 3D stage : hologram -->
 <script type="module">
 import * as THREE from "three";
-import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 
+const HOLO_URL = "https://cdn.creativeclaw.co/u/79610596/images/cf53d87e-04be-443a-b60f-77620d8fdba9.jpg";
 const S = window.TITAN3D = window.TITAN3D || { level: 0, mode: "idle", compact: false };
 try {
   const canvas = document.getElementById("scene");
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.0;
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x05070a);
-  scene.fog = new THREE.FogExp2(0x05070a, 0.07);
-  const pmrem = new THREE.PMREMGenerator(renderer);
-  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  scene.background = new THREE.Color(0x03050b);
+  scene.fog = new THREE.FogExp2(0x03050b, 0.08);
+  const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 100);
 
-  const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
-  camera.position.set(0, 0.15, 7);
+  const rig = new THREE.Group(); scene.add(rig);
+  const BLUE = new THREE.Color(0x6fb6ff), VIOLET = new THREE.Color(0x9b7bff);
 
-  const key = new THREE.DirectionalLight(0xfff0d8, 2.4); key.position.set(3, 4, 5); scene.add(key);
-  const rim = new THREE.DirectionalLight(0x6fa8ff, 1.8); rim.position.set(-4, 1, -3); scene.add(rim);
-  const glow = new THREE.PointLight(0xffa640, 26, 8, 2); glow.position.set(0, -1.6, 1.2); scene.add(glow);
+  /* projector base: dark metal puck with glowing rings */
+  const metal = new THREE.MeshStandardMaterial({ color: 0x1a1f2b, metalness: 0.9, roughness: 0.35 });
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(0.95, 1.05, 0.22, 96), metal);
+  base.position.y = -2.0; rig.add(base);
+  const top = new THREE.Mesh(new THREE.CylinderGeometry(0.78, 0.82, 0.05, 96), new THREE.MeshStandardMaterial({ color: 0x0b0e15, metalness: 1, roughness: 0.15 }));
+  top.position.y = -1.87; rig.add(top);
+  const glowRing = new THREE.Mesh(new THREE.TorusGeometry(0.8, 0.018, 16, 160), new THREE.MeshBasicMaterial({ color: 0x8fd0ff }));
+  glowRing.rotation.x = Math.PI / 2; glowRing.position.y = -1.84; rig.add(glowRing);
+  const lens = new THREE.Mesh(new THREE.CircleGeometry(0.42, 64), new THREE.MeshBasicMaterial({ color: 0xbfe4ff }));
+  lens.rotation.x = -Math.PI / 2; lens.position.y = -1.84; rig.add(lens);
+  scene.add(new THREE.HemisphereLight(0x8fb8ff, 0x05070c, 0.6));
+  const under = new THREE.PointLight(0x6fb6ff, 20, 6, 2); under.position.set(0, -1.5, 0.8); rig.add(under);
 
-  const core = new THREE.Group(); scene.add(core);
-  const uni = { uTime: { value: 0 }, uAmp: { value: 0.03 } };
-  const coreMat = new THREE.MeshPhysicalMaterial({ color: 0xc9893a, metalness: 1, roughness: 0.2, clearcoat: 1, clearcoatRoughness: 0.06, emissive: 0x3a1a02, emissiveIntensity: 0.5 });
-  coreMat.onBeforeCompile = sh => {
-    Object.assign(sh.uniforms, uni);
-    sh.vertexShader = sh.vertexShader.replace("#include <common>", `#include <common>
-      uniform float uTime; uniform float uAmp;
-      float wav(vec3 p){return sin(p.x*3.1+uTime*1.7)*sin(p.y*2.7+uTime*1.3)*sin(p.z*3.3+uTime*1.1)+0.5*sin(p.x*7.0-uTime*2.3+p.y*5.0);}`)
-      .replace("#include <begin_vertex>", `#include <begin_vertex>
-      transformed += normal * wav(position*1.2) * uAmp;`);
-  };
-  core.add(new THREE.Mesh(new THREE.IcosahedronGeometry(1, 96), coreMat));
-  core.add(new THREE.Mesh(new THREE.SphereGeometry(1.32, 96, 64), new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0, roughness: 0.05, transmission: 1, thickness: 0.6, ior: 1.45, clearcoat: 1, envMapIntensity: 1.2, attenuationColor: new THREE.Color(0xffd9a0), attenuationDistance: 3 })));
+  /* light cone from the projector */
+  const coneMat = new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
+    uniforms: { uTime: { value: 0 }, uLvl: { value: 0 }, uCol: { value: BLUE.clone() } },
+    vertexShader: `varying vec2 vUv; varying vec3 vN; varying vec3 vV; void main(){ vUv=uv; vN=normalize(normalMatrix*normal); vec4 mv=modelViewMatrix*vec4(position,1.0); vV=normalize(-mv.xyz); gl_Position=projectionMatrix*mv; }`,
+    fragmentShader: `uniform float uTime; uniform float uLvl; uniform vec3 uCol; varying vec2 vUv; varying vec3 vN; varying vec3 vV;
+      void main(){ float h=vUv.y; float edge=pow(1.0-abs(dot(vN,vV)),1.5); float fade=pow(1.0-h,1.6);
+      float rays=0.6+0.4*sin(vUv.x*60.0+uTime*1.5)*sin(vUv.x*23.0-uTime);
+      float a=fade*(0.10+0.35*edge)*rays*(0.8+uLvl*1.2); gl_FragColor=vec4(uCol*a,a); }`
+  });
+  const cone = new THREE.Mesh(new THREE.CylinderGeometry(1.55, 0.42, 3.2, 96, 1, true), coneMat);
+  cone.position.y = -0.24; rig.add(cone);
 
-  const ringMat = new THREE.MeshStandardMaterial({ color: 0xb9b4ad, metalness: 1, roughness: 0.28 });
-  const goldMat = new THREE.MeshStandardMaterial({ color: 0xe8b25c, metalness: 1, roughness: 0.18, emissive: 0x2a1500, emissiveIntensity: 0.4 });
-  const ring1 = new THREE.Mesh(new THREE.TorusGeometry(1.72, 0.035, 24, 220), ringMat);
-  const ring2 = new THREE.Mesh(new THREE.TorusGeometry(1.95, 0.018, 16, 220), goldMat);
-  ring1.rotation.x = Math.PI * 0.42; ring2.rotation.x = Math.PI * 0.58; ring2.rotation.y = 0.35;
-  core.add(ring1, ring2);
-  const sats = [0, 1, 2].map(() => { const m = new THREE.Mesh(new THREE.SphereGeometry(0.055, 24, 16), goldMat); ring2.add(m); return m; });
+  /* hologram figure */
+  const holoU = { uTex: { value: null }, uTime: { value: 0 }, uLvl: { value: 0 }, uTint: { value: new THREE.Color(1, 1, 1) }, uGlitch: { value: 0 } };
+  const holoMat = new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, uniforms: holoU,
+    vertexShader: `varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
+    fragmentShader: `uniform sampler2D uTex; uniform float uTime; uniform float uLvl; uniform vec3 uTint; uniform float uGlitch; varying vec2 vUv;
+      float rnd(float x){ return fract(sin(x*91.7)*43758.5); }
+      void main(){
+        vec2 uv=vUv; float band=step(0.985, rnd(floor(uv.y*60.0)+floor(uTime*8.0)));
+        uv.x += (band*0.02 + uGlitch*0.03*sin(uv.y*80.0+uTime*40.0));
+        vec3 c=texture2D(uTex,uv).rgb;
+        float ca=texture2D(uTex,uv+vec2(0.004,0.0)).r; float cb=texture2D(uTex,uv-vec2(0.004,0.0)).b; c=vec3(mix(c.r,ca,0.5),c.g,mix(c.b,cb,0.5));
+        float scan=0.82+0.18*sin(uv.y*700.0-uTime*6.0);
+        float flick=0.93+0.07*sin(uTime*23.0)*sin(uTime*7.0);
+        float bottom=smoothstep(0.0,0.22,uv.y);
+        vec3 col=c*uTint*scan*flick*(1.0+uLvl*0.9)*bottom;
+        float a=max(max(col.r,col.g),col.b);
+        gl_FragColor=vec4(col,a);
+      }`
+  });
+  const holo = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 3.2), holoMat);
+  holo.position.y = 0.05; holo.visible = false; rig.add(holo);
+  const loader = new THREE.TextureLoader(); loader.setCrossOrigin("anonymous");
+  loader.load(HOLO_URL, t => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; holoU.uTex.value = t; holo.visible = true; }, undefined, () => { document.body.classList.add("holo-img"); });
 
-  const floor = new THREE.Mesh(new THREE.CircleGeometry(12, 96), new THREE.MeshStandardMaterial({ color: 0x07080b, metalness: 0.85, roughness: 0.45 }));
-  floor.rotation.x = -Math.PI / 2; floor.position.y = -2.6; scene.add(floor);
+  /* floating holographic panels */
+  const panelTex = (draw) => { const c = document.createElement("canvas"); c.width = 256; c.height = 256; const x = c.getContext("2d"); draw(x); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; };
+  const frame = (x, col) => { x.strokeStyle = col; x.lineWidth = 3; x.globalAlpha = .9; x.strokeRect(10, 10, 236, 236); x.globalAlpha = .25; x.fillStyle = col; x.fillRect(10, 10, 236, 236); x.globalAlpha = 1; };
+  const p1 = panelTex(x => { frame(x, "#9b7bff"); x.strokeStyle = "#c9b6ff"; x.lineWidth = 4; x.beginPath(); x.moveTo(128, 50); x.lineTo(200, 128); x.lineTo(128, 206); x.lineTo(56, 128); x.closePath(); x.stroke(); x.beginPath(); x.moveTo(128, 85); x.lineTo(170, 128); x.lineTo(128, 171); x.lineTo(86, 128); x.closePath(); x.stroke(); x.beginPath(); x.moveTo(40, 128); x.lineTo(216, 128); x.stroke(); });
+  const p2 = panelTex(x => { frame(x, "#6fb6ff"); x.strokeStyle = "#bfe4ff"; x.lineWidth = 4; [70, 52, 34].forEach((r, i) => { x.globalAlpha = 1 - i * .25; x.beginPath(); x.arc(128, 128, r, 0, Math.PI * 2); x.stroke(); }); x.globalAlpha = 1; x.fillStyle = "#bfe4ff"; x.beginPath(); x.arc(128, 128, 14, 0, Math.PI * 2); x.fill(); });
+  const panelMat = t => new THREE.MeshBasicMaterial({ map: t, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, opacity: 0.85 });
+  const panL = new THREE.Mesh(new THREE.PlaneGeometry(0.95, 0.95), panelMat(p1));
+  const panR = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.8), panelMat(p2));
+  panL.position.set(-1.75, 0.75, -0.3); panL.rotation.y = 0.45;
+  panR.position.set(1.7, 0.95, -0.3); panR.rotation.y = -0.45;
+  rig.add(panL, panR);
 
-  const N = 900, pos = new Float32Array(N * 3);
-  for (let i = 0; i < N; i++) { const r = 2.5 + Math.random() * 7, a = Math.random() * Math.PI * 2, h = (Math.random() - 0.5) * 7; pos.set([Math.cos(a) * r, h, Math.sin(a) * r - 2], i * 3); }
+  /* particles rising in the beam + dust */
+  const N = 500, pos = new Float32Array(N * 3), spd = new Float32Array(N);
+  for (let i = 0; i < N; i++) { const a = Math.random() * 6.283, r = Math.random() * 1.4; pos.set([Math.cos(a) * r, -1.8 + Math.random() * 3.6, Math.sin(a) * r * 0.6], i * 3); spd[i] = 0.003 + Math.random() * 0.008; }
   const pg = new THREE.BufferGeometry(); pg.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-  const dust = new THREE.Points(pg, new THREE.PointsMaterial({ color: 0xffd7a0, size: 0.025, transparent: true, opacity: 0.5, depthWrite: false }));
-  scene.add(dust);
+  const pts = new THREE.Points(pg, new THREE.PointsMaterial({ color: 0xa9d4ff, size: 0.022, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false }));
+  rig.add(pts);
+
+  /* reflective floor grid */
+  const grid = new THREE.GridHelper(30, 60, 0x1d3a66, 0x0d1830); grid.position.y = -2.12; grid.material.transparent = true; grid.material.opacity = 0.35; scene.add(grid);
 
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
-  const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.5, 0.6, 0.82);
-  composer.addPass(bloom);
-  composer.addPass(new OutputPass());
+  const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.7, 0.55, 0.15);
+  composer.addPass(bloom); composer.addPass(new OutputPass());
 
-  // place the core in the top area of the screen, smaller on form tabs
-  const placeCore = () => {
-    const h = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.position.z;
-    const w = h * camera.aspect;
-    const fit = Math.min(w / 4.6, h / 4.6);
-    const scale = (S.compact ? 0.55 : 1) * Math.min(fit, 1.15);
-    const topY = h / 2 - (S.compact ? 0.22 : 0.33) * h;
-    return { y: topY - (S.compact ? 0 : 0.02 * h), scale };
-  };
-  const resize = () => {
-    const w = innerWidth, h = innerHeight;
-    renderer.setSize(w, h, false); composer.setSize(w, h); bloom.setSize(w, h);
-    camera.aspect = w / h; camera.updateProjectionMatrix();
-  };
+  const resize = () => { const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); composer.setSize(w, h); bloom.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix(); };
   addEventListener("resize", resize); resize();
 
   let tx = 0, ty = 0;
-  addEventListener("pointermove", e => { tx = (e.clientX / innerWidth - 0.5) * 0.4; ty = (e.clientY / innerHeight - 0.5) * 0.2; });
-
+  addEventListener("pointermove", e => { tx = (e.clientX / innerWidth - 0.5) * 0.5; ty = (e.clientY / innerHeight - 0.5) * 0.25; });
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const clock = new THREE.Clock();
-  let lvl = 0, curY = 1, curS = 1;
-  const tmpColor = new THREE.Color();
+  let lvl = 0, cs = 1, cy = 0, glitchT = 0;
+  const cTalk = new THREE.Color(1.05, 0.95, 1.15), cListen = new THREE.Color(0.85, 1.05, 1.2), cIdle = new THREE.Color(1, 1, 1);
   const tick = () => {
     const t = clock.getElapsedTime();
-    lvl += (S.level - lvl) * 0.18;
-    const target = placeCore();
-    curY += (target.y - curY) * 0.08; curS += (target.scale - curS) * 0.08;
-    const base = S.mode === "talk" ? 0.07 : S.mode === "listen" ? 0.045 : 0.03;
-    uni.uTime.value = reduce ? 0 : t * (S.mode === "talk" ? 1.6 : 0.8);
-    uni.uAmp.value = base + lvl * 0.22;
-    core.position.y = curY;
-    core.scale.setScalar(curS * (reduce ? 1 : 1 + Math.sin(t * 1.2) * 0.012 + lvl * 0.06));
-    core.rotation.y += reduce ? 0 : 0.0025;
-    ring1.rotation.z = t * 0.18; ring2.rotation.z = -t * 0.26;
-    sats.forEach((m, i) => { const a = t * 0.9 + i * 2.094; m.position.set(Math.cos(a) * 1.95, Math.sin(a) * 1.95, 0); });
-    tmpColor.set(S.mode === "talk" ? 0xffb04a : S.mode === "listen" ? 0x57d6ff : 0xffa640);
-    glow.color.lerp(tmpColor, 0.06);
-    glow.position.y = curY - 1.6 * curS;
-    glow.intensity = 20 + lvl * 90 + (S.mode === "listen" ? 10 : 0);
-    coreMat.emissiveIntensity = 0.45 + lvl * 2.2;
-    bloom.strength = 0.4 + lvl * 0.9;
-    dust.rotation.y = t * 0.02;
+    lvl += (S.level - lvl) * 0.2;
+    // framing: rig fills the upper part of the screen; smaller on form tabs
+    const portrait = camera.aspect < 0.8;
+    camera.position.z = portrait ? 9.2 : 7.2;
+    const vh = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.position.z;
+    const ts = S.compact ? 0.48 : (portrait ? 1.0 : 0.82);
+    const ty0 = vh / 2 - (S.compact ? 0.24 : 0.36) * vh;
+    cs += (ts - cs) * 0.08; cy += (ty0 - cy) * 0.08;
+    rig.scale.setScalar(cs); rig.position.y = cy;
+    const tm = reduce ? 0 : t;
+    holoU.uTime.value = tm; coneMat.uniforms.uTime.value = tm;
+    holoU.uLvl.value = lvl; coneMat.uniforms.uLvl.value = lvl;
+    holoU.uTint.value.lerp(S.mode === "talk" ? cTalk : S.mode === "listen" ? cListen : cIdle, 0.08);
+    coneMat.uniforms.uCol.value.lerp(S.mode === "talk" ? VIOLET : BLUE, 0.05);
+    if (!reduce && Math.random() < 0.004) glitchT = 0.25;
+    glitchT = Math.max(0, glitchT - 0.016); holoU.uGlitch.value = glitchT > 0 ? 1 : 0;
+    holo.position.y = 0.05 + (reduce ? 0 : Math.sin(t * 1.1) * 0.04);
+    panL.position.y = 0.75 + (reduce ? 0 : Math.sin(t * 0.9) * 0.06); panR.position.y = 0.95 + (reduce ? 0 : Math.sin(t * 0.8 + 1) * 0.06);
+    glowRing.material.color.setHSL(0.58 - lvl * 0.08, 1, 0.65 + lvl * 0.2);
+    under.intensity = 16 + lvl * 50;
+    bloom.strength = 0.6 + lvl * 0.7;
+    if (!reduce) { const p = pg.attributes.position.array; for (let i = 0; i < N; i++) { p[i * 3 + 1] += spd[i] * (1 + lvl * 2); if (p[i * 3 + 1] > 1.8) p[i * 3 + 1] = -1.8; } pg.attributes.position.needsUpdate = true; }
     camera.position.x += (tx - camera.position.x) * 0.05;
-    camera.position.y += (0.15 - ty - camera.position.y) * 0.05;
-    camera.lookAt(0, 0, 0);
+    camera.position.y += (0.2 - ty - camera.position.y) * 0.05;
+    camera.lookAt(0, cy * 0.5, 0);
     composer.render();
     requestAnimationFrame(tick);
   };
