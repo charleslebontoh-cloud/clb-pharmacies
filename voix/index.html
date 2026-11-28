@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CLB Voix">
+<meta name="theme-color" content="#05070a">
+<title>CLB Voix</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+/* VOICE: premium, calm, a little cinematic.
+   IDEA: a titanium-and-gold core floating in the dark: the agent's "heart" that every tab orbits.
+   PICTURE: realistic 3D core (three.js, PBR, bloom) that reacts to the voice.
+   COLOUR and TYPE: near-black, champagne gold, cool rim blue; Sora.
+   LAYOUT: 3D stage behind glass panels; tabs in a bottom dock on phone. */
+:root{color-scheme:dark;--ink:#f4efe6;--soft:#b9b2a6;--mute:#8f887d;--gold:#e8b25c;--glass:rgba(16,18,24,.62);--edge:rgba(255,220,170,.16);--ok:#3fd68a;--sky:#7cc8ff;--bad:#ff8a7a}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0;min-height:100%;background:#05070a;color:var(--ink);font:16px/1.5 Sora,system-ui,sans-serif;overflow-x:clip}
+#scene{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0}
+.orbcss{display:none;position:fixed;left:50%;top:30%;width:min(56vw,240px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at 34% 28%,#fff3d6 0,#e8b25c 22%,#7a4a18 60%,#1a0e04 100%);box-shadow:0 0 80px rgba(232,178,92,.35)}
+.fallback .orbcss{display:block}
+.app{position:relative;z-index:1;min-height:100dvh;display:flex;flex-direction:column;padding:max(18px,env(safe-area-inset-top)) 16px calc(96px + env(safe-area-inset-bottom))}
+header{text-align:center;margin-bottom:8px}
+h1{margin:0;font-weight:800;font-size:clamp(28px,7vw,44px);letter-spacing:.28em;padding-left:.28em;line-height:1;background:linear-gradient(180deg,#fff6e4 0%,#e8b25c 55%,#8a5a22 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 18px rgba(232,178,92,.35))}
+.ver{font-size:12px;color:var(--mute);margin-top:6px;font-weight:300}
+.view{display:none;flex:1;flex-direction:column;width:min(100%,640px);margin:0 auto}
+.view.on{display:flex}
+.spacer{flex:1;min-height:min(46vh,380px)}
+.view.compact .spacer{min-height:min(26vh,200px);flex:0}
+.panel{border:1px solid var(--edge);border-radius:22px;padding:18px;background:var(--glass);backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);margin-top:12px;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+h2{font-size:19px;margin:0 0 10px;font-weight:600}
+p{margin:0}
+.note{font-size:13px;color:var(--soft);margin-top:8px}
+label{display:block;font-weight:600;font-size:14px;margin:14px 0 6px}
+label small{font-weight:300;color:var(--mute)}
+input,textarea,select{width:100%;font:16px Sora,sans-serif;color:var(--ink);background:rgba(0,0,0,.35);border:1px solid var(--edge);border-radius:14px;padding:12px 14px;min-height:46px}
+textarea{min-height:84px;resize:vertical}
+input:focus,textarea:focus,select:focus,button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.btn{font:600 17px Sora,sans-serif;min-height:58px;width:100%;border:1px solid rgba(255,230,190,.45);border-radius:29px;cursor:pointer;color:#1c1105;background:linear-gradient(180deg,#ffe2a8 0%,#e8b25c 45%,#b07a32 100%);box-shadow:0 12px 30px rgba(232,178,92,.25),inset 0 1px 0 rgba(255,255,255,.7),inset 0 -3px 8px rgba(80,40,0,.35);transition:transform .15s;margin-top:14px}
+.btn:active{transform:scale(.98)}
+.btn.alt{background:rgba(255,255,255,.06);color:var(--ink);border-color:var(--edge);box-shadow:none}
+.btn.stop{color:#ffe9e9;background:linear-gradient(180deg,#7a2626,#3d1010);border-color:rgba(255,150,150,.35);box-shadow:0 12px 30px rgba(180,40,40,.3)}
+.btn:disabled{opacity:.5}
+.status{text-align:center;font-weight:600;font-size:16px;min-height:24px;text-shadow:0 2px 10px #000}
+.loc{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;align-items:center;font-size:13px;color:var(--soft)}
+.loc b{color:var(--ink);font-size:15px;font-weight:600}
+.loc span:last-child{grid-column:2}
+.dot{width:10px;height:10px;border-radius:50%;background:#555}
+.dot.on{background:var(--ok);box-shadow:0 0 12px var(--ok)}
+.log{max-height:300px;overflow:auto;display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.msg{padding:9px 13px;border-radius:14px;max-width:90%;font-size:14px}
+.msg b{display:block;font-size:12px;color:var(--mute);font-weight:600}
+.msg.ai{background:rgba(232,178,92,.16);align-self:flex-end}
+.msg.user{background:rgba(124,200,255,.13);align-self:flex-start}
+.msg.sys{align-self:center;font-size:12px;color:var(--mute)}
+ol{padding-left:20px;margin:0}li{margin:7px 0}
+.warn{border-left:3px solid var(--gold);padding:8px 12px;background:rgba(232,178,92,.08);border-radius:8px;font-size:13px;margin-top:12px;color:var(--soft)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{font-size:13px;border:1px solid var(--edge);border-radius:999px;padding:6px 12px;color:var(--soft)}
+.row{display:flex;gap:10px}.row>*{flex:1}
+nav.dock{position:fixed;z-index:3;left:50%;bottom:max(12px,env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;gap:4px;padding:6px;border-radius:26px;background:rgba(12,14,19,.78);border:1px solid var(--edge);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);width:min(calc(100% - 24px),520px)}
+nav.dock button{flex:1;border:0;background:transparent;color:var(--soft);font:600 12px Sora,sans-serif;min-height:52px;border-radius:20px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+nav.dock button svg{width:20px;height:20px}
+nav.dock button[aria-selected=true]{color:#1c1105;background:linear-gradient(180deg,#ffe2a8,#e8b25c)}
+@media(min-width:900px){.app{padding-bottom:110px}}
+</style>
+</head>
+<body>
+<canvas id="scene" aria-hidden="true"></canvas>
+<div class="orbcss" aria-hidden="true"></div>
+
+<div class="app">
+  <header><h1>CLB VOIX</h1><div class="ver">Version 1.0.0 · TITAN</div></header>
+
+  <!-- 1 PRÉPARER -->
+  <section class="view compact" id="v-prep">
+    <div class="spacer"></div>
+    <form class="panel" id="form" autocomplete="off">
+      <h2>La mission de l'appel</h2>
+      <label for="who">Qui appelles-tu ?</label>
+      <input id="who" placeholder="Ex. Garage Sino Afrique, service après-vente">
+      <label for="num">Numéro <small>(tu appelles depuis ton iPhone)</small></label>
+      <input id="num" inputmode="tel" placeholder="+225 07 00 00 00 00">
+      <label for="goal">Objectif</label>
+      <textarea id="goal" placeholder="Ex. Prendre rendez-vous pour la révision de la Kaiyi X7, samedi matin de préférence."></textarea>
+      <label for="facts">Infos que TITAN peut donner</label>
+      <textarea id="facts" placeholder="Ex. Kaiyi X7 2.0T, environ 20 000 km, dispo samedi 8h-12h, sinon lundi après 17h."></textarea>
+      <label for="limits">Interdits <small>(il ne les fera jamais)</small></label>
+      <textarea id="limits">Ne prendre aucun engagement financier. Ne donner aucune donnée bancaire ni personnelle. Si une décision importante est demandée, dire que Charles rappellera.</textarea>
+      <label for="tone">Ton</label>
+      <select id="tone"><option>Poli et chaleureux</option><option>Professionnel et bref</option><option>Décontracté, à l'ivoirienne</option></select>
+      <label for="first">Sa première phrase</label>
+      <textarea id="first"></textarea>
+      <button class="btn" type="button" id="go">Passer à l'appel</button>
+    </form>
+  </section>
+
+  <!-- 2 EN LIGNE -->
+  <section class="view" id="v-live">
+    <div class="spacer"></div>
+    <div class="status" id="liveStatus">Prêt pour l'appel</div>
+    <div class="panel">
+      <h2 id="liveWho">Appel</h2>
+      <ol class="note" style="color:var(--soft)">
+        <li>Touche « Démarrer TITAN ». Il te dit bonjour, puis il lit ta mission.</li>
+        <li>Appelle la personne depuis ton iPhone, haut-parleur activé, posé près de cet appareil.</li>
+        <li>Ne parle plus : TITAN mène l'échange, attend son tour et s'arrête quand la personne parle.</li>
+      </ol>
+      <button class="btn" id="liveBtn">Démarrer TITAN</button>
+      <div class="log" id="log" aria-live="polite"></div>
+      <button class="btn alt" id="copyLog" hidden>Copier la conversation</button>
+    </div>
+  </section>
+
+  <!-- 3 CONFÉRENCE -->
+  <section class="view compact" id="v-conf">
+    <div class="spacer"></div>
+    <div class="panel">
+      <h2>Version finale : TITAN entre dans ton appel</h2>
+      <ol>
+        <li>Tu appelles la personne depuis ton iPhone, avec ton numéro.</li>
+        <li>Elle décroche : tu touches « Ajouter » et tu appelles le numéro de TITAN.</li>
+        <li>TITAN décroche : tu touches « Fusionner ». Il entend tout et parle.</li>
+        <li>Tu restes en sourdine, tu reprends la parole quand tu veux.</li>
+      </ol>
+      <div class="warn">À tester d'abord : appelle un proche, touche Ajouter, appelle un 2ᵉ proche, puis Fusionner. Si ça fusionne, ton opérateur accepte la conférence.</div>
+      <label for="agentnum">Numéro de TITAN <small>(quand on l'aura, +225)</small></label>
+      <input id="agentnum" inputmode="tel" placeholder="+225 ...">
+      <p class="note" id="agentline"></p>
+    </div>
+    <div class="panel">
+      <h2>Ta voix clonée</h2>
+      <p class="note">Ta voix est clonée sur ElevenLabs (modèle v2, vitesse 0,95, stabilité 0,5, similarité maximale). Pour les vrais appels, TITAN parlera avec elle dès que le numéro +225 sera branché.</p>
+    </div>
+  </section>
+
+  <!-- 4 TITAN -->
+  <section class="view" id="v-titan">
+    <div class="spacer"></div>
+    <div class="status" id="tStatus">Prêt</div>
+    <button class="btn" id="tBtn">Parler à TITAN</button>
+    <div class="panel loc"><span class="dot" id="dot"></span><b id="place">Position pas encore partagée</b><span id="coords"></span></div>
+    <div class="panel">
+      <h2>Ce qu'il sait faire</h2>
+      <div class="chips"><span class="chip">Discuter et conseiller</span><span class="chip">Recherche en ligne</span><span class="chip">Ta position en direct</span><span class="chip">Mode écoute</span><span class="chip">Marvin et Mila</span><span class="chip">« Retiens ça »</span></div>
+      <p class="note">Mets des écouteurs pour qu'il s'arrête net quand tu parles. Garde l'appli ouverte : l'iPhone coupe le GPS quand l'écran se verrouille. Préviens les personnes autour de toi qu'il les entend.</p>
+    </div>
+  </section>
+</div>
+
+<nav class="dock" role="tablist" aria-label="Sections">
+  <button role="tab" data-v="prep" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M4 12h10M4 19h7"/></svg>Préparer</button>
+  <button role="tab" data-v="live" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>En ligne</button>
+  <button role="tab" data-v="conf" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M2 20c1-3 3.5-4.5 6-4.5s5 1.5 6 4.5M14 15.6c.6-.1 1.3-.1 2-.1 2.5 0 5 1.5 6 4.5"/></svg>Conférence</button>
+  <button role="tab" data-v="titan" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(-20 12 12)"/></svg>TITAN</button>
+</nav>
+
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}
+</script>
+
+<!-- 3D stage -->
+<script type="module">
+import * as THREE from "three";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+
+const S = window.TITAN3D = window.TITAN3D || { level: 0, mode: "idle", compact: false };
+try {
+  const canvas = document.getElementById("scene");
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.0;
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x05070a);
+  scene.fog = new THREE.FogExp2(0x05070a, 0.07);
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+  const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+  camera.position.set(0, 0.15, 7);
+
+  const key = new THREE.DirectionalLight(0xfff0d8, 2.4); key.position.set(3, 4, 5); scene.add(key);
+  const rim = new THREE.DirectionalLight(0x6fa8ff, 1.8); rim.position.set(-4, 1, -3); scene.add(rim);
+  const glow = new THREE.PointLight(0xffa640, 26, 8, 2); glow.position.set(0, -1.6, 1.2); scene.add(glow);
+
+  const core = new THREE.Group(); scene.add(core);
+  const uni = { uTime: { value: 0 }, uAmp: { value: 0.03 } };
+  const coreMat = new THREE.MeshPhysicalMaterial({ color: 0xc9893a, metalness: 1, roughness: 0.2, clearcoat: 1, clearcoatRoughness: 0.06, emissive: 0x3a1a02, emissiveIntensity: 0.5 });
+  coreMat.onBeforeCompile = sh => {
+    Object.assign(sh.uniforms, uni);
+    sh.vertexShader = sh.vertexShader.replace("#include <common>", `#include <common>
+      uniform float uTime; uniform float uAmp;
+      float wav(vec3 p){return sin(p.x*3.1+uTime*1.7)*sin(p.y*2.7+uTime*1.3)*sin(p.z*3.3+uTime*1.1)+0.5*sin(p.x*7.0-uTime*2.3+p.y*5.0);}`)
+      .replace("#include <begin_vertex>", `#include <begin_vertex>
+      transformed += normal * wav(position*1.2) * uAmp;`);
+  };
+  core.add(new THREE.Mesh(new THREE.IcosahedronGeometry(1, 96), coreMat));
+  core.add(new THREE.Mesh(new THREE.SphereGeometry(1.32, 96, 64), new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0, roughness: 0.05, transmission: 1, thickness: 0.6, ior: 1.45, clearcoat: 1, envMapIntensity: 1.2, attenuationColor: new THREE.Color(0xffd9a0), attenuationDistance: 3 })));
+
+  const ringMat = new THREE.MeshStandardMaterial({ color: 0xb9b4ad, metalness: 1, roughness: 0.28 });
+  const goldMat = new THREE.MeshStandardMaterial({ color: 0xe8b25c, metalness: 1, roughness: 0.18, emissive: 0x2a1500, emissiveIntensity: 0.4 });
+  const ring1 = new THREE.Mesh(new THREE.TorusGeometry(1.72, 0.035, 24, 220), ringMat);
+  const ring2 = new THREE.Mesh(new THREE.TorusGeometry(1.95, 0.018, 16, 220), goldMat);
+  ring1.rotation.x = Math.PI * 0.42; ring2.rotation.x = Math.PI * 0.58; ring2.rotation.y = 0.35;
+  core.add(ring1, ring2);
+  const sats = [0, 1, 2].map(() => { const m = new THREE.Mesh(new THREE.SphereGeometry(0.055, 24, 16), goldMat); ring2.add(m); return m; });
+
+  const floor = new THREE.Mesh(new THREE.CircleGeometry(12, 96), new THREE.MeshStandardMaterial({ color: 0x07080b, metalness: 0.85, roughness: 0.45 }));
+  floor.rotation.x = -Math.PI / 2; floor.position.y = -2.6; scene.add(floor);
+
+  const N = 900, pos = new Float32Array(N * 3);
+  for (let i = 0; i < N; i++) { const r = 2.5 + Math.random() * 7, a = Math.random() * Math.PI * 2, h = (Math.random() - 0.5) * 7; pos.set([Math.cos(a) * r, h, Math.sin(a) * r - 2], i * 3); }
+  const pg = new THREE.BufferGeometry(); pg.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+  const dust = new THREE.Points(pg, new THREE.PointsMaterial({ color: 0xffd7a0, size: 0.025, transparent: true, opacity: 0.5, depthWrite: false }));
+  scene.add(dust);
+
+  const composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+  const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.5, 0.6, 0.82);
+  composer.addPass(bloom);
+  composer.addPass(new OutputPass());
+
+  // place the core in the top area of the screen, smaller on form tabs
+  const placeCore = () => {
+    const h = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.position.z;
+    const w = h * camera.aspect;
+    const fit = Math.min(w / 4.6, h / 4.6);
+    const scale = (S.compact ? 0.55 : 1) * Math.min(fit, 1.15);
+    const topY = h / 2 - (S.compact ? 0.17 : 0.27) * h;
+    return { y: topY - (S.compact ? 0 : 0.02 * h), scale };
+  };
+  const resize = () => {
+    const w = innerWidth, h = innerHeight;
+    renderer.setSize(w, h, false); composer.setSize(w, h); bloom.setSize(w, h);
+    camera.aspect = w / h; camera.updateProjectionMatrix();
+  };
+  addEventListener("resize", resize); resize();
+
+  let tx = 0, ty = 0;
+  addEventListener("pointermove", e => { tx = (e.clientX / innerWidth - 0.5) * 0.4; ty = (e.clientY / innerHeight - 0.5) * 0.2; });
+
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const clock = new THREE.Clock();
+  let lvl = 0, curY = 1, curS = 1;
+  const tmpColor = new THREE.Color();
+  const tick = () => {
+    const t = clock.getElapsedTime();
+    lvl += (S.level - lvl) * 0.18;
+    const target = placeCore();
+    curY += (target.y - curY) * 0.08; curS += (target.scale - curS) * 0.08;
+    const base = S.mode === "talk" ? 0.07 : S.mode === "listen" ? 0.045 : 0.03;
+    uni.uTime.value = reduce ? 0 : t * (S.mode === "talk" ? 1.6 : 0.8);
+    uni.uAmp.value = base + lvl * 0.22;
+    core.position.y = curY;
+    core.scale.setScalar(curS * (reduce ? 1 : 1 + Math.sin(t * 1.2) * 0.012 + lvl * 0.06));
+    core.rotation.y += reduce ? 0 : 0.0025;
+    ring1.rotation.z = t * 0.18; ring2.rotation.z = -t * 0.26;
+    sats.forEach((m, i) => { const a = t * 0.9 + i * 2.094; m.position.set(Math.cos(a) * 1.95, Math.sin(a) * 1.95, 0); });
+    tmpColor.set(S.mode === "talk" ? 0xffb04a : S.mode === "listen" ? 0x57d6ff : 0xffa640);
+    glow.color.lerp(tmpColor, 0.06);
+    glow.position.y = curY - 1.6 * curS;
+    glow.intensity = 20 + lvl * 90 + (S.mode === "listen" ? 10 : 0);
+    coreMat.emissiveIntensity = 0.45 + lvl * 2.2;
+    bloom.strength = 0.4 + lvl * 0.9;
+    dust.rotation.y = t * 0.02;
+    camera.position.x += (tx - camera.position.x) * 0.05;
+    camera.position.y += (0.15 - ty - camera.position.y) * 0.05;
+    camera.lookAt(0, 0, 0);
+    composer.render();
+    requestAnimationFrame(tick);
+  };
+  tick();
+} catch (e) {
+  document.body.classList.add("fallback");
+  console.error("3D indisponible", e);
+}
+</script>
+
+<!-- app logic -->
+<script type="module">
+import { Conversation } from "https://cdn.jsdelivr.net/npm/@elevenlabs/client/+esm";
+const AGENT = "agent_1501m8gypmc0ef1rjshjw9sxfzsy";
+const $ = id => document.getElementById(id);
+const S = window.TITAN3D = window.TITAN3D || { level: 0, mode: "idle", compact: false };
+const F = ["who", "num", "goal", "facts", "limits", "tone", "first", "agentnum"];
+
+/* tabs */
+const show = v => {
+  document.querySelectorAll("nav.dock button").forEach(b => b.setAttribute("aria-selected", b.dataset.v === v));
+  document.querySelectorAll(".view").forEach(s => s.classList.toggle("on", s.id === "v-" + v));
+  S.compact = v === "prep" || v === "conf";
+  try { localStorage.setItem("clbvoix_tab", v); } catch {}
+  scrollTo({ top: 0 });
+};
+document.querySelectorAll("nav.dock button").forEach(b => b.onclick = () => show(b.dataset.v));
+let startTab = "titan"; try { startTab = localStorage.getItem("clbvoix_tab") || "titan"; } catch {}
+show(startTab);
+
+/* remember the mission on this phone */
+const save = () => { try { const o = {}; F.forEach(k => o[k] = $(k).value); localStorage.setItem("clbvoix", JSON.stringify(o)); } catch {} };
+try { const o = JSON.parse(localStorage.getItem("clbvoix") || "{}"); F.forEach(k => { if (o[k] != null) $(k).value = o[k]; }); } catch {}
+const defFirst = () => { const g = ($("goal").value.split(/[.!?]/)[0] || "").trim(); return `Bonjour, je suis l'assistant vocal de Charles Sery, je vous appelle de sa part${g ? " pour " + g.charAt(0).toLowerCase() + g.slice(1) : ""}. Vous avez un petit moment ?`; };
+if (!$("first").value) $("first").value = defFirst();
+$("first").addEventListener("input", () => $("first").dataset.touched = "1");
+["who", "goal"].forEach(k => $(k).addEventListener("change", () => { if ($("first").dataset.touched !== "1") $("first").value = defFirst(); }));
+document.addEventListener("input", () => { save(); lines(); });
+const lines = () => {
+  $("liveWho").textContent = $("who").value ? "Appel : " + $("who").value + ($("num").value ? " · " + $("num").value : "") : "Appel";
+  $("agentline").textContent = $("agentnum").value ? "Numéro à ajouter dans la conférence : " + $("agentnum").value : "";
+};
+lines();
+$("go").onclick = () => { save(); show("live"); };
+
+const mission = () => `MISSION D'APPEL préparée par Charles Sery.
+Personne appelée : ${$("who").value || "non précisée"}${$("num").value ? " (" + $("num").value + ")" : ""}.
+Objectif : ${$("goal").value || "non précisé"}.
+Infos que tu peux donner : ${$("facts").value || "aucune"}.
+Interdits absolus : ${$("limits").value}.
+Ton : ${$("tone").value}.
+Première phrase à dire quand la personne décroche : « ${$("first").value || defFirst()} »`;
+
+/* live location */
+let watchId = null, pos = null, placeName = "", lastGeo = 0;
+async function nameOf(lat, lon) {
+  try {
+    const r = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=fr`);
+    const j = await r.json();
+    const admin = (j.localityInfo?.administrative || []).map(a => a.name);
+    return [...new Set([j.locality, j.city, admin[admin.length - 1], j.countryName].filter(Boolean))].join(", ");
+  } catch { return ""; }
+}
+function startWatch() {
+  return new Promise(res => {
+    if (!navigator.geolocation) { $("place").textContent = "GPS indisponible sur cet appareil"; return res(); }
+    let first = true;
+    watchId = navigator.geolocation.watchPosition(async p => {
+      pos = p.coords; $("dot").classList.add("on");
+      $("coords").textContent = `${pos.latitude.toFixed(5)}, ${pos.longitude.toFixed(5)} · ±${Math.round(pos.accuracy)} m`;
+      if (Date.now() - lastGeo > 30000) { lastGeo = Date.now(); placeName = await nameOf(pos.latitude, pos.longitude); $("place").textContent = placeName || "Position reçue"; }
+      if (first) { first = false; res(); }
+    }, err => {
+      $("place").textContent = err.code === 1 ? "Localisation refusée : Réglages > Safari > Position" : "Position introuvable";
+      if (first) { first = false; res(); }
+    }, { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 });
+  });
+}
+const stopWatch = () => { if (watchId != null) navigator.geolocation.clearWatch(watchId); watchId = null; $("dot").classList.remove("on"); };
+function locationReport() {
+  if (!pos) return "Position indisponible : Charles n'a pas autorisé la localisation ou le GPS ne répond pas.";
+  const speed = pos.speed != null && pos.speed > 0.5 ? ` Vitesse : ${Math.round(pos.speed * 3.6)} km/h.` : "";
+  return `Position actuelle de Charles : ${placeName || "lieu inconnu"}. Coordonnées GPS : ${pos.latitude.toFixed(5)}, ${pos.longitude.toFixed(5)} (précision ±${Math.round(pos.accuracy)} m).${speed} Lien carte : https://maps.google.com/?q=${pos.latitude},${pos.longitude}`;
+}
+
+/* one TITAN session, used by "En ligne" (call mode) and "TITAN" (companion) */
+let conv = null, meter = null, kind = null;
+const ui = () => kind === "call" ? { btn: $("liveBtn"), st: $("liveStatus"), idle: "Démarrer TITAN" } : { btn: $("tBtn"), st: $("tStatus"), idle: "Parler à TITAN" };
+const setMode = (m, label) => { S.mode = m; if (label) ui().st.textContent = label; };
+const addLog = (who, text) => {
+  if (kind !== "call") return;
+  const d = document.createElement("div"); d.className = "msg " + who;
+  if (who !== "sys") { const b = document.createElement("b"); b.textContent = who === "ai" ? "TITAN" : ($("who").value || "Interlocuteur"); d.append(b); }
+  const t = document.createElement("span"); t.textContent = text; d.append(t);
+  $("log").append(d); $("log").scrollTop = 1e9; $("copyLog").hidden = false;
+};
+
+async function start(which) {
+  if (conv) return;
+  kind = which;
+  const { btn, st } = ui();
+  btn.disabled = true; setMode("idle", "Connexion…");
+  if (kind === "call") { $("log").innerHTML = ""; $("copyLog").hidden = true; }
+  try {
+    await navigator.mediaDevices.getUserMedia({ audio: true });
+    if (kind === "titan") await startWatch(); else startWatch();
+    conv = await Conversation.startSession({
+      agentId: AGENT,
+      connectionType: "websocket",
+      clientTools: {
+        position_actuelle: async () => locationReport(),
+        mission_actuelle: async () => kind === "call" ? mission() : "Aucune mission d'appel en cours : reste en mode compagnon."
+      },
+      onConnect: () => {
+        setMode("listen", kind === "call" ? "TITAN lit ta mission…" : "TITAN t'écoute");
+        if (kind === "call") setTimeout(() => { try { conv?.sendUserMessage("MODE APPEL"); addLog("sys", "Mission envoyée à TITAN. Lance l'appel sur ton iPhone."); } catch {} }, 2500);
+      },
+      onDisconnect: () => stop(true),
+      onError: e => { st.textContent = "Erreur : " + (e?.message || e); },
+      onModeChange: m => m.mode === "speaking" ? setMode("talk", "TITAN parle") : setMode("listen", kind === "call" ? "TITAN écoute la ligne" : "TITAN t'écoute"),
+      onMessage: m => { if (m?.message && m.message !== "MODE APPEL") addLog(m.source === "ai" ? "ai" : "user", m.message); }
+    });
+    meter = setInterval(() => { if (!conv) return; try { const v = S.mode === "talk" ? conv.getOutputVolume() : conv.getInputVolume() * 0.6; S.level = Math.min(1, v * 1.6); } catch {} }, 50);
+    btn.textContent = "Raccrocher"; btn.classList.add("stop");
+  } catch (e) {
+    st.textContent = e?.name === "NotAllowedError" ? "Autorise le micro pour parler à TITAN" : "Impossible de joindre TITAN";
+    stop(false, true);
+  }
+  btn.disabled = false;
+}
+function stop(fromServer, keepMsg) {
+  const { btn, st, idle } = ui();
+  clearInterval(meter); meter = null; S.level = 0; stopWatch();
+  btn.textContent = idle; btn.classList.remove("stop"); btn.disabled = false;
+  S.mode = "idle"; if (!keepMsg) st.textContent = kind === "call" ? "Appel terminé" : "À tout à l'heure";
+  conv = null;
+}
+const toggle = async which => {
+  if (conv) { const same = kind === which; try { await conv.endSession(); } catch {} stop(); if (same) return; }
+  start(which);
+};
+$("tBtn").onclick = () => toggle("titan");
+$("liveBtn").onclick = () => toggle("call");
+$("copyLog").onclick = () => {
+  const txt = [...$("log").children].map(d => d.innerText.replace("\n", " : ")).join("\n");
+  navigator.clipboard?.writeText(txt).then(() => $("copyLog").textContent = "Copié", () => {});
+};
+</script>
+</body>
+</html>
